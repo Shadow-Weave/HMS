@@ -1,0 +1,2 @@
+HMS installed. Access the control plane:
+  kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "hms.fullname" . }}-control-plane 3000:3000

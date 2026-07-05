@@ -1,0 +1,17 @@
+{{- if .Values.controlPlane.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hms.fullname" . }}-control-plane
+  labels:
+    {{- include "hms.controlPlane.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.controlPlane.service.type }}
+  ports:
+  - port: {{ .Values.controlPlane.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "hms.controlPlane.selectorLabels" . | nindent 4 }}
+{{- end }}

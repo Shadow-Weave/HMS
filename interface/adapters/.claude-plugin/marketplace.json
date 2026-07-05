@@ -1,0 +1,14 @@
+{
+  "name": "hms-local",
+  "owner": {
+    "name": "HMS Team",
+    "url": "https://docs.hms.local"
+  },
+  "plugins": [
+    {
+      "name": "hms-memory",
+      "description": "Automatic long-term memory via HMS. Retains conversations, provides knowledge page tools.",
+      "source": "./claude-code"
+    }
+  ]
+}

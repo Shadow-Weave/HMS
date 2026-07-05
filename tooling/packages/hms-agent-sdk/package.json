@@ -1,0 +1,36 @@
+{
+  "name": "@hms-memory/hms-agent-sdk",
+  "version": "0.1.0",
+  "description": "Agent knowledge tools powered by HMS — harness-agnostic SDK",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run tests",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ai-agents",
+    "hms",
+    "memory",
+    "knowledge",
+    "self-driving"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hms-memory/hms.git",
+    "directory": "hms-agent-sdk"
+  },
+  "dependencies": {
+    "@hms-memory/hms-client": "^0.5.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.4",
+    "vitest": "^4.1.2"
+  }
+}

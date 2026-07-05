@@ -1,0 +1,10 @@
+generatorName: go
+outputDir: ./
+inputSpec: ../../../knowledge/site/static/openapi.json
+packageName: hms
+gitUserId: hms-io
+gitRepoId: hms/interface/sdk/go
+isGoSubmodule: true
+enumClassPrefix: true
+structPrefix: true
+generateInterfaces: true

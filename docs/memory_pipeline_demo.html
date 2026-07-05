@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HMS Shadow Memory Pipeline Demo</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f8fb;
+        --ink: #172033;
+        --muted: #64748b;
+        --line: #d7dee9;
+        --panel: #ffffff;
+        --teal: #0f766e;
+        --blue: #2563eb;
+        --amber: #d97706;
+        --green: #059669;
+        --red: #dc2626;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      header {
+        min-height: 170px;
+        padding: 34px clamp(20px, 5vw, 72px);
+        background:
+          linear-gradient(120deg, rgba(15, 118, 110, 0.94), rgba(37, 99, 235, 0.92)),
+          #0f766e;
+        color: #fff;
+      }
+
+      header h1 {
+        margin: 0 0 12px;
+        font-size: clamp(30px, 5vw, 54px);
+        line-height: 1.03;
+        letter-spacing: 0;
+      }
+
+      header p {
+        max-width: 820px;
+        margin: 0;
+        color: #e2e8f0;
+        font-size: 17px;
+        line-height: 1.6;
+      }
+
+      main {
+        max-width: 1220px;
+        margin: 0 auto;
+        padding: 28px clamp(16px, 4vw, 36px) 48px;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 18px;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+      }
+
+      button[aria-pressed="true"] {
+        border-color: var(--teal);
+        background: #ccfbf1;
+        color: #134e4a;
+      }
+
+      .stage {
+        display: grid;
+        grid-template-columns: minmax(0, 1.04fr) 80px minmax(0, 1.42fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .panel {
+        min-width: 0;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+      }
+
+      .panel header {
+        min-height: auto;
+        padding: 18px 20px;
+        background: #fff;
+        color: var(--ink);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel h2 {
+        margin: 0 0 6px;
+        font-size: 20px;
+        letter-spacing: 0;
+      }
+
+      .panel header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .panel-body {
+        padding: 18px;
+      }
+
+      .session {
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--amber);
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 12px;
+        background: #fffaf0;
+      }
+
+      .session:nth-child(2) {
+        border-left-color: var(--blue);
+        background: #eff6ff;
+      }
+
+      .session:nth-child(3) {
+        border-left-color: var(--green);
+        background: #ecfdf5;
+      }
+
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .session p,
+      .ledger-row p,
+      .answer p {
+        margin: 0;
+        line-height: 1.48;
+      }
+
+      .transform {
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 12px;
+        min-height: 460px;
+      }
+
+      .arrow {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        color: #334155;
+        font-size: 28px;
+        font-weight: 800;
+      }
+
+      .transform span {
+        max-width: 78px;
+        text-align: center;
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+
+      .query {
+        margin-bottom: 14px;
+        padding: 14px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        border: 1px solid var(--line);
+      }
+
+      .query strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .ledger {
+        display: grid;
+        gap: 10px;
+      }
+
+      .ledger-row {
+        display: grid;
+        grid-template-columns: 116px minmax(0, 1fr);
+        gap: 12px;
+        padding: 13px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .tag {
+        align-self: start;
+        border-radius: 999px;
+        padding: 6px 9px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .old {
+        background: #ffedd5;
+        color: #9a3412;
+      }
+
+      .transition {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+
+      .current {
+        background: #d1fae5;
+        color: #047857;
+      }
+
+      .answer {
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 8px;
+        border: 1px solid #bbf7d0;
+        background: #ecfdf5;
+      }
+
+      .answer strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #065f46;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .note {
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 860px) {
+        .stage {
+          grid-template-columns: 1fr;
+        }
+
+        .transform {
+          min-height: auto;
+          padding: 6px 0;
+        }
+
+        .arrow {
+          transform: rotate(90deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Memory evidence organization demo</h1>
+      <p>
+        This static demo shows what a model sees before and after the HMS Shadow
+        evidence layer. It does not require a memory database, model endpoint,
+        or benchmark output.
+      </p>
+    </header>
+
+    <main>
+      <div class="toolbar" aria-label="Demo view selector">
+        <button type="button" data-view="full" aria-pressed="true">Full flow</button>
+        <button type="button" data-view="raw" aria-pressed="false">Raw sessions</button>
+        <button type="button" data-view="ledger" aria-pressed="false">Evidence ledger</button>
+        <button type="button" data-view="answer" aria-pressed="false">Grounded answer</button>
+      </div>
+
+      <section class="stage">
+        <article class="panel raw-panel">
+          <header>
+            <h2>Before: scattered retrieved sessions</h2>
+            <p>The model receives relevant snippets, but state changes and time order are implicit.</p>
+          </header>
+          <div class="panel-body">
+            <div class="query">
+              <strong>Question</strong>
+              Which city should the assistant use as the user's current city?
+            </div>
+
+            <div class="session">
+              <div class="meta"><span>Session 01</span><span>Jan 08</span></div>
+              <p>User: I live in Boston. Use it for local suggestions.</p>
+            </div>
+            <div class="session">
+              <div class="meta"><span>Session 07</span><span>Mar 03</span></div>
+              <p>User: I am moving to Seattle next week.</p>
+            </div>
+            <div class="session">
+              <div class="meta"><span>Session 09</span><span>Mar 11</span></div>
+              <p>User: I finished the move. Use Seattle as my current city.</p>
+            </div>
+          </div>
+        </article>
+
+        <div class="transform" aria-hidden="true">
+          <div class="arrow">→</div>
+          <span>answer-time evidence organization</span>
+        </div>
+
+        <article class="panel ledger-panel">
+          <header>
+            <h2>After: structured evidence before generation</h2>
+            <p>The same snippets become rows with state, time, source, and support.</p>
+          </header>
+          <div class="panel-body">
+            <div class="ledger">
+              <div class="ledger-row">
+                <span class="tag old">older state</span>
+                <p><strong>Jan 08 · Session 01</strong><br />Boston is valid history, but it is superseded by later evidence.</p>
+              </div>
+              <div class="ledger-row">
+                <span class="tag transition">transition</span>
+                <p><strong>Mar 03 · Session 07</strong><br />The user announces a future move to Seattle.</p>
+              </div>
+              <div class="ledger-row">
+                <span class="tag current">current state</span>
+                <p><strong>Mar 11 · Session 09</strong><br />The latest explicit instruction says to use Seattle as the current city.</p>
+              </div>
+            </div>
+
+            <div class="answer">
+              <strong>Grounded answer</strong>
+              <p>Use Seattle, because it is the latest explicit current-city statement.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <p class="note">
+        The example is illustrative. It is intended to make the architecture easy
+        to inspect before connecting a real memory database or model endpoint.
+      </p>
+    </main>
+
+    <script>
+      const buttons = [...document.querySelectorAll("button[data-view]")];
+      const raw = document.querySelector(".raw-panel");
+      const ledger = document.querySelector(".ledger-panel");
+      const arrow = document.querySelector(".transform");
+      const answer = document.querySelector(".answer");
+
+      function setView(view) {
+        buttons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.view === view));
+        });
+
+        raw.classList.toggle("hidden", view === "ledger" || view === "answer");
+        ledger.classList.toggle("hidden", view === "raw");
+        arrow.classList.toggle("hidden", view !== "full");
+        answer.classList.toggle("hidden", view === "ledger");
+
+        if (view === "answer") {
+          raw.classList.add("hidden");
+          ledger.classList.remove("hidden");
+          answer.classList.remove("hidden");
+        }
+
+        if (view === "ledger") {
+          ledger.classList.remove("hidden");
+          answer.classList.add("hidden");
+        }
+      }
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => setView(button.dataset.view));
+      });
+    </script>
+  </body>
+</html>

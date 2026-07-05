@@ -1,0 +1,90 @@
+# HMS API deployment with Nginx reverse proxy (API-only)
+#
+# This example deploys HMS API under the path /hms with:
+# - HMS standalone image (API + Control Plane + embedded pg0)
+# - Nginx reverse proxy (API only)
+#
+# Quick Start:
+#   docker-compose -f deploy/containers/docker-compose/nginx/docker-compose.yml up
+#
+# Access:
+#   API (via nginx):         http://localhost:8080/hms/docs
+#   Control Plane (direct):  http://localhost:9999
+#
+# For full stack deployment (API + Control Plane both under /hms):
+#   See README.md in this directory for instructions on building with basePath.
+#
+# Note: This configuration uses the published image (no build required).
+#       Control Plane is served directly because Next.js basePath requires
+#       build-time configuration. See README.md for the full stack option.
+
+services:
+  # HMS (API + Control Plane + embedded pg0)
+  hms:
+    image: ghcr.io/hms-memory/hms:latest
+    ports:
+      - "9999:9999"  # Control Plane (direct access, not proxied)
+    environment:
+      # API base path for reverse proxy
+      HMS_API_BASE_PATH: /hms
+
+      # LLM configuration
+      # Using mock provider for testing (no API key needed)
+      # For production, set OPENAI_API_KEY or ANTHROPIC_API_KEY and use a real provider
+      HMS_API_LLM_PROVIDER: ${HMS_API_LLM_PROVIDER:-mock}
+      HMS_API_LLM_API_KEY: ${OPENAI_API_KEY:-not-needed-for-mock}
+      HMS_API_LLM_MODEL: ${HMS_API_LLM_MODEL:-mock-model}
+
+      # Production examples (uncomment and set appropriate API key):
+      # HMS_API_LLM_PROVIDER: openai
+      # HMS_API_LLM_API_KEY: ${OPENAI_API_KEY}
+      # HMS_API_LLM_MODEL: gpt-4o-mini
+
+      # HMS_API_LLM_PROVIDER: anthropic
+      # HMS_API_LLM_API_KEY: ${ANTHROPIC_API_KEY}
+      # HMS_API_LLM_MODEL: claude-sonnet-4-20250514
+
+      # Server config
+      HMS_API_HOST: 0.0.0.0
+      HMS_API_PORT: 8888
+      HMS_API_LOG_LEVEL: info
+
+      # Control Plane config
+      HMS_CP_DATAPLANE_API_URL: http://localhost:8888
+      # Optional: Require a shared access key for Control Plane UI access
+      # HMS_CP_ACCESS_KEY: your-secret-key
+    volumes:
+      # Persist embedded pg0 database
+      - hms_data:/app/data
+    # Note: Ports not exposed - access via Nginx at localhost:8080/hms/
+    # To debug directly, uncomment these ports:
+    # ports:
+    #   - "8888:8888"  # API
+    #   - "9999:9999"  # Control Plane
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/hms/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - hms
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      hms:
+        condition: service_healthy
+    networks:
+      - hms
+
+volumes:
+  hms_data:
+
+networks:
+  hms:

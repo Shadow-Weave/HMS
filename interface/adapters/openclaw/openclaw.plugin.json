@@ -1,0 +1,512 @@
+{
+  "id": "hms-openclaw",
+  "name": "HMS Memory",
+  "kind": "memory",
+  "configContracts": {
+    "secretInputs": {
+      "paths": [
+        { "path": "llmApiKey", "expected": "string" },
+        { "path": "hmsApiToken", "expected": "string" }
+      ]
+    }
+  },
+  "contracts": {
+    "tools": [
+      "agent_knowledge_list_pages",
+      "agent_knowledge_get_page",
+      "agent_knowledge_create_page",
+      "agent_knowledge_update_page",
+      "agent_knowledge_delete_page",
+      "agent_knowledge_recall",
+      "agent_knowledge_ingest"
+    ]
+  },
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "daemonIdleTimeout": {
+        "type": "number",
+        "description": "Seconds before daemon shuts down from inactivity (0 = never)",
+        "default": 0
+      },
+      "embedPort": {
+        "type": "number",
+        "description": "Port for hms-embed server (auto-assigned if not specified)",
+        "default": 0
+      },
+      "bankMission": {
+        "type": "string",
+        "description": "Mission stamped onto the bank's reflect_mission column on first use. Only affects the /reflect operation — does not steer retain or recall. Leave unset (or empty) to manage missions out-of-band via PATCH /banks/{id}.",
+        "default": "You are an AI assistant helping users across multiple communication channels (Telegram, Slack, Discord, etc.). Remember user preferences, instructions, and important context from conversations to provide personalized assistance."
+      },
+      "retainMission": {
+        "type": "string",
+        "description": "Mission stamped onto the bank's retain_mission column on first use. Steers what gets extracted as facts during retain. Leave unset to use built-in extraction rules."
+      },
+      "observationsMission": {
+        "type": "string",
+        "description": "Mission stamped onto the bank's observations_mission column on first use. Controls what gets synthesised into observations during consolidation."
+      },
+      "embedVersion": {
+        "type": "string",
+        "description": "hms-embed version to use (e.g. 'latest', '0.4.2', or empty for latest)",
+        "default": "latest"
+      },
+      "llmProvider": {
+        "type": "string",
+        "description": "LLM provider for HMS memory (e.g. 'openai', 'anthropic', 'gemini', 'groq', 'ollama', 'openai-codex', 'claude-code').",
+        "enum": ["openai", "anthropic", "gemini", "groq", "ollama", "openai-codex", "claude-code"]
+      },
+      "llmModel": {
+        "type": "string",
+        "description": "LLM model to use (e.g. 'gpt-4o-mini', 'claude-3-5-haiku-20241022'). Used with llmProvider."
+      },
+      "llmApiKey": {
+        "type": ["string", "object"],
+        "description": "API key for the LLM provider used by the HMS memory daemon. Set via 'openclaw config set ... --ref-source env --ref-id OPENAI_API_KEY' to reference an env var without storing plaintext."
+      },
+      "llmBaseUrl": {
+        "type": "string",
+        "description": "Optional base URL override for OpenAI-compatible providers (e.g. 'https://openrouter.ai/api/v1')."
+      },
+      "embedPackagePath": {
+        "type": "string",
+        "description": "Local path to hms package for development (e.g. '/path/to/hms'). When set, uses 'uv run --directory <path>' instead of 'uvx hms-embed@latest'."
+      },
+      "apiPort": {
+        "type": "number",
+        "description": "Port for the openclaw profile daemon (default: 9077)",
+        "default": 9077
+      },
+      "hmsApiUrl": {
+        "type": "string",
+        "description": "External HMS API URL (e.g. 'https://mcp.mcp.hms.local'). When set, skips local daemon and connects directly to this API."
+      },
+      "hmsApiToken": {
+        "type": ["string", "object"],
+        "description": "API token for external HMS API authentication. Required if the external API has authentication enabled."
+      },
+      "dynamicBankId": {
+        "type": "boolean",
+        "description": "Enable per-user memory banks. When true, memories are isolated by user per channel (e.g., slack-U123, telegram-456789). When false, all users share a single 'openclaw' bank.",
+        "default": true
+      },
+      "bankId": {
+        "type": "string",
+        "description": "Static bank ID used when dynamicBankId is false."
+      },
+      "bankIdPrefix": {
+        "type": "string",
+        "description": "Optional prefix for bank IDs (e.g., 'prod' results in 'prod-slack-U123'). Useful for separating environments."
+      },
+      "retainTags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Tags applied to every retained document (e.g. ['source_system:openclaw', 'agent:agentname'])."
+      },
+      "retainSource": {
+        "type": "string",
+        "description": "Source value written into retained document metadata. Defaults to 'openclaw'.",
+        "default": "openclaw"
+      },
+      "autoRecall": {
+        "type": "boolean",
+        "description": "Automatically recall memories on every prompt and inject them as context. Set to false when agent has its own recall tool.",
+        "default": true
+      },
+      "excludeProviders": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Message providers to exclude from recall and retain (e.g. ['heartbeat', 'telegram', 'discord'])",
+        "default": ["heartbeat"]
+      },
+      "dynamicBankGranularity": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["agent", "channel", "user", "provider"]
+        },
+        "description": "Fields used to derive bank ID. Controls memory isolation granularity. Default: ['agent', 'channel', 'user'].",
+        "default": ["agent", "channel", "user"]
+      },
+      "autoRetain": {
+        "type": "boolean",
+        "description": "Automatically retain conversation as memories after each interaction. Set to false to disable.",
+        "default": true
+      },
+      "retainRoles": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["user", "assistant", "system", "tool"]
+        },
+        "description": "Message roles to include in retained transcript. Default: ['user', 'assistant'].",
+        "default": ["user", "assistant"]
+      },
+      "retainFormat": {
+        "type": "string",
+        "description": "Serialization format for retained conversation content. 'json' (default) emits a structured array of {role, content} messages, matching the Claude Code integration. 'text' emits the legacy '[role: x] ... [x:end]' markers.",
+        "enum": ["json", "text"],
+        "default": "json"
+      },
+      "retainToolCalls": {
+        "type": "boolean",
+        "description": "When true (default) and retainFormat is 'json', each message's content is an Anthropic-shaped array of typed blocks including tool_use (agent tool calls) and tool_result (truncated at 2000 chars). Operational MCP tools — HMS's own recall/retain/search — are filtered out to avoid feedback loops. Set to false to retain text-only content, one string per message.",
+        "default": true
+      },
+      "includeSenderContext": {
+        "type": "boolean",
+        "description": "When true (default), prepend a session context block (sender, channel, provider) to retained transcripts so similarity search can distinguish memories by speaker even when dynamicBankGranularity does not include 'user'. Set false to omit.",
+        "default": true
+      },
+      "retainEveryNTurns": {
+        "type": "integer",
+        "description": "Retain every Nth turn instead of every turn. 1 = every turn (default). Values > 1 enable chunked retention with a sliding window.",
+        "minimum": 1,
+        "default": 1
+      },
+      "retainOverlapTurns": {
+        "type": "integer",
+        "description": "Extra prior turns to include when chunked retention fires. Window = retainEveryNTurns + retainOverlapTurns. Only applies when retainEveryNTurns > 1.",
+        "minimum": 0,
+        "default": 0
+      },
+      "retainDocumentScope": {
+        "type": "string",
+        "description": "Granularity of the retained document_id. 'session' (default) groups all retains under a single document per OpenClaw session. 'turn' produces a new document per retain.",
+        "enum": ["session", "turn"],
+        "default": "session"
+      },
+      "recallBudget": {
+        "type": "string",
+        "description": "Recall effort level. Higher budgets use more retrieval strategies for better results but take longer.",
+        "enum": ["low", "mid", "high"],
+        "default": "mid"
+      },
+      "recallMaxTokens": {
+        "type": "integer",
+        "description": "Maximum tokens for recall response. Controls how much memory context is injected per turn.",
+        "minimum": 1,
+        "default": 1024
+      },
+      "recallTypes": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["world", "experience", "observation"]
+        },
+        "description": "Memory types to recall. Defaults to ['world', 'experience'] — excludes verbose observation entries.",
+        "default": ["world", "experience"]
+      },
+      "recallRoles": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["user", "assistant", "system", "tool"]
+        },
+        "description": "Roles to include when composing contextual recall query. Default: ['user', 'assistant'].",
+        "default": ["user", "assistant"]
+      },
+      "recallContextTurns": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Number of user turns to include in recall query context. 1 keeps latest-message-only behavior.",
+        "default": 1
+      },
+      "recallMaxQueryChars": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Maximum character length for composed recall query before calling recall.",
+        "default": 800
+      },
+      "recallTopK": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Maximum number of memories to inject per turn. Applied after API response as a hard cap."
+      },
+      "recallPromptPreamble": {
+        "type": "string",
+        "description": "Text shown above recalled memories in the injected context block.",
+        "default": "Relevant memories from past conversations (prioritize recent when conflicting). Only use memories that are directly useful to continue this conversation; ignore the rest:"
+      },
+      "recallTimeoutMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "description": "Timeout for auto-recall in milliseconds. Increase if recall times out with high budget.",
+        "default": 10000
+      },
+      "recallInjectionPosition": {
+        "type": "string",
+        "enum": ["prepend", "append", "user"],
+        "description": "Where to inject recalled memories. 'prepend' = start of system prompt (default), 'append' = end of system prompt (preserves prompt cache), 'user' = before user message.",
+        "default": "prepend"
+      },
+      "debug": {
+        "type": "boolean",
+        "description": "Enable debug logging for HMS plugin operations. Equivalent to logLevel: 'debug'.",
+        "default": false
+      },
+      "logLevel": {
+        "type": "string",
+        "description": "Console log verbosity. 'off' = no output, 'error' = errors only, 'warning' = errors + warnings, 'info' = key events + periodic summaries, 'debug' = all details.",
+        "enum": ["off", "error", "warning", "info", "debug"],
+        "default": "info"
+      },
+      "logSummaryIntervalMs": {
+        "type": "number",
+        "description": "Interval in ms to batch retain/recall log summaries. 0 = log every event individually. Default: 300000 (5 min).",
+        "default": 300000
+      },
+      "debugPerfTiming": {
+        "type": "boolean",
+        "description": "Emit one info-level perf line per before_prompt_build (recall path) and agent_end (retain path) so you can spot whether latency is in the plugin or upstream. Format: 'perf: <hook> hook_total=Xms <hook-specific fields>'.",
+        "default": false
+      },
+      "retainQueuePath": {
+        "type": "string",
+        "description": "Path to JSONL file for buffering failed retains (external API mode only). Default: ~/.openclaw/data/hms-retain-queue.jsonl"
+      },
+      "retainQueueMaxAgeMs": {
+        "type": "number",
+        "description": "Max age in ms for queued retain items. -1 = keep forever.",
+        "default": -1
+      },
+      "retainQueueFlushIntervalMs": {
+        "type": "number",
+        "description": "How often to attempt flushing queued retains in ms. Default: 60000 (1 min).",
+        "default": 60000
+      },
+      "ignoreSessionPatterns": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Session key glob patterns to skip entirely (no recall, no retain). E.g. [\"agent:main:**\", \"agent:*:cron:**\"]. * matches non-colon chars, ** matches anything."
+      },
+      "statelessSessionPatterns": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Session key glob patterns for read-only sessions: retain is always skipped, recall is skipped when skipStatelessSessions is true. E.g. [\"agent:*:subagent:**\", \"agent:*:heartbeat:**\"]."
+      },
+      "skipStatelessSessions": {
+        "type": "boolean",
+        "description": "When true (default), sessions matching statelessSessionPatterns also skip recall. When false, they can recall but never retain.",
+        "default": true
+      },
+      "enableKnowledgeTools": {
+        "type": "boolean",
+        "description": "Register agent_knowledge_* tools for self-driving agents. Set automatically by the self-driving-agents CLI.",
+        "default": false
+      }
+    },
+    "additionalProperties": false
+  },
+  "uiHints": {
+    "daemonIdleTimeout": {
+      "label": "Daemon Idle Timeout",
+      "placeholder": "0 (never timeout)"
+    },
+    "embedPort": {
+      "label": "Embed Server Port",
+      "placeholder": "0 (auto-assign)"
+    },
+    "bankMission": {
+      "label": "Bank Mission (reflect)",
+      "placeholder": "Custom context for what this agent does..."
+    },
+    "retainMission": {
+      "label": "Retain Mission",
+      "placeholder": "Steers what gets extracted as facts during retain..."
+    },
+    "observationsMission": {
+      "label": "Observations Mission",
+      "placeholder": "Controls what gets synthesised into observations..."
+    },
+    "embedVersion": {
+      "label": "HMS Embed Version",
+      "placeholder": "latest (or pin to specific version like 0.4.2)"
+    },
+    "llmProvider": {
+      "label": "LLM Provider",
+      "placeholder": "e.g. openai, anthropic, gemini, groq"
+    },
+    "llmModel": {
+      "label": "LLM Model",
+      "placeholder": "e.g. gpt-4o-mini, claude-3-5-haiku-20241022"
+    },
+    "llmApiKey": {
+      "label": "LLM API Key",
+      "placeholder": "API key for the chosen LLM provider",
+      "sensitive": true
+    },
+    "llmBaseUrl": {
+      "label": "LLM Base URL",
+      "placeholder": "e.g. https://openrouter.ai/api/v1 (optional)"
+    },
+    "embedPackagePath": {
+      "label": "Local Package Path (Dev)",
+      "placeholder": "/path/to/hms (for local development)"
+    },
+    "apiPort": {
+      "label": "API Port",
+      "placeholder": "9077 (default)"
+    },
+    "hmsApiUrl": {
+      "label": "External HMS API URL",
+      "placeholder": "e.g. https://mcp.mcp.hms.local (leave empty for local daemon)"
+    },
+    "hmsApiToken": {
+      "label": "External API Token",
+      "placeholder": "API token if external API requires authentication",
+      "sensitive": true
+    },
+    "dynamicBankId": {
+      "label": "Dynamic Bank IDs",
+      "placeholder": "true (isolate memories per channel)"
+    },
+    "bankId": {
+      "label": "Static Bank ID",
+      "placeholder": "e.g. openclaw, shared-bank (used when dynamicBankId is false)"
+    },
+    "bankIdPrefix": {
+      "label": "Bank ID Prefix",
+      "placeholder": "e.g., prod, staging (optional)"
+    },
+    "retainTags": {
+      "label": "Retain Tags",
+      "placeholder": "e.g. ['source_system:openclaw', 'agent:agentname']"
+    },
+    "retainSource": {
+      "label": "Retain Source",
+      "placeholder": "openclaw"
+    },
+    "autoRecall": {
+      "label": "Auto-Recall",
+      "placeholder": "true (inject memories on every prompt)"
+    },
+    "excludeProviders": {
+      "label": "Excluded Providers",
+      "placeholder": "e.g. heartbeat, telegram, discord"
+    },
+    "dynamicBankGranularity": {
+      "label": "Bank Granularity",
+      "placeholder": "e.g. ['agent', 'channel', 'user']"
+    },
+    "autoRetain": {
+      "label": "Auto-Retain",
+      "placeholder": "true (enable auto-retention)"
+    },
+    "retainRoles": {
+      "label": "Retain Roles",
+      "placeholder": "e.g. ['user', 'assistant']"
+    },
+    "retainFormat": {
+      "label": "Retain Format",
+      "placeholder": "json (default) or text (legacy markers)"
+    },
+    "retainToolCalls": {
+      "label": "Retain Tool Calls",
+      "placeholder": "true (default) — include tool_use / tool_result blocks in retained JSON"
+    },
+    "includeSenderContext": {
+      "label": "Include Sender Context",
+      "placeholder": "true (default) — prepend sender/channel/provider context to retained content"
+    },
+    "retainEveryNTurns": {
+      "label": "Retain Every N Turns",
+      "placeholder": "1 (every turn, default)"
+    },
+    "retainOverlapTurns": {
+      "label": "Retain Overlap Turns",
+      "placeholder": "0 (no overlap, default)"
+    },
+    "retainDocumentScope": {
+      "label": "Retain Document Scope",
+      "placeholder": "session (default) or turn"
+    },
+    "recallBudget": {
+      "label": "Recall Budget",
+      "placeholder": "low, mid, or high"
+    },
+    "recallMaxTokens": {
+      "label": "Recall Max Tokens",
+      "placeholder": "1024 (default)"
+    },
+    "recallTypes": {
+      "label": "Recall Types",
+      "placeholder": "e.g. ['world', 'experience']"
+    },
+    "recallRoles": {
+      "label": "Recall Roles",
+      "placeholder": "e.g. ['user', 'assistant']"
+    },
+    "recallContextTurns": {
+      "label": "Recall Context Turns",
+      "placeholder": "1 (latest only, default)"
+    },
+    "recallMaxQueryChars": {
+      "label": "Recall Max Query Chars",
+      "placeholder": "800 (default)"
+    },
+    "recallTopK": {
+      "label": "Recall Top K",
+      "placeholder": "e.g. 5 (no limit by default)"
+    },
+    "recallPromptPreamble": {
+      "label": "Recall Prompt Preamble",
+      "placeholder": "Instruction shown above recalled memories in injected context"
+    },
+    "recallTimeoutMs": {
+      "label": "Recall Timeout (ms)",
+      "placeholder": "10000 (default)"
+    },
+    "recallInjectionPosition": {
+      "label": "Recall Injection Position",
+      "placeholder": "prepend, append, or user"
+    },
+    "debug": {
+      "label": "Debug"
+    },
+    "logLevel": {
+      "label": "Log Level"
+    },
+    "logSummaryIntervalMs": {
+      "label": "Log Summary Interval (ms)",
+      "placeholder": "300000"
+    },
+    "debugPerfTiming": {
+      "label": "Debug Perf Timing",
+      "placeholder": "false (default) — enable to log per-hook latency"
+    },
+    "enableKnowledgeTools": {
+      "label": "Enable Knowledge Tools",
+      "placeholder": "false (default) — enable agent_knowledge_* tools"
+    },
+    "retainQueuePath": {
+      "label": "Retain Queue File Path",
+      "placeholder": "~/.openclaw/data/hms-retain-queue.jsonl"
+    },
+    "retainQueueMaxAgeMs": {
+      "label": "Retain Queue Max Age (ms)",
+      "placeholder": "-1 (forever)"
+    },
+    "retainQueueFlushIntervalMs": {
+      "label": "Retain Queue Flush Interval (ms)",
+      "placeholder": "60000"
+    },
+    "ignoreSessionPatterns": {
+      "label": "Ignore Session Patterns",
+      "placeholder": "e.g. [\"agent:main:**\", \"agent:*:cron:**\"]"
+    },
+    "statelessSessionPatterns": {
+      "label": "Stateless Session Patterns",
+      "placeholder": "e.g. [\"agent:*:subagent:**\", \"agent:*:heartbeat:**\"]"
+    },
+    "skipStatelessSessions": {
+      "label": "Skip Stateless Sessions",
+      "placeholder": "true (default)"
+    }
+  }
+}

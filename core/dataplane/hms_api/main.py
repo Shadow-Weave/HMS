@@ -1,0 +1,329 @@
+"""
+Command-line interface for HMS API.
+
+Run the server with:
+    hms-api
+
+Run as background daemon:
+    hms-api --daemon
+
+Stop with Ctrl+C.
+"""
+
+import argparse
+import asyncio
+import atexit
+import dataclasses
+import os
+import signal
+import sys
+import warnings
+
+import uvicorn
+
+from . import MemoryEngine, __version__
+from .api import create_app
+from .banner import print_banner
+from .config import DEFAULT_WORKERS, ENV_HOST, ENV_WORKERS, HMSConfig, _get_raw_config
+from .daemon import (
+    DEFAULT_DAEMON_PORT,
+    DEFAULT_IDLE_TIMEOUT,
+    ENV_DAEMON_CHILD,
+    IdleTimeoutMiddleware,
+    daemonize,
+)
+from .extensions import DefaultExtensionContext, OperationValidatorExtension, TenantExtension, load_extension
+
+# Filter deprecation warnings from third-party libraries
+warnings.filterwarnings("ignore", message="websockets.legacy is deprecated")
+warnings.filterwarnings("ignore", message="websockets.server.WebSocketServerProtocol is deprecated")
+
+# Disable tokenizers parallelism to avoid warnings
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+# Global reference for cleanup
+_memory: MemoryEngine | None = None
+
+
+def _cleanup():
+    """Synchronous cleanup function to stop resources on exit."""
+    global _memory
+    if _memory is not None and _memory._pg0 is not None:
+        try:
+            loop = asyncio.new_event_loop()
+            loop.run_until_complete(_memory._pg0.stop())
+            loop.close()
+            print("\npg0 stopped.")
+        except Exception as e:
+            print(f"\nError stopping pg0: {e}")
+
+
+def _signal_handler(signum, frame):
+    """Handle SIGINT/SIGTERM to ensure cleanup."""
+    print(f"\nReceived signal {signum}, shutting down...")
+    _cleanup()
+    sys.exit(0)
+
+
+def resolve_daemon_host_port(*, args_host: str, args_port: int, config_host: str, config_port: int) -> tuple[str, int]:
+    """Resolve host/port for daemon mode.
+
+    Defaults to 127.0.0.1 for security, but honors explicit user overrides
+    via --host flag or HMS_API_HOST env var. Uses DEFAULT_DAEMON_PORT
+    unless the user specified a custom port.
+    """
+    port = args_port if args_port != config_port else DEFAULT_DAEMON_PORT
+    # Only force localhost if the user didn't explicitly set a host
+    if args_host != config_host or os.environ.get(ENV_HOST):
+        host = args_host
+    else:
+        host = "127.0.0.1"
+    return host, port
+
+
+def main():
+    """Main entry point for the CLI."""
+    global _memory
+
+    # Load configuration from environment (for CLI args defaults)
+    config = _get_raw_config()
+
+    parser = argparse.ArgumentParser(
+        prog="hms-api",
+        description="HMS API Server",
+    )
+
+    # Server options
+    parser.add_argument(
+        "--host", default=config.host, help=f"Host to bind to (default: {config.host}, env: HMS_API_HOST)"
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=config.port,
+        help=f"Port to bind to (default: {config.port}, env: HMS_API_PORT)",
+    )
+    parser.add_argument(
+        "--log-level",
+        default=config.log_level,
+        choices=["critical", "error", "warning", "info", "debug", "trace"],
+        help=f"Log level (default: {config.log_level}, env: HMS_API_LOG_LEVEL)",
+    )
+
+    # Development options
+    parser.add_argument("--reload", action="store_true", help="Enable auto-reload on code changes (development only)")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=int(os.getenv(ENV_WORKERS, str(DEFAULT_WORKERS))),
+        help=f"Number of worker processes (env: {ENV_WORKERS}, default: {DEFAULT_WORKERS})",
+    )
+
+    # Access log options
+    parser.add_argument("--access-log", action="store_true", help="Enable access log")
+    parser.add_argument("--no-access-log", dest="access_log", action="store_false", help="Disable access log (default)")
+    parser.set_defaults(access_log=False)
+
+    # Proxy options
+    parser.add_argument(
+        "--proxy-headers", action="store_true", help="Enable X-Forwarded-Proto, X-Forwarded-For headers"
+    )
+    parser.add_argument(
+        "--forwarded-allow-ips", default=None, help="Comma separated list of IPs to trust with proxy headers"
+    )
+
+    # SSL options
+    parser.add_argument("--ssl-keyfile", default=None, help="SSL key file")
+    parser.add_argument("--ssl-certfile", default=None, help="SSL certificate file")
+
+    # Daemon mode options
+    parser.add_argument(
+        "--daemon",
+        action="store_true",
+        help=f"Run as background daemon (uses port {DEFAULT_DAEMON_PORT}, auto-exits after idle)",
+    )
+    parser.add_argument(
+        "--idle-timeout",
+        type=int,
+        default=DEFAULT_IDLE_TIMEOUT,
+        help=f"Idle timeout in seconds before auto-exit in daemon mode (default: {DEFAULT_IDLE_TIMEOUT})",
+    )
+
+    args = parser.parse_args()
+
+    # Daemon mode handling.
+    # is_daemon_child is True when we are the re-exec'd child spawned by
+    # daemonize() or by hms-embed's DaemonEmbedManager.  The child
+    # does not have --daemon in its argv, but must still behave as a daemon
+    # (resolve host/port, enable idle timeout, suppress banner, etc.).
+    is_daemon_child = os.environ.get(ENV_DAEMON_CHILD) == "1"
+    is_daemon = args.daemon or is_daemon_child
+
+    if is_daemon:
+        args.host, args.port = resolve_daemon_host_port(
+            args_host=args.host,
+            args_port=args.port,
+            config_host=config.host,
+            config_port=config.port,
+        )
+
+        # Detach into background (parent re-execs and exits; child redirects
+        # stdio to log file).  No lockfile needed — port binding prevents
+        # duplicate daemons.
+        daemonize()
+
+    # Print banner (not in daemon mode)
+    if not is_daemon:
+        print()
+        print_banner()
+
+    # Configure Python logging based on log level
+    # Update config with CLI override if provided
+    if args.log_level != config.log_level:
+        config = dataclasses.replace(config, host=args.host, port=args.port, log_level=args.log_level)
+    config.configure_logging()
+    if not is_daemon:
+        config.log_config()
+
+    # Register cleanup handlers
+    atexit.register(_cleanup)
+    signal.signal(signal.SIGINT, _signal_handler)
+    signal.signal(signal.SIGTERM, _signal_handler)
+
+    # Load operation validator extension if configured
+    operation_validator = load_extension("OPERATION_VALIDATOR", OperationValidatorExtension)
+    if operation_validator:
+        import logging
+
+        logging.info(f"Loaded operation validator: {operation_validator.__class__.__name__}")
+
+    # Load tenant extension if configured
+    tenant_extension = load_extension("TENANT", TenantExtension)
+    if tenant_extension:
+        import logging
+
+        logging.info(f"Loaded tenant extension: {tenant_extension.__class__.__name__}")
+
+    # Create MemoryEngine (reads configuration from environment)
+    _memory = MemoryEngine(
+        operation_validator=operation_validator,
+        tenant_extension=tenant_extension,
+        run_migrations=config.run_migrations_on_startup,
+    )
+
+    # Set extension context on tenant extension (needed for schema provisioning)
+    if tenant_extension:
+        extension_context = DefaultExtensionContext(
+            database_url=config.database_url,
+            memory_engine=_memory,
+        )
+        tenant_extension.set_context(extension_context)
+        logging.info("Extension context set on tenant extension")
+
+    # Create FastAPI app
+    app = create_app(
+        memory=_memory,
+        http_api_enabled=True,
+        mcp_api_enabled=config.mcp_enabled,
+        mcp_mount_path="/mcp",
+        initialize_memory=True,
+    )
+
+    # Wrap with idle timeout middleware in daemon mode
+    idle_middleware = None
+    if is_daemon:
+        idle_middleware = IdleTimeoutMiddleware(app, idle_timeout=args.idle_timeout)
+        app = idle_middleware
+
+    # Prepare uvicorn config
+    # When using workers or reload, we must use import string so each worker can import the app
+    use_import_string = args.workers > 1 or args.reload
+    # Check for uvloop/winloop availability
+    import sys
+
+    loop_impl = "asyncio"
+    if sys.platform == "win32":
+        try:
+            import winloop
+
+            winloop.install()  # Patches asyncio globally — uvicorn uses "asyncio" but gets winloop
+            loop_impl = "asyncio"  # Tell uvicorn "asyncio" — it's now winloop underneath
+            print("winloop installed as asyncio event loop policy (Windows uvloop port)")
+        except ImportError:
+            print("winloop not installed, using default asyncio event loop")
+    else:
+        try:
+            import uvloop  # noqa: F401
+
+            loop_impl = "uvloop"
+            print("uvloop available, will use for event loop")
+        except ImportError:
+            print("uvloop not installed, using default asyncio event loop")
+
+    uvicorn_config = {
+        "app": "hms_api.server:app" if use_import_string else app,
+        "host": args.host,
+        "port": args.port,
+        "log_level": args.log_level,
+        "access_log": args.access_log,
+        "proxy_headers": args.proxy_headers,
+        "ws": "wsproto",  # Use wsproto instead of websockets to avoid deprecation warnings
+        "loop": loop_impl,  # Explicitly set event loop implementation
+        "timeout_keep_alive": 30,  # Exceed aiohttp's 15s client timeout so the client always closes first
+        "timeout_graceful_shutdown": 5,  # Cap graceful shutdown at 5s; also enables force-kill on second Ctrl+C
+    }
+
+    # Add optional parameters if provided
+    if args.reload:
+        uvicorn_config["reload"] = True
+    if args.workers > 1:
+        uvicorn_config["workers"] = args.workers
+    if args.forwarded_allow_ips:
+        uvicorn_config["forwarded_allow_ips"] = args.forwarded_allow_ips
+    if args.ssl_keyfile:
+        uvicorn_config["ssl_keyfile"] = args.ssl_keyfile
+    if args.ssl_certfile:
+        uvicorn_config["ssl_certfile"] = args.ssl_certfile
+
+    # Print startup info (not in daemon mode)
+    if not is_daemon:
+        from .banner import print_startup_info
+
+        print_startup_info(
+            host=args.host,
+            port=args.port,
+            database_url=config.database_url,
+            llm_provider=config.llm_provider,
+            llm_model=config.llm_model,
+            embeddings_provider=config.embeddings_provider,
+            reranker_provider=config.reranker_provider,
+            mcp_enabled=config.mcp_enabled,
+            version=__version__,
+            vector_extension=config.vector_extension,
+            text_search_extension=config.text_search_extension,
+        )
+
+    # Start idle checker in daemon mode
+    if idle_middleware is not None:
+        # Start the idle checker in a background thread with its own event loop
+        import logging
+        import threading
+
+        def run_idle_checker():
+            import time
+
+            time.sleep(2)  # Wait for uvicorn to start
+            try:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(idle_middleware._check_idle())
+            except Exception as e:
+                logging.error(f"Idle checker error: {e}", exc_info=True)
+
+        threading.Thread(target=run_idle_checker, daemon=True).start()
+
+    uvicorn.run(**uvicorn_config)
+
+
+if __name__ == "__main__":
+    main()

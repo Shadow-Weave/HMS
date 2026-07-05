@@ -1,0 +1,8 @@
+{
+  "name": "hms-memory",
+  "description": "Automatic long-term memory for Claude Code via HMS. Recalls relevant memories before each prompt, retains conversation transcripts, and provides knowledge page tools.",
+  "version": "0.6.4",
+  "author": {"name": "HMS Team", "url": "https://docs.hms.local"},
+  "license": "MIT",
+  "keywords": ["memory", "hms", "recall", "retain"]
+}

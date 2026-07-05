@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Memory evidence organization demo</title>
+  <desc id="desc">A visual comparison between raw retrieved sessions and an organized evidence ledger before answer generation.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#14213d" flood-opacity="0.14"/>
+    </filter>
+    <linearGradient id="header" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="10" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#334155"/>
+    </marker>
+  </defs>
+
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect x="48" y="38" width="1184" height="72" rx="10" fill="url(#header)"/>
+  <text x="82" y="84" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">From scattered sessions to structured evidence</text>
+  <text x="884" y="84" font-family="Inter, Arial, sans-serif" font-size="16" fill="#dbeafe">illustrative demo, no benchmark result</text>
+
+  <rect x="54" y="146" width="344" height="508" rx="12" fill="#ffffff" filter="url(#shadow)"/>
+  <text x="82" y="184" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Before: raw retrieved sessions</text>
+  <text x="82" y="212" font-family="Inter, Arial, sans-serif" font-size="14" fill="#64748b">The answer model sees scattered snippets.</text>
+
+  <rect x="82" y="244" width="288" height="96" rx="8" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="102" y="274" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#92400e">Session 01 · Jan 08</text>
+  <text x="102" y="301" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">User: I live in Boston.</text>
+  <text x="102" y="323" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">Use it for local suggestions.</text>
+
+  <rect x="82" y="362" width="288" height="104" rx="8" fill="#e0f2fe" stroke="#0284c7"/>
+  <text x="102" y="392" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#075985">Session 07 · Mar 03</text>
+  <text x="102" y="419" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">User: I am moving to Seattle</text>
+  <text x="102" y="441" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">next week.</text>
+
+  <rect x="82" y="488" width="288" height="112" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="102" y="518" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#166534">Session 09 · Mar 11</text>
+  <text x="102" y="545" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">User: I finished the move.</text>
+  <text x="102" y="567" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">Use Seattle as my current city.</text>
+
+  <line x1="418" y1="400" x2="523" y2="400" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="445" y="338" width="56" height="112" rx="28" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="473" y="382" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">HMS</text>
+  <text x="473" y="403" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">evidence</text>
+  <text x="473" y="424" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">layer</text>
+
+  <rect x="546" y="146" width="680" height="508" rx="12" fill="#ffffff" filter="url(#shadow)"/>
+  <text x="576" y="184" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">After: organized evidence before generation</text>
+  <text x="576" y="212" font-family="Inter, Arial, sans-serif" font-size="14" fill="#64748b">The same memories are converted into source-grounded rows.</text>
+
+  <rect x="576" y="246" width="620" height="42" rx="8" fill="#0f172a"/>
+  <text x="600" y="273" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Evidence ledger</text>
+  <text x="840" y="273" font-family="Inter, Arial, sans-serif" font-size="13" fill="#cbd5e1">time · state · source · support</text>
+
+  <rect x="576" y="306" width="620" height="66" rx="8" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="600" y="333" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#9a3412">older state</text>
+  <text x="706" y="333" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">Jan 08 · Boston · Session 01</text>
+  <text x="600" y="355" font-family="Inter, Arial, sans-serif" font-size="13" fill="#64748b">Useful as history, but superseded by later evidence.</text>
+
+  <rect x="576" y="390" width="620" height="66" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="600" y="417" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#1d4ed8">transition</text>
+  <text x="706" y="417" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">Mar 03 · moving to Seattle · Session 07</text>
+  <text x="600" y="439" font-family="Inter, Arial, sans-serif" font-size="13" fill="#64748b">Signals an update, but not yet final current state.</text>
+
+  <rect x="576" y="474" width="620" height="74" rx="8" fill="#ecfdf5" stroke="#bbf7d0"/>
+  <text x="600" y="502" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#047857">current state</text>
+  <text x="706" y="502" font-family="Inter, Arial, sans-serif" font-size="14" fill="#374151">Mar 11 · Seattle · Session 09</text>
+  <text x="600" y="524" font-family="Inter, Arial, sans-serif" font-size="13" fill="#64748b">Latest explicit instruction: use Seattle as current city.</text>
+
+  <rect x="576" y="574" width="620" height="48" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="600" y="604" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#0f172a">Grounded answer:</text>
+  <text x="742" y="604" font-family="Inter, Arial, sans-serif" font-size="15" fill="#0f172a">Use Seattle, because it is the latest explicit state.</text>
+</svg>

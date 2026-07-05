@@ -1,0 +1,102 @@
+# HMS CLI ↔ OpenAPI coverage manifest.
+#
+# The CI job `cli-coverage-check` (see lab/evaluation/hms_dev/cli_coverage_check.py)
+# enforces both endpoint-level and parameter-level coverage:
+#
+#  1. Every operationId in knowledge/site/static/openapi.json must be either
+#     called from interface/cli/src/**/*.rs (the progenitor-generated client
+#     methods are named identically to the operationId) or listed under
+#     [skip] below with a reason.
+#
+#  2. For each operation with a JSON request body, every top-level property
+#     of that body must be either present in interface/cli/src/main.rs as a
+#     clap command variant field (`field_name: <type>`) or a `long = "..."`
+#     attribute, OR listed under [fields.<operation_id>] below with a reason.
+#
+# Skip entries should explain *why* the field/operation is not exposed (e.g.
+# flattened into several CLI flags, complex nested struct, available via a
+# different subcommand).
+
+# ---------------------------------------------------------------------------
+# Operation-level skips
+# ---------------------------------------------------------------------------
+[skip]
+# UI-only endpoint powering the control-plane stats chart.
+# Zero-filled bucket arrays don't map to a useful CLI command.
+get_memories_timeseries = "UI-only endpoint for the control plane stats chart"
+
+# UI-only endpoint powering the control-plane entity constellation view.
+# Returns nodes/edges in cytoscape shape; not a useful CLI command.
+get_entity_graph = "UI-only endpoint for the control plane entity constellation"
+
+# Document chunks listing is a UI-only endpoint for the document detail dialog.
+list_document_chunks = "UI-only endpoint for the control plane document detail dialog"
+
+# Reprocess triggers an async retain re-run; exposed in the control plane UI only.
+reprocess_document = "UI-only endpoint for the control plane document detail dialog"
+
+# ---------------------------------------------------------------------------
+# Per-operation parameter skips
+# ---------------------------------------------------------------------------
+
+[fields.add_bank_background]
+update_disposition = "Exposed inverted as --no-update-disposition on `bank background`."
+
+[fields.create_or_update_bank]
+disposition = "Flattened into --skepticism / --literalism / --empathy on `bank create`."
+disposition_skepticism = "Covered by --skepticism; the flat form is an API alias."
+disposition_literalism = "Covered by --literalism; the flat form is an API alias."
+disposition_empathy = "Covered by --empathy; the flat form is an API alias."
+background = "Set via the dedicated `bank background` subcommand."
+reflect_mission = "Set via `bank set-config --reflect-mission`."
+retain_mission = "Set via `bank set-config --retain-mission`."
+retain_extraction_mode = "Set via `bank set-config --retain-extraction-mode`."
+retain_custom_instructions = "Set via `bank set-config` (hierarchical config)."
+retain_chunk_size = "Set via `bank set-config` (hierarchical config)."
+enable_observations = "Set via `bank set-config` (hierarchical config)."
+observations_mission = "Set via `bank set-config --observations-mission`."
+
+[fields.update_bank]
+disposition = "Flattened into --skepticism / --literalism / --empathy on `bank update`."
+disposition_skepticism = "Covered by --skepticism; the flat form is an API alias."
+disposition_literalism = "Covered by --literalism; the flat form is an API alias."
+disposition_empathy = "Covered by --empathy; the flat form is an API alias."
+background = "Set via the dedicated `bank background` subcommand."
+reflect_mission = "Set via `bank set-config --reflect-mission`."
+retain_mission = "Set via `bank set-config --retain-mission`."
+retain_extraction_mode = "Set via `bank set-config --retain-extraction-mode`."
+retain_custom_instructions = "Set via `bank set-config` (hierarchical config)."
+retain_chunk_size = "Set via `bank set-config` (hierarchical config)."
+enable_observations = "Set via `bank set-config` (hierarchical config)."
+observations_mission = "Set via `bank set-config --observations-mission`."
+
+[fields.update_bank_disposition]
+disposition = "Flattened into --skepticism / --literalism / --empathy on `bank set-disposition`."
+
+[fields.update_bank_config]
+updates = "Flattened into per-setting flags (--llm-provider, --llm-model, etc) on `bank set-config`."
+
+[fields.create_webhook]
+http_config = "Advanced HTTP customisation (headers/method/timeout/params) is not exposed in the CLI yet; use the JSON API if needed."
+
+[fields.update_webhook]
+http_config = "Advanced HTTP customisation (headers/method/timeout/params) is not exposed in the CLI yet; use the JSON API if needed."
+
+[fields.recall_memories]
+types = "CLI exposes this as --fact-type (the schema property is named `types` but it holds fact types)."
+include = "Flattened into --include-chunks / --chunk-max-tokens (facts are always included)."
+tag_groups = "Complex nested tag filter not yet exposed in the CLI; use --tags / --tags-match for simple cases."
+
+[fields.reflect]
+include = "Flattened into --include-facts and related flags."
+response_schema = "Exposed as --schema (path to a JSON schema file)."
+tag_groups = "Complex nested tag filter not yet exposed in the CLI; use --tags / --tags-match for simple cases."
+
+[fields.retain_memories]
+items = "Constructed from the single positional content argument on `memory retain`."
+
+[fields.create_mental_model]
+trigger = "Exposed as --trigger-refresh-after-consolidation on `mental-model create` (other nested trigger fields like fact_types/tag_groups are not exposed yet)."
+
+[fields.update_mental_model]
+trigger = "Exposed as --trigger-refresh-after-consolidation on `mental-model update` (other nested trigger fields like fact_types/tag_groups are not exposed yet)."

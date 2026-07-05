@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+
+# Node
+node_modules/
+.next/
+coverage/
+
+# Build artifacts
+build/
+dist/
+wheels/
+target/
+*.tgz
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local benchmark/runtime outputs
+.aaaDATA/
+.aaaLOG/
+.aaaRESULT/
+logs/
+*.log
+
+# Local service state
+.mcp.json
+.monitoring/
+.pgbouncer/
+nltk_data/
+
+# Editor and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.env
+.sesskey
+.aaaDATA/
+.aaaLOG/
+.aaaRESULT/
+*.log
+*.pyc
+__pycache__/
+.venv/
+venv/
+node_modules/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

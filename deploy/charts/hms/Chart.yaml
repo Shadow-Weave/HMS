@@ -1,0 +1,13 @@
+apiVersion: v2
+name: hms
+description: HMS helm chart
+type: application
+version: 0.6.1
+appVersion: "0.6.1"
+keywords:
+  - ai
+  - memory
+  - llm
+  - agents
+maintainers:
+  - name: HMS Team

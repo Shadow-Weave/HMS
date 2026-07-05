@@ -1,0 +1,90 @@
+name: hms
+# Docker Compose file for HMS with AlloyDB Omni and ScaNN
+# Uses Google's free AlloyDB Omni container image: https://hub.docker.com/r/google/alloydbomni
+#
+# Usage:
+# docker compose -f deploy/containers/docker-compose/alloydb/docker-compose.yaml up -d
+#
+# Make sure to set the required environment variables before running:
+# - HMS_DB_PASSWORD: password for the AlloyDB Omni/PostgreSQL user
+# - Configure LLM provider variables as needed (see the hms service below)
+#
+# Optional environment variables with defaults:
+# - HMS_VERSION: HMS application version (default: latest)
+# - HMS_DB_VERSION: AlloyDB Omni image tag (default: 17)
+# - HMS_DB_USER: database user (default: hms_user)
+# - HMS_DB_NAME: database name (default: hms_db)
+
+services:
+  db:
+    image: google/alloydbomni:${HMS_DB_VERSION:-17}
+    container_name: hms-db-alloydb
+    restart: always
+    ports:
+      - "5438:5432"
+    environment:
+      POSTGRES_USER: ${HMS_DB_USER:-hms_user}
+      POSTGRES_PASSWORD: ${HMS_DB_PASSWORD:-hms_password}
+      POSTGRES_DB: ${HMS_DB_NAME:-hms_db}
+    volumes:
+      - alloydb_data:/var/lib/postgresql/data
+    networks:
+      - hms-net
+
+  alloydb-init:
+    image: google/alloydbomni:${HMS_DB_VERSION:-17}
+    depends_on:
+      - db
+    environment:
+      - PGPASSWORD=${HMS_DB_PASSWORD:-hms_password}
+    command:
+      - bash
+      - -c
+      - |
+        echo 'Waiting for AlloyDB Omni to be ready...'
+        until pg_isready -h hms-db-alloydb -p 5432 -U ${HMS_DB_USER:-hms_user}; do
+          echo 'AlloyDB Omni is unavailable - sleeping'
+          sleep 2
+        done
+        echo 'AlloyDB Omni is ready - creating ${HMS_DB_NAME:-hms_db} database'
+        psql -h hms-db-alloydb -p 5432 -U ${HMS_DB_USER:-hms_user} -c 'CREATE DATABASE ${HMS_DB_NAME:-hms_db};' 2>/dev/null || echo 'Database already exists'
+        echo 'Creating vector and alloydb_scann extensions'
+        psql -h hms-db-alloydb -p 5432 -U ${HMS_DB_USER:-hms_user} -d ${HMS_DB_NAME:-hms_db} -c 'CREATE EXTENSION IF NOT EXISTS vector;'
+        psql -h hms-db-alloydb -p 5432 -U ${HMS_DB_USER:-hms_user} -d ${HMS_DB_NAME:-hms_db} -c 'CREATE EXTENSION IF NOT EXISTS alloydb_scann CASCADE;'
+        echo 'Database and extensions created successfully'
+    restart: "no"
+    networks:
+      - hms-net
+
+  hms:
+    image: ghcr.io/hms-memory/hms:${HMS_VERSION:-latest}
+    container_name: hms-app
+    ports:
+      - "8888:8888"
+      - "9999:9999"
+    environment:
+      # LLM Configuration
+      HMS_API_LLM_PROVIDER: ${HMS_API_LLM_PROVIDER:-openai}
+      HMS_API_LLM_API_KEY: ${OPENAI_API_KEY:-your-api-key}
+
+      # Database Configuration
+      HMS_API_DATABASE_URL: postgresql://${HMS_DB_USER:-hms_user}:${HMS_DB_PASSWORD:-hms_password}@db:5432/${HMS_DB_NAME:-hms_db}
+
+      # Vector and Text Search Extensions
+      HMS_API_VECTOR_EXTENSION: scann
+      HMS_API_TEXT_SEARCH_EXTENSION: native
+
+    depends_on:
+      db:
+        condition: service_started
+      alloydb-init:
+        condition: service_completed_successfully
+    networks:
+      - hms-net
+
+networks:
+  hms-net:
+    driver: bridge
+
+volumes:
+  alloydb_data:

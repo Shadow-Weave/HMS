@@ -1,0 +1,445 @@
+"""
+Embedded HMS client with automatic daemon lifecycle management.
+
+This module provides HMSEmbedded, a client that uses the same daemon
+management interface as hms-embed CLI, ensuring full compatibility.
+
+Example:
+    ```python
+    from hms import HMSEmbedded
+
+    # Daemon starts automatically on first use
+    client = HMSEmbedded(
+        profile="myapp",
+        llm_provider="groq",
+        llm_api_key="your-api-key",
+    )
+
+    # Use just like HMSClient
+    client.retain(bank_id="alice", content="Alice loves AI")
+    results = client.recall(bank_id="alice", query="What does Alice like?")
+
+    # Optional cleanup
+    client.close()
+    ```
+
+Using context manager:
+    ```python
+    from hms import HMSEmbedded
+
+    with HMSEmbedded(profile="myapp") as client:
+        client.retain(bank_id="alice", content="Alice loves AI")
+        # Daemon managed automatically
+    ```
+"""
+
+import logging
+import threading
+from typing import Optional
+
+from hms_client import HMS
+from hms_embed import get_embed_manager
+
+from .api_namespaces import BanksAPI, DirectivesAPI, MemoriesAPI, MentalModelsAPI
+
+logger = logging.getLogger(__name__)
+
+
+class HMSEmbedded:
+    """
+    HMS client with automatic daemon lifecycle management.
+
+    This client uses the same daemon management interface as hms-embed CLI,
+    ensuring full compatibility and shared profiles. The daemon is started automatically
+    on first use and manages profile-specific databases.
+
+    Profile data is stored in: ~/.pg0/instances/hms-embed-{profile}/
+
+    All methods from HMSClient are available:
+    - retain(), retain_batch()
+    - recall()
+    - reflect()
+    - create_bank(), set_mission(), delete_bank()
+    - create_mental_model(), list_mental_models(), etc.
+    - create_directive(), list_directives(), etc.
+    - And all async variants (aretain, arecall, areflect, etc.)
+
+    Args:
+        profile: Profile name for data isolation (default: "default")
+        llm_provider: LLM provider ("groq", "openai", "ollama", "gemini", "anthropic", "lmstudio")
+        llm_api_key: API key for the LLM provider
+        llm_model: Model name to use
+        llm_base_url: Optional custom base URL for LLM API
+        database_url: Optional database URL override (default: profile-specific pg0)
+        idle_timeout: Seconds before daemon auto-exits when idle (default: 0, disabled)
+        log_level: Daemon log level (default: "info")
+        ui: Whether to start the control plane web UI alongside the daemon (default: False)
+        ui_port: Port for the UI. Defaults to daemon_port + 10000.
+        ui_hostname: Hostname to bind the UI to. Defaults to "0.0.0.0".
+    """
+
+    def __init__(
+        self,
+        profile: str = "default",
+        llm_provider: str = "groq",
+        llm_api_key: str = "",
+        llm_model: str = "openai/gpt-oss-120b",
+        llm_base_url: Optional[str] = None,
+        database_url: Optional[str] = None,
+        idle_timeout: int = 0,
+        log_level: str = "info",
+        ui: bool = False,
+        ui_port: Optional[int] = None,
+        ui_hostname: str = "0.0.0.0",
+    ):
+        """
+        Initialize the embedded client (daemon starts on first use).
+
+        Args:
+            profile: Profile name for data isolation
+            llm_provider: LLM provider
+            llm_api_key: API key for the LLM provider
+            llm_model: Model name to use
+            llm_base_url: Optional custom base URL for LLM API
+            database_url: Optional database URL override
+            idle_timeout: Seconds before daemon auto-exits when idle (0 = disabled)
+            log_level: Daemon log level
+            ui: Whether to start the control plane web UI alongside the daemon
+            ui_port: Port for the UI (defaults to daemon_port + 10000)
+            ui_hostname: Hostname to bind the UI to (defaults to "0.0.0.0")
+        """
+        self.profile = profile
+
+        # Build config dict for daemon (matches CLI format)
+        self.config = {
+            "HMS_API_LLM_PROVIDER": llm_provider,
+            "HMS_API_LLM_API_KEY": llm_api_key,
+            "HMS_API_LLM_MODEL": llm_model,
+            "HMS_API_LOG_LEVEL": log_level,
+            "HMS_EMBED_DAEMON_IDLE_TIMEOUT": str(idle_timeout),
+        }
+
+        if llm_base_url:
+            self.config["HMS_API_LLM_BASE_URL"] = llm_base_url
+
+        if database_url:
+            self.config["HMS_EMBED_API_DATABASE_URL"] = database_url
+
+        self._ui = ui
+        self._ui_port = ui_port
+        self._ui_hostname = ui_hostname
+
+        self._client: Optional[HMS] = None
+        self._lock = threading.Lock()
+        self._started = False
+        self._closed = False
+        self._manager = get_embed_manager()
+
+        # API namespaces (initialized once, lazily)
+        self._banks_api: Optional[BanksAPI] = None
+        self._mental_models_api: Optional[MentalModelsAPI] = None
+        self._directives_api: Optional[DirectivesAPI] = None
+        self._memories_api: Optional[MemoriesAPI] = None
+
+    def _ensure_started(self):
+        """Ensure daemon is running (thread-safe), restarting if crashed."""
+        if self._started and self._client is not None:
+            if self._manager.is_running(self.profile):
+                return
+            # Daemon crashed — reset state and fall through to restart
+            logger.warning(
+                "Daemon for profile '%s' is no longer responsive, restarting...",
+                self.profile,
+            )
+            try:
+                self._client.close()
+            except Exception:
+                logger.debug("Error closing stale client", exc_info=True)
+            self._client = None
+            self._started = False
+
+        with self._lock:
+            # Double-check after acquiring lock
+            if self._started and self._client is not None:
+                if self._manager.is_running(self.profile):
+                    return
+                logger.warning(
+                    "Daemon for profile '%s' is no longer responsive (lock path), restarting...",
+                    self.profile,
+                )
+                try:
+                    self._client.close()
+                except Exception:
+                    logger.debug("Error closing stale client", exc_info=True)
+                self._client = None
+                self._started = False
+
+            if self._closed:
+                raise RuntimeError(
+                    "Cannot use HMSEmbedded after it has been closed"
+                )
+
+            # Use embed manager interface for daemon management
+            logger.info(f"Ensuring daemon is running for profile '{self.profile}'...")
+            success = self._manager.ensure_running(self.config, self.profile)
+            if not success:
+                raise RuntimeError(
+                    f"Failed to start daemon for profile '{self.profile}'"
+                )
+
+            # Get daemon URL and create client
+            daemon_url = self._manager.get_url(self.profile)
+            self._client = HMS(base_url=daemon_url)
+            self._started = True
+            logger.info(f"Connected to daemon at {daemon_url}")
+
+            # Start UI if requested
+            if self._ui:
+                logger.info(f"Starting UI for profile '{self.profile}'...")
+                ui_started = self._manager.start_ui(
+                    self.profile, self._ui_port, self._ui_hostname
+                )
+                if not ui_started:
+                    logger.warning(f"Failed to start UI for profile '{self.profile}'")
+
+    def _cleanup(self, stop_daemon_on_close: bool = False):
+        """
+        Cleanup client resources (idempotent).
+
+        Args:
+            stop_daemon_on_close: If True, stops the daemon. Otherwise, daemon continues
+                running (it will auto-stop after idle timeout).
+        """
+        if self._closed:
+            return
+
+        acquired = self._lock.acquire(timeout=5.0)
+        if not acquired:
+            # Lock is held by another thread (e.g. _ensure_started).
+            # Mark closed to prevent new operations but skip shared-state
+            # teardown — the daemon's idle timeout handles the rest.
+            logger.warning(
+                "Cleanup lock acquisition timed out for profile '%s'; "
+                "marking closed, daemon will idle-stop on its own",
+                self.profile,
+            )
+            self._closed = True
+            return
+
+        try:
+            if self._closed:
+                return
+
+            if self._client is not None:
+                try:
+                    self._client.close()
+                except Exception:
+                    logger.debug(
+                        "Error closing client for profile '%s'",
+                        self.profile,
+                        exc_info=True,
+                    )
+                self._client = None
+
+            # Stop UI if it was started
+            if self._ui and self._started:
+                logger.info(f"Stopping UI for profile '{self.profile}'...")
+                self._manager.stop_ui(self.profile, self._ui_port)
+
+            # Optionally stop daemon (daemon has idle timeout, so not required)
+            if stop_daemon_on_close and self._started:
+                logger.info(f"Stopping daemon for profile '{self.profile}'...")
+                self._manager.stop(self.profile)
+
+            self._closed = True
+        finally:
+            self._lock.release()
+
+    def close(self, stop_daemon: bool = False):
+        """
+        Explicitly close the client.
+
+        Args:
+            stop_daemon: If True, stops the daemon. Otherwise, daemon continues running
+                and will auto-stop after idle timeout (default: False).
+
+        Note:
+            The daemon may be shared with other clients or the CLI, so stopping it
+            might affect other users. By default, we rely on the daemon's idle timeout.
+        """
+        self._cleanup(stop_daemon_on_close=stop_daemon)
+
+    def __getattr__(self, name: str):
+        """
+        Proxy all method calls to the underlying HMS client.
+
+        This allows HMSEmbedded to expose all HMSClient methods
+        without manually wrapping each one.
+        """
+        # Ensure server is started (and restart if crashed) before proxying
+        self._ensure_started()
+
+        return getattr(self._client, name)
+
+    def __enter__(self):
+        """Context manager entry - ensures server is started."""
+        self._ensure_started()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - stops the server."""
+        self.close()
+
+    def __del__(self):
+        """Cleanup on garbage collection."""
+        self._cleanup()
+
+    @property
+    def banks(self) -> BanksAPI:
+        """
+        Access bank management operations.
+
+        Each method call ensures the daemon is running before executing.
+
+        Example:
+            ```python
+            from hms import HMSEmbedded
+
+            embedded = HMSEmbedded(profile="myapp", ...)
+
+            # Create a bank
+            embedded.banks.create(bank_id="test", name="Test Bank")
+
+            # Set mission
+            embedded.banks.set_mission(bank_id="test", mission="Help users")
+            ```
+        """
+        if self._banks_api is None:
+            self._banks_api = BanksAPI(self)
+        return self._banks_api
+
+    @property
+    def mental_models(self) -> MentalModelsAPI:
+        """
+        Access mental model operations.
+
+        Each method call ensures the daemon is running before executing.
+
+        Example:
+            ```python
+            from hms import HMSEmbedded
+
+            embedded = HMSEmbedded(profile="myapp", ...)
+
+            # Create a mental model
+            embedded.mental_models.create(
+                bank_id="test",
+                name="User Preferences",
+                content="User prefers dark mode"
+            )
+
+            # List mental models
+            models = embedded.mental_models.list(bank_id="test")
+            ```
+        """
+        if self._mental_models_api is None:
+            self._mental_models_api = MentalModelsAPI(self)
+        return self._mental_models_api
+
+    @property
+    def directives(self) -> DirectivesAPI:
+        """
+        Access directive operations.
+
+        Each method call ensures the daemon is running before executing.
+
+        Example:
+            ```python
+            from hms import HMSEmbedded
+
+            embedded = HMSEmbedded(profile="myapp", ...)
+
+            # Create a directive
+            embedded.directives.create(
+                bank_id="test",
+                name="Response Style",
+                content="Always be concise and friendly"
+            )
+
+            # List directives
+            directives = embedded.directives.list(bank_id="test")
+            ```
+        """
+        if self._directives_api is None:
+            self._directives_api = DirectivesAPI(self)
+        return self._directives_api
+
+    @property
+    def memories(self) -> MemoriesAPI:
+        """
+        Access memory listing operations.
+
+        Each method call ensures the daemon is running before executing.
+
+        Example:
+            ```python
+            from hms import HMSEmbedded
+
+            embedded = HMSEmbedded(profile="myapp", ...)
+
+            # List memories
+            memories = embedded.memories.list(
+                bank_id="test",
+                type="world",
+                limit=50
+            )
+            ```
+        """
+        if self._memories_api is None:
+            self._memories_api = MemoriesAPI(self)
+        return self._memories_api
+
+    @property
+    def client(self) -> HMS:
+        """
+        Get the underlying HMS client for direct access.
+
+        Ensures daemon is started (and restarts it if it has crashed) before
+        returning the client.
+
+        Returns:
+            HMS: The underlying client instance
+
+        Example:
+            ```python
+            from hms import HMSEmbedded
+
+            embedded = HMSEmbedded(profile="myapp", ...)
+
+            client = embedded.client
+            banks = client.list_banks()
+            ```
+        """
+        self._ensure_started()
+        return self._client
+
+    @property
+    def url(self) -> str:
+        """Get the daemon URL (starts daemon if needed)."""
+        self._ensure_started()
+        return self._manager.get_url(self.profile)
+
+    @property
+    def is_running(self) -> bool:
+        """Check if the client is initialized and the daemon is responsive."""
+        return (
+            self._started
+            and not self._closed
+            and self._client is not None
+            and self._manager.is_running(self.profile)
+        )
+
+    @property
+    def ui_url(self) -> str:
+        """Get the UI URL for this profile."""
+        return self._manager.get_ui_url(self.profile)

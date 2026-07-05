@@ -1,0 +1,35 @@
+[project]
+name = "hms-dify"
+version = "0.1.1"
+description = "Persistent long-term memory for Dify workflows via HMS."
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "HMS", email = "support@hms.local" },
+]
+dependencies = [
+    "dify_plugin>=0.6.0",
+    "hms-client>=0.4.0",
+    "requests>=2.31.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/hms-memory/hms"
+Repository = "https://github.com/hms-memory/hms"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.12",
+    "ruff>=0.8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

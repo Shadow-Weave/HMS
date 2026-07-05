@@ -1,0 +1,57 @@
+[package]
+name = "hms-cli"
+version = "0.6.1"
+edition = "2021"
+authors = ["HMS Team"]
+description = "A beautiful CLI for HMS - semantic memory system"
+license = "MIT"
+
+[[bin]]
+name = "hms"
+path = "src/main.rs"
+
+[dependencies]
+# HMS API client (generated)
+hms-client = { path = "../sdk/rust" }
+
+# CLI framework
+clap = { version = "4.5", features = ["derive", "env"] }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# HTTP client (for timeout configuration and multipart file uploads)
+reqwest = { version = "0.12", features = ["multipart"] }
+
+# Serialization (for config and output formatting)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+
+# TUI libraries
+ratatui = "0.29"
+crossterm = "0.28"
+
+# Colors and styling
+colored = "2.1"
+indicatif = "0.17"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Utilities
+chrono = "0.4"
+walkdir = "2.5"
+dirs = "5.0"
+
+[dev-dependencies]
+# For integration tests with blocking HTTP client
+reqwest = { version = "0.12", features = ["blocking"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

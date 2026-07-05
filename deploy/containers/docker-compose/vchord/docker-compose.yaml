@@ -1,0 +1,93 @@
+name: hms
+# Docker Compose file for HMS with PostgreSQL and vectorchord
+# docker compose -f deploy/containers/docker-compose/docker-compose.yaml down && sleep 2 && docker compose -f deploy/containers/docker-compose/docker-compose.yaml up -d
+# Make sure to set the required environment variables before running:
+# - HMS_DB_PASSWORD: Password for the PostgreSQL user
+# - Configure LLM provider variables as needed (see below in the hms service)
+#
+# Usage:
+# docker compose up -d
+#
+# Optional environment variables with defaults:
+# - HMS_VERSION: HMS application version (default: latest)
+# - HMS_DB_USER: PostgreSQL user (default: hms_user)
+# - HMS_DB_NAME: PostgreSQL database name (default: hms_db)
+# - HMS_DB_VERSION: PostgreSQL version (default: 18)
+
+services:
+  db:
+    # Use a PostgreSQL-Image with vectorchord extension pre-installed
+    image: tensorchord/vchord-suite:pg${HMS_DB_VERSION:-18-latest}
+    container_name: hms-db
+    restart: always
+    # Expose PostgreSQL port
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: ${HMS_DB_USER:-hms_user}
+      POSTGRES_PASSWORD: ${HMS_DB_PASSWORD:-hms_password}
+      POSTGRES_DB: ${HMS_DB_NAME:-hms_db}
+    volumes:
+      - pg_data:/var/lib/postgresql/${HMS_DB_VERSION:-18}/docker
+    networks:
+      - hms-net
+
+  vectorchord-init:
+    image: tensorchord/vchord-suite:pg18-latest
+    #container_name: vectorchord-init
+    depends_on:
+      - db
+    environment:
+      - PGPASSWORD=${HMS_DB_PASSWORD:-hms_password}
+    command: >
+      bash -c "
+        echo 'Waiting for PostgreSQL to be ready...';
+        until pg_isready -h hms-db -p 5432 -U hms_user; do
+          echo 'PostgreSQL is unavailable - sleeping';
+          sleep 2;
+        done;
+        echo 'PostgreSQL is ready - creating hms_db database';
+        psql -h hms-db -p 5432 -U hms_user -c 'CREATE DATABASE hms_db;' 2>/dev/null || echo 'Database already exists';
+        echo 'Creating extensions in hms_db database';
+        psql -h hms-db -p 5432 -U hms_user -d hms_db -c 'CREATE EXTENSION IF NOT EXISTS vchord CASCADE;';
+        psql -h hms-db -p 5432 -U hms_user -d hms_db -c 'CREATE EXTENSION IF NOT EXISTS pg_tokenizer CASCADE;';
+        psql -h hms-db -p 5432 -U hms_user -d hms_db -c 'CREATE EXTENSION IF NOT EXISTS vchord_bm25 CASCADE;';
+        echo 'Creating llmlingua2 tokenizer';
+        psql -h hms-db -p 5432 -U hms_user -d hms_db -c \"SELECT create_tokenizer('llmlingua2', \\$\\$ model = \\\"llmlingua2\\\" \\$\\$);\" 2>/dev/null || echo 'Tokenizer already exists or creation skipped';
+        echo 'Database and extensions created successfully';
+      "
+    restart: "no"
+    networks:
+      - hms-net
+
+  hms:
+    image: ghcr.io/hms-memory/hms:${HMS_VERSION:-latest}
+    container_name: hms-app
+    ports:
+      - "8888:8888"
+      - "9999:9999"
+    environment:
+      # LLM Configuration (uses OpenAI for testing vchord)
+      # LLM configuration
+      HMS_API_LLM_PROVIDER: ${HMS_API_LLM_PROVIDER:-openai}
+      HMS_API_LLM_API_KEY: ${OPENAI_API_KEY:-your-api-key}
+
+      # Database Configuration
+      HMS_API_DATABASE_URL: postgresql://${HMS_DB_USER:-hms_user}:${HMS_DB_PASSWORD:-hms_password}@db:5432/${HMS_DB_NAME:-hms_db}
+
+      # Vector and Text Search Extensions
+      HMS_API_VECTOR_EXTENSION: vchord
+      HMS_API_TEXT_SEARCH_EXTENSION: vchord
+
+    depends_on:
+      - db
+    networks:
+      - hms-net
+
+
+networks:
+  hms-net:
+    driver: bridge
+
+volumes:
+  pg_data:

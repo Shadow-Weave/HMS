@@ -1,0 +1,69 @@
+[project]
+name = "hms-litellm"
+version = "0.5.2"
+description = "Universal LLM memory integration via LiteLLM - works with 100+ providers"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "HMS", email = "support@hms.local" }
+]
+keywords = [
+    "ai",
+    "memory",
+    "llm",
+    "litellm",
+    "openai",
+    "anthropic",
+    "groq",
+    "langchain",
+    "agents",
+    "hms",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "litellm>=1.83.0", # 1.82.7/1.82.8 had a supply chain compromise (yanked); 1.83.0+ also fixes GHSA-jjhc-v7c2-5hh6 / GHSA-53mr-6c8q-9789
+    # Transitive dependency security fixes
+    "aiohttp>=3.13.3",  # Multiple DoS vulnerabilities
+    "filelock>=3.20.3",  # TOCTOU race condition
+    "urllib3>=2.6.3",  # Decompression-bomb safeguards bypass
+    "requests>=2.33.0",  # Insecure temp file reuse in extract_zipped_paths()
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-mock>=3.10.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/hms-memory/hms"
+Documentation = "https://github.com/hms-memory/hms/tree/main/interface/adapters/litellm"
+Repository = "https://github.com/hms-memory/hms"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["hms_litellm"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

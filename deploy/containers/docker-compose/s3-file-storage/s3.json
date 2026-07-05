@@ -1,0 +1,19 @@
+{
+  "identities": [
+    {
+      "name": "hms",
+      "credentials": [
+        {
+          "accessKey": "hms_s3_key",
+          "secretKey": "hms_s3_secret"
+        }
+      ],
+      "actions": [
+        "Admin",
+        "Read",
+        "Write",
+        "List"
+      ]
+    }
+  ]
+}

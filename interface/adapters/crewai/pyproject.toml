@@ -1,0 +1,63 @@
+[project]
+name = "hms-crewai"
+version = "0.4.20"
+description = "CrewAI memory integration via HMS - persistent memory for AI agent crews"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "HMS", email = "support@hms.local" }
+]
+keywords = [
+    "ai",
+    "memory",
+    "crewai",
+    "agents",
+    "hms",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "crewai>=0.86.0",
+    "hms-client>=0.4.0",
+    # Transitive dependency security fixes
+    "cryptography>=46.0.6", # Incomplete DNS name constraint enforcement fix
+    "pillow>=12.1.1", # Out-of-bounds write in PSD image loading fix
+    "pyjwt>=2.12.0", # Accepts unknown crit header extensions fix
+    "requests>=2.33.0", # Insecure temp file reuse in extract_zipped_paths()
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-mock>=3.10.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/hms-memory/hms"
+Documentation = "https://github.com/hms-memory/hms/tree/main/interface/adapters/crewai"
+Repository = "https://github.com/hms-memory/hms"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["hms_crewai"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

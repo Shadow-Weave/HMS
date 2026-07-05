@@ -1,0 +1,11 @@
+packageName: hms_client_api
+projectName: hms-client
+packageVersion: 0.0.7
+library: asyncio
+generateSourceCodeOnly: true
+# Don't generate auto tests or docs - we have our own
+globalProperties:
+  apiTests: false
+  modelTests: false
+  apiDocs: false
+  modelDocs: false

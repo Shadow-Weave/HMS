@@ -1,0 +1,37 @@
+identity:
+  author: hms
+  name: hms
+  label:
+    en_US: HMS
+  description:
+    en_US: Persistent long-term memory for AI agents and workflows.
+  icon: icon.png
+  tags:
+    - utilities
+credentials_for_provider:
+  api_url:
+    type: text-input
+    required: true
+    default: https://api.hms.local
+    label:
+      en_US: API URL
+    placeholder:
+      en_US: https://api.hms.local
+    help:
+      en_US: "HMS API base URL. Use https://api.hms.local for HMS Cloud, or your self-hosted URL (e.g., http://localhost:8888)."
+  api_key:
+    type: secret-input
+    required: false
+    label:
+      en_US: API Key
+    placeholder:
+      en_US: hsk_...
+    help:
+      en_US: "HMS API key (starts with 'hsk_'). Required for HMS Cloud; optional for unauthenticated self-hosted instances."
+tools:
+  - tools/retain.yaml
+  - tools/recall.yaml
+  - tools/reflect.yaml
+extra:
+  python:
+    source: provider/hms.py

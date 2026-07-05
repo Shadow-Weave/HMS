@@ -1,0 +1,1298 @@
+"""
+OpenAI-compatible LLM provider supporting OpenAI, Groq, Ollama, LMStudio, MiniMax, and DeepSeek.
+
+This provider handles all OpenAI API-compatible models including:
+- OpenAI: GPT-4, GPT-4o, GPT-5, o1, o3 (reasoning models)
+- Groq: Fast inference with seed control and service tiers
+- Ollama: Local models with native streaming API support
+- LMStudio: Local models with OpenAI-compatible API
+- MiniMax: MiniMax-M2.7 models with 1M context window
+- DeepSeek: deepseek-v4-flash / deepseek-v4-pro / deepseek-chat / deepseek-reasoner via api.deepseek.com
+
+Features:
+- Reasoning models with extended thinking (o1, o3, GPT-5 families)
+- Strict JSON schema enforcement (OpenAI)
+- Provider-specific parameters (Groq seed, service tier)
+- Native Ollama streaming for better structured output
+- Automatic token limit handling per model family
+"""
+
+import asyncio
+import io
+import json
+import logging
+import os
+import re
+import time
+from typing import Any
+from urllib.parse import parse_qs, urlparse, urlunparse
+
+import httpx
+from openai import APIConnectionError, APIStatusError, AsyncOpenAI, LengthFinishReasonError
+
+from hms_api.config import DEFAULT_LLM_TIMEOUT, ENV_LLM_TIMEOUT
+from hms_api.engine.llm_interface import LLMInterface, OutputTooLongError
+from hms_api.engine.response_models import LLMToolCall, LLMToolCallResult, TokenUsage
+from hms_api.metrics import get_metrics_collector
+from hms_api.worker.stage import set_stage
+
+logger = logging.getLogger(__name__)
+
+# Seed applied to every Groq request for deterministic behavior
+DEFAULT_LLM_SEED = 4242
+JSON_MODE_USER_HINT = "Return valid json only."
+
+
+class ProviderResponseError(RuntimeError):
+    """Raised when a provider returns a success response without usable content."""
+
+    def __init__(self, message: str, *, retryable: bool = True):
+        super().__init__(message)
+        self.retryable = retryable
+
+
+def _strip_code_fences(content: str) -> str:
+    """Strip markdown code fences from LLM response if present.
+
+    Many LLM providers (MiniMax, some Ollama models, Claude via proxies)
+    wrap JSON responses in ```json ... ``` fences even when json_object
+    response format is requested. This strips the fences while preserving
+    the JSON content inside. Returns the original content unchanged if
+    no fences are detected.
+    """
+    if "```" not in content:
+        return content
+    try:
+        if "```json" in content:
+            return content.split("```json")[1].split("```")[0].strip()
+        return content.split("```")[1].split("```")[0].strip()
+    except (IndexError, ValueError):
+        return content
+
+
+def _response_get(response: Any, key: str, default: Any = None) -> Any:
+    if isinstance(response, dict):
+        return response.get(key, default)
+    return getattr(response, key, default)
+
+
+def _response_to_dict(response: Any) -> dict[str, Any]:
+    if isinstance(response, dict):
+        return response
+    if hasattr(response, "model_dump"):
+        try:
+            return response.model_dump(mode="json")
+        except Exception:
+            return {}
+    return {}
+
+
+def _summarize_provider_error_payload(error: Any, max_len: int = 400) -> str:
+    if error is None:
+        return "<none>"
+    if isinstance(error, dict):
+        message = error.get("message") or error.get("error") or error
+        err_type = error.get("type")
+        param = error.get("param")
+        summary = str(message)
+        details = [f"type={err_type}" if err_type else "", f"param={param}" if param else ""]
+        details = [d for d in details if d]
+        if details:
+            summary = f"{summary} ({', '.join(details)})"
+    else:
+        summary = str(error)
+    if len(summary) > max_len:
+        summary = summary[:max_len] + "...TRUNCATED"
+    return summary
+
+
+def _finish_reason_for_choice(choice: Any) -> Any:
+    return _response_get(choice, "finish_reason")
+
+
+def _message_for_choice(choice: Any) -> Any:
+    return _response_get(choice, "message")
+
+
+def _message_content(message: Any) -> Any:
+    return _response_get(message, "content")
+
+
+def _message_tool_calls(message: Any) -> Any:
+    return _response_get(message, "tool_calls")
+
+
+def _message_refusal(message: Any) -> Any:
+    return _response_get(message, "refusal")
+
+
+def _first_choice_or_error(response: Any, *, provider: str, model: str, scope: str) -> Any:
+    """Return the first choice or raise a clear error for malformed success responses."""
+
+    data = _response_to_dict(response)
+    error_payload = _response_get(response, "error") or data.get("error")
+    if error_payload:
+        raise ProviderResponseError(
+            f"Provider returned error payload ({provider}/{model}, scope={scope}): "
+            f"{_summarize_provider_error_payload(error_payload)}",
+            retryable=False,
+        )
+
+    choices = _response_get(response, "choices")
+    if not choices:
+        raise ProviderResponseError(
+            f"Provider returned no choices ({provider}/{model}, scope={scope})",
+            retryable=True,
+        )
+    return choices[0]
+
+
+def _content_or_error(response: Any, *, provider: str, model: str, scope: str) -> tuple[str, Any]:
+    """Extract message.content while turning provider shape issues into useful errors."""
+
+    choice = _first_choice_or_error(response, provider=provider, model=model, scope=scope)
+    message = _message_for_choice(choice)
+    finish_reason = _finish_reason_for_choice(choice)
+    if message is None:
+        raise ProviderResponseError(
+            f"Provider returned a choice without message ({provider}/{model}, scope={scope}, "
+            f"finish_reason={finish_reason})",
+            retryable=True,
+        )
+
+    content = _message_content(message)
+    if content is None or content == "":
+        tool_calls = _message_tool_calls(message)
+        refusal = _message_refusal(message)
+        retryable = finish_reason not in {"content_filter"}
+        raise ProviderResponseError(
+            f"Provider returned empty message content ({provider}/{model}, scope={scope}, "
+            f"finish_reason={finish_reason}, has_tool_calls={bool(tool_calls)}, "
+            f"refusal={bool(refusal)})",
+            retryable=retryable,
+        )
+    return content, choice
+
+
+def _ensure_json_word_in_user_message(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Some OpenAI-compatible gateways require 'json' in a user message for json_object mode."""
+
+    normalized = [dict(message) for message in messages]
+    user_indexes = [
+        index
+        for index, message in enumerate(normalized)
+        if message.get("role") == "user" and isinstance(message.get("content"), str)
+    ]
+    if not user_indexes:
+        normalized.append({"role": "user", "content": JSON_MODE_USER_HINT})
+        return normalized
+
+    if any("json" in normalized[index]["content"] for index in user_indexes):
+        return normalized
+
+    last_user = user_indexes[-1]
+    normalized[last_user]["content"] = f"{JSON_MODE_USER_HINT}\n\n{normalized[last_user]['content']}"
+    return normalized
+
+
+def _summarize_status_error(e: APIStatusError, body_max: int = 400) -> str:
+    """Render an APIStatusError with status code + truncated response body.
+
+    Without this, retry loops only log "API error after N attempts" with the
+    bare exception message — losing the provider's actual error payload, which
+    is the only thing that explains *why* a request failed (rate limit reason,
+    invalid tool schema, model overloaded, etc.).
+    """
+    body: Any = getattr(e, "body", None)
+    if body is None:
+        try:
+            body = e.response.text
+        except Exception:
+            body = None
+    if isinstance(body, (dict, list)):
+        try:
+            body_str = json.dumps(body, default=str, ensure_ascii=False)
+        except Exception:
+            body_str = str(body)
+    else:
+        body_str = str(body or "").strip()
+    if len(body_str) > body_max:
+        body_str = body_str[:body_max] + "...TRUNCATED"
+    return f"HTTP {e.status_code}: {body_str or '<no body>'}"
+
+
+class OpenAICompatibleLLM(LLMInterface):
+    """
+    LLM provider for OpenAI-compatible APIs.
+
+    Supports:
+    - OpenAI: Standard models (GPT-4, GPT-4o) and reasoning models (o1, o3, GPT-5)
+    - Groq: Fast inference with seed control and service tiers
+    - Ollama: Local models with native streaming API for better structured output
+    - LMStudio: Local models with OpenAI-compatible API
+    - MiniMax: MiniMax-M2.7 models via OpenAI-compatible API (https://api.minimax.io/v1)
+    - DeepSeek: deepseek-v4-flash / deepseek-v4-pro / deepseek-chat / deepseek-reasoner via https://api.deepseek.com
+    """
+
+    def __init__(
+        self,
+        provider: str,
+        api_key: str,
+        base_url: str,
+        model: str,
+        reasoning_effort: str = "low",
+        timeout: float | None = None,
+        groq_service_tier: str | None = None,
+        extra_body: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ):
+        """
+        Initialize OpenAI-compatible LLM provider.
+
+        Args:
+            provider: Provider name ("openai", "groq", "ollama", "lmstudio").
+            api_key: API key (optional for ollama/lmstudio).
+            base_url: Base URL for the API (uses defaults for groq/ollama/lmstudio if empty).
+            model: Model name.
+            reasoning_effort: Reasoning effort level for supported models ("low", "medium", "high").
+            timeout: Request timeout in seconds (uses env var or 300s default).
+            groq_service_tier: Groq service tier ("on_demand", "flex", "auto").
+            extra_body: Extra body params merged into every API call.
+            **kwargs: Additional provider-specific parameters.
+        """
+        super().__init__(provider, api_key, base_url, model, reasoning_effort, **kwargs)
+
+        # Validate provider
+        valid_providers = [
+            "openai",
+            "groq",
+            "ollama",
+            "lmstudio",
+            "llamacpp",
+            "minimax",
+            "deepseek",
+            "volcano",
+            "openrouter",
+            "zai",
+        ]
+        if self.provider not in valid_providers:
+            raise ValueError(f"OpenAICompatibleLLM only supports: {', '.join(valid_providers)}. Got: {self.provider}")
+
+        # Set default base URLs
+        if not self.base_url:
+            if self.provider == "groq":
+                self.base_url = "https://api.groq.com/openai/v1"
+            elif self.provider == "ollama":
+                self.base_url = "http://localhost:11434/v1"
+            elif self.provider == "lmstudio":
+                self.base_url = "http://localhost:1234/v1"
+            elif self.provider == "minimax":
+                self.base_url = "https://api.minimax.io/v1"
+            elif self.provider == "deepseek":
+                self.base_url = "https://api.deepseek.com"
+            elif self.provider == "openrouter":
+                self.base_url = "https://openrouter.ai/api/v1"
+            elif self.provider == "zai":
+                self.base_url = "https://api.z.ai/api/coding/paas/v4"
+
+        # For ollama/lmstudio, use dummy key if not provided
+        if self.provider in ("ollama", "lmstudio") and not self.api_key:
+            self.api_key = "local"
+
+        # Validate API key for cloud providers
+        if self.provider in ("openai", "groq", "minimax", "deepseek", "openrouter", "zai") and not self.api_key:
+            raise ValueError(f"API key is required for {self.provider}")
+
+        # Service tier configuration (from config, not env vars)
+        self.groq_service_tier = groq_service_tier
+        self.openai_service_tier = kwargs.get("openai_service_tier")
+        # User-configured extra body params (merged into every API call)
+        self._config_extra_body = extra_body or {}
+
+        # Get timeout config
+        self.timeout = timeout or float(os.getenv(ENV_LLM_TIMEOUT, str(DEFAULT_LLM_TIMEOUT)))
+
+        # Create OpenAI client — extract query params from base_url (e.g. Azure api-version)
+        client_kwargs: dict[str, Any] = {"api_key": self.api_key, "max_retries": 0}
+        if self.base_url:
+            parsed = urlparse(self.base_url)
+            if parsed.query:
+                clean_url = urlunparse(parsed._replace(query=""))
+                client_kwargs["base_url"] = clean_url
+                default_query = {k: v[0] for k, v in parse_qs(parsed.query).items()}
+                client_kwargs["default_query"] = default_query
+                self.base_url = clean_url
+            else:
+                client_kwargs["base_url"] = self.base_url
+        if self.timeout:
+            client_kwargs["timeout"] = self.timeout
+
+        self._client = AsyncOpenAI(**client_kwargs)
+        logger.info(
+            f"OpenAI-compatible client initialized: provider={self.provider}, model={self.model}, "
+            f"base_url={self.base_url or 'default'}"
+        )
+
+    async def verify_connection(self) -> None:
+        """
+        Verify that the provider is configured correctly by making a simple test call.
+
+        Raises:
+            RuntimeError: If the connection test fails.
+        """
+        try:
+            logger.info(f"Verifying connection: {self.provider}/{self.model}")
+            await self.call(
+                messages=[{"role": "user", "content": "Say 'ok'"}],
+                max_completion_tokens=100,
+                max_retries=2,
+                initial_backoff=0.5,
+                max_backoff=2.0,
+                scope="verification",
+            )
+            logger.info(f"Connection verified: {self.provider}/{self.model}")
+        except Exception as e:
+            raise RuntimeError(f"Connection verification failed for {self.provider}/{self.model}: {e}") from e
+
+    def _supports_reasoning_model(self) -> bool:
+        """Check if the current model is a reasoning model (o1, o3, GPT-5, DeepSeek)."""
+        model_lower = self.model.lower()
+        if "deepseek" in model_lower:
+            # DeepSeek v4-flash is the non-thinking route. Treating every
+            # DeepSeek model as a reasoning model injects reasoning_effort,
+            # which conflicts with thinking-disabled flash calls.
+            return any(x in model_lower for x in ["v4-pro", "reasoner", "r1", "thinking"])
+        return any(x in model_lower for x in ["gpt-5", "o1", "o3"])
+
+    def _get_max_reasoning_tokens(self) -> int | None:
+        """Get max reasoning tokens for reasoning models."""
+        model_lower = self.model.lower()
+
+        # GPT-4 and GPT-4.1 models have different caps
+        if any(x in model_lower for x in ["gpt-4.1", "gpt-4-"]):
+            return 32000
+        elif "gpt-4o" in model_lower:
+            return 16384
+
+        return None
+
+    def _max_tokens_param_name(self) -> str:
+        """Return the correct parameter name for limiting response tokens.
+
+        Native OpenAI, Azure OpenAI, Groq, and llamacpp accept 'max_completion_tokens'.
+        Mistral and other OpenAI-compatible endpoints that haven't adopted the newer
+        parameter name require 'max_tokens', so when the openai provider is configured
+        with a non-Azure custom base_url we fall back to the widely-supported
+        'max_tokens'.
+
+        Reasoning models (GPT-5, o1, o3) only accept 'max_completion_tokens' and reject
+        'max_tokens' outright, so they always use the new parameter name regardless of
+        base_url.
+        """
+        # Reasoning models (GPT-5, o1, o3, ...) only accept max_completion_tokens.
+        # Azure OpenAI + GPT-5 is the canonical example: issue #978.
+        if self._supports_reasoning_model():
+            return "max_completion_tokens"
+        # Native OpenAI (no custom base URL), Groq, and llamacpp use max_completion_tokens
+        if self.provider in ("groq", "llamacpp"):
+            return "max_completion_tokens"
+        if self.provider == "openai" and not self.base_url:
+            return "max_completion_tokens"
+        # Azure OpenAI is fully OpenAI-API-compatible — detect it by hostname so users
+        # can keep provider=openai + an Azure base_url (the documented setup).
+        if self.provider == "openai" and self.base_url and ".openai.azure.com" in self.base_url:
+            return "max_completion_tokens"
+        # openai with custom base_url, ollama, lmstudio, minimax, volcano —
+        # use the widely-supported max_tokens
+        return "max_tokens"
+
+    async def call(
+        self,
+        messages: list[dict[str, str]],
+        response_format: Any | None = None,
+        max_completion_tokens: int | None = None,
+        temperature: float | None = None,
+        scope: str = "memory",
+        max_retries: int = 4,
+        initial_backoff: float = 5.0,
+        max_backoff: float = 60.0,
+        skip_validation: bool = False,
+        strict_schema: bool = False,
+        return_usage: bool = False,
+    ) -> Any:
+        """
+        Make an LLM API call with retry logic.
+
+        Args:
+            messages: List of message dicts with 'role' and 'content'.
+            response_format: Optional Pydantic model for structured output.
+            max_completion_tokens: Maximum tokens in response.
+            temperature: Sampling temperature (0.0-2.0).
+            scope: Scope identifier for tracking.
+            max_retries: Maximum retry attempts.
+            initial_backoff: Initial backoff time in seconds.
+            max_backoff: Maximum backoff time in seconds.
+            skip_validation: Return raw JSON without Pydantic validation.
+            strict_schema: Use strict JSON schema enforcement (OpenAI only).
+            return_usage: If True, return tuple (result, TokenUsage) instead of just result.
+
+        Returns:
+            If return_usage=False: Parsed response if response_format is provided, otherwise text content.
+            If return_usage=True: Tuple of (result, TokenUsage) with token counts.
+
+        Raises:
+            OutputTooLongError: If output exceeds token limits.
+            Exception: Re-raises API errors after retries exhausted.
+        """
+        # Handle Ollama with native API for structured output (better schema enforcement)
+        if self.provider == "ollama" and response_format is not None:
+            return await self._call_ollama_native(
+                messages=messages,
+                response_format=response_format,
+                max_completion_tokens=max_completion_tokens,
+                temperature=temperature,
+                max_retries=max_retries,
+                initial_backoff=initial_backoff,
+                max_backoff=max_backoff,
+                skip_validation=skip_validation,
+                scope=scope,
+                return_usage=return_usage,
+            )
+
+        start_time = time.time()
+
+        # Build call parameters
+        call_params: dict[str, Any] = {
+            "model": self.model,
+            "messages": [dict(message) for message in messages],
+        }
+
+        # Check if model supports reasoning parameter
+        is_reasoning_model = self._supports_reasoning_model()
+
+        # Apply model-specific token limits
+        if max_completion_tokens is not None:
+            max_tokens_cap = self._get_max_reasoning_tokens()
+            if max_tokens_cap and max_completion_tokens > max_tokens_cap:
+                max_completion_tokens = max_tokens_cap
+            # For reasoning models, enforce minimum to ensure space for reasoning + output
+            if is_reasoning_model and max_completion_tokens < 16000:
+                max_completion_tokens = 16000
+            call_params[self._max_tokens_param_name()] = max_completion_tokens
+        if temperature is not None and not is_reasoning_model:
+            # MiniMax requires temperature in (0.0, 1.0] — clamp accordingly
+            if self.provider == "minimax":
+                temperature = max(0.01, min(temperature, 1.0))
+            call_params["temperature"] = temperature
+
+        # Set reasoning_effort for reasoning models
+        if is_reasoning_model:
+            call_params["reasoning_effort"] = self.reasoning_effort
+
+        # Provider-specific parameters
+        extra_body: dict[str, Any] = {**self._config_extra_body}
+        if self.provider == "groq":
+            call_params["seed"] = DEFAULT_LLM_SEED
+            # Add service_tier if configured
+            if self.groq_service_tier:
+                extra_body["service_tier"] = self.groq_service_tier
+            # Add reasoning parameters for reasoning models
+            if is_reasoning_model:
+                extra_body["include_reasoning"] = False
+        if extra_body:
+            call_params["extra_body"] = extra_body
+
+        # Prepare response format ONCE before retry loop
+        if response_format is not None:
+            schema = None
+            if hasattr(response_format, "model_json_schema"):
+                schema = response_format.model_json_schema()
+
+            if strict_schema and schema is not None:
+                # Use OpenAI's strict JSON schema enforcement
+                call_params["response_format"] = {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "response",
+                        "strict": True,
+                        "schema": schema,
+                    },
+                }
+            else:
+                # Soft enforcement: add schema to prompt and use json_object mode
+                if schema is not None:
+                    schema_msg = f"\n\nYou must respond with valid JSON matching this schema:\n{json.dumps(schema, indent=2, ensure_ascii=False)}"
+
+                    if call_params["messages"] and call_params["messages"][0].get("role") == "system":
+                        first_msg = call_params["messages"][0]
+                        if isinstance(first_msg, dict) and isinstance(first_msg.get("content"), str):
+                            first_msg["content"] += schema_msg
+                    elif call_params["messages"]:
+                        first_msg = call_params["messages"][0]
+                        if isinstance(first_msg, dict) and isinstance(first_msg.get("content"), str):
+                            first_msg["content"] = schema_msg + "\n\n" + first_msg["content"]
+                # Providers that skip json_object grammar enforcement
+                skip_grammar = self.provider in ("lmstudio", "ollama", "volcano")
+                if self.provider == "llamacpp":
+                    from hms_api.config import get_config
+
+                    skip_grammar = get_config().llamacpp_no_grammar
+                if not skip_grammar:
+                    call_params["messages"] = _ensure_json_word_in_user_message(call_params["messages"])
+                    call_params["response_format"] = {"type": "json_object"}
+
+        last_exception = None
+
+        for attempt in range(max_retries + 1):
+            # Surface attempt count in worker stage so JSON-schema retry loops
+            # are visible from logs (small models on strict structured output
+            # often loop here). Cheap no-op outside worker context.
+            if attempt > 0:
+                set_stage(f"llm.{self.provider}.{scope}.attempt={attempt + 1}/{max_retries + 1}")
+            try:
+                if response_format is not None:
+                    response = await self._client.chat.completions.create(**call_params)
+
+                    content, first_choice = _content_or_error(
+                        response,
+                        provider=self.provider,
+                        model=self.model,
+                        scope=scope,
+                    )
+
+                    # Strip reasoning model thinking tags
+                    # Supports: <think>, <thinking>, <reasoning>, |startthink|/|endthink|
+                    original_len = len(content)
+                    content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL)
+                    content = re.sub(r"<thinking>.*?</thinking>", "", content, flags=re.DOTALL)
+                    content = re.sub(r"<reasoning>.*?</reasoning>", "", content, flags=re.DOTALL)
+                    content = re.sub(r"\|startthink\|.*?\|endthink\|", "", content, flags=re.DOTALL)
+                    content = content.strip()
+                    if len(content) < original_len:
+                        logger.debug(f"Stripped {original_len - len(content)} chars of reasoning tokens")
+
+                    # Strip markdown code fences if present — any provider may
+                    # produce these (confirmed with MiniMax, some Ollama models,
+                    # Claude via proxies). No-op when content is already bare JSON.
+                    clean_content = _strip_code_fences(content)
+                    try:
+                        json_data = json.loads(clean_content)
+                    except json.JSONDecodeError:
+                        # Fallback to parsing raw content in case stripping was wrong
+                        try:
+                            json_data = json.loads(content)
+                        except json.JSONDecodeError as json_err:
+                            # Truncate content for logging
+                            content_preview = content[:500] if content else "<empty>"
+                            if content and len(content) > 700:
+                                content_preview = f"{content[:500]}...TRUNCATED...{content[-200:]}"
+                            logger.warning(
+                                f"JSON parse error from LLM response (attempt {attempt + 1}/{max_retries + 1}): {json_err}\n"
+                                f"  Model: {self.provider}/{self.model}\n"
+                                f"  Content length: {len(content) if content else 0} chars\n"
+                                f"  Content preview: {content_preview!r}\n"
+                                f"  Finish reason: {_finish_reason_for_choice(first_choice)}"
+                            )
+                            # Retry on JSON parse errors
+                            if attempt < max_retries:
+                                backoff = min(initial_backoff * (2**attempt), max_backoff)
+                                await asyncio.sleep(backoff)
+                                last_exception = json_err
+                                continue
+                            else:
+                                logger.error(f"JSON parse error after {max_retries + 1} attempts, giving up")
+                                raise
+
+                    if skip_validation:
+                        result = json_data
+                    else:
+                        result = response_format.model_validate(json_data)
+                else:
+                    response = await self._client.chat.completions.create(**call_params)
+                    result, first_choice = _content_or_error(
+                        response,
+                        provider=self.provider,
+                        model=self.model,
+                        scope=scope,
+                    )
+
+                # Record token usage metrics
+                duration = time.time() - start_time
+                usage = response.usage
+                input_tokens = usage.prompt_tokens or 0 if usage else 0
+                output_tokens = usage.completion_tokens or 0 if usage else 0
+                total_tokens = usage.total_tokens or 0 if usage else 0
+
+                # Record LLM metrics
+                metrics = get_metrics_collector()
+                metrics.record_llm_call(
+                    provider=self.provider,
+                    model=self.model,
+                    scope=scope,
+                    duration=duration,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    success=True,
+                )
+
+                # Record trace span
+                from hms_api.tracing import _serialize_for_span, get_span_recorder
+
+                finish_reason = _finish_reason_for_choice(first_choice)
+                span_recorder = get_span_recorder()
+                span_recorder.record_llm_call(
+                    provider=self.provider,
+                    model=self.model,
+                    scope=scope,
+                    messages=call_params["messages"],
+                    response_content=_serialize_for_span(result),
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    duration=duration,
+                    finish_reason=finish_reason,
+                    error=None,
+                )
+
+                # Log slow calls
+                if duration > 10.0 and usage:
+                    ratio = max(1, output_tokens) / max(1, input_tokens)
+                    cached_tokens = 0
+                    if hasattr(usage, "prompt_tokens_details") and usage.prompt_tokens_details:
+                        cached_tokens = getattr(usage.prompt_tokens_details, "cached_tokens", 0) or 0
+                    cache_info = f", cached_tokens={cached_tokens}" if cached_tokens > 0 else ""
+                    logger.info(
+                        f"slow llm call: scope={scope}, model={self.provider}/{self.model}, "
+                        f"input_tokens={input_tokens}, output_tokens={output_tokens}, "
+                        f"total_tokens={total_tokens}{cache_info}, time={duration:.3f}s, ratio out/in={ratio:.2f}"
+                    )
+
+                if return_usage:
+                    token_usage = TokenUsage(
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                        total_tokens=total_tokens,
+                    )
+                    return result, token_usage
+                return result
+
+            except LengthFinishReasonError as e:
+                logger.warning(f"LLM output exceeded token limits: {str(e)}")
+                raise OutputTooLongError(
+                    "LLM output exceeded token limits. Input may need to be split into smaller chunks."
+                ) from e
+
+            except APIConnectionError as e:
+                last_exception = e
+                status_code = getattr(e, "status_code", None) or getattr(
+                    getattr(e, "response", None), "status_code", None
+                )
+                logger.error(f"APIConnectionError (HTTP {status_code}), attempt {attempt + 1}: {str(e)[:200]}")
+                if attempt < max_retries:
+                    backoff = min(initial_backoff * (2**attempt), max_backoff)
+                    await asyncio.sleep(backoff)
+                    continue
+                else:
+                    logger.error(f"Connection error after {max_retries + 1} attempts: {str(e)}")
+                    raise
+
+            except APIStatusError as e:
+                # Fast fail only on 401 (unauthorized) and 403 (forbidden)
+                if e.status_code in (401, 403):
+                    logger.error(f"Auth error (HTTP {e.status_code}), not retrying: {str(e)}")
+                    raise
+
+                # Handle tool_use_failed error - model outputted in tool call format
+                if e.status_code == 400 and response_format is not None:
+                    try:
+                        error_body = e.body if hasattr(e, "body") else {}
+                        if isinstance(error_body, dict):
+                            error_info: dict[str, Any] = error_body.get("error") or {}
+                            if error_info.get("code") == "tool_use_failed":
+                                failed_gen = error_info.get("failed_generation", "")
+                                if failed_gen:
+                                    # Parse tool call format and convert to expected format
+                                    tool_call = json.loads(failed_gen)
+                                    tool_name = tool_call.get("name", "")
+                                    tool_args = tool_call.get("arguments", {})
+                                    converted = {"actions": [{"tool": tool_name, **tool_args}]}
+                                    if skip_validation:
+                                        result = converted
+                                    else:
+                                        result = response_format.model_validate(converted)
+
+                                    # Record metrics
+                                    duration = time.time() - start_time
+                                    metrics = get_metrics_collector()
+                                    metrics.record_llm_call(
+                                        provider=self.provider,
+                                        model=self.model,
+                                        scope=scope,
+                                        duration=duration,
+                                        input_tokens=0,
+                                        output_tokens=0,
+                                        success=True,
+                                    )
+                                    if return_usage:
+                                        return result, TokenUsage(input_tokens=0, output_tokens=0, total_tokens=0)
+                                    return result
+                    except (json.JSONDecodeError, KeyError, TypeError):
+                        pass  # Failed to parse tool_use_failed, continue with normal retry
+
+                last_exception = e
+                if attempt < max_retries:
+                    logger.warning(
+                        f"APIStatusError ({self.provider}/{self.model}, scope={scope}, "
+                        f"attempt {attempt + 1}/{max_retries + 1}): {_summarize_status_error(e)}"
+                    )
+                    backoff = min(initial_backoff * (2**attempt), max_backoff)
+                    jitter = backoff * 0.2 * (2 * (time.time() % 1) - 1)
+                    sleep_time = backoff + jitter
+                    await asyncio.sleep(sleep_time)
+                else:
+                    logger.error(
+                        f"API error after {max_retries + 1} attempts ({self.provider}/{self.model}, "
+                        f"scope={scope}): {_summarize_status_error(e)}"
+                    )
+                    raise
+
+            except ProviderResponseError as e:
+                last_exception = e
+                if e.retryable and attempt < max_retries:
+                    logger.warning(
+                        f"Provider response error ({self.provider}/{self.model}, scope={scope}, "
+                        f"attempt {attempt + 1}/{max_retries + 1}): {e}"
+                    )
+                    backoff = min(initial_backoff * (2**attempt), max_backoff)
+                    await asyncio.sleep(backoff)
+                    continue
+                logger.error(
+                    f"Provider response error after {attempt + 1} attempts "
+                    f"({self.provider}/{self.model}, scope={scope}): {e}"
+                )
+                raise
+
+            except Exception:
+                raise
+
+        if last_exception:
+            raise last_exception
+        raise RuntimeError("LLM call failed after all retries with no exception captured")
+
+    async def call_with_tools(
+        self,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]],
+        max_completion_tokens: int | None = None,
+        temperature: float | None = None,
+        scope: str = "tools",
+        max_retries: int = 5,
+        initial_backoff: float = 1.0,
+        max_backoff: float = 30.0,
+        tool_choice: str | dict[str, Any] = "auto",
+    ) -> LLMToolCallResult:
+        """
+        Make an LLM API call with tool/function calling support.
+
+        Args:
+            messages: List of message dicts. Can include tool results with role='tool'.
+            tools: List of tool definitions in OpenAI format.
+            max_completion_tokens: Maximum tokens in response.
+            temperature: Sampling temperature (0.0-2.0).
+            scope: Scope identifier for tracking.
+            max_retries: Maximum retry attempts.
+            initial_backoff: Initial backoff time in seconds.
+            max_backoff: Maximum backoff time in seconds.
+            tool_choice: How to choose tools - "auto", "none", "required", or specific function.
+
+        Returns:
+            LLMToolCallResult with content and/or tool_calls.
+        """
+        start_time = time.time()
+
+        request_tool_choice: str | dict[str, Any] | None = tool_choice
+
+        # Normalize named tool_choice dicts to "required" + filter tools.
+        # Some providers (e.g. LM Studio, Ollama) reject the OpenAI named format
+        # {"type": "function", "function": {"name": "..."}}.  The semantics are
+        # identical to tool_choice="required" with the tools list restricted to
+        # just the requested tool, so we apply that transformation where supported.
+        if isinstance(request_tool_choice, dict) and request_tool_choice.get("type") == "function":
+            forced_name = request_tool_choice.get("function", {}).get("name")
+            if forced_name:
+                filtered = [t for t in tools if t.get("function", {}).get("name") == forced_name]
+                if filtered:
+                    tools = filtered
+                request_tool_choice = "required"
+
+        # DeepSeek accepts tool calls but rejects explicit required/named
+        # tool_choice values. The tools list has already been narrowed for
+        # forced calls, so omitting tool_choice preserves the practical behavior.
+        if "deepseek" in self.model.lower() and request_tool_choice != "auto":
+            request_tool_choice = None
+
+        # "auto" is the OpenAI API default — omitting tool_choice is semantically
+        # identical. Some providers (e.g. DeepSeek's reasoner pathway, which
+        # deepseek-v4-flash falls into when thinking mode is enabled) reject the
+        # parameter outright, returning HTTP 400 even for value "auto". Sending it
+        # only when the caller asks for a non-default behaviour avoids those 400s
+        # without changing semantics for compliant providers.
+        if request_tool_choice == "auto":
+            request_tool_choice = None
+
+        # DeepSeek tool-call replies can carry provider-specific reasoning_content.
+        # The normalized tool result does not retain it, but replaying assistant
+        # tool_calls without the field can trigger a 400. DeepSeek accepts an
+        # empty-string fallback, matching the provider's history-replay contract.
+        if "deepseek" in self.model.lower():
+            normalized_messages: list[dict[str, Any]] = []
+            for msg in messages:
+                if msg.get("role") == "assistant" and msg.get("tool_calls") and "reasoning_content" not in msg:
+                    normalized_msg = dict(msg)
+                    normalized_msg["reasoning_content"] = ""
+                    normalized_messages.append(normalized_msg)
+                else:
+                    normalized_messages.append(msg)
+            messages = normalized_messages
+
+        # Build call parameters
+        call_params: dict[str, Any] = {
+            "model": self.model,
+            "messages": messages,
+            "tools": tools,
+        }
+        if request_tool_choice is not None:
+            call_params["tool_choice"] = request_tool_choice
+
+        if max_completion_tokens is not None:
+            call_params[self._max_tokens_param_name()] = max_completion_tokens
+        if temperature is not None:
+            # MiniMax requires temperature in (0.0, 1.0] — clamp accordingly
+            if self.provider == "minimax":
+                temperature = max(0.01, min(temperature, 1.0))
+            call_params["temperature"] = temperature
+
+        # Provider-specific parameters
+        extra_body: dict[str, Any] = {**self._config_extra_body}
+        if self.provider == "groq":
+            call_params["seed"] = DEFAULT_LLM_SEED
+        if extra_body:
+            call_params["extra_body"] = extra_body
+
+        last_exception = None
+
+        for attempt in range(max_retries + 1):
+            if attempt > 0:
+                set_stage(f"llm.{self.provider}.tools.attempt={attempt + 1}/{max_retries + 1}")
+            try:
+                response = await self._client.chat.completions.create(**call_params)
+
+                message = response.choices[0].message
+                finish_reason = response.choices[0].finish_reason
+
+                # Extract tool calls if present
+                tool_calls: list[LLMToolCall] = []
+                if message.tool_calls:
+                    for tc in message.tool_calls:
+                        try:
+                            args = json.loads(tc.function.arguments) if tc.function.arguments else {}
+                        except json.JSONDecodeError:
+                            args = {"_raw": tc.function.arguments}
+                        tool_calls.append(LLMToolCall(id=tc.id, name=tc.function.name, arguments=args))
+
+                content = message.content
+
+                # Record metrics
+                duration = time.time() - start_time
+                usage = response.usage
+                input_tokens = usage.prompt_tokens or 0 if usage else 0
+                output_tokens = usage.completion_tokens or 0 if usage else 0
+
+                metrics = get_metrics_collector()
+                metrics.record_llm_call(
+                    provider=self.provider,
+                    model=self.model,
+                    scope=scope,
+                    duration=duration,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    success=True,
+                )
+
+                # Record OpenTelemetry span
+                from hms_api.tracing import get_span_recorder
+
+                span_recorder = get_span_recorder()
+                # Convert LLMToolCall objects to dicts for span recording
+                tool_calls_dict = (
+                    [{"id": tc.id, "name": tc.name, "arguments": tc.arguments} for tc in tool_calls]
+                    if tool_calls
+                    else None
+                )
+                span_recorder.record_llm_call(
+                    provider=self.provider,
+                    model=self.model,
+                    scope=scope,
+                    messages=messages,
+                    response_content=content,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    duration=duration,
+                    finish_reason=finish_reason,
+                    error=None,
+                    tool_calls=tool_calls_dict,
+                )
+
+                return LLMToolCallResult(
+                    content=content,
+                    tool_calls=tool_calls,
+                    finish_reason=finish_reason,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                )
+
+            except APIConnectionError as e:
+                last_exception = e
+                status_code = getattr(e, "status_code", None) or getattr(
+                    getattr(e, "response", None), "status_code", None
+                )
+                if attempt < max_retries:
+                    logger.warning(
+                        f"APIConnectionError in tool call ({self.provider}/{self.model}, scope={scope}, "
+                        f"attempt {attempt + 1}/{max_retries + 1}, HTTP {status_code}): {str(e)[:200]}"
+                    )
+                    await asyncio.sleep(min(initial_backoff * (2**attempt), max_backoff))
+                    continue
+                logger.error(
+                    f"Connection error in tool call after {max_retries + 1} attempts "
+                    f"({self.provider}/{self.model}, scope={scope}): {str(e)}"
+                )
+                raise
+
+            except APIStatusError as e:
+                if e.status_code in (401, 403):
+                    logger.error(
+                        f"Auth error in tool call (HTTP {e.status_code}, {self.provider}/{self.model}), "
+                        f"not retrying: {_summarize_status_error(e)}"
+                    )
+                    raise
+                last_exception = e
+                if attempt < max_retries:
+                    logger.warning(
+                        f"APIStatusError in tool call ({self.provider}/{self.model}, scope={scope}, "
+                        f"attempt {attempt + 1}/{max_retries + 1}): {_summarize_status_error(e)}"
+                    )
+                    await asyncio.sleep(min(initial_backoff * (2**attempt), max_backoff))
+                    continue
+                logger.error(
+                    f"API error in tool call after {max_retries + 1} attempts "
+                    f"({self.provider}/{self.model}, scope={scope}): {_summarize_status_error(e)}"
+                )
+                raise
+
+            except Exception:
+                raise
+
+        if last_exception:
+            raise last_exception
+        raise RuntimeError("Tool call failed after all retries")
+
+    async def _call_ollama_native(
+        self,
+        messages: list[dict[str, str]],
+        response_format: Any,
+        max_completion_tokens: int | None,
+        temperature: float | None,
+        max_retries: int,
+        initial_backoff: float,
+        max_backoff: float,
+        skip_validation: bool,
+        scope: str = "memory",
+        return_usage: bool = False,
+    ) -> Any:
+        """
+        Call Ollama using native API with JSON schema enforcement.
+
+        Ollama's native API supports passing a full JSON schema in the 'format' parameter,
+        which provides better structured output control than the OpenAI-compatible API.
+        """
+        start_time = time.time()
+
+        # Get the JSON schema from the Pydantic model
+        schema = response_format.model_json_schema() if hasattr(response_format, "model_json_schema") else None
+
+        # Build the base URL for Ollama's native API
+        # Default OpenAI-compatible URL is http://localhost:11434/v1
+        # Native API is at http://localhost:11434/api/chat
+        base_url = self.base_url or "http://localhost:11434/v1"
+        if base_url.endswith("/v1"):
+            native_url = base_url[:-3] + "/api/chat"
+        else:
+            native_url = base_url.rstrip("/") + "/api/chat"
+
+        # Build request payload
+        payload: dict[str, Any] = {
+            "model": self.model,
+            "messages": messages,
+            "stream": False,
+            "think": False,  # Disable thinking for reasoning models (qwen3.5, etc.)
+        }
+
+        # Add schema as format parameter for structured output
+        if schema:
+            payload["format"] = schema
+
+        # Add optional parameters with optimized defaults for Ollama
+        options: dict[str, Any] = {
+            "num_ctx": 16384,  # 16k context window for larger prompts
+            "num_batch": 512,  # Optimal batch size for prompt processing
+        }
+        if max_completion_tokens:
+            options["num_predict"] = max_completion_tokens
+        if temperature is not None:
+            options["temperature"] = temperature
+        payload["options"] = options
+
+        last_exception = None
+
+        async with httpx.AsyncClient(timeout=300.0) as client:
+            for attempt in range(max_retries + 1):
+                if attempt > 0:
+                    set_stage(f"llm.ollama_native.{scope}.attempt={attempt + 1}/{max_retries + 1}")
+                try:
+                    response = await client.post(native_url, json=payload)
+                    response.raise_for_status()
+
+                    result = response.json()
+                    content = result.get("message", {}).get("content", "")
+
+                    # Strip markdown code fences if present (safety net —
+                    # Ollama with schema enforcement usually returns bare JSON,
+                    # but some models may still wrap in fences)
+                    clean_content = _strip_code_fences(content)
+                    try:
+                        json_data = json.loads(clean_content)
+                    except json.JSONDecodeError:
+                        # Fallback to raw content
+                        try:
+                            json_data = json.loads(content)
+                        except json.JSONDecodeError as json_err:
+                            content_preview = content[:500] if content else "<empty>"
+                            if content and len(content) > 700:
+                                content_preview = f"{content[:500]}...TRUNCATED...{content[-200:]}"
+                            logger.warning(
+                                f"Ollama JSON parse error (attempt {attempt + 1}/{max_retries + 1}): {json_err}\n"
+                                f"  Model: ollama/{self.model}\n"
+                                f"  Content length: {len(content) if content else 0} chars\n"
+                                f"  Content preview: {content_preview!r}"
+                            )
+                            if attempt < max_retries:
+                                backoff = min(initial_backoff * (2**attempt), max_backoff)
+                                await asyncio.sleep(backoff)
+                                last_exception = json_err
+                                continue
+                            else:
+                                raise
+
+                    # Extract token usage from Ollama response
+                    duration = time.time() - start_time
+                    input_tokens = result.get("prompt_eval_count", 0) or 0
+                    output_tokens = result.get("eval_count", 0) or 0
+                    total_tokens = input_tokens + output_tokens
+
+                    # Record LLM metrics
+                    metrics = get_metrics_collector()
+                    metrics.record_llm_call(
+                        provider=self.provider,
+                        model=self.model,
+                        scope=scope,
+                        duration=duration,
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                        success=True,
+                    )
+
+                    # Validate against Pydantic model or return raw JSON
+                    if skip_validation:
+                        validated_result = json_data
+                    else:
+                        validated_result = response_format.model_validate(json_data)
+
+                    if return_usage:
+                        token_usage = TokenUsage(
+                            input_tokens=input_tokens,
+                            output_tokens=output_tokens,
+                            total_tokens=total_tokens,
+                        )
+                        return validated_result, token_usage
+                    return validated_result
+
+                except httpx.HTTPStatusError as e:
+                    last_exception = e
+                    if attempt < max_retries:
+                        logger.warning(
+                            f"Ollama HTTP error (attempt {attempt + 1}/{max_retries + 1}): {e.response.status_code}"
+                        )
+                        backoff = min(initial_backoff * (2**attempt), max_backoff)
+                        await asyncio.sleep(backoff)
+                        continue
+                    else:
+                        logger.error(f"Ollama HTTP error after {max_retries + 1} attempts: {e}")
+                        raise
+
+                except httpx.RequestError as e:
+                    last_exception = e
+                    if attempt < max_retries:
+                        logger.warning(f"Ollama connection error (attempt {attempt + 1}/{max_retries + 1}): {e}")
+                        backoff = min(initial_backoff * (2**attempt), max_backoff)
+                        await asyncio.sleep(backoff)
+                        continue
+                    else:
+                        logger.error(f"Ollama connection error after {max_retries + 1} attempts: {e}")
+                        raise
+
+                except Exception as e:
+                    logger.error(f"Unexpected error during Ollama call: {type(e).__name__}: {e}")
+                    raise
+
+        if last_exception:
+            raise last_exception
+        raise RuntimeError("Ollama call failed after all retries")
+
+    async def supports_batch_api(self) -> bool:
+        """Check if this provider supports batch API operations."""
+        # Only OpenAI and Groq support batch API
+        return self.provider in ("openai", "groq")
+
+    async def submit_batch(
+        self,
+        requests: list[dict[str, Any]],
+        endpoint: str = "/v1/chat/completions",
+        completion_window: str = "24h",
+    ) -> dict[str, Any]:
+        """
+        Submit a batch of requests to OpenAI/Groq Batch API.
+
+        Args:
+            requests: List of request dicts with custom_id, method, url, body
+            endpoint: API endpoint (e.g., "/v1/chat/completions")
+            completion_window: Completion window (e.g., "24h")
+
+        Returns:
+            Dict with batch metadata including batch_id
+
+        Raises:
+            NotImplementedError: If provider doesn't support batch API
+        """
+        if not await self.supports_batch_api():
+            raise NotImplementedError(f"Batch API not supported for provider: {self.provider}")
+
+        logger.info(f"Submitting batch with {len(requests)} requests to {self.provider}")
+
+        # Format requests as JSONL
+        jsonl_content = "\n".join(json.dumps(req, ensure_ascii=False) for req in requests)
+
+        # Upload file to provider (wrap in BytesIO with filename)
+        file_bytes = io.BytesIO(jsonl_content.encode("utf-8"))
+        file_bytes.name = "batch_input.jsonl"  # OpenAI SDK needs a filename
+
+        file_response = await self._client.files.create(
+            file=file_bytes,
+            purpose="batch",
+        )
+
+        logger.debug(f"Uploaded batch file: {file_response.id}")
+
+        # Create batch
+        batch_response = await self._client.batches.create(
+            input_file_id=file_response.id,
+            endpoint=endpoint,
+            completion_window=completion_window,
+        )
+
+        logger.info(f"Batch submitted: {batch_response.id}, status={batch_response.status}")
+
+        return {
+            "batch_id": batch_response.id,
+            "status": batch_response.status,
+            "input_file_id": file_response.id,
+            "created_at": batch_response.created_at,
+            "request_count": len(requests),
+        }
+
+    async def get_batch_status(self, batch_id: str) -> dict[str, Any]:
+        """
+        Get the status of a batch job.
+
+        Args:
+            batch_id: Batch identifier
+
+        Returns:
+            Dict with status info (batch_id, status, completed_at, etc.)
+        """
+        if not await self.supports_batch_api():
+            raise NotImplementedError(f"Batch API not supported for provider: {self.provider}")
+
+        batch = await self._client.batches.retrieve(batch_id)
+
+        result = {
+            "batch_id": batch.id,
+            "status": batch.status,
+            "created_at": batch.created_at,
+            "request_counts": {
+                "total": batch.request_counts.total if batch.request_counts else 0,
+                "completed": batch.request_counts.completed if batch.request_counts else 0,
+                "failed": batch.request_counts.failed if batch.request_counts else 0,
+            },
+        }
+
+        if batch.completed_at:
+            result["completed_at"] = batch.completed_at
+        if batch.output_file_id:
+            result["output_file_id"] = batch.output_file_id
+        if batch.error_file_id:
+            result["error_file_id"] = batch.error_file_id
+        if batch.errors:
+            result["errors"] = batch.errors
+
+        return result
+
+    async def retrieve_batch_results(self, batch_id: str) -> list[dict[str, Any]]:
+        """
+        Retrieve completed batch results.
+
+        Args:
+            batch_id: Batch identifier
+
+        Returns:
+            List of result dicts (one per request, matched by custom_id)
+        """
+        if not await self.supports_batch_api():
+            raise NotImplementedError(f"Batch API not supported for provider: {self.provider}")
+
+        # Get batch status
+        batch = await self._client.batches.retrieve(batch_id)
+
+        if batch.status != "completed":
+            raise ValueError(f"Batch {batch_id} is not completed yet (status: {batch.status})")
+
+        if not batch.output_file_id:
+            raise ValueError(f"Batch {batch_id} has no output file")
+
+        # Download results file
+        logger.debug(f"Downloading results for batch {batch_id} from file {batch.output_file_id}")
+        file_content = await self._client.files.content(batch.output_file_id)
+
+        # Parse JSONL results
+        results = []
+        for line in file_content.text.strip().split("\n"):
+            if line:
+                results.append(json.loads(line))
+
+        logger.info(f"Retrieved {len(results)} results for batch {batch_id}")
+
+        return results
+
+    async def cleanup(self) -> None:
+        """Clean up resources (close OpenAI client connections)."""
+        if hasattr(self, "_client") and self._client:
+            await self._client.close()

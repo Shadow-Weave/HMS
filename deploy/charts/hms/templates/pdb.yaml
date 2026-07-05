@@ -1,0 +1,56 @@
+{{- if and .Values.api.enabled .Values.api.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "hms.fullname" . }}-api
+  labels:
+    {{- include "hms.api.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.api.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.api.podDisruptionBudget.minAvailable }}
+  {{- end }}
+  {{- if .Values.api.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.api.podDisruptionBudget.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hms.api.selectorLabels" . | nindent 6 }}
+{{- end }}
+---
+{{- if and .Values.controlPlane.enabled .Values.controlPlane.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "hms.fullname" . }}-control-plane
+  labels:
+    {{- include "hms.controlPlane.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.controlPlane.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.controlPlane.podDisruptionBudget.minAvailable }}
+  {{- end }}
+  {{- if .Values.controlPlane.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.controlPlane.podDisruptionBudget.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hms.controlPlane.selectorLabels" . | nindent 6 }}
+{{- end }}
+---
+{{- if and .Values.worker.enabled .Values.worker.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "hms.fullname" . }}-worker
+  labels:
+    {{- include "hms.worker.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.worker.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.worker.podDisruptionBudget.minAvailable }}
+  {{- end }}
+  {{- if .Values.worker.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.worker.podDisruptionBudget.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hms.worker.selectorLabels" . | nindent 6 }}
+{{- end }}

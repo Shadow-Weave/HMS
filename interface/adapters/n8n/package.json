@@ -1,0 +1,61 @@
+{
+  "name": "@hms-memory/n8n-nodes-hms",
+  "version": "0.1.3",
+  "description": "n8n community nodes for HMS - persistent memory for any n8n workflow",
+  "license": "MIT",
+  "homepage": "https://docs.hms.local",
+  "author": {
+    "name": "HMS",
+    "email": "support@hms.local"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hms-memory/hms.git",
+    "directory": "interface/adapters/n8n"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && npm run copy-icons",
+    "copy-icons": "mkdir -p dist/nodes/HMS && cp nodes/HMS/hms.* dist/nodes/HMS/",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint nodes credentials --ext .ts",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/HMSApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/HMS/HMS.node.js"
+    ]
+  },
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "hms",
+    "memory",
+    "ai",
+    "agents",
+    "llm",
+    "long-term-memory"
+  ],
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "n8n-workflow": "^1.82.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "engines": {
+    "node": ">=20.15"
+  }
+}

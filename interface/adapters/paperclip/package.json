@@ -1,0 +1,50 @@
+{
+  "name": "@hms-memory/hms-paperclip",
+  "version": "0.2.1",
+  "description": "Persistent long-term memory for Paperclip agents via HMS — recall before every heartbeat, retain after every run",
+  "type": "module",
+  "paperclipPlugin": {
+    "manifest": "./dist/manifest.js",
+    "worker": "./dist/worker.js"
+  },
+  "keywords": [
+    "paperclip",
+    "hms",
+    "memory",
+    "agents",
+    "ai",
+    "plugin"
+  ],
+  "author": "HMS <support@hms.local>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hms-memory/hms.git",
+    "directory": "interface/adapters/paperclip"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run tests",
+    "test:watch": "vitest tests",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "@paperclipai/plugin-sdk": "^2026.403.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hms-api"
+version = "0.6.1"
+description = "HMS: Agent Memory That Works Like Human Memory"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "hms-api-slim[all]==0.6.1",
+]
+
+[tool.uv.sources]
+hms-api-slim = { workspace = true }
+
+[project.scripts]
+hms-api = "hms_api.main:main"
+hms-worker = "hms_api.worker.main:main"
+hms-local-mcp = "hms_api.mcp_local:main"
+hms-admin = "hms_api.admin.cli:main"
+
+[tool.setuptools]
+packages = []
