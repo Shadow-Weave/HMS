@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HMS Store Errands Memory Demo</title>
+  <style>
+    :root {
+      --ink: #18212f;
+      --muted: #657083;
+      --line: #d8dde7;
+      --paper: #f7f8fb;
+      --panel: #ffffff;
+      --green: #1b7f5a;
+      --blue: #275ea8;
+      --amber: #a76514;
+      --red: #b13b3b;
+      --shadow: 0 12px 30px rgba(24, 33, 47, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(39, 94, 168, 0.08), transparent 34%),
+        linear-gradient(315deg, rgba(27, 127, 90, 0.08), transparent 30%),
+        var(--paper);
+      color: var(--ink);
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+    }
+
+    main {
+      width: min(1440px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 28px 0 36px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 34px;
+      line-height: 1.05;
+      margin: 0 0 12px;
+      letter-spacing: 0;
+    }
+
+    .question {
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--muted);
+      max-width: 820px;
+    }
+
+    .answer {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      border-radius: 8px;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .answer strong {
+      display: block;
+      font-size: 30px;
+      color: var(--green);
+      margin-bottom: 4px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.68);
+      border-radius: 8px;
+      padding: 10px 12px;
+      min-height: 64px;
+      transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .step.active {
+      border-color: var(--blue);
+      box-shadow: 0 8px 20px rgba(39, 94, 168, 0.16);
+      transform: translateY(-2px);
+    }
+
+    .step b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    section {
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    section h2 {
+      margin: 0;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .stack {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--panel);
+      padding: 11px;
+      transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .card.active {
+      border-color: var(--blue);
+      box-shadow: 0 8px 18px rgba(39, 94, 168, 0.16);
+      background: #f9fbff;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 7px;
+      background: #fbfcff;
+    }
+
+    .ok {
+      color: var(--green);
+      border-color: rgba(27, 127, 90, 0.28);
+      background: rgba(27, 127, 90, 0.07);
+    }
+
+    .warn {
+      color: var(--amber);
+      border-color: rgba(167, 101, 20, 0.28);
+      background: rgba(167, 101, 20, 0.07);
+    }
+
+    .drop {
+      color: var(--red);
+      border-color: rgba(177, 59, 59, 0.28);
+      background: rgba(177, 59, 59, 0.07);
+    }
+
+    .text {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .ledger table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      background: #fafbfe;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .decision .card {
+      min-height: 126px;
+    }
+
+    @media (max-width: 1050px) {
+      header,
+      .grid,
+      .decision {
+        grid-template-columns: 1fr;
+      }
+
+      .steps {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>HMS Memory Pipeline Demo</h1>
+        <div class="question">
+          Question date: 2024-03-10. Query: "How many clothing items do I currently need to pick up or return from a store?"
+        </div>
+      </div>
+      <div class="answer">
+        <strong>Answer: 3</strong>
+        Blazer pickup + Zara boot return + replacement boot pickup. Duplicate reminders, canceled jeans, and a scarf suggestion are excluded.
+      </div>
+    </header>
+
+    <div class="steps" id="steps">
+      <div class="step active" data-step="0"><b>1. Raw sessions</b><span>Five conversations with updates, duplicates, and distractors.</span></div>
+      <div class="step" data-step="1"><b>2. Retain</b><span>Turn sessions into action/state memory units.</span></div>
+      <div class="step" data-step="2"><b>3. Recall</b><span>Retrieve candidate facts for the question.</span></div>
+      <div class="step" data-step="3"><b>4. Evidence ledger</b><span>Deduplicate and apply state controls.</span></div>
+      <div class="step" data-step="4"><b>5. Answer packet</b><span>Provide answer-ready context for the model.</span></div>
+    </div>
+
+    <div class="grid">
+      <section>
+        <h2>Raw Sessions</h2>
+        <div class="stack">
+          <div class="card flow-0">
+            <div class="meta"><span class="pill">s1</span><span class="pill">2024-03-01</span><span class="pill ok">pending pickup</span></div>
+            <div class="text">User needs to pick up a navy blue blazer from dry cleaning.</div>
+          </div>
+          <div class="card flow-0">
+            <div class="meta"><span class="pill">s2</span><span class="pill">2024-03-04</span><span class="pill ok">return + pickup</span></div>
+            <div class="text">Zara boots are too small. User must return them and pick up the larger replacement pair.</div>
+          </div>
+          <div class="card flow-0">
+            <div class="meta"><span class="pill">s3</span><span class="pill">2024-03-05</span><span class="pill warn">duplicate</span></div>
+            <div class="text">Reminder repeats the same Zara return and replacement pickup.</div>
+          </div>
+          <div class="card flow-0">
+            <div class="meta"><span class="pill">s4</span><span class="pill">2024-03-07</span><span class="pill drop">canceled</span></div>
+            <div class="text">Black jeans pickup from Uniqlo is canceled and should not count.</div>
+          </div>
+          <div class="card flow-0">
+            <div class="meta"><span class="pill">s5</span><span class="pill">2024-03-08</span><span class="pill drop">recommendation only</span></div>
+            <div class="text">A scarf is suggested, but the user is not buying or returning it now.</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Retained Memory Units</h2>
+        <div class="stack">
+          <div class="card flow-1">
+            <div class="meta"><span class="pill ok">count</span><span class="pill">source=s1</span></div>
+            <div class="text">pickup(item=navy blue blazer, status=pending)</div>
+          </div>
+          <div class="card flow-1">
+            <div class="meta"><span class="pill ok">count</span><span class="pill">source=s2</span></div>
+            <div class="text">return(item=too-small Zara boots, status=pending)</div>
+          </div>
+          <div class="card flow-1">
+            <div class="meta"><span class="pill ok">count</span><span class="pill">source=s2</span></div>
+            <div class="text">pickup(item=larger replacement boots, status=pending)</div>
+          </div>
+          <div class="card flow-1">
+            <div class="meta"><span class="pill warn">merge</span><span class="pill">source=s3</span></div>
+            <div class="text">duplicate_of=Zara return + replacement pickup</div>
+          </div>
+          <div class="card flow-1">
+            <div class="meta"><span class="pill drop">exclude</span><span class="pill">source=s4/s5</span></div>
+            <div class="text">canceled jeans and scarf suggestion are not active store actions.</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Gateway Call</h2>
+        <div class="stack">
+          <div class="card flow-2">
+            <div class="mono">POST /v1/vendor/pipeline
+Authorization: Bearer hms_live_xxx
+
+{
+  "bank_id": "vendor-demo-store-errands",
+  "sessions": [...],
+  "question": "How many clothing items...",
+  "create_bank": true,
+  "reset_bank": true,
+  "organize": true
+}</div>
+          </div>
+          <div class="card flow-2">
+            <div class="meta"><span class="pill">recall candidates</span><span class="pill ok">5 facts</span></div>
+            <div class="text">Recall surfaces pending actions, duplicate Zara reminder, canceled Uniqlo jeans, and the scarf distractor.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="ledger" style="margin-top:14px;">
+      <h2>Structured Evidence Ledger</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Row</th>
+            <th>Evidence</th>
+            <th>Decision</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="flow-3">
+            <td>1</td>
+            <td>s1: pick up navy blue blazer</td>
+            <td><span class="pill ok">count</span></td>
+            <td>Pending pickup, unique event.</td>
+          </tr>
+          <tr class="flow-3">
+            <td>2</td>
+            <td>s2: return too-small Zara boots</td>
+            <td><span class="pill ok">count</span></td>
+            <td>Pending return, separate action.</td>
+          </tr>
+          <tr class="flow-3">
+            <td>3</td>
+            <td>s2: pick up larger replacement boots</td>
+            <td><span class="pill ok">count</span></td>
+            <td>Pending pickup, separate from return.</td>
+          </tr>
+          <tr class="flow-3">
+            <td>4</td>
+            <td>s3: duplicate Zara reminder</td>
+            <td><span class="pill warn">dedup</span></td>
+            <td>Same underlying Zara return/pickup already counted.</td>
+          </tr>
+          <tr class="flow-3">
+            <td>5</td>
+            <td>s4: Uniqlo black jeans pickup canceled</td>
+            <td><span class="pill drop">exclude</span></td>
+            <td>Current state says canceled.</td>
+          </tr>
+          <tr class="flow-3">
+            <td>6</td>
+            <td>s5: scarf recommendation</td>
+            <td><span class="pill drop">exclude</span></td>
+            <td>Recommendation only, not a committed pickup/return.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="decision">
+      <div class="card flow-4">
+        <div class="meta"><span class="pill ok">control</span></div>
+        <div class="text"><b>Count/total deduplication</b><br />Enumerate unique real store actions before counting.</div>
+      </div>
+      <div class="card flow-4">
+        <div class="meta"><span class="pill ok">control</span></div>
+        <div class="text"><b>Current-state arbitration</b><br />Exclude canceled jeans because the latest explicit state overrides the old pickup.</div>
+      </div>
+      <div class="card flow-4">
+        <div class="meta"><span class="pill ok">answer packet</span></div>
+        <div class="text"><b>Final direct value: 3</b><br />1 blazer pickup, 1 boot return, 1 replacement boot pickup.</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const steps = Array.from(document.querySelectorAll('.step'));
+    const groups = [0, 1, 2, 3, 4].map(i => Array.from(document.querySelectorAll('.flow-' + i)));
+    let current = 0;
+
+    function showStep(index) {
+      steps.forEach((step, i) => step.classList.toggle('active', i === index));
+      groups.forEach((items, i) => {
+        items.forEach(item => item.classList.toggle('active', i === index));
+      });
+    }
+
+    showStep(0);
+    setInterval(() => {
+      current = (current + 1) % steps.length;
+      showStep(current);
+    }, 1800);
+  </script>
+</body>
+</html>

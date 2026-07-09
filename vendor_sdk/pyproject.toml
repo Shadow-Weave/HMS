@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hms-vendor-sdk"
+version = "0.1.0"
+description = "Vendor-facing SDK for HMS retain and recall testing"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn>=0.27",
+]
+
+[project.scripts]
+hms-vendor = "hms_vendor_sdk.cli:main"
+hms-vendor-gateway = "hms_vendor_sdk.gateway:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,88 @@
+{
+  "case_id": "store_errands_multi_session_001",
+  "question": "How many clothing items do I currently need to pick up or return from a store?",
+  "question_date": "2024-03-10T00:00:00Z",
+  "expected_answer": "3",
+  "expected_reasoning": "Count the pending blazer pickup, the Zara boot return, and the larger replacement boot pickup. Do not count the duplicate reminder, the canceled jeans pickup, or the scarf recommendation.",
+  "bank_profile": {
+    "retain_mission": "Extract persistent user tasks, store errands, item states, cancellations, duplicate reminders, and shopping action updates.",
+    "reflect_mission": "Answer with the current user state grounded in retrieved memory evidence. For counts, deduplicate repeated mentions and exclude canceled or merely suggested items."
+  },
+  "sessions": [
+    {
+      "session_id": "store-errands-s1",
+      "timestamp": "2024-03-01T10:00:00Z",
+      "context": "dry cleaning pickup",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I need to pick up my navy blue blazer from dry cleaning this week."
+        },
+        {
+          "role": "assistant",
+          "content": "I will remember the blazer pickup."
+        }
+      ]
+    },
+    {
+      "session_id": "store-errands-s2",
+      "timestamp": "2024-03-04T15:30:00Z",
+      "context": "Zara boot exchange",
+      "messages": [
+        {
+          "role": "user",
+          "content": "The Zara boots I bought are too small. I need to return them and pick up the larger replacement pair when it arrives."
+        },
+        {
+          "role": "assistant",
+          "content": "I will remember the return and the replacement pickup as separate actions."
+        }
+      ]
+    },
+    {
+      "session_id": "store-errands-s3",
+      "timestamp": "2024-03-05T19:10:00Z",
+      "context": "duplicate reminder",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Reminder: the Zara boot situation is still open. I still have to return the small boots and collect the replacement."
+        },
+        {
+          "role": "assistant",
+          "content": "That sounds like the same Zara return and replacement pickup."
+        }
+      ]
+    },
+    {
+      "session_id": "store-errands-s4",
+      "timestamp": "2024-03-07T09:20:00Z",
+      "context": "cancelled pickup",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I no longer need to pick up the black jeans from Uniqlo because the order was canceled."
+        },
+        {
+          "role": "assistant",
+          "content": "I will treat the Uniqlo jeans pickup as canceled."
+        }
+      ]
+    },
+    {
+      "session_id": "store-errands-s5",
+      "timestamp": "2024-03-08T12:45:00Z",
+      "context": "recommendation only",
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "You might also like a wool scarf from COS if you want another winter accessory."
+        },
+        {
+          "role": "user",
+          "content": "Maybe later, but I am not buying or returning a scarf right now."
+        }
+      ]
+    }
+  ]
+}
