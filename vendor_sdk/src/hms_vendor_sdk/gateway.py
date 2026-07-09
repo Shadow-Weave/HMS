@@ -29,6 +29,8 @@ SECRET_PATTERNS = [
     re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}"),
 ]
 
+BANK_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}$")
+
 
 class GatewayConfig(BaseModel):
     internal_base_url: str = Field(default="http://127.0.0.1:18080")
@@ -37,6 +39,12 @@ class GatewayConfig(BaseModel):
     rate_limit_per_minute: int = 60
     daily_quota: int = 1000
     audit_log_path: str = ".aaaLOG/vendor_gateway_audit.jsonl"
+    scope_bank_ids: bool = True
+    check_internal_health: bool = True
+    max_sessions_per_request: int = 100
+    max_messages_per_session: int = 100
+    max_message_chars: int = 20000
+    max_question_chars: int = 4000
 
     @classmethod
     def from_env(cls) -> "GatewayConfig":
@@ -49,6 +57,12 @@ class GatewayConfig(BaseModel):
             rate_limit_per_minute=int(os.getenv("HMS_GATEWAY_RATE_LIMIT_PER_MINUTE", "60")),
             daily_quota=int(os.getenv("HMS_GATEWAY_DAILY_QUOTA", "1000")),
             audit_log_path=os.getenv("HMS_GATEWAY_AUDIT_LOG", ".aaaLOG/vendor_gateway_audit.jsonl"),
+            scope_bank_ids=_env_bool("HMS_GATEWAY_SCOPE_BANK_IDS", True),
+            check_internal_health=_env_bool("HMS_GATEWAY_CHECK_INTERNAL_HEALTH", True),
+            max_sessions_per_request=int(os.getenv("HMS_GATEWAY_MAX_SESSIONS_PER_REQUEST", "100")),
+            max_messages_per_session=int(os.getenv("HMS_GATEWAY_MAX_MESSAGES_PER_SESSION", "100")),
+            max_message_chars=int(os.getenv("HMS_GATEWAY_MAX_MESSAGE_CHARS", "20000")),
+            max_question_chars=int(os.getenv("HMS_GATEWAY_MAX_QUESTION_CHARS", "4000")),
         )
 
 
@@ -106,6 +120,50 @@ class GatewayState:
         self._check_quota(key_hash)
         return key_hash
 
+    def internal_bank_id(self, bank_id: str, key_hash: str) -> str:
+        self._validate_bank_id(bank_id)
+        if not self.config.scope_bank_ids:
+            return bank_id
+        return f"vendor_{key_hash}_{bank_id}"
+
+    def public_result(self, result: dict[str, Any], *, public_bank_id: str, internal_bank_id: str) -> dict[str, Any]:
+        return _replace_value(result, internal_bank_id, public_bank_id)
+
+    def validate_pipeline(self, payload: VendorPipelineRequest) -> None:
+        self._validate_bank_id(payload.bank_id)
+        self._validate_question(payload.question)
+        if len(payload.sessions) > self.config.max_sessions_per_request:
+            raise HTTPException(status_code=413, detail="Too many sessions in one request.")
+        for session in payload.sessions:
+            messages = session.get("messages", []) if isinstance(session, dict) else []
+            if len(messages) > self.config.max_messages_per_session:
+                raise HTTPException(status_code=413, detail="Too many messages in one session.")
+            for message in messages:
+                content = str((message or {}).get("content", ""))
+                if len(content) > self.config.max_message_chars:
+                    raise HTTPException(status_code=413, detail="Message content is too large.")
+
+    def validate_recall(self, payload: VendorRecallRequest) -> None:
+        self._validate_bank_id(payload.bank_id)
+        self._validate_question(payload.question)
+
+    def validate_organize(self, payload: VendorOrganizeRequest) -> None:
+        self._validate_question(payload.question)
+
+    def _validate_bank_id(self, bank_id: str) -> None:
+        if not BANK_ID_RE.fullmatch(bank_id or ""):
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "bank_id must start with a letter or digit and contain only letters, digits, "
+                    "underscore, dash, dot, or colon; max length is 96."
+                ),
+            )
+
+    def _validate_question(self, question: str) -> None:
+        if not question or len(question) > self.config.max_question_chars:
+            raise HTTPException(status_code=400, detail="Question is required and must not exceed configured length.")
+
     def _check_rate_limit(self, key_hash: str) -> None:
         now = time.time()
         with self.lock:
@@ -133,7 +191,7 @@ class GatewayState:
 
 def create_app(config: GatewayConfig | None = None) -> FastAPI:
     state = GatewayState(config or GatewayConfig.from_env())
-    app = FastAPI(title="HMS Vendor Gateway", version="0.1.0")
+    app = FastAPI(title="HMS Vendor Gateway", version="0.1.1")
 
     def auth_dependency(authorization: str | None = Header(default=None)) -> str:
         return state.check_access(authorization)
@@ -144,18 +202,29 @@ def create_app(config: GatewayConfig | None = None) -> FastAPI:
 
     @app.get("/health")
     def health():
-        return {
+        content: dict[str, Any] = {
             "status": "ok",
             "gateway": "hms-vendor-gateway",
-            "internal_base_url": state.config.internal_base_url,
             "auth_configured": bool(state.config.external_api_keys),
         }
+        if state.config.check_internal_health:
+            try:
+                state.client.health()
+                content["internal_status"] = "ok"
+            except HMSVendorError:
+                content["status"] = "degraded"
+                content["internal_status"] = "unhealthy"
+                return JSONResponse(status_code=503, content=content)
+        return content
 
     @app.post("/v1/vendor/pipeline")
     def pipeline(payload: VendorPipelineRequest, key_hash: str = Depends(auth_dependency)):
+        state.validate_pipeline(payload)
         started = time.time()
+        public_bank_id = payload.bank_id
+        internal_bank_id = state.internal_bank_id(public_bank_id, key_hash)
         result = state.client.pipeline(
-            bank_id=payload.bank_id,
+            bank_id=internal_bank_id,
             sessions=payload.sessions,
             question=payload.question,
             question_date=payload.question_date,
@@ -167,11 +236,13 @@ def create_app(config: GatewayConfig | None = None) -> FastAPI:
             recall_budget=payload.recall_budget,
             organize=payload.organize,
         ).to_dict()
+        result = state.public_result(result, public_bank_id=public_bank_id, internal_bank_id=internal_bank_id)
         state.audit(
             {
                 "action": "pipeline",
                 "key_hash": key_hash,
-                "bank_id": payload.bank_id,
+                "bank_id": public_bank_id,
+                "internal_bank_id": internal_bank_id,
                 "sessions": len(payload.sessions),
                 "question": payload.question,
                 "duration_ms": int((time.time() - started) * 1000),
@@ -183,19 +254,24 @@ def create_app(config: GatewayConfig | None = None) -> FastAPI:
 
     @app.post("/v1/vendor/recall")
     def recall(payload: VendorRecallRequest, key_hash: str = Depends(auth_dependency)):
+        state.validate_recall(payload)
         started = time.time()
+        public_bank_id = payload.bank_id
+        internal_bank_id = state.internal_bank_id(public_bank_id, key_hash)
         result = state.client.recall(
-            bank_id=payload.bank_id,
+            bank_id=internal_bank_id,
             question=payload.question,
             question_date=payload.question_date,
             budget=payload.recall_budget,
             max_tokens=payload.max_tokens,
         ).to_dict()
+        result = state.public_result(result, public_bank_id=public_bank_id, internal_bank_id=internal_bank_id)
         state.audit(
             {
                 "action": "recall",
                 "key_hash": key_hash,
-                "bank_id": payload.bank_id,
+                "bank_id": public_bank_id,
+                "internal_bank_id": internal_bank_id,
                 "question": payload.question,
                 "duration_ms": int((time.time() - started) * 1000),
                 "recall_results": len(result.get("results", [])),
@@ -205,6 +281,7 @@ def create_app(config: GatewayConfig | None = None) -> FastAPI:
 
     @app.post("/v1/vendor/organize")
     def organize(payload: VendorOrganizeRequest, key_hash: str = Depends(auth_dependency)):
+        state.validate_organize(payload)
         rows = [RecallItem.from_dict(row) for row in payload.recall_response.get("results", [])]
         recall_bundle = RecallBundle(
             bank_id=payload.recall_response.get("bank_id", "external"),
@@ -231,7 +308,7 @@ def create_app(config: GatewayConfig | None = None) -> FastAPI:
                 "ledger_rows": len(packet.get("ledger_rows", [])),
             }
         )
-        return packet
+        return {"evidence_packet": packet}
 
     return app
 
@@ -257,6 +334,23 @@ def _extract_bearer(authorization: str | None) -> str:
 
 def _hash_key(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()[:16]
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.lower() in {"1", "true", "yes", "on"}
+
+
+def _replace_value(value: Any, old: str, new: str) -> Any:
+    if isinstance(value, dict):
+        return {key: _replace_value(item, old, new) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_replace_value(item, old, new) for item in value]
+    if value == old:
+        return new
+    return value
 
 
 def _redact(value: Any) -> Any:

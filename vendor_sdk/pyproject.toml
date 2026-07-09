@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "hms-vendor-sdk"
-version = "0.1.0"
+version = "0.1.1"
 description = "Vendor-facing SDK for HMS retain and recall testing"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,8 +17,18 @@ dependencies = [
 hms-vendor = "hms_vendor_sdk.cli:main"
 hms-vendor-gateway = "hms_vendor_sdk.gateway:main"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
+[tool.hatch.build.targets.wheel]
+packages = ["src/hms_vendor_sdk"]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.hatch.build.targets.sdist]
+include = [
+  "src/hms_vendor_sdk/**/*",
+  "tests/**/*",
+  "examples/**/*",
+  "scripts/**/*",
+  "README.md",
+  "DESIGN.md",
+  "GATEWAY.md",
+  "VENDOR_TESTING.md",
+  "pyproject.toml",
+]

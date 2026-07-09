@@ -50,14 +50,14 @@ export HMS_BANK_ID="vendor-demo"     # optional default for CLI demos
 Install in editable mode:
 
 ```bash
-cd /root/autodl-tmp/hanyh/hms_shadow/vendor_sdk
+cd /root/autodl-tmp/hanyh/hmsshadow/vendor_sdk
 python3 -m pip install -e .
 ```
 
 You can also run without installing:
 
 ```bash
-export PYTHONPATH=/root/autodl-tmp/hanyh/hms_shadow/vendor_sdk/src
+export PYTHONPATH=/root/autodl-tmp/hanyh/hmsshadow/vendor_sdk/src
 ```
 
 ## One-Command Demo
@@ -66,7 +66,7 @@ Run the built-in shopping-action case:
 
 ```bash
 hms-vendor run-case \
-  --case /root/autodl-tmp/hanyh/hms_shadow/vendor_sdk/examples/cases/shopping_actions.json \
+  --case /root/autodl-tmp/hanyh/hmsshadow/vendor_sdk/examples/cases/shopping_actions.json \
   --bank-id vendor-demo-shopping \
   --create-bank \
   --reset-bank
@@ -100,9 +100,9 @@ Open the static visual replay:
 If the package is not installed:
 
 ```bash
-PYTHONPATH=/root/autodl-tmp/hanyh/hms_shadow/vendor_sdk/src \
+PYTHONPATH=/root/autodl-tmp/hanyh/hmsshadow/vendor_sdk/src \
 python3 -m hms_vendor_sdk.cli run-case \
-  --case /root/autodl-tmp/hanyh/hms_shadow/vendor_sdk/examples/cases/shopping_actions.json \
+  --case /root/autodl-tmp/hanyh/hmsshadow/vendor_sdk/examples/cases/shopping_actions.json \
   --bank-id vendor-demo-shopping \
   --create-bank \
   --reset-bank
@@ -117,6 +117,7 @@ export HMS_INTERNAL_BASE_URL="http://127.0.0.1:18080"
 export HMS_INTERNAL_API_KEY="hms_internal_service_key"
 export HMS_GATEWAY_API_KEYS="hms_live_vendor_key"
 export HMS_GATEWAY_PORT=18081
+export HMS_GATEWAY_SCOPE_BANK_IDS=true
 
 bash /root/autodl-tmp/hanyh/hmsshadow/vendor_sdk/scripts/start_gateway.sh
 ```
@@ -128,6 +129,8 @@ http://SERVER_IP:18081
 ```
 
 The vendor-facing `api_key` is one of the keys in `HMS_GATEWAY_API_KEYS`.
+The gateway scopes each public `bank_id` by API key before calling HMS, so
+different vendors do not share an internal bank when they use the same bank name.
 
 ## Python Usage
 
@@ -193,5 +196,6 @@ hms-vendor recall --bank-id vendor-demo --question "What do I need to pick up?"
 - result fabrication or score reporting
 - downstream answer generation
 
-If you need the next layer after recall, extend this package with an
-`organize()` stage and keep the input/output contracts unchanged.
+The answer-generation layer is intentionally left to the vendor. Use
+`organize()` or `/v1/vendor/pipeline` to supply a structured evidence packet to
+that downstream answer step.

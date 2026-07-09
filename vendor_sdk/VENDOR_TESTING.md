@@ -16,7 +16,7 @@ export HMS_BANK_ID="vendor-demo"
 Install the SDK:
 
 ```bash
-cd /root/autodl-tmp/hanyh/hms_shadow/vendor_sdk
+cd /root/autodl-tmp/hanyh/hmsshadow/vendor_sdk
 python3 -m pip install -e .
 ```
 

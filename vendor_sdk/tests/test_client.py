@@ -54,6 +54,21 @@ class HMSVendorClientTest(unittest.TestCase):
         self.assertIn("[ASSISTANT]\nRecorded.", captured["body"]["items"][0]["content"])
         self.assertEqual(captured["body"]["items"][0]["metadata"]["session_id"], "s1")
 
+    def test_bank_id_path_segment_is_encoded(self):
+        captured = {}
+
+        def fake_urlopen(req, timeout):
+            captured["url"] = req.full_url
+            return FakeResponse({"success": True, "items_count": 1, "async": False})
+
+        with patch("hms_vendor_sdk.client.request.urlopen", side_effect=fake_urlopen):
+            self.client.retain_sessions(
+                "vendor/demo",
+                [{"session_id": "s1", "messages": [{"role": "user", "content": "A"}]}],
+            )
+
+        self.assertTrue(captured["url"].endswith("/v1/default/banks/vendor%2Fdemo/memories"))
+
     def test_recall_normalizes_results(self):
         def fake_urlopen(req, timeout):
             payload = {

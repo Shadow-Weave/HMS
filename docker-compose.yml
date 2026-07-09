@@ -1,0 +1,124 @@
+name: hms-vendor-deploy
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hms_dev_password_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-hms}
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - hms-internal
+
+  hms-api:
+    build:
+      context: .
+      dockerfile: docker/hms-api.Dockerfile
+    restart: unless-stopped
+    environment:
+      HMS_API_HOST: 0.0.0.0
+      HMS_API_PORT: "18080"
+      HMS_API_LOG_LEVEL: ${HMS_API_LOG_LEVEL:-info}
+      HMS_API_LOG_FORMAT: ${HMS_API_LOG_FORMAT:-json}
+      HMS_API_DATABASE_BACKEND: postgresql
+      HMS_API_DATABASE_URL: ${HMS_API_DATABASE_URL:-postgresql://hms:hms_dev_password_change_me@postgres:5432/hms}
+      HMS_API_DATABASE_SCHEMA: ${HMS_API_DATABASE_SCHEMA:-public}
+      HMS_API_VECTOR_EXTENSION: ${HMS_API_VECTOR_EXTENSION:-pgvector}
+      HMS_API_TENANT_EXTENSION: hms_api.extensions.builtin.tenant:ApiKeyTenantExtension
+      HMS_API_TENANT_API_KEY: ${HMS_API_TENANT_API_KEY:-hms_internal_change_me}
+      HMS_API_WORKER_ENABLED: ${HMS_API_WORKER_ENABLED:-true}
+      HMS_API_RUN_MIGRATIONS_ON_STARTUP: ${HMS_API_RUN_MIGRATIONS_ON_STARTUP:-true}
+      HMS_API_LLM_PROVIDER: ${HMS_API_LLM_PROVIDER:-openai}
+      HMS_API_LLM_MODEL: ${HMS_API_LLM_MODEL:-gpt-4o}
+      HMS_API_LLM_API_KEY: ${HMS_API_LLM_API_KEY:-openai_key_change_me}
+      HMS_API_LLM_BASE_URL: ${HMS_API_LLM_BASE_URL:-}
+      HMS_API_RETAIN_LLM_PROVIDER: ${HMS_API_RETAIN_LLM_PROVIDER:-openai}
+      HMS_API_RETAIN_LLM_MODEL: ${HMS_API_RETAIN_LLM_MODEL:-gpt-4o}
+      HMS_API_RETAIN_LLM_API_KEY: ${HMS_API_RETAIN_LLM_API_KEY:-openai_key_change_me}
+      HMS_API_RETAIN_LLM_BASE_URL: ${HMS_API_RETAIN_LLM_BASE_URL:-}
+      HMS_API_EMBEDDINGS_PROVIDER: ${HMS_API_EMBEDDINGS_PROVIDER:-openai}
+      HMS_API_EMBEDDINGS_OPENAI_MODEL: ${HMS_API_EMBEDDINGS_OPENAI_MODEL:-text-embedding-3-small}
+      HMS_API_EMBEDDINGS_OPENAI_API_KEY: ${HMS_API_EMBEDDINGS_OPENAI_API_KEY:-openai_key_change_me}
+      HMS_API_EMBEDDINGS_OPENAI_BASE_URL: ${HMS_API_EMBEDDINGS_OPENAI_BASE_URL:-}
+      HMS_API_RERANKER_PROVIDER: ${HMS_API_RERANKER_PROVIDER:-rrf}
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:18080/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 90s
+    networks:
+      - hms-internal
+
+  hms-vendor-gateway:
+    build:
+      context: .
+      dockerfile: docker/hms-vendor-gateway.Dockerfile
+    restart: unless-stopped
+    environment:
+      HMS_GATEWAY_HOST: 0.0.0.0
+      HMS_GATEWAY_PORT: "18081"
+      HMS_INTERNAL_BASE_URL: http://hms-api:18080
+      HMS_INTERNAL_API_KEY: ${HMS_INTERNAL_API_KEY:-hms_internal_change_me}
+      HMS_GATEWAY_API_KEYS: ${HMS_GATEWAY_API_KEYS:-hms_live_vendor_a_change_me}
+      HMS_GATEWAY_RATE_LIMIT_PER_MINUTE: ${HMS_GATEWAY_RATE_LIMIT_PER_MINUTE:-60}
+      HMS_GATEWAY_DAILY_QUOTA: ${HMS_GATEWAY_DAILY_QUOTA:-1000}
+      HMS_GATEWAY_AUDIT_LOG: /app/logs/vendor_gateway_audit.jsonl
+      HMS_GATEWAY_SCOPE_BANK_IDS: ${HMS_GATEWAY_SCOPE_BANK_IDS:-true}
+      HMS_GATEWAY_CHECK_INTERNAL_HEALTH: ${HMS_GATEWAY_CHECK_INTERNAL_HEALTH:-true}
+      HMS_GATEWAY_INTERNAL_TIMEOUT: ${HMS_GATEWAY_INTERNAL_TIMEOUT:-600}
+      HMS_GATEWAY_MAX_SESSIONS_PER_REQUEST: ${HMS_GATEWAY_MAX_SESSIONS_PER_REQUEST:-100}
+      HMS_GATEWAY_MAX_MESSAGES_PER_SESSION: ${HMS_GATEWAY_MAX_MESSAGES_PER_SESSION:-100}
+      HMS_GATEWAY_MAX_MESSAGE_CHARS: ${HMS_GATEWAY_MAX_MESSAGE_CHARS:-20000}
+      HMS_GATEWAY_MAX_QUESTION_CHARS: ${HMS_GATEWAY_MAX_QUESTION_CHARS:-4000}
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      hms-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:18081/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+    networks:
+      - hms-internal
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./logs/nginx:/var/log/nginx
+    ports:
+      - "${PUBLIC_HTTP_PORT:-8080}:80"
+    depends_on:
+      hms-vendor-gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - hms-internal
+
+networks:
+  hms-internal:
+    driver: bridge

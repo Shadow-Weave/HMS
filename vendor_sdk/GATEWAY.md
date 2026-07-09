@@ -19,6 +19,8 @@ export HMS_GATEWAY_PORT="18081"
 export HMS_GATEWAY_RATE_LIMIT_PER_MINUTE="60"
 export HMS_GATEWAY_DAILY_QUOTA="1000"
 export HMS_GATEWAY_AUDIT_LOG="/root/autodl-tmp/hanyh/hmsshadow/.aaaLOG/vendor_gateway_audit.jsonl"
+export HMS_GATEWAY_SCOPE_BANK_IDS="true"
+export HMS_GATEWAY_CHECK_INTERNAL_HEALTH="true"
 ```
 
 ## Run
@@ -43,6 +45,9 @@ Use HTTPS and a reverse proxy before sharing it outside a private network.
 - `POST /v1/vendor/pipeline`
 - `POST /v1/vendor/recall`
 - `POST /v1/vendor/organize`
+
+`/v1/vendor/organize` returns an object with `evidence_packet`. It does not call
+the internal HMS API and is safe for smoke tests.
 
 ## Generate Keys
 
@@ -70,11 +75,12 @@ Use the vendor-facing key in the gateway as `HMS_GATEWAY_API_KEYS`.
 ## Vendor Call Example
 
 ```bash
-curl -sS \
-  -H "Authorization: Bearer hms_live_vendor_key" \
-  -H "Content-Type: application/json" \
-  http://SERVER_IP:18081/v1/vendor/pipeline \
-  -d @examples/cases/shopping_actions.json
+HMS_BASE_URL=http://SERVER_IP:18081 \
+HMS_API_KEY=hms_live_vendor_key \
+python3 examples/call_gateway_pipeline.py \
+  --case examples/cases/store_errands_multi_session.json \
+  --bank-id vendor-demo-store-errands \
+  --output /tmp/hms_vendor_result.json
 ```
 
 ## Security Layer
@@ -82,6 +88,7 @@ curl -sS \
 The gateway implements:
 
 - Bearer API-key authentication
+- per-key bank ID scoping
 - in-memory per-key rate limiting
 - in-memory per-key daily quota
 - JSONL audit logging

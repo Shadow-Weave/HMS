@@ -6,6 +6,7 @@ import time
 from dataclasses import asdict, is_dataclass
 from typing import Any
 from urllib import error, request
+from urllib.parse import quote
 
 from .models import (
     EvidencePacket,
@@ -70,11 +71,11 @@ class HMSVendorClient:
             "background": background,
         }
         payload = {key: value for key, value in payload.items() if value is not None}
-        return self._request_json("PUT", f"/v1/default/banks/{bank_id}", payload)
+        return self._request_json("PUT", f"/v1/default/banks/{self._path_segment(bank_id)}", payload)
 
     def delete_bank(self, bank_id: str, *, missing_ok: bool = False) -> dict[str, Any]:
         try:
-            return self._request_json("DELETE", f"/v1/default/banks/{bank_id}")
+            return self._request_json("DELETE", f"/v1/default/banks/{self._path_segment(bank_id)}")
         except HMSVendorError as exc:
             if missing_ok and "failed: 404" in str(exc):
                 return {"success": True, "message": f"Bank '{bank_id}' did not exist."}
@@ -134,7 +135,7 @@ class HMSVendorClient:
         if document_tags:
             payload["document_tags"] = document_tags
 
-        response = self._request_json("POST", f"/v1/default/banks/{bank_id}/memories", payload)
+        response = self._request_json("POST", f"/v1/default/banks/{self._path_segment(bank_id)}/memories", payload)
         return RetainSummary(
             bank_id=bank_id,
             items_count=int(response.get("items_count", len(cleaned_items))),
@@ -203,7 +204,11 @@ class HMSVendorClient:
         }
         payload = {key: value for key, value in payload.items() if value is not None}
 
-        response = self._request_json("POST", f"/v1/default/banks/{bank_id}/memories/recall", payload)
+        response = self._request_json(
+            "POST",
+            f"/v1/default/banks/{self._path_segment(bank_id)}/memories/recall",
+            payload,
+        )
         results = [RecallItem.from_dict(row) for row in response.get("results", [])]
         return RecallBundle(
             bank_id=bank_id,
@@ -278,7 +283,10 @@ class HMSVendorClient:
 
     def get_operation(self, bank_id: str, operation_id: str, *, include_payload: bool = False) -> OperationStatus:
         query = "?include_payload=true" if include_payload else ""
-        response = self._request_json("GET", f"/v1/default/banks/{bank_id}/operations/{operation_id}{query}")
+        response = self._request_json(
+            "GET",
+            f"/v1/default/banks/{self._path_segment(bank_id)}/operations/{self._path_segment(operation_id)}{query}",
+        )
         return OperationStatus(
             operation_id=response["operation_id"],
             status=response["status"],
@@ -424,6 +432,12 @@ class HMSVendorClient:
             raise HMSVendorError(f"{method} {url} failed: {exc.code} {detail}") from exc
         except error.URLError as exc:
             raise HMSVendorError(f"{method} {url} failed: {exc.reason}") from exc
+
+    @staticmethod
+    def _path_segment(value: str) -> str:
+        if not value:
+            raise HMSVendorError("Path segment cannot be empty.")
+        return quote(str(value), safe="")
 
     def _normalize_payload(self, payload: Any) -> Any:
         if is_dataclass(payload):
