@@ -1002,3 +1002,105 @@ class TestStreamingSupport:
             call_kwargs = mock_hms_client.retain.call_args[1]
             assert "USER: Hello" in call_kwargs["content"]
             assert "ASSISTANT: Hello world!" in call_kwargs["content"]
+
+
+class TestOpenAIResponsesWrapper:
+    """Tests for automatic memory with the OpenAI Responses API."""
+
+    def test_responses_create_injects_recall_and_retains_exchange(self):
+        from types import SimpleNamespace
+        from unittest.mock import MagicMock, patch
+
+        from hms_litellm.wrappers import wrap_openai
+
+        mock_client = MagicMock()
+        mock_client.responses.create.return_value = SimpleNamespace(output_text="Alice prefers dark mode.")
+        wrapped = wrap_openai(
+            mock_client,
+            hms_api_url="http://localhost:18080",
+            bank_id="alice",
+            store_conversations=True,
+            inject_memories=True,
+        )
+
+        memory = SimpleNamespace(
+            text="Alice prefers dark mode.",
+            type="world",
+            occurred_start=None,
+            occurred_end=None,
+            mentioned_at=None,
+            context=None,
+            metadata=None,
+        )
+        mock_hms_client = MagicMock()
+        mock_hms_client.recall.return_value = [memory]
+
+        with patch.object(wrapped, "_get_hms_client", return_value=mock_hms_client):
+            response = wrapped.responses.create(
+                model="gpt-4o-mini",
+                instructions="Answer concisely.",
+                input=[{"role": "user", "content": [{"type": "input_text", "text": "What does Alice prefer?"}]}],
+            )
+
+        assert response.output_text == "Alice prefers dark mode."
+        call_kwargs = mock_client.responses.create.call_args.kwargs
+        assert call_kwargs["instructions"].startswith("Answer concisely.")
+        assert "# Relevant Memories" in call_kwargs["instructions"]
+        assert "Alice prefers dark mode." in call_kwargs["instructions"]
+        mock_hms_client.retain.assert_called_once()
+        retained = mock_hms_client.retain.call_args.kwargs["content"]
+        assert "USER: What does Alice prefer?" in retained
+        assert "ASSISTANT: Alice prefers dark mode." in retained
+
+    def test_responses_create_strips_hms_kwargs(self):
+        from types import SimpleNamespace
+        from unittest.mock import MagicMock
+
+        from hms_litellm.wrappers import wrap_openai
+
+        mock_client = MagicMock()
+        mock_client.responses.create.return_value = SimpleNamespace(output_text="Hello")
+        wrapped = wrap_openai(mock_client, bank_id="default")
+
+        wrapped.responses.create(
+            model="gpt-4o-mini",
+            input="Hello",
+            hms_bank_id="override",
+            hms_inject_memories=False,
+            hms_store_conversations=False,
+        )
+
+        call_kwargs = mock_client.responses.create.call_args.kwargs
+        assert call_kwargs == {"model": "gpt-4o-mini", "input": "Hello"}
+
+    def test_responses_stream_retains_collected_output(self):
+        from types import SimpleNamespace
+        from unittest.mock import MagicMock, patch
+
+        from hms_litellm.wrappers import wrap_openai
+
+        events = iter(
+            [
+                SimpleNamespace(type="response.output_text.delta", delta="Hello"),
+                SimpleNamespace(type="response.output_text.delta", delta=" Alice"),
+                SimpleNamespace(type="response.completed", delta=None),
+            ]
+        )
+        mock_client = MagicMock()
+        mock_client.responses.create.return_value = events
+        wrapped = wrap_openai(
+            mock_client,
+            hms_api_url="http://localhost:18080",
+            bank_id="alice",
+            inject_memories=False,
+            store_conversations=True,
+        )
+        mock_hms_client = MagicMock()
+
+        with patch.object(wrapped, "_get_hms_client", return_value=mock_hms_client):
+            result = wrapped.responses.create(model="gpt-4o-mini", input="Say hello", stream=True)
+            assert len(list(result)) == 3
+
+        retained = mock_hms_client.retain.call_args.kwargs["content"]
+        assert "USER: Say hello" in retained
+        assert "ASSISTANT: Hello Alice" in retained

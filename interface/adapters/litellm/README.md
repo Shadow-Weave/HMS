@@ -367,13 +367,24 @@ client = OpenAI()
 wrapped = wrap_openai(
     client,
     bank_id="my-agent",
-    hms_api_url="http://localhost:8888",
+    hms_api_url="http://127.0.0.1:18080",
 )
 
-response = wrapped.chat.completions.create(
-    model="gpt-4",
-    messages=[{"role": "user", "content": "What do you know about me?"}]
+response = wrapped.responses.create(
+    model="gpt-4o-mini",
+    input="What do you know about me?",
 )
+```
+
+Before the call, the wrapper recalls relevant HMS memories and appends them to
+the Responses API `instructions`. After the call, it retains the completed
+user/assistant exchange. The same behavior is available through
+`wrapped.chat.completions.create(...)`. Both APIs support streaming.
+
+Repository one-command demo:
+
+```bash
+bash scripts/run_memory_demo.sh
 ```
 
 ### Anthropic Wrapper

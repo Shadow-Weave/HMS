@@ -52,6 +52,8 @@ services:
       HMS_API_RERANKER_PROVIDER: ${HMS_API_RERANKER_PROVIDER:-rrf}
     volumes:
       - ./logs:/app/logs
+    ports:
+      - "127.0.0.1:${HMS_LOCAL_API_PORT:-18080}:18080"
     depends_on:
       postgres:
         condition: service_healthy

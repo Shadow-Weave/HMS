@@ -36,6 +36,7 @@ set_env "POSTGRES_PASSWORD" "${postgres_password}"
 set_env "HMS_API_DATABASE_URL" "postgresql://hms:${postgres_password}@postgres:5432/hms"
 set_env "HMS_API_TENANT_API_KEY" "${internal_key}"
 set_env "HMS_INTERNAL_API_KEY" "${internal_key}"
+set_env "HMS_MEMORY_API_KEY" "${internal_key}"
 set_env "HMS_GATEWAY_API_KEYS" "${vendor_key_a},${vendor_key_b}"
 
 cat <<EOF

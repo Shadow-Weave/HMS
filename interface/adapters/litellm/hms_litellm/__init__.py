@@ -83,6 +83,12 @@ Native client wrappers:
     >>> client = OpenAI()
     >>> wrapped = wrap_openai(client, bank_id="user-123")
     >>>
+    >>> response = wrapped.responses.create(
+    ...     model="gpt-4o-mini",
+    ...     input="What do you remember about me?",
+    ... )
+    >>>
+    >>> # Chat Completions is supported as well.
     >>> response = wrapped.chat.completions.create(
     ...     model="gpt-4",
     ...     messages=[{"role": "user", "content": "Hello!"}]

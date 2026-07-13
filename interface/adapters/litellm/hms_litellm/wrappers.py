@@ -743,6 +743,73 @@ class _StreamWrapper:
         return getattr(self._stream, name)
 
 
+class _ResponsesStreamWrapper:
+    """Collect OpenAI Responses API text deltas and retain the exchange."""
+
+    def __init__(
+        self,
+        stream: Any,
+        user_query: str,
+        model: str,
+        wrapper: "HMSOpenAI",
+        settings: HMSCallSettings,
+    ):
+        self._stream = stream
+        self._user_query = user_query
+        self._model = model
+        self._wrapper = wrapper
+        self._settings = settings
+        self._collected_content: List[str] = []
+        self._finished = False
+
+    def __iter__(self) -> Iterator[Any]:
+        return self
+
+    def __next__(self) -> Any:
+        try:
+            event = next(self._stream)
+            if getattr(event, "type", None) == "response.output_text.delta":
+                delta = getattr(event, "delta", None)
+                if delta:
+                    self._collected_content.append(delta)
+            return event
+        except StopIteration:
+            self._store_if_needed()
+            raise
+
+    def __enter__(self):
+        if hasattr(self._stream, "__enter__"):
+            self._stream.__enter__()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._store_if_needed()
+        if hasattr(self._stream, "__exit__"):
+            return self._stream.__exit__(exc_type, exc_val, exc_tb)
+
+    def _store_if_needed(self):
+        if self._finished or not self._settings.store_conversations:
+            return
+
+        self._finished = True
+        assistant_output = "".join(self._collected_content).strip()
+        if assistant_output:
+            self._wrapper._store_conversation(
+                self._user_query,
+                assistant_output,
+                self._model,
+                self._settings,
+            )
+
+    def close(self):
+        self._store_if_needed()
+        if hasattr(self._stream, "close"):
+            self._stream.close()
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._stream, name)
+
+
 class _AnthropicStreamWrapper:
     """Wrapper for Anthropic stream that collects content and stores conversation when done."""
 
@@ -874,8 +941,9 @@ class HMSOpenAI:
             settings_kwargs = {k: v for k, v in setting_kwargs.items() if k in valid_fields}
             self._default_settings = HMSCallSettings(**settings_kwargs)
 
-        # Create wrapped chat.completions interface
+        # Create wrapped OpenAI interfaces.
         self.chat = _WrappedChat(self)
+        self.responses = _WrappedResponses(self)
 
     def _get_hms_client(self):
         """Get or create the HMS client."""
@@ -1220,6 +1288,103 @@ class _WrappedCompletions:
                     if assistant_output:
                         self._wrapper._store_conversation(user_query, assistant_output, model, settings)
             return response
+
+
+def _text_from_response_input(input_value: Any) -> str:
+    """Extract the latest user text from an OpenAI Responses API input."""
+    if isinstance(input_value, str):
+        return input_value
+
+    if not isinstance(input_value, list):
+        return ""
+
+    for item in reversed(input_value):
+        if not isinstance(item, dict) or item.get("role") != "user":
+            continue
+
+        content = item.get("content", "")
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            text_parts = []
+            for part in content:
+                if not isinstance(part, dict):
+                    continue
+                if part.get("type") in {"input_text", "text"} and part.get("text"):
+                    text_parts.append(str(part["text"]))
+            if text_parts:
+                return "\n".join(text_parts)
+
+    return ""
+
+
+def _response_output_text(response: Any) -> str:
+    """Extract assistant text from a non-streaming Responses API result."""
+    output_text = getattr(response, "output_text", None)
+    if output_text:
+        return str(output_text)
+
+    text_parts = []
+    for item in getattr(response, "output", None) or []:
+        for content in getattr(item, "content", None) or []:
+            if getattr(content, "type", None) == "output_text":
+                text = getattr(content, "text", None)
+                if text:
+                    text_parts.append(str(text))
+    return "\n".join(text_parts)
+
+
+class _WrappedResponses:
+    """Wrapped OpenAI Responses API with automatic recall and retain."""
+
+    def __init__(self, wrapper: HMSOpenAI):
+        self._wrapper = wrapper
+
+    def create(self, **kwargs) -> Any:
+        """Create an OpenAI response with HMS memory enabled.
+
+        HMS settings can be overridden per call with ``hms_*`` kwargs. Relevant
+        memories are appended to ``instructions`` before the model call. The
+        completed user/assistant exchange is retained after the call.
+        """
+        settings = _merge_settings(self._wrapper._default_settings, kwargs)
+        openai_kwargs = {k: v for k, v in kwargs.items() if not k.startswith("hms_")}
+
+        user_query = settings.query or _text_from_response_input(openai_kwargs.get("input"))
+        model = openai_kwargs.get("model", "gpt-4o-mini")
+
+        if user_query and settings.inject_memories:
+            if settings.use_reflect:
+                memory_context = self._wrapper._reflect_memories(user_query, settings)
+            else:
+                memory_context = self._wrapper._recall_memories(user_query, settings)
+
+            if memory_context:
+                existing_instructions = openai_kwargs.get("instructions")
+                if existing_instructions:
+                    openai_kwargs["instructions"] = f"{existing_instructions}\n\n{memory_context}"
+                else:
+                    openai_kwargs["instructions"] = memory_context
+
+        response = self._wrapper._client.responses.create(**openai_kwargs)
+
+        if openai_kwargs.get("stream", False):
+            if user_query and settings.store_conversations:
+                return _ResponsesStreamWrapper(
+                    stream=response,
+                    user_query=user_query,
+                    model=model,
+                    wrapper=self._wrapper,
+                    settings=settings,
+                )
+            return response
+
+        if user_query and settings.store_conversations:
+            assistant_output = _response_output_text(response)
+            if assistant_output:
+                self._wrapper._store_conversation(user_query, assistant_output, model, settings)
+
+        return response
 
 
 class HMSAnthropic:
