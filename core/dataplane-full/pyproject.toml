@@ -12,6 +12,11 @@ dependencies = [
     "hms-api-slim[all]==0.6.1",
 ]
 
+[project.optional-dependencies]
+milvus = [
+    "hms-api-slim[milvus]==0.6.1",
+]
+
 [tool.uv.sources]
 hms-api-slim = { workspace = true }
 

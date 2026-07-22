@@ -177,6 +177,8 @@ if TYPE_CHECKING:
     from hms_api.extensions import OperationValidatorExtension, TenantExtension
     from hms_api.models import RequestContext
 
+    from .vector_index import VectorIndex
+
 
 from enum import Enum
 
@@ -406,6 +408,7 @@ class MemoryEngine(MemoryEngineInterface):
         embeddings: Embeddings | None = None,
         cross_encoder: CrossEncoderModel | None = None,
         query_analyzer: QueryAnalyzer | None = None,
+        vector_index: "VectorIndex | None" = None,
         pool_min_size: int | None = None,
         pool_max_size: int | None = None,
         db_command_timeout: int | None = None,
@@ -445,6 +448,7 @@ class MemoryEngine(MemoryEngineInterface):
             embeddings: Embeddings implementation. If not provided, created from env vars.
             cross_encoder: Cross-encoder model. If not provided, created from env vars.
             query_analyzer: Query analyzer implementation. If not provided, uses DateparserQueryAnalyzer.
+            vector_index: Optional semantic vector-index provider. If not provided, created from configuration.
             pool_min_size: Minimum number of connections in the pool. Defaults to HMS_API_DB_POOL_MIN_SIZE.
             pool_max_size: Maximum number of connections in the pool. Defaults to HMS_API_DB_POOL_MAX_SIZE.
             db_command_timeout: PostgreSQL command timeout in seconds. Defaults to HMS_API_DB_COMMAND_TIMEOUT.
@@ -538,6 +542,16 @@ class MemoryEngine(MemoryEngineInterface):
             self.embeddings = embeddings
         else:
             self.embeddings = create_embeddings_from_env()
+
+        # Initialize the semantic vector-index abstraction. External providers
+        # are rebuildable projections; the relational database remains canonical.
+        if vector_index is not None:
+            self._vector_index = vector_index
+        else:
+            from .vector_index import create_vector_index
+
+            self._vector_index = create_vector_index(config)
+        self._vector_index_degraded_scopes: set[tuple[str, str | None]] = set()
 
         # Initialize query analyzer
         if query_analyzer is not None:
@@ -1049,6 +1063,10 @@ class MemoryEngine(MemoryEngineInterface):
             request_context=internal_context,
             operation_id=task_dict.get("operation_id"),
         )
+
+        # Consolidation may create, update, or delete observations in one job.
+        # Replace that narrow projection after all SQL transactions commit.
+        await self._replace_vector_index_fact_type(bank_id, "observation")
 
         logger.info(f"[CONSOLIDATION] bank={bank_id} completed: {result.get('memories_processed', 0)} processed")
         return result
@@ -1862,6 +1880,11 @@ class MemoryEngine(MemoryEngineInterface):
         # Run pg0 and selected model initializations in parallel
         await asyncio.gather(*init_tasks)
 
+        # The embedding model determines the collection dimension. Explicitly
+        # configured external providers fail fast here if their dependency,
+        # credentials, schema, or dimension is invalid.
+        await self._vector_index.initialize(self.embeddings.dimension)
+
         # Run database migrations if enabled
         if self._run_migrations:
             if not self.db_url:
@@ -2107,7 +2130,14 @@ class MemoryEngine(MemoryEngineInterface):
             async with backend.acquire() as conn:
                 result = await conn.fetchval("SELECT 1")
                 if result == 1:
-                    return {"status": "healthy", "database": "connected"}
+                    return {
+                        "status": "healthy",
+                        "database": "connected",
+                        "vector_index": {
+                            "provider": self._vector_index.provider_name,
+                            "degraded": self.vector_index_degraded,
+                        },
+                    }
                 else:
                     return {"status": "unhealthy", "database": "unexpected response"}
         except Exception as e:
@@ -2127,6 +2157,11 @@ class MemoryEngine(MemoryEngineInterface):
         if self._http_client is not None:
             await self._http_client.aclose()
             self._http_client = None
+
+        try:
+            await self._vector_index.close()
+        except Exception as e:
+            logger.warning(f"Error closing semantic vector index: {e}")
 
         if self._read_backend is not None and self._read_backend is not self._backend:
             await self._read_backend.shutdown()
@@ -2158,6 +2193,244 @@ class MemoryEngine(MemoryEngineInterface):
             await self._pg0.stop()
             self._pg0 = None
             logger.info("pg0 stopped")
+
+    @property
+    def vector_index_degraded(self) -> bool:
+        """Return whether an external index sync failed in this process."""
+
+        return bool(self._vector_index_degraded_scopes)
+
+    def _is_vector_index_degraded(self, bank_id: str) -> bool:
+        """Return whether the current namespace/bank must use SQL semantic search."""
+
+        namespace = get_current_schema()
+        return (namespace, None) in self._vector_index_degraded_scopes or (
+            namespace,
+            bank_id,
+        ) in self._vector_index_degraded_scopes
+
+    async def _run_vector_index_sync(
+        self,
+        description: str,
+        operation: Callable[[], Awaitable[None]],
+        *,
+        namespace: str,
+        bank_id: str | None,
+    ) -> None:
+        """Run a post-commit external-index mutation without failing SQL writes."""
+
+        if not self._vector_index.is_external:
+            return
+        try:
+            await operation()
+        except Exception:
+            self._vector_index_degraded_scopes.add((namespace, bank_id))
+            logger.warning(
+                "Semantic vector index sync failed during %s; SQL semantic fallback is enabled "
+                "until the index is rebuilt",
+                description,
+                exc_info=True,
+            )
+
+    async def _fetch_vector_index_records(
+        self,
+        where_clause: str,
+        params: list[Any],
+    ) -> list[Any]:
+        from .vector_index import record_from_row
+
+        backend = await self._get_backend()
+        async with acquire_with_retry(backend) as conn:
+            rows = await conn.fetch(
+                f"""
+                SELECT id, bank_id, fact_type, embedding, document_id, tags, updated_at
+                FROM {fq_table("memory_units")}
+                WHERE embedding IS NOT NULL
+                  {where_clause}
+                ORDER BY id
+                """,
+                *params,
+            )
+        namespace = get_current_schema()
+        return [record_from_row(row, namespace) for row in rows]
+
+    async def _fetch_vector_index_records_by_ids(self, unit_ids: list[str]) -> list[Any]:
+        if not unit_ids:
+            return []
+        placeholders = ", ".join(f"${index}" for index in range(1, len(unit_ids) + 1))
+        return await self._fetch_vector_index_records(f"AND id IN ({placeholders})", unit_ids)
+
+    async def _sync_vector_index_units(self, bank_id: str, unit_ids: list[str]) -> None:
+        if not self._vector_index.is_external or not unit_ids:
+            return
+
+        unique_ids = list(dict.fromkeys(unit_ids))
+        namespace = get_current_schema()
+
+        async def operation() -> None:
+            records = await self._fetch_vector_index_records_by_ids(unique_ids)
+            await self._vector_index.upsert(records)
+
+        await self._run_vector_index_sync(
+            f"upserting {len(unique_ids)} memory units",
+            operation,
+            namespace=namespace,
+            bank_id=bank_id,
+        )
+
+    async def _replace_vector_index_document(self, bank_id: str, document_id: str) -> None:
+        if not self._vector_index.is_external:
+            return
+        namespace = get_current_schema()
+
+        async def operation() -> None:
+            records = await self._fetch_vector_index_records(
+                "AND bank_id = $1 AND document_id = $2",
+                [bank_id, document_id],
+            )
+            await self._vector_index.delete_document(namespace, bank_id, document_id)
+            await self._vector_index.upsert(records)
+
+        await self._run_vector_index_sync(
+            f"replacing document {document_id}",
+            operation,
+            namespace=namespace,
+            bank_id=bank_id,
+        )
+
+    async def _replace_vector_index_fact_type(self, bank_id: str, fact_type: str) -> None:
+        if not self._vector_index.is_external:
+            return
+        namespace = get_current_schema()
+
+        async def operation() -> None:
+            records = await self._fetch_vector_index_records(
+                "AND bank_id = $1 AND fact_type = $2",
+                [bank_id, fact_type],
+            )
+            await self._vector_index.delete_bank(namespace, bank_id, fact_type=fact_type)
+            await self._vector_index.upsert(records)
+
+        await self._run_vector_index_sync(
+            f"replacing {fact_type} records for bank {bank_id}",
+            operation,
+            namespace=namespace,
+            bank_id=bank_id,
+        )
+
+    async def _delete_vector_index_units(self, bank_id: str, unit_ids: list[str]) -> None:
+        if not self._vector_index.is_external or not unit_ids:
+            return
+        namespace = get_current_schema()
+        unique_ids = list(dict.fromkeys(unit_ids))
+        await self._run_vector_index_sync(
+            f"deleting {len(unique_ids)} memory units",
+            lambda: self._vector_index.delete_units(namespace, unique_ids),
+            namespace=namespace,
+            bank_id=bank_id,
+        )
+
+    async def _delete_vector_index_document(self, bank_id: str, document_id: str) -> None:
+        if not self._vector_index.is_external:
+            return
+        namespace = get_current_schema()
+        await self._run_vector_index_sync(
+            f"deleting document {document_id}",
+            lambda: self._vector_index.delete_document(namespace, bank_id, document_id),
+            namespace=namespace,
+            bank_id=bank_id,
+        )
+
+    async def _delete_vector_index_bank(self, bank_id: str, fact_type: str | None = None) -> None:
+        if not self._vector_index.is_external:
+            return
+        namespace = get_current_schema()
+        await self._run_vector_index_sync(
+            f"deleting bank {bank_id}" + (f" fact type {fact_type}" if fact_type else ""),
+            lambda: self._vector_index.delete_bank(namespace, bank_id, fact_type=fact_type),
+            namespace=namespace,
+            bank_id=bank_id,
+        )
+
+    async def rebuild_vector_index(
+        self,
+        *,
+        request_context: "RequestContext",
+        bank_id: str | None = None,
+        batch_size: int = 500,
+    ) -> dict[str, Any]:
+        """Rebuild the configured external semantic index from canonical SQL data."""
+
+        if batch_size <= 0:
+            raise ValueError("batch_size must be greater than zero")
+        await self._authenticate_tenant(request_context)
+        await self._get_backend()
+        if not self._vector_index.is_external:
+            return {"provider": self._vector_index.provider_name, "indexed": 0, "skipped": True}
+
+        namespace = get_current_schema()
+        indexed = 0
+        backend = await self._get_backend()
+        from .vector_index import record_from_row
+
+        try:
+            if bank_id is None:
+                await self._vector_index.delete_namespace(namespace)
+                where_clause = ""
+                params: list[Any] = []
+            else:
+                await self._vector_index.delete_bank(namespace, bank_id)
+                where_clause = "AND bank_id = $1"
+                params = [bank_id]
+
+            offset = 0
+            while True:
+                limit_placeholder = len(params) + 1
+                offset_placeholder = len(params) + 2
+                async with acquire_with_retry(backend) as conn:
+                    rows = await conn.fetch(
+                        f"""
+                        SELECT id, bank_id, fact_type, embedding, document_id, tags, updated_at
+                        FROM {fq_table("memory_units")}
+                        WHERE embedding IS NOT NULL
+                          {where_clause}
+                        ORDER BY id
+                        LIMIT ${limit_placeholder} OFFSET ${offset_placeholder}
+                        """,
+                        *params,
+                        batch_size,
+                        offset,
+                    )
+                if not rows:
+                    break
+                records = [record_from_row(row, namespace) for row in rows]
+                await self._vector_index.upsert(records)
+                indexed += len(records)
+                offset += len(records)
+        except Exception:
+            self._vector_index_degraded_scopes.add((namespace, bank_id))
+            raise
+
+        if bank_id is None:
+            self._vector_index_degraded_scopes = {
+                scope for scope in self._vector_index_degraded_scopes if scope[0] != namespace
+            }
+        else:
+            self._vector_index_degraded_scopes.discard((namespace, bank_id))
+        logger.info(
+            "Semantic vector index rebuild completed: provider=%s, namespace=%s, bank=%s, indexed=%d",
+            self._vector_index.provider_name,
+            namespace,
+            bank_id or "all",
+            indexed,
+        )
+        return {
+            "provider": self._vector_index.provider_name,
+            "namespace": namespace,
+            "bank_id": bank_id,
+            "indexed": indexed,
+            "skipped": False,
+        }
 
     async def wait_for_background_tasks(self):
         """
@@ -2486,6 +2759,21 @@ class MemoryEngine(MemoryEngineInterface):
                 strategy=strategy,
                 outbox_callback=outbox_callback,
             )
+
+        # Synchronize only after the retain transaction(s) have committed. A
+        # document-level replacement also removes units deleted by full/delta
+        # re-ingestion and refreshes tag metadata on unchanged units.
+        retained_unit_ids = [unit_id for item_ids in result for unit_id in item_ids]
+        retained_document_ids = list(
+            dict.fromkeys(str(item["document_id"]) for item in contents if item.get("document_id"))
+        )
+        for retained_document_id in retained_document_ids:
+            await self._replace_vector_index_document(bank_id, retained_document_id)
+        await self._sync_vector_index_units(bank_id, retained_unit_ids)
+        if retained_document_ids:
+            # Document replacement can invalidate observations derived from
+            # outgoing source memories, which do not inherit document_id.
+            await self._replace_vector_index_fact_type(bank_id, "observation")
 
         # Call post-operation hook if validator is configured
         if self._operation_validator:
@@ -3081,6 +3369,8 @@ class MemoryEngine(MemoryEngineInterface):
                         query_rewriting_strategy_name=query_rewriting_strategy_name,
                         alias_expansion_enabled=query_rewriting_enabled,
                         session_expansion_weight=session_expansion_weight,
+                        vector_index=None if self._is_vector_index_degraded(bank_id) else self._vector_index,
+                        query_vector=query_embedding,
                     )
                     parallel_duration = time.time() - parallel_start
             finally:
@@ -3995,6 +4285,7 @@ class MemoryEngine(MemoryEngineInterface):
             await self._validate_operation(self._operation_validator.validate_bank_write(ctx))
         backend = await self._get_backend()
         invalidated_obs = 0
+        unit_ids: list[str] = []
         async with acquire_with_retry(backend) as conn:
             async with conn.transaction():
                 # Get memory unit IDs before deletion (for observation cleanup)
@@ -4026,6 +4317,11 @@ class MemoryEngine(MemoryEngineInterface):
                     "document_deleted": 1 if deleted else 0,
                     "memory_units_deleted": units_count if deleted else 0,
                 }
+
+        if result["document_deleted"]:
+            await self._delete_vector_index_document(bank_id, document_id)
+        if invalidated_obs > 0:
+            await self._replace_vector_index_fact_type(bank_id, "observation")
 
         if invalidated_obs > 0:
             try:
@@ -4183,10 +4479,14 @@ class MemoryEngine(MemoryEngineInterface):
                             )
 
         if invalidated_obs > 0:
+            await self._replace_vector_index_fact_type(bank_id, "observation")
             try:
                 await self.submit_async_consolidation(bank_id=bank_id, request_context=request_context)
             except Exception as e:
                 logger.warning(f"Failed to submit consolidation after document update for bank {bank_id}: {e}")
+
+        if tags is not None:
+            await self._replace_vector_index_document(bank_id, document_id)
 
         return True
 
@@ -4257,6 +4557,11 @@ class MemoryEngine(MemoryEngineInterface):
                     if deleted
                     else "Memory unit not found",
                 }
+
+        if deleted is not None and bank_id is not None:
+            await self._delete_vector_index_units(bank_id, [unit_id])
+        if invalidated_obs > 0 and bank_id_for_consolidation:
+            await self._replace_vector_index_fact_type(bank_id_for_consolidation, "observation")
 
         if bank_id_for_consolidation:
             try:
@@ -4391,6 +4696,10 @@ class MemoryEngine(MemoryEngineInterface):
             if bank_internal_id:
                 await bank_utils.drop_bank_vector_indexes(conn, bank_internal_id, ops=self._backend.ops)
 
+        await self._delete_vector_index_bank(bank_id, fact_type=fact_type)
+        if fact_type in ("experience", "world") and invalidated_obs > 0:
+            await self._replace_vector_index_fact_type(bank_id, "observation")
+
         if invalidated_obs > 0:
             try:
                 await self.submit_async_consolidation(bank_id=bank_id, request_context=request_context)
@@ -4422,6 +4731,7 @@ class MemoryEngine(MemoryEngineInterface):
             ctx = BankWriteContext(bank_id=bank_id, operation="clear_observations", request_context=request_context)
             await self._validate_operation(self._operation_validator.validate_bank_write(ctx))
         backend = await self._get_backend()
+        result: dict[str, int]
         async with acquire_with_retry(backend) as conn:
             async with conn.transaction():
                 # Count observations before deletion
@@ -4448,7 +4758,10 @@ class MemoryEngine(MemoryEngineInterface):
                     bank_id,
                 )
 
-                return {"deleted_count": count or 0}
+                result = {"deleted_count": count or 0}
+
+        await self._delete_vector_index_bank(bank_id, fact_type="observation")
+        return result
 
     async def retry_failed_consolidation(
         self,
@@ -4558,6 +4871,7 @@ class MemoryEngine(MemoryEngineInterface):
                     )
 
         if deleted_count > 0:
+            await self._replace_vector_index_fact_type(bank_id, "observation")
             await self.submit_async_consolidation(bank_id=bank_id, request_context=request_context)
 
         return {"deleted_count": deleted_count}
@@ -4594,6 +4908,8 @@ class MemoryEngine(MemoryEngineInterface):
                 bank_id=bank_id,
                 request_context=request_context,
             )
+
+            await self._replace_vector_index_fact_type(bank_id, "observation")
 
             return {
                 "processed": result.get("processed", 0),

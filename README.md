@@ -165,6 +165,19 @@ bash scripts/smoke_test.sh
 The core and retain roles may use the same OpenAI-compatible endpoint. Embedding
 configuration can use a separate provider or a local model.
 
+### Optional Milvus semantic index
+
+Set `HMS_API_VECTOR_INDEX_PROVIDER=milvus` to use Milvus for dense semantic candidate retrieval. The relational database remains canonical and continues to handle full-text/BM25, graph, temporal, fusion, reranking, SQL hydration, and fallback search.
+
+```bash
+export HMS_API_VECTOR_INDEX_PROVIDER=milvus
+export HMS_API_MILVUS_URI=./hms_milvus.db  # Milvus Lite
+# export HMS_API_MILVUS_URI=http://localhost:19530  # Milvus Server
+# export HMS_API_MILVUS_TOKEN=your-token            # Zilliz Cloud or secured Server
+```
+
+After enabling Milvus for an existing database, rebuild its projection with `hms-admin rebuild-vector-index --yes`. Milvus Lite is intended for a single HMS process; use Milvus Server or Zilliz Cloud for multi-worker deployments. See [the dataplane README](core/dataplane/README.md#optional-milvus-semantic-index) for all settings and consistency guidance.
+
 ## Security Notes
 
 - Keep `.env`, private keys, tokens, and populated credentials out of Git.

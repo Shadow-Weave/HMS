@@ -313,6 +313,82 @@ def run_db_migration(
     typer.echo(f"Database migrations completed successfully for {len(schemas)} schema(s)")
 
 
+async def _run_vector_index_rebuild(
+    db_url: str,
+    *,
+    schema: str,
+    bank_id: str | None,
+    batch_size: int,
+) -> dict[str, Any]:
+    """Initialize a minimal engine and rebuild the configured semantic index."""
+
+    from ..engine.memory_engine import MemoryEngine, _current_schema
+    from ..engine.task_backend import SyncTaskBackend
+    from ..models import RequestContext
+
+    schema_token = _current_schema.set(schema)
+    memory = MemoryEngine(
+        db_url=db_url,
+        memory_llm_provider="none",
+        task_backend=SyncTaskBackend(),
+        run_migrations=False,
+        skip_llm_verification=True,
+        lazy_reranker=True,
+        pool_min_size=1,
+        pool_max_size=2,
+    )
+    try:
+        await memory.initialize()
+        return await memory.rebuild_vector_index(
+            request_context=RequestContext(internal=True),
+            bank_id=bank_id,
+            batch_size=batch_size,
+        )
+    finally:
+        try:
+            await memory.close()
+        finally:
+            _current_schema.reset(schema_token)
+
+
+@app.command(name="rebuild-vector-index")
+def rebuild_vector_index(
+    schema: str | None = typer.Option(None, "--schema", "-s", help="Database schema to rebuild"),
+    bank_id: str | None = typer.Option(None, "--bank-id", help="Only rebuild one memory bank"),
+    batch_size: int = typer.Option(500, "--batch-size", min=1, help="Records per Milvus upsert batch"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Skip confirmation prompt"),
+):
+    """Rebuild the external semantic vector index from canonical database rows."""
+
+    config = HMSConfig.from_env()
+    if config.vector_index_provider == "database":
+        typer.echo("No external vector index is configured. Set HMS_API_VECTOR_INDEX_PROVIDER=milvus.", err=True)
+        raise typer.Exit(1)
+    if not config.database_url:
+        typer.echo("Error: Database URL not configured.", err=True)
+        typer.echo("Set HMS_API_DATABASE_URL environment variable.", err=True)
+        raise typer.Exit(1)
+
+    target_schema = schema or config.database_schema
+    scope = f"bank '{bank_id}' in schema '{target_schema}'" if bank_id else f"schema '{target_schema}'"
+    if not yes:
+        typer.confirm(
+            f"This will replace the Milvus projection for {scope}. Continue?",
+            abort=True,
+        )
+
+    typer.echo(f"Rebuilding semantic vector index for {scope}...")
+    result = asyncio.run(
+        _run_vector_index_rebuild(
+            config.database_url,
+            schema=target_schema,
+            bank_id=bank_id,
+            batch_size=batch_size,
+        )
+    )
+    typer.echo(f"Indexed {result['indexed']} memory unit(s) with provider '{result['provider']}'")
+
+
 async def _decommission_worker(db_url: str, worker_id: str, schema: str = "public") -> int:
     """Release all tasks owned by a worker, setting them back to pending status."""
     is_pg0, instance_name, _ = parse_pg0_url(db_url)

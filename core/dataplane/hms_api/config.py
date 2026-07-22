@@ -289,6 +289,12 @@ ENV_RERANKER_QWEN3_INSTRUCTION = "HMS_API_RERANKER_QWEN3_INSTRUCTION"
 
 ENV_VECTOR_EXTENSION = "HMS_API_VECTOR_EXTENSION"
 ENV_TEXT_SEARCH_EXTENSION = "HMS_API_TEXT_SEARCH_EXTENSION"
+ENV_VECTOR_INDEX_PROVIDER = "HMS_API_VECTOR_INDEX_PROVIDER"
+ENV_MILVUS_URI = "HMS_API_MILVUS_URI"
+ENV_MILVUS_TOKEN = "HMS_API_MILVUS_TOKEN"
+ENV_MILVUS_DB_NAME = "HMS_API_MILVUS_DB_NAME"
+ENV_MILVUS_COLLECTION = "HMS_API_MILVUS_COLLECTION"
+ENV_MILVUS_CONSISTENCY_LEVEL = "HMS_API_MILVUS_CONSISTENCY_LEVEL"
 
 ENV_HOST = "HMS_API_HOST"
 ENV_PORT = "HMS_API_PORT"
@@ -560,6 +566,14 @@ DEFAULT_VECTOR_EXTENSION = "pgvector"  # Options: "pgvector", "vchord", "pgvecto
 
 # Text search extension (native PostgreSQL, vchord BM25, or Timescale pg_textsearch)
 DEFAULT_TEXT_SEARCH_EXTENSION = "native"  # Options: "native", "vchord", "pg_textsearch"
+
+# Semantic vector index provider. PostgreSQL/Oracle remain the canonical store.
+DEFAULT_VECTOR_INDEX_PROVIDER = "database"  # Options: "database", "milvus"
+DEFAULT_MILVUS_URI = "./hms_milvus.db"
+DEFAULT_MILVUS_TOKEN = None
+DEFAULT_MILVUS_DB_NAME = None
+DEFAULT_MILVUS_COLLECTION = "hms_memory_units"
+DEFAULT_MILVUS_CONSISTENCY_LEVEL = "Session"
 
 # LiteLLM defaults
 DEFAULT_LITELLM_API_BASE = "http://localhost:4000"
@@ -1186,6 +1200,12 @@ class HMSConfig:
     # Defaulted fields (source-compatible additions — existing direct constructor callers keep working).
     # Keep at the end of the dataclass; Python forbids non-default fields after default fields.
     embeddings_openai_batch_size: int = DEFAULT_EMBEDDINGS_OPENAI_BATCH_SIZE
+    vector_index_provider: str = DEFAULT_VECTOR_INDEX_PROVIDER
+    milvus_uri: str = DEFAULT_MILVUS_URI
+    milvus_token: str | None = DEFAULT_MILVUS_TOKEN
+    milvus_db_name: str | None = DEFAULT_MILVUS_DB_NAME
+    milvus_collection: str = DEFAULT_MILVUS_COLLECTION
+    milvus_consistency_level: str = DEFAULT_MILVUS_CONSISTENCY_LEVEL
 
     # Class-level sets for configuration categorization
 
@@ -1225,6 +1245,9 @@ class HMSConfig:
         # File parser credentials
         "file_parser_iris_token",
         "file_parser_llama_parse_api_key",
+        # External vector index credentials and endpoints
+        "milvus_uri",
+        "milvus_token",
     }
 
     # CONFIGURABLE_FIELDS: Safe behavioral settings that can be customized per-tenant/bank
@@ -1347,6 +1370,26 @@ class HMSConfig:
                 f"Invalid text_search_extension: {self.text_search_extension}. Must be one of: {', '.join(valid_text_search)}"
             )
 
+        valid_vector_index_providers = ("database", "milvus")
+        if self.vector_index_provider not in valid_vector_index_providers:
+            raise ValueError(
+                f"Invalid vector_index_provider: {self.vector_index_provider}. "
+                f"Must be one of: {', '.join(valid_vector_index_providers)}"
+            )
+
+        valid_consistency_levels = ("Strong", "Session", "Bounded", "Eventually")
+        if self.milvus_consistency_level not in valid_consistency_levels:
+            raise ValueError(
+                f"Invalid milvus_consistency_level: {self.milvus_consistency_level}. "
+                f"Must be one of: {', '.join(valid_consistency_levels)}"
+            )
+
+        if self.vector_index_provider == "milvus":
+            if not self.milvus_uri:
+                raise ValueError("milvus_uri is required when vector_index_provider='milvus'")
+            if not self.milvus_collection:
+                raise ValueError("milvus_collection is required when vector_index_provider='milvus'")
+
         # When LLM provider is "none", force chunks-only mode and disable LLM-dependent features
         if self.llm_provider == "none":
             self.retain_extraction_mode = "chunks"
@@ -1423,6 +1466,14 @@ class HMSConfig:
             database_schema=os.getenv(ENV_DATABASE_SCHEMA, DEFAULT_DATABASE_SCHEMA),
             vector_extension=os.getenv(ENV_VECTOR_EXTENSION, DEFAULT_VECTOR_EXTENSION).lower(),
             text_search_extension=os.getenv(ENV_TEXT_SEARCH_EXTENSION, DEFAULT_TEXT_SEARCH_EXTENSION).lower(),
+            vector_index_provider=os.getenv(ENV_VECTOR_INDEX_PROVIDER, DEFAULT_VECTOR_INDEX_PROVIDER).lower(),
+            milvus_uri=os.getenv(ENV_MILVUS_URI, DEFAULT_MILVUS_URI),
+            milvus_token=os.getenv(ENV_MILVUS_TOKEN) or DEFAULT_MILVUS_TOKEN,
+            milvus_db_name=os.getenv(ENV_MILVUS_DB_NAME) or DEFAULT_MILVUS_DB_NAME,
+            milvus_collection=os.getenv(ENV_MILVUS_COLLECTION, DEFAULT_MILVUS_COLLECTION),
+            milvus_consistency_level=os.getenv(
+                ENV_MILVUS_CONSISTENCY_LEVEL, DEFAULT_MILVUS_CONSISTENCY_LEVEL
+            ).capitalize(),
             # LLM
             llm_provider=llm_provider,
             llm_api_key=os.getenv(ENV_LLM_API_KEY),
@@ -1975,6 +2026,7 @@ class HMSConfig:
         logger.info(f"Embeddings: provider={self.embeddings_provider}")
         logger.info(f"Reranker: provider={self.reranker_provider}")
         logger.info(f"Graph retriever: {self.graph_retriever}")
+        logger.info(f"Semantic vector index: provider={self.vector_index_provider}")
 
 
 # Cached config instance

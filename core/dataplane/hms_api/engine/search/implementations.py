@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 
 from ...config import get_config
 from ..db_utils import acquire_with_retry
-from ..memory_engine import fq_table
+from ..memory_engine import fq_table, get_current_schema
 from ..sql import create_sql_dialect
 from .fusion import reciprocal_rank_fusion
 from .graph_retrieval import GraphRetriever
@@ -22,18 +22,20 @@ from .link_expansion_retrieval import LinkExpansionRetriever
 from .strategies import (
     FusionStrategy,
     GraphRetrievalStrategy,
-    RetrievalStrategy,
     RerankingStrategy,
+    RetrievalStrategy,
     fusion_registry,
     graph_retrieval_registry,
-    retrieval_registry,
     reranking_registry,
+    retrieval_registry,
 )
 from .tags import (
     TagGroup,
     TagsMatch,
     build_tag_groups_where_clause,
     build_tags_where_clause_simple,
+    filter_results_by_tag_groups,
+    filter_results_by_tags,
 )
 from .types import (
     GraphRetrievalTimings,
@@ -93,16 +95,294 @@ class SemanticBM25Retrieval(RetrievalStrategy):
     def name(self) -> str:
         return "semantic_bm25"
 
+    async def _hydrate_vector_hits(
+        self,
+        conn,
+        vector_index,
+        hits_by_fact_type,
+        *,
+        bank_id: str,
+        fact_types: List[str],
+        limit: int,
+        tags: List[str] | None,
+        tags_match: TagsMatch,
+        tag_groups: List[TagGroup] | None,
+        created_after: datetime | None,
+        created_before: datetime | None,
+    ) -> Dict[str, List[RetrievalResult]]:
+        """Hydrate external vector hits from canonical SQL rows in hit order."""
+
+        hit_ids = list(
+            dict.fromkeys(hit.id for fact_type in fact_types for hit in hits_by_fact_type.get(fact_type, []))
+        )
+        hydrated: Dict[str, List[RetrievalResult]] = {fact_type: [] for fact_type in fact_types}
+        if not hit_ids:
+            return hydrated
+
+        placeholders = ", ".join(f"${index}" for index in range(1, len(hit_ids) + 1))
+        rows = await conn.fetch(
+            f"""
+            SELECT id, bank_id, text, context, event_date, occurred_start, occurred_end, mentioned_at,
+                   fact_type, document_id, chunk_id, tags, metadata, proof_count, updated_at
+            FROM {fq_table("memory_units")}
+            WHERE id IN ({placeholders})
+            """,
+            *hit_ids,
+        )
+
+        rows_by_id = {
+            str(row["id"]): row
+            for row in rows
+            if str(row["bank_id"]) == bank_id and str(row["fact_type"]) in fact_types
+        }
+        stale_ids = [hit_id for hit_id in hit_ids if hit_id not in rows_by_id]
+        if stale_ids:
+            try:
+                await vector_index.delete_units(get_current_schema(), stale_ids)
+            except Exception:
+                logger.warning("Failed to prune %d stale external vector hits", len(stale_ids), exc_info=True)
+
+        for fact_type in fact_types:
+            for hit in hits_by_fact_type.get(fact_type, []):
+                if hit.similarity < 0.3:
+                    continue
+                row = rows_by_id.get(hit.id)
+                if row is None or str(row["fact_type"]) != fact_type:
+                    continue
+
+                updated_at = row.get("updated_at")
+                if created_after is not None and updated_at is not None and updated_at <= created_after:
+                    continue
+                if created_before is not None and updated_at is not None and updated_at >= created_before:
+                    continue
+
+                row_dict = dict(row)
+                row_dict["similarity"] = hit.similarity
+                row_dict["bm25_score"] = None
+                result = RetrievalResult.from_db_row(row_dict)
+                if not filter_results_by_tags([result], tags, match=tags_match):
+                    continue
+                if not filter_results_by_tag_groups([result], tag_groups):
+                    continue
+                hydrated[fact_type].append(result)
+                if len(hydrated[fact_type]) >= limit:
+                    break
+
+        return hydrated
+
+    async def _retrieve_database_semantic_only(
+        self,
+        conn,
+        *,
+        query_embedding_str: str,
+        bank_id: str,
+        fact_types: List[str],
+        limit: int,
+        tags: List[str] | None,
+        tags_match: TagsMatch,
+        tag_groups: List[TagGroup] | None,
+        created_after: datetime | None,
+        created_before: datetime | None,
+    ) -> Dict[str, List[RetrievalResult]]:
+        """Run the canonical SQL semantic path for selected fact types."""
+
+        result_dict: Dict[str, List[RetrievalResult]] = {fact_type: [] for fact_type in fact_types}
+        if not fact_types:
+            return result_dict
+
+        dialect = create_sql_dialect(getattr(conn, "backend_type", "postgresql"))
+        cols = (
+            "id, text, context, event_date, occurred_start, occurred_end, mentioned_at, "
+            "fact_type, document_id, chunk_id, tags, metadata, proof_count"
+        )
+        tags_clause = build_tags_where_clause_simple(tags, 3, match=tags_match)
+        group_start = 3 + (1 if tags else 0)
+        groups_clause, groups_params, _ = build_tag_groups_where_clause(tag_groups, group_start)
+        next_param = group_start + len(groups_params)
+        created_clause = ""
+        created_params: List[Any] = []
+        if created_after is not None:
+            created_params.append(created_after)
+            created_clause += f" AND updated_at > ${next_param}"
+            next_param += 1
+        if created_before is not None:
+            created_params.append(created_before)
+            created_clause += f" AND updated_at < ${next_param}"
+
+        fetch_limit = max(limit * 5, 100)
+        arms = [
+            dialect.build_semantic_arm(
+                table=fq_table("memory_units"),
+                cols=cols,
+                fact_type=fact_type,
+                embedding_param="$1",
+                bank_id_param="$2",
+                fetch_limit=fetch_limit,
+                tags_clause=tags_clause,
+                groups_clause=groups_clause,
+                extra_where=created_clause,
+            )
+            for fact_type in fact_types
+        ]
+        params: List[Any] = [query_embedding_str, bank_id]
+        if tags:
+            params.append(tags)
+        params.extend(groups_params)
+        params.extend(created_params)
+        rows = await conn.fetch("\nUNION ALL\n".join(arms), *params)
+        for raw_row in rows:
+            row = dict(raw_row)
+            row.pop("source", None)
+            fact_type = row.get("fact_type")
+            if fact_type in result_dict and len(result_dict[fact_type]) < limit:
+                result_dict[fact_type].append(RetrievalResult.from_db_row(row))
+        return result_dict
+
+    async def _retrieve_with_external_vector_index(
+        self,
+        conn,
+        vector_index,
+        query_vector: list[float],
+        *,
+        query_embedding_str: str,
+        rewritten_query: str,
+        tokens: list[str],
+        bank_id: str,
+        fact_types: List[str],
+        limit: int,
+        tags: List[str] | None,
+        tags_match: TagsMatch,
+        tag_groups: List[TagGroup] | None,
+        created_after: datetime | None,
+        created_before: datetime | None,
+    ) -> Dict[str, List[RetrievalResult]]:
+        """Run Milvus dense retrieval while retaining database BM25/FTS."""
+
+        result_dict: Dict[str, List[RetrievalResult]] = {fact_type: [] for fact_type in fact_types}
+        fetch_limit = max(limit * 5, 100)
+        vector_task = asyncio.create_task(
+            vector_index.search(
+                query_vector,
+                namespace=get_current_schema(),
+                bank_id=bank_id,
+                fact_types=fact_types,
+                limit=fetch_limit,
+                tags=tags,
+                tags_match=tags_match,
+                tag_groups=tag_groups,
+                created_after=created_after,
+                created_before=created_before,
+            )
+        )
+        try:
+            if tokens:
+                dialect = create_sql_dialect(getattr(conn, "backend_type", "postgresql"))
+                config = get_config()
+                text_extension = config.text_search_extension
+                bm25_text = dialect.prepare_bm25_text(tokens, rewritten_query, text_search_extension=text_extension)
+                tags_clause = build_tags_where_clause_simple(tags, 4, match=tags_match)
+                group_start = 4 + (1 if tags else 0)
+                groups_clause, groups_params, _ = build_tag_groups_where_clause(tag_groups, group_start)
+                next_param = group_start + len(groups_params)
+                created_clause = ""
+                created_params: List[Any] = []
+                if created_after is not None:
+                    created_params.append(created_after)
+                    created_clause += f" AND updated_at > ${next_param}"
+                    next_param += 1
+                if created_before is not None:
+                    created_params.append(created_before)
+                    created_clause += f" AND updated_at < ${next_param}"
+
+                cols = (
+                    "id, text, context, event_date, occurred_start, occurred_end, mentioned_at, "
+                    "fact_type, document_id, chunk_id, tags, metadata, proof_count"
+                )
+                bm25_arms = [
+                    dialect.build_bm25_arm(
+                        table=fq_table("memory_units"),
+                        cols=cols,
+                        fact_type=fact_type,
+                        bank_id_param="$1",
+                        limit_param="$2",
+                        text_param="$3",
+                        tags_clause=tags_clause,
+                        groups_clause=groups_clause,
+                        arm_index=index,
+                        text_search_extension=text_extension,
+                        extra_where=created_clause,
+                    )
+                    for index, fact_type in enumerate(fact_types)
+                ]
+                bm25_params: List[Any] = [bank_id, limit, bm25_text]
+                if tags:
+                    bm25_params.append(tags)
+                bm25_params.extend(groups_params)
+                bm25_params.extend(created_params)
+                bm25_rows = await conn.fetch("\nUNION ALL\n".join(bm25_arms), *bm25_params)
+                for raw_row in bm25_rows:
+                    row = dict(raw_row)
+                    row.pop("source", None)
+                    fact_type = row.get("fact_type")
+                    if fact_type in result_dict:
+                        result_dict[fact_type].append(RetrievalResult.from_db_row(row))
+
+            hits_by_fact_type = await vector_task
+        except BaseException:
+            if not vector_task.done():
+                vector_task.cancel()
+            try:
+                await vector_task
+            except (asyncio.CancelledError, Exception):
+                pass
+            raise
+
+        if hits_by_fact_type is None:
+            raise RuntimeError("External vector index did not return a result set")
+        semantic = await self._hydrate_vector_hits(
+            conn,
+            vector_index,
+            hits_by_fact_type,
+            bank_id=bank_id,
+            fact_types=fact_types,
+            limit=limit,
+            tags=tags,
+            tags_match=tags_match,
+            tag_groups=tag_groups,
+            created_after=created_after,
+            created_before=created_before,
+        )
+
+        missing_fact_types = [fact_type for fact_type in fact_types if not semantic[fact_type]]
+        if missing_fact_types:
+            sql_semantic = await self._retrieve_database_semantic_only(
+                conn,
+                query_embedding_str=query_embedding_str,
+                bank_id=bank_id,
+                fact_types=missing_fact_types,
+                limit=limit,
+                tags=tags,
+                tags_match=tags_match,
+                tag_groups=tag_groups,
+                created_after=created_after,
+                created_before=created_before,
+            )
+            semantic.update(sql_semantic)
+
+        for fact_type in fact_types:
+            result_dict[fact_type] = semantic[fact_type] + result_dict[fact_type]
+        return result_dict
+
     async def _expand_query(self, query_text: str, question_date: Optional[datetime] = None) -> dict:
         """
         Expand query using alias expansion strategy.
-        
+
         For LLM-driven strategies, this returns a comprehensive analysis result.
-        
+
         Args:
             query_text: Original query text
             question_date: Optional date when the question was asked
-            
+
         Returns:
             Dict with analysis results containing:
                 - rewritten_query: The rewritten query (or original if no expansion)
@@ -125,23 +405,25 @@ class SemanticBM25Retrieval(RetrievalStrategy):
             return result
 
         strategy = self._get_query_rewriting_strategy()
-        
+
         # Check if strategy supports LLM-driven analysis
-        if hasattr(strategy, 'analyze'):
+        if hasattr(strategy, "analyze"):
             try:
                 analysis_result = await strategy.analyze(query_text, llm=self._llm, question_date=question_date)
-                
+
                 result["rewritten_query"] = analysis_result.rewritten_query or query_text
                 result["expanded_aliases"] = analysis_result.expanded_entities
                 result["needs_expansion"] = analysis_result.needs_expansion
                 result["needs_time_window"] = analysis_result.needs_time_window
                 result["time_window_start"] = analysis_result.time_window_start
                 result["time_window_end"] = analysis_result.time_window_end
-                
-                logger.debug(f"LLM-driven query analysis: needs_expansion={result['needs_expansion']}, needs_time_window={result['needs_time_window']}")
+
+                logger.debug(
+                    f"LLM-driven query analysis: needs_expansion={result['needs_expansion']}, needs_time_window={result['needs_time_window']}"
+                )
                 if result["time_window_start"]:
                     logger.debug(f"Time window: {result['time_window_start']} to {result['time_window_end']}")
-                
+
             except Exception as e:
                 logger.warning(f"LLM-driven query analysis failed: {e}")
                 return result
@@ -180,7 +462,7 @@ class SemanticBM25Retrieval(RetrievalStrategy):
     ) -> Dict[str, List[RetrievalResult]]:
         """
         Retrieve memories using semantic + BM25 combined strategy.
-        
+
         Args:
             conn: Database connection
             query_embedding_str: Query embedding as string (for semantic search)
@@ -194,7 +476,7 @@ class SemanticBM25Retrieval(RetrievalStrategy):
             created_after: Only return results created after this time
             created_before: Only return results created before this time
             **kwargs: Additional parameters, may include 'question_date' for query analysis
-        
+
         Returns:
             Dict mapping fact_type -> list of RetrievalResult
         """
@@ -202,14 +484,40 @@ class SemanticBM25Retrieval(RetrievalStrategy):
 
         # Get question_date from kwargs for LLM-driven analysis
         question_date = kwargs.get("question_date")
-        
+
         # Perform query expansion/analysis
         expansion_result = await self._expand_query(query_text, question_date)
         rewritten_query = expansion_result["rewritten_query"]
         expanded_aliases = expansion_result["expanded_aliases"]
-        
+
         tokens = tokenize_query(rewritten_query)
         hnsw_fetch = max(limit * 5, 100)
+
+        vector_index = kwargs.get("vector_index")
+        query_vector = kwargs.get("query_vector")
+        if vector_index is not None and vector_index.is_external and query_vector is not None:
+            try:
+                return await self._retrieve_with_external_vector_index(
+                    conn,
+                    vector_index,
+                    query_vector,
+                    query_embedding_str=query_embedding_str,
+                    rewritten_query=rewritten_query,
+                    tokens=tokens,
+                    bank_id=bank_id,
+                    fact_types=fact_types,
+                    limit=limit,
+                    tags=tags,
+                    tags_match=tags_match,
+                    tag_groups=tag_groups,
+                    created_after=created_after,
+                    created_before=created_before,
+                )
+            except Exception:
+                logger.warning(
+                    "External semantic vector retrieval failed; falling back to the canonical database index",
+                    exc_info=True,
+                )
 
         cols = (
             "id, text, context, event_date, occurred_start, occurred_end, mentioned_at, "
@@ -256,9 +564,7 @@ class SemanticBM25Retrieval(RetrievalStrategy):
 
         if _include_bm25:
             text_ext = config.text_search_extension
-            bm25_text_param: str = dialect.prepare_bm25_text(
-                tokens, rewritten_query, text_search_extension=text_ext
-            )
+            bm25_text_param: str = dialect.prepare_bm25_text(tokens, rewritten_query, text_search_extension=text_ext)
             for i, ft in enumerate(fact_types):
                 arms.append(
                     dialect.build_bm25_arm(

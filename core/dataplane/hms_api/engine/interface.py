@@ -264,6 +264,26 @@ class MemoryEngineInterface(ABC):
         """
         ...
 
+    @abstractmethod
+    async def rebuild_vector_index(
+        self,
+        *,
+        request_context: "RequestContext",
+        bank_id: str | None = None,
+        batch_size: int = 500,
+    ) -> dict[str, Any]:
+        """Rebuild the configured external semantic index from canonical database rows.
+
+        Args:
+            request_context: Request context for authentication.
+            bank_id: Optional bank to rebuild. If omitted, rebuild the current namespace.
+            batch_size: Number of memory units to upsert per batch.
+
+        Returns:
+            Dict describing the provider, scope, and number of indexed records.
+        """
+        ...
+
     # =========================================================================
     # Memory Units
     # =========================================================================

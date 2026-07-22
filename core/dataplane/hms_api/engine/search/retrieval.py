@@ -97,6 +97,8 @@ async def retrieve_semantic_bm25_combined(
     query_rewriting_strategy_name: str = "llm_based",
     alias_expansion_enabled: bool = True,
     question_date: datetime | None = None,
+    vector_index: Any | None = None,
+    query_vector: list[float] | None = None,
 ) -> tuple[dict[str, tuple[list[RetrievalResult], list[RetrievalResult]]], dict]:
     """
     Combined semantic + BM25 retrieval for multiple fact types in a single query.
@@ -135,12 +137,12 @@ async def retrieve_semantic_bm25_combined(
     )
     if llm is not None:
         strategy.set_llm(llm)
-    
+
     # Get query analysis result from strategy
     analysis_result = {}
     if alias_expansion_enabled and llm is not None:
         analysis_result = await strategy._expand_query(query_text, question_date)
-    
+
     results = await strategy.retrieve(
         conn=conn,
         query_embedding_str=query_emb_str,
@@ -154,6 +156,8 @@ async def retrieve_semantic_bm25_combined(
         created_after=created_after,
         created_before=created_before,
         question_date=question_date,
+        vector_index=vector_index,
+        query_vector=query_vector,
     )
 
     result_dict: dict[str, tuple[list[RetrievalResult], list[RetrievalResult]]] = {ft: ([], []) for ft in fact_types}
@@ -235,6 +239,8 @@ async def retrieve_all_fact_types_parallel(
     query_rewriting_strategy_name: str = "llm_based",
     alias_expansion_enabled: bool = True,
     session_expansion_weight: float = 0.3,
+    vector_index: Any | None = None,
+    query_vector: list[float] | None = None,
 ) -> MultiFactTypeRetrievalResult:
     """
     Optimized retrieval for multiple fact types using batched queries.
@@ -257,7 +263,9 @@ async def retrieve_all_fact_types_parallel(
     from .temporal_extraction import extract_temporal_constraint
 
     # Extract temporal constraint using native logic
-    native_temporal_constraint = extract_temporal_constraint(query_text, reference_date=question_date, analyzer=query_analyzer)
+    native_temporal_constraint = extract_temporal_constraint(
+        query_text, reference_date=question_date, analyzer=query_analyzer
+    )
     temporal_extraction_time = time.time() - temporal_extraction_start
     timings["temporal_extraction"] = temporal_extraction_time
 
@@ -286,17 +294,19 @@ async def retrieve_all_fact_types_parallel(
             query_rewriting_strategy_name=query_rewriting_strategy_name,
             alias_expansion_enabled=alias_expansion_enabled,
             question_date=question_date,
+            vector_index=vector_index,
+            query_vector=query_vector,
         )
         semantic_bm25_time = time.time() - semantic_bm25_start
 
         # Fusion of native temporal constraint and LLM-driven time window
         # Priority: LLM-driven time window takes precedence when available and requested
         temporal_constraint = native_temporal_constraint
-        
+
         llm_time_window_start = query_analysis_result.get("time_window_start")
         llm_time_window_end = query_analysis_result.get("time_window_end")
         llm_needs_time_window = query_analysis_result.get("needs_time_window", False)
-        
+
         if llm_needs_time_window and llm_time_window_start and llm_time_window_end:
             # LLM-driven time window takes precedence
             temporal_constraint = (llm_time_window_start, llm_time_window_end)

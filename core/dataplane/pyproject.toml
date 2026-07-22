@@ -98,6 +98,9 @@ embedded-db = [
 oracle = [
     "oracledb>=2.5.0",
 ]
+milvus = [
+    "pymilvus[milvus-lite]>=3.0.0",
+]
 all = [
     "hms-api-slim[local-ml,embedded-db]",
 ]
