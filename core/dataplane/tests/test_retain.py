@@ -536,7 +536,7 @@ async def test_mentioned_at_from_context_string(memory, request_context):
     bank_id = f"test_context_date_{datetime.now(timezone.utc).timestamp()}"
 
     try:
-        # Test case 1: Date in context string (like longmemeval benchmark)
+        # Test case 1: Date embedded in a context string.
         session_date = datetime(2023, 5, 10, 14, 30, 0, tzinfo=timezone.utc)
 
         unit_ids = await memory.retain_async(

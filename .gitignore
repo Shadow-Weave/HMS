@@ -35,8 +35,6 @@ target/
 .aaaDATA/
 .aaaLOG/
 .aaaRESULT/
-lab/evaluation/benchmarks/**/datasets/
-lab/evaluation/benchmarks/**/results/
 logs/
 *.log
 
