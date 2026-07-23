@@ -163,13 +163,15 @@ docker run --rm -it -p 8888:8888 \
 
 ## MCP Server
 
-For local MCP integration without running the full API server:
+For local MCP integration with embedded PostgreSQL defaults:
 
 ```bash
 hms-local-mcp
 ```
 
-This runs a stdio-based MCP server that can be used directly with MCP-compatible clients.
+This starts the full local HMS HTTP API on `localhost:8888`. MCP-compatible
+clients can connect to `/mcp/` for multi-bank mode or `/mcp/{bank_id}/` for a
+bank-pinned mode; this command is not a stdio transport.
 
 ## Key Features
 
@@ -183,6 +185,7 @@ This runs a stdio-based MCP server that can be used directly with MCP-compatible
 
 Full documentation: [https://docs.hms.local](https://docs.hms.local)
 
+- [Multimodal image/video memory operator guide](../../docs/multimodal_memory.md)
 - [Installation Guide](https://docs.hms.local/developer/installation)
 - [Configuration Reference](https://docs.hms.local/developer/configuration)
 - [API Reference](https://docs.hms.local/api-reference)

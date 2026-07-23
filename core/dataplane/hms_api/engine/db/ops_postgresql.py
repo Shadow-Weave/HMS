@@ -67,6 +67,7 @@ class PostgreSQLOps(DataAccessOps):
         tags_list: list[str],
         observation_scopes_list: list,
         text_signals_list: list,
+        projection_jsons: list[str],
         text_search_extension: str = "native",
     ) -> list[str]:
         from ...config import get_config
@@ -79,14 +80,15 @@ class PostgreSQLOps(DataAccessOps):
                 WITH input_data AS (
                     SELECT * FROM unnest(
                         $2::text[], $3::vector[], $4::timestamptz[], $5::timestamptz[], $6::timestamptz[], $7::timestamptz[],
-                        $8::text[], $9::text[], $10::jsonb[], $11::text[], $12::text[], $13::jsonb[], $14::jsonb[], $15::text[]
+                        $8::text[], $9::text[], $10::jsonb[], $11::text[], $12::text[], $13::jsonb[], $14::jsonb[], $15::text[],
+                        $16::jsonb[]
                     ) AS t(text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                            context, fact_type, metadata, chunk_id, document_id, tags_json,
-                           observation_scopes_json, text_signals)
+                           observation_scopes_json, text_signals, projection)
                 )
                 INSERT INTO {table} (bank_id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                                      context, fact_type, metadata, chunk_id, document_id, tags,
-                                     observation_scopes, text_signals, search_vector)
+                                     observation_scopes, text_signals, projection, search_vector)
                 SELECT
                     $1,
                     text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
@@ -97,6 +99,7 @@ class PostgreSQLOps(DataAccessOps):
                     ),
                     observation_scopes_json,
                     text_signals,
+                    COALESCE(projection, '{{}}'::jsonb),
                     tokenize(
                         COALESCE(text, '') || ' ' || COALESCE(context, '') || ' ' || COALESCE(text_signals, ''),
                         'llmlingua2'
@@ -109,14 +112,15 @@ class PostgreSQLOps(DataAccessOps):
                 WITH input_data AS (
                     SELECT * FROM unnest(
                         $2::text[], $3::vector[], $4::timestamptz[], $5::timestamptz[], $6::timestamptz[], $7::timestamptz[],
-                        $8::text[], $9::text[], $10::jsonb[], $11::text[], $12::text[], $13::jsonb[], $14::jsonb[], $15::text[]
+                        $8::text[], $9::text[], $10::jsonb[], $11::text[], $12::text[], $13::jsonb[], $14::jsonb[], $15::text[],
+                        $16::jsonb[]
                     ) AS t(text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                            context, fact_type, metadata, chunk_id, document_id, tags_json,
-                           observation_scopes_json, text_signals)
+                           observation_scopes_json, text_signals, projection)
                 )
                 INSERT INTO {table} (bank_id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                                      context, fact_type, metadata, chunk_id, document_id, tags,
-                                     observation_scopes, text_signals)
+                                     observation_scopes, text_signals, projection)
                 SELECT
                     $1,
                     text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
@@ -126,7 +130,8 @@ class PostgreSQLOps(DataAccessOps):
                         '{{}}'::varchar[]
                     ),
                     observation_scopes_json,
-                    text_signals
+                    text_signals,
+                    COALESCE(projection, '{{}}'::jsonb)
                 FROM input_data
                 RETURNING id
             """
@@ -148,6 +153,7 @@ class PostgreSQLOps(DataAccessOps):
             tags_list,
             observation_scopes_list,
             text_signals_list,
+            projection_jsons,
         )
         return [str(row["id"]) for row in results]
 
@@ -248,6 +254,30 @@ class PostgreSQLOps(DataAccessOps):
             ON CONFLICT DO NOTHING
             """,
             unit_ids,
+            entity_ids,
+        )
+
+    async def refresh_entity_fact_counts(
+        self,
+        conn: DatabaseConnection,
+        entities_table: str,
+        ue_table: str,
+        entity_ids: list,
+    ) -> None:
+        if not entity_ids:
+            return
+        await conn.execute(
+            f"""
+            UPDATE {entities_table} e
+            SET fact_count = counts.fact_count
+            FROM (
+                SELECT ids.entity_id, COUNT(ue.unit_id)::int AS fact_count
+                FROM (SELECT DISTINCT unnest($1::uuid[]) AS entity_id) ids
+                LEFT JOIN {ue_table} ue ON ue.entity_id = ids.entity_id
+                GROUP BY ids.entity_id
+            ) counts
+            WHERE e.id = counts.entity_id
+            """,
             entity_ids,
         )
 
@@ -352,8 +382,44 @@ class PostgreSQLOps(DataAccessOps):
         self,
         mu_table: str,
         ue_table: str,
+        entities_table: str,
         per_entity_limit: int,
+        entity_fanout_hard_cap: int = 5000,
+        entity_idf_weighting: bool = False,
     ) -> str:
+        if entity_idf_weighting:
+            return f"""
+                seed_entities AS (
+                    SELECT DISTINCT ue.entity_id,
+                           (1.0 / ln(2.718281828 + GREATEST(e.fact_count, 1)))::float AS entity_weight
+                    FROM {ue_table} ue
+                    JOIN {entities_table} e ON e.id = ue.entity_id
+                    WHERE ue.unit_id = ANY($1::uuid[])
+                      AND e.fact_count <= {entity_fanout_hard_cap}
+                ),
+                entity_expanded AS (
+                    SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
+                           mu.occurred_end, mu.mentioned_at,
+                           mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
+                           SUM(se.entity_weight)::float AS score,
+                           'entity'::text AS source
+                    FROM seed_entities se
+                    CROSS JOIN LATERAL (
+                        SELECT ue_target.unit_id
+                        FROM {ue_table} ue_target
+                        WHERE ue_target.entity_id = se.entity_id
+                          AND ue_target.unit_id != ALL($1::uuid[])
+                        ORDER BY ue_target.unit_id DESC
+                        LIMIT {per_entity_limit}
+                    ) t
+                    JOIN {mu_table} mu ON mu.id = t.unit_id
+                    WHERE mu.fact_type = $2
+                    GROUP BY mu.id
+                    ORDER BY score DESC
+                    LIMIT $3
+                )"""
+
+        del entities_table, entity_fanout_hard_cap
         return f"""
             seed_entities AS (
                 SELECT DISTINCT ue.entity_id
@@ -363,7 +429,7 @@ class PostgreSQLOps(DataAccessOps):
             entity_expanded AS (
                 SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                        mu.occurred_end, mu.mentioned_at,
-                       mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                       mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                        COUNT(DISTINCT se.entity_id)::float AS score,
                        'entity'::text AS source
                 FROM seed_entities se
@@ -394,14 +460,14 @@ class PostgreSQLOps(DataAccessOps):
                 SELECT
                     id, text, context, event_date, occurred_start,
                     occurred_end, mentioned_at,
-                    fact_type, document_id, chunk_id, tags, proof_count,
+                    fact_type, document_id, chunk_id, tags, projection, proof_count,
                     MAX(weight) AS score,
                     'semantic'::text AS source
                 FROM (
                     SELECT
                         mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                         mu.occurred_end, mu.mentioned_at,
-                        mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                        mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                         ml.weight
                     FROM {ml_table} ml
                     JOIN {mu_table} mu ON mu.id = ml.to_unit_id
@@ -413,7 +479,7 @@ class PostgreSQLOps(DataAccessOps):
                     SELECT
                         mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                         mu.occurred_end, mu.mentioned_at,
-                        mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                        mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                         ml.weight
                     FROM {ml_table} ml
                     JOIN {mu_table} mu ON mu.id = ml.from_unit_id
@@ -424,7 +490,7 @@ class PostgreSQLOps(DataAccessOps):
                 ) sem_raw
                 GROUP BY id, text, context, event_date, occurred_start,
                          occurred_end, mentioned_at,
-                         fact_type, document_id, chunk_id, tags, proof_count
+                         fact_type, document_id, chunk_id, tags, projection, proof_count
                 ORDER BY score DESC
                 LIMIT $3
             ),
@@ -432,7 +498,7 @@ class PostgreSQLOps(DataAccessOps):
                 SELECT DISTINCT ON (mu.id)
                     mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                     mu.occurred_end, mu.mentioned_at,
-                    mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                    mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                     ml.weight AS score,
                     'causal'::text AS source
                 FROM {ml_table} ml
@@ -444,6 +510,147 @@ class PostgreSQLOps(DataAccessOps):
                 LIMIT $3
             )"""
 
+    def build_semantic_ann_cte(
+        self,
+        mu_table: str,
+        threshold_param_idx: int,
+        limit_param_idx: int,
+        bank_param_idx: int,
+        visibility_filter_clause: str = "",
+    ) -> str:
+        return f"""
+            semantic_expanded AS (
+                SELECT
+                    id, text, context, event_date, occurred_start,
+                    occurred_end, mentioned_at,
+                    fact_type, document_id, chunk_id, tags, projection, proof_count,
+                    MAX(score) AS score,
+                    'semantic'::text AS source
+                FROM (
+                    SELECT
+                        mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
+                        mu.occurred_end, mu.mentioned_at,
+                        mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
+                        (1 - (mu.embedding <=> seed.embedding)) AS score
+                    FROM (
+                        SELECT id, embedding
+                        FROM {mu_table}
+                        WHERE id = ANY($1::uuid[])
+                          AND embedding IS NOT NULL
+                    ) seed
+                    CROSS JOIN LATERAL (
+                        SELECT mu_inner.*
+                        FROM {mu_table} mu_inner
+                        WHERE mu_inner.bank_id = ${bank_param_idx}
+                          AND mu_inner.fact_type = $2
+                          AND mu_inner.embedding IS NOT NULL
+                          AND mu_inner.id != ALL($1::uuid[])
+                          {visibility_filter_clause}
+                        ORDER BY mu_inner.embedding <=> seed.embedding
+                        LIMIT ${limit_param_idx}
+                    ) mu
+                    WHERE (1 - (mu.embedding <=> seed.embedding)) >= ${threshold_param_idx}
+                ) ann_raw
+                GROUP BY id, text, context, event_date, occurred_start,
+                         occurred_end, mentioned_at,
+                         fact_type, document_id, chunk_id, tags, projection, proof_count
+                ORDER BY score DESC
+                LIMIT $3
+            )"""
+
+    def build_causal_expansion_cte(
+        self,
+        ml_table: str,
+        mu_table: str,
+    ) -> str:
+        return f"""
+            causal_expanded AS (
+                SELECT DISTINCT ON (mu.id)
+                    mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
+                    mu.occurred_end, mu.mentioned_at,
+                    mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
+                    ml.weight AS score,
+                    'causal'::text AS source
+                FROM {ml_table} ml
+                JOIN {mu_table} mu ON ml.to_unit_id = mu.id
+                WHERE ml.from_unit_id = ANY($1::uuid[])
+                  AND ml.link_type IN ('causes', 'caused_by', 'enables', 'prevents')
+                  AND mu.fact_type = $2
+                ORDER BY mu.id, ml.weight DESC
+                LIMIT $3
+            )"""
+
+    def build_temporal_links_spreading_lateral(
+        self,
+        ml_table: str,
+        limit_param_idx: int,
+    ) -> str:
+        return f"""
+            SELECT ml.to_unit_id, ml.weight, ml.link_type
+            FROM {ml_table} ml
+            WHERE ml.from_unit_id = src.from_unit_id
+              AND ml.link_type IN ('temporal', 'causes', 'caused_by', 'enables', 'prevents')
+              AND ml.weight >= 0.1
+            ORDER BY ml.weight DESC
+            LIMIT ${limit_param_idx}
+        """
+
+    def build_temporal_btree_spreading_lateral(
+        self,
+        mu_table: str,
+        ml_table: str,
+        limit_param_idx: int,
+        bank_param_idx: int,
+        fact_type_param_idx: int,
+        window_seconds_param_idx: int,
+        sigma_seconds_param_idx: int,
+    ) -> str:
+        temporal_weight = (
+            f"exp(-abs(extract(epoch from (mu_t.event_date - src_mu.event_date))) / ${sigma_seconds_param_idx})"
+        )
+        temporal_window = (
+            f"abs(extract(epoch from (mu_t.event_date - src_mu.event_date))) <= ${window_seconds_param_idx}"
+        )
+        return f"""
+            (
+                SELECT mu_t.id AS to_unit_id, {temporal_weight} AS weight, 'temporal'::text AS link_type
+                FROM {mu_table} mu_t
+                WHERE src_mu.event_date IS NOT NULL
+                  AND mu_t.bank_id = ${bank_param_idx}
+                  AND mu_t.fact_type = ${fact_type_param_idx}
+                  AND mu_t.event_date IS NOT NULL
+                  AND mu_t.event_date >= src_mu.event_date
+                  AND mu_t.id <> src.from_unit_id
+                  AND {temporal_window}
+                ORDER BY mu_t.event_date ASC
+                LIMIT ${limit_param_idx}
+            )
+            UNION ALL
+            (
+                SELECT mu_t.id AS to_unit_id, {temporal_weight} AS weight, 'temporal'::text AS link_type
+                FROM {mu_table} mu_t
+                WHERE src_mu.event_date IS NOT NULL
+                  AND mu_t.bank_id = ${bank_param_idx}
+                  AND mu_t.fact_type = ${fact_type_param_idx}
+                  AND mu_t.event_date IS NOT NULL
+                  AND mu_t.event_date < src_mu.event_date
+                  AND mu_t.id <> src.from_unit_id
+                  AND {temporal_window}
+                ORDER BY mu_t.event_date DESC
+                LIMIT ${limit_param_idx}
+            )
+            UNION ALL
+            (
+                SELECT ml.to_unit_id, ml.weight, ml.link_type
+                FROM {ml_table} ml
+                WHERE ml.from_unit_id = src.from_unit_id
+                  AND ml.link_type IN ('causes', 'caused_by', 'enables', 'prevents')
+                  AND ml.weight >= 0.1
+                ORDER BY ml.weight DESC
+                LIMIT ${limit_param_idx}
+            )
+        """
+
     async def expand_observations(
         self,
         conn: DatabaseConnection,
@@ -451,8 +658,14 @@ class PostgreSQLOps(DataAccessOps):
         ue_table: str,
         ml_table: str,
         seed_ids: list,
+        bank_id: str,
         budget: int,
         per_entity_limit: int,
+        semantic_mode: str = "links",
+        ann_threshold: float = 0.7,
+        ann_limit: int = 50,
+        visibility_filter_clause: str = "",
+        visibility_filter_params: list | None = None,
     ) -> tuple[list[ResultRow], list[ResultRow], list[ResultRow]]:
         # v0.5.6 array ops: unnest, &&, COUNT(DISTINCT) on source_memory_ids.
         from ..schema import fq_table
@@ -490,7 +703,7 @@ class PostgreSQLOps(DataAccessOps):
             SELECT
                 mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                 mu.occurred_end, mu.mentioned_at,
-                mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                 (SELECT COUNT(DISTINCT s) FROM unnest(mu.source_memory_ids) s WHERE s = ANY(ca.source_ids))::float AS score
             FROM {mu_table} mu, connected_array ca
             WHERE mu.fact_type = 'observation'
@@ -504,56 +717,75 @@ class PostgreSQLOps(DataAccessOps):
             budget,
         )
 
-        # Exact v0.5.6 query shape: GROUP BY + MAX(weight) for semantic,
-        # DISTINCT ON for causal, hardcoded to fact_type='observation'.
-        sem_causal_rows = await conn.fetch(
-            f"""
-            WITH semantic_expanded AS (
-                SELECT
-                    id, text, context, event_date, occurred_start,
-                    occurred_end, mentioned_at,
-                    fact_type, document_id, chunk_id, tags, proof_count,
-                    MAX(weight) AS score,
-                    'semantic'::text AS source
-                FROM (
-                    SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
-                           mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id,
-                           mu.chunk_id, mu.tags, mu.proof_count, ml.weight
-                    FROM {ml_table} ml JOIN {mu_table} mu ON mu.id = ml.to_unit_id
-                    WHERE ml.from_unit_id = ANY($1::uuid[])
-                      AND ml.link_type = 'semantic' AND mu.fact_type = 'observation'
-                      AND mu.id != ALL($1::uuid[])
-                    UNION ALL
-                    SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
-                           mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id,
-                           mu.chunk_id, mu.tags, mu.proof_count, ml.weight
-                    FROM {ml_table} ml JOIN {mu_table} mu ON mu.id = ml.from_unit_id
-                    WHERE ml.to_unit_id = ANY($1::uuid[])
-                      AND ml.link_type = 'semantic' AND mu.fact_type = 'observation'
-                      AND mu.id != ALL($1::uuid[])
-                ) sem_raw
-                GROUP BY id, text, context, event_date, occurred_start, occurred_end,
-                         mentioned_at, fact_type, document_id, chunk_id, tags, proof_count
-                ORDER BY score DESC LIMIT $2
-            ),
-            causal_expanded AS (
-                SELECT DISTINCT ON (mu.id)
-                    mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
-                    mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id,
-                    mu.chunk_id, mu.tags, mu.proof_count, ml.weight AS score, 'causal'::text AS source
-                FROM {ml_table} ml JOIN {mu_table} mu ON ml.to_unit_id = mu.id
-                WHERE ml.from_unit_id = ANY($1::uuid[])
-                  AND ml.link_type IN ('causes', 'caused_by', 'enables', 'prevents')
-                  AND mu.fact_type = 'observation'
-                ORDER BY mu.id, ml.weight DESC LIMIT $2
+        visibility_filter_params = visibility_filter_params or []
+        if semantic_mode == "ann":
+            sem_causal_rows = await conn.fetch(
+                f"""
+                WITH {self.build_semantic_ann_cte(mu_table, 4, 5, 6, visibility_filter_clause)},
+                {self.build_causal_expansion_cte(ml_table, mu_table)}
+                SELECT * FROM semantic_expanded
+                UNION ALL
+                SELECT * FROM causal_expanded
+                """,
+                seed_ids,
+                "observation",
+                budget,
+                ann_threshold,
+                ann_limit,
+                bank_id,
+                *visibility_filter_params,
             )
-            SELECT * FROM semantic_expanded
-            UNION ALL
-            SELECT * FROM causal_expanded
-            """,
-            seed_ids,
-            budget,
-        )
+        else:
+            # Exact v0.5.6 query shape: GROUP BY + MAX(weight) for semantic,
+            # DISTINCT ON for causal, hardcoded to fact_type='observation'.
+            sem_causal_rows = await conn.fetch(
+                f"""
+                WITH semantic_expanded AS (
+                    SELECT
+                        id, text, context, event_date, occurred_start,
+                        occurred_end, mentioned_at,
+                        fact_type, document_id, chunk_id, tags, projection, proof_count,
+                        MAX(weight) AS score,
+                        'semantic'::text AS source
+                    FROM (
+                        SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
+                               mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id,
+                               mu.chunk_id, mu.tags, mu.projection, mu.proof_count, ml.weight
+                        FROM {ml_table} ml JOIN {mu_table} mu ON mu.id = ml.to_unit_id
+                        WHERE ml.from_unit_id = ANY($1::uuid[])
+                          AND ml.link_type = 'semantic' AND mu.fact_type = 'observation'
+                          AND mu.id != ALL($1::uuid[])
+                        UNION ALL
+                        SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
+                               mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id,
+                               mu.chunk_id, mu.tags, mu.projection, mu.proof_count, ml.weight
+                        FROM {ml_table} ml JOIN {mu_table} mu ON mu.id = ml.from_unit_id
+                        WHERE ml.to_unit_id = ANY($1::uuid[])
+                          AND ml.link_type = 'semantic' AND mu.fact_type = 'observation'
+                          AND mu.id != ALL($1::uuid[])
+                    ) sem_raw
+                    GROUP BY id, text, context, event_date, occurred_start, occurred_end,
+                             mentioned_at, fact_type, document_id, chunk_id, tags, projection, proof_count
+                    ORDER BY score DESC LIMIT $2
+                ),
+                causal_expanded AS (
+                    SELECT DISTINCT ON (mu.id)
+                        mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
+                        mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id,
+                        mu.chunk_id, mu.tags, mu.projection, mu.proof_count, ml.weight AS score, 'causal'::text AS source
+                    FROM {ml_table} ml JOIN {mu_table} mu ON ml.to_unit_id = mu.id
+                    WHERE ml.from_unit_id = ANY($1::uuid[])
+                      AND ml.link_type IN ('causes', 'caused_by', 'enables', 'prevents')
+                      AND mu.fact_type = 'observation'
+                    ORDER BY mu.id, ml.weight DESC LIMIT $2
+                )
+                SELECT * FROM semantic_expanded
+                UNION ALL
+                SELECT * FROM causal_expanded
+                """,
+                seed_ids,
+                budget,
+            )
 
         semantic_rows = [r for r in sem_causal_rows if r["source"] == "semantic"]
         causal_rows = [r for r in sem_causal_rows if r["source"] == "causal"]

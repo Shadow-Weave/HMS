@@ -6,21 +6,25 @@
 #   INCLUDE_CP=true/false          - Include Control Plane (default: true)
 #   INCLUDE_LOCAL_MODELS=true/false - Include local ML models for embeddings/reranking (default: true)
 #                                     Set to false when using external providers (TEI, OpenAI, Cohere)
+#   INCLUDE_MULTIMODAL_VIDEO=true/false - Include PyAV for local video decode (default: false)
 #   PRELOAD_ML_MODELS=true/false   - Pre-download ML models during build (default: true)
 #                                     Only effective when INCLUDE_LOCAL_MODELS=true
 #                                     NOTE: tiktoken encodings are ALWAYS preloaded (required for air-gapped deployments)
 #
 # Examples:
-#   docker build -t hms .                                          # Both (standalone)
-#   docker build -t hms-api --build-arg INCLUDE_CP=false .         # API only
-#   docker build -t hms-cp --build-arg INCLUDE_API=false .         # Control Plane only
-#   docker build -t hms --build-arg PRELOAD_ML_MODELS=false .      # Skip ML model preload
-#   docker build -t hms --build-arg INCLUDE_LOCAL_MODELS=false .   # Skip local ML deps (for external providers)
+#   docker build -f deploy/containers/standalone/Dockerfile --target standalone -t hms .
+#   docker build -f deploy/containers/standalone/Dockerfile --target api-only -t hms-api .
+#   docker build -f deploy/containers/standalone/Dockerfile --target cp-only -t hms-cp .
+#   docker build -f deploy/containers/standalone/Dockerfile --target standalone \
+#     --build-arg PRELOAD_ML_MODELS=false -t hms .
+#   docker build -f deploy/containers/standalone/Dockerfile --target api-only \
+#     --build-arg INCLUDE_LOCAL_MODELS=false --build-arg INCLUDE_MULTIMODAL_VIDEO=true -t hms-video .
 
 ARG INCLUDE_API=true
 ARG INCLUDE_CP=true
 ARG PRELOAD_ML_MODELS=true
 ARG INCLUDE_LOCAL_MODELS=true
+ARG INCLUDE_MULTIMODAL_VIDEO=false
 
 # =============================================================================
 # Stage: API Builder
@@ -29,6 +33,7 @@ FROM python:3.11-slim AS api-builder
 
 ARG INCLUDE_API
 ARG INCLUDE_LOCAL_MODELS
+ARG INCLUDE_MULTIMODAL_VIDEO
 RUN if [ "$INCLUDE_API" != "true" ]; then echo "Skipping API build" && exit 0; fi
 
 WORKDIR /app
@@ -47,13 +52,26 @@ COPY core/dataplane/README.md ./api/
 
 WORKDIR /app/api
 
-# Sync dependencies using appropriate extras based on INCLUDE_LOCAL_MODELS
+# Sync dependencies using appropriate extras based on build-time capabilities.
 # local-ml: torch, sentence-transformers, transformers, einops, flashrank, mlx (optional)
 # embedded-db: pg0-embedded (always included for embedded PostgreSQL support)
-RUN if [ "$INCLUDE_LOCAL_MODELS" = "true" ]; then \
+# multimodal-video: PyAV for bounded local video probing/decoding (optional)
+RUN set -eu; \
+    case "$INCLUDE_MULTIMODAL_VIDEO" in \
+        true|false) ;; \
+        *) echo "INCLUDE_MULTIMODAL_VIDEO must be true or false" >&2; exit 2 ;; \
+    esac; \
+    if [ "$INCLUDE_LOCAL_MODELS" = "true" ] && [ "$INCLUDE_MULTIMODAL_VIDEO" = "true" ]; then \
+        uv sync --extra local-ml --extra embedded-db --extra multimodal-video; \
+    elif [ "$INCLUDE_LOCAL_MODELS" = "true" ]; then \
         uv sync --extra local-ml --extra embedded-db; \
+    elif [ "$INCLUDE_MULTIMODAL_VIDEO" = "true" ]; then \
+        uv sync --extra embedded-db --extra multimodal-video; \
     else \
         uv sync --extra embedded-db; \
+    fi; \
+    if [ "$INCLUDE_MULTIMODAL_VIDEO" = "true" ]; then \
+        .venv/bin/python -c "import av; decoder = av.codec.CodecContext.create('h264', 'r'); print('PyAV/H.264 decoder available:', av.__version__, decoder.codec.name)"; \
     fi
 
 # Copy source code (alembic migrations are inside hms_api/)
@@ -139,6 +157,8 @@ RUN STANDALONE_ROOT=$(find .next/standalone -path '*/node_modules' -prune -o -na
 # =============================================================================
 FROM python:3.11-slim AS api-only
 
+ARG INCLUDE_MULTIMODAL_VIDEO
+
 WORKDIR /app
 
 # Note: libicu version varies by Debian version - try common versions in order
@@ -157,6 +177,12 @@ RUN useradd -m -s /bin/bash hms
 
 # Copy API with virtual environment from builder
 COPY --from=api-builder /app/api /app/api
+
+# Verify the copied environment in the slim runtime stage, not only in the
+# compiler-bearing builder. This catches missing shared-library dependencies.
+RUN if [ "$INCLUDE_MULTIMODAL_VIDEO" = "true" ]; then \
+        /app/api/.venv/bin/python -c "import av; decoder = av.codec.CodecContext.create('h264', 'r'); print('Runtime PyAV/H.264 available:', av.__version__, decoder.codec.name)"; \
+    fi
 
 # Copy startup script
 COPY deploy/containers/standalone/start-all.sh /app/start-all.sh
@@ -285,6 +311,8 @@ CMD ["/app/start-all.sh"]
 # =============================================================================
 FROM python:3.11-slim AS standalone
 
+ARG INCLUDE_MULTIMODAL_VIDEO
+
 WORKDIR /app
 
 # Install Node.js, curl, uv, and system dependencies
@@ -306,6 +334,12 @@ RUN useradd -m -s /bin/bash hms
 
 # Copy API with virtual environment from builder
 COPY --from=api-builder /app/api /app/api
+
+# Keep the combined runtime subject to the same decoder verification as the
+# API-only image used by dedicated API/worker deployments.
+RUN if [ "$INCLUDE_MULTIMODAL_VIDEO" = "true" ]; then \
+        /app/api/.venv/bin/python -c "import av; decoder = av.codec.CodecContext.create('h264', 'r'); print('Runtime PyAV/H.264 available:', av.__version__, decoder.codec.name)"; \
+    fi
 
 # Copy built SDK
 COPY --from=sdk-builder /app/interface/sdk/typescript /app/sdk

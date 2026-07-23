@@ -11,8 +11,10 @@ This implements a sophisticated memory architecture that combines:
 
 import asyncio
 import contextvars
+import hashlib
 import json
 import logging
+import re
 import time
 import uuid
 from collections.abc import Awaitable, Callable
@@ -40,6 +42,7 @@ from ..worker.stage import set_stage
 from .audit import AuditLogger, audit_context
 from .db import DatabaseBackend, create_database_backend
 from .db_budget import budgeted_operation
+from .multimodal.security import contains_encoded_media_payload
 from .operation_metadata import (
     BatchRetainChildMetadata,
     BatchRetainParentMetadata,
@@ -54,6 +57,217 @@ from .sql import SQLDialect, create_sql_dialect
 _current_schema: contextvars.ContextVar[str | None] = contextvars.ContextVar("current_schema", default=None)
 
 
+class _MultimodalCommandSuperseded(RuntimeError):
+    """Internal control flow used to roll back an obsolete child retain."""
+
+
+_MULTIMODAL_CACHE_PIPELINE_PREFIX = "__hms_pipeline__."
+
+_MULTIMODAL_UNCONSTRAINED_HINT = "unconstrained"
+_MULTIMODAL_FALLBACK_POLICY_VERSION = "typed-not-applicable-only-v1"
+
+
+def _derive_anonymous_multimodal_document_id(
+    *,
+    tenant_scope: str | None,
+    bank_id: str,
+    asset_sha256: str,
+) -> str:
+    """Derive the stable logical ID used only by anonymous multimodal files.
+
+    The raw digest is never exposed as the document ID.  The domain-separated
+    digest includes both isolation dimensions, so retries converge inside one
+    tenant/schema and bank without merging the same bytes across either scope.
+    """
+
+    if not bank_id:
+        raise ValueError("bank_id must be non-empty")
+    if len(asset_sha256) != 64 or any(char not in "0123456789abcdef" for char in asset_sha256):
+        raise ValueError("asset_sha256 must be a lowercase SHA-256 digest")
+    identity = {
+        "domain": "hms:openai-multimodal:anonymous-document:v1",
+        "tenant_scope": tenant_scope if tenant_scope is not None else {"default": True},
+        "bank_id": bank_id,
+        "asset_sha256": asset_sha256,
+    }
+    digest = hashlib.sha256(
+        json.dumps(identity, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
+    ).hexdigest()
+    return f"file_mm_{digest}"
+
+
+def _canonical_multimodal_validator_hints(
+    *,
+    filename: str,
+    content_type: str | None,
+) -> dict[str, str]:
+    """Canonicalize only hints that can change media validation.
+
+    MIME parameters and case do not affect validation.  Missing MIME and
+    ``application/octet-stream`` are both unconstrained by contract.  For a
+    filename, only a recognized final extension matters; aliases accepted by
+    the same validator family (for example ``.jpg``/``.jpeg`` or
+    ``.mp4``/``.mov``) intentionally converge.  The customer filename itself
+    is therefore absent from durable command identity.
+    """
+
+    declared_mime = (content_type or "").split(";", 1)[0].strip().lower()
+    if not declared_mime or declared_mime == "application/octet-stream":
+        declared_mime = _MULTIMODAL_UNCONSTRAINED_HINT
+    # Reuse the same lookup functions as the validators.  Identity therefore
+    # cannot silently drift when a supported alias or container is changed.
+    from .multimodal.images import image_extension_mime_hint
+    from .multimodal.video import video_extension_family_hint
+
+    image_mime = image_extension_mime_hint(filename)
+    video_family = video_extension_family_hint(filename)
+    if image_mime is not None:
+        extension_family = f"image:{image_mime}"
+    elif video_family is not None:
+        extension_family = f"video:{video_family}"
+    else:
+        extension_family = _MULTIMODAL_UNCONSTRAINED_HINT
+    return {
+        "declared_mime": declared_mime,
+        "extension_family": extension_family,
+    }
+
+
+def _canonical_multimodal_parser_policy(parsers: Any) -> dict[str, Any]:
+    """Return the ordered parser policy that governs one multimodal command."""
+
+    if isinstance(parsers, str):
+        chain = [parsers]
+    elif isinstance(parsers, list | tuple):
+        chain = list(parsers)
+    else:
+        raise ValueError("multimodal parser chain must be a list of names")
+    if not chain or any(not isinstance(name, str) or not name.strip() for name in chain):
+        raise ValueError("multimodal parser chain must contain non-empty names")
+    return {
+        "chain": chain,
+        "fallback_policy": _MULTIMODAL_FALLBACK_POLICY_VERSION,
+    }
+
+
+def _reject_multimodal_transport_payload_in_metadata(
+    item: dict[str, Any],
+    filename: str,
+    document_tags: list[str] | None,
+) -> None:
+    """Keep encoded media out of durable request metadata and logs."""
+
+    # Scan every caller-controlled field, not just the fields historically
+    # used by the retain path.  In particular, document_id/parser/strategy
+    # must not become alternate data-URL or base64 persistence channels.
+    stack: list[Any] = [filename, document_tags or []]
+    stack.extend(value for key, value in item.items() if key != "file")
+    seen_containers: set[int] = set()
+    while stack:
+        value = stack.pop()
+        if isinstance(value, str):
+            if contains_encoded_media_payload(value):
+                raise ValueError("Multimodal file metadata cannot contain an encoded media payload")
+            continue
+        if isinstance(value, bytes | bytearray | memoryview):
+            raise ValueError("Multimodal file metadata cannot contain an encoded media payload")
+        if isinstance(value, dict):
+            identity = id(value)
+            if identity in seen_containers:
+                continue
+            seen_containers.add(identity)
+            stack.extend(value.keys())
+            stack.extend(value.values())
+        elif isinstance(value, list | tuple | set | frozenset):
+            identity = id(value)
+            if identity in seen_containers:
+                continue
+            seen_containers.add(identity)
+            stack.extend(value)
+
+
+def _classify_multimodal_media_kind(
+    file_data: bytes,
+    *,
+    filename: str,
+    content_type: str | None,
+) -> Literal["image", "video"]:
+    """Classify early status metadata from bytes before falling back to hints.
+
+    This is not the media validation boundary: the selected parser still does
+    full decoder and MIME/extension cross-validation.  Magic-first
+    classification prevents a valid MP4 uploaded as ``application/octet-stream``
+    from being reported as an image while pending or after an early failure.
+    """
+
+    from .multimodal.errors import MediaValidationError
+    from .multimodal.images import detect_image_mime
+    from .multimodal.video import detect_video_magic
+
+    try:
+        detect_image_mime(file_data)
+    except MediaValidationError:
+        pass
+    else:
+        return "image"
+
+    try:
+        detect_video_magic(file_data)
+    except MediaValidationError:
+        pass
+    else:
+        return "video"
+
+    normalized_type = (content_type or "").split(";", 1)[0].strip().lower()
+    if normalized_type.startswith("video/"):
+        return "video"
+    suffix = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    return "video" if suffix in {"avi", "m4v", "mkv", "mov", "mp4", "webm"} else "image"
+
+
+def _multimodal_descriptor_checkpoint_values(convert_result: Any) -> tuple[dict[str, Any], list[str]]:
+    """Flatten the reusable parser result without retaining transport data."""
+
+    provenance: dict[str, Any] = {
+        key: value for key, value in convert_result.metadata.items() if key != "media_source_available"
+    }
+    for key, value in convert_result.pipeline_metadata.items():
+        if value is None or isinstance(value, str | int | float | bool):
+            provenance[f"{_MULTIMODAL_CACHE_PIPELINE_PREFIX}{key}"] = value
+    entities = [
+        str(entity["text"])
+        for entity in convert_result.entities
+        if isinstance(entity, dict) and isinstance(entity.get("text"), str) and entity["text"]
+    ]
+    return provenance, entities
+
+
+def _multimodal_convert_result_from_checkpoint(record: Any) -> Any:
+    """Rehydrate the typed parser seam from a sanitized durable checkpoint."""
+
+    from .parsers import ConvertResult
+
+    metadata = {
+        key: str(value)
+        for key, value in record.provenance_metadata.items()
+        if not key.startswith(_MULTIMODAL_CACHE_PIPELINE_PREFIX) and value is not None
+    }
+    pipeline_metadata = {
+        key.removeprefix(_MULTIMODAL_CACHE_PIPELINE_PREFIX): value
+        for key, value in record.provenance_metadata.items()
+        if key.startswith(_MULTIMODAL_CACHE_PIPELINE_PREFIX) and value is not None
+    }
+    pipeline_metadata["possible_duplicate_provider_attempt"] = record.possible_duplicate_provider_attempt
+    return ConvertResult(
+        content=record.canonical_markdown or "",
+        parser_name="openai_multimodal",
+        metadata=metadata,
+        entities=[{"text": entity, "type": "CONCEPT"} for entity in record.entities],
+        retain_extraction_mode="chunks",
+        pipeline_metadata=pipeline_metadata,
+    )
+
+
 def get_current_schema() -> str:
     """Get the current schema from context (falls back to config default)."""
     schema = _current_schema.get()
@@ -66,6 +280,16 @@ def get_current_schema() -> str:
 def count_tokens(text: str) -> int:
     """Count tokens in text using tiktoken (cl100k_base encoding for GPT-4/3.5)."""
     return len(_safe_encode_tiktoken(text))
+
+
+def _truncate_to_token_budget(text: str, max_tokens: int) -> str:
+    """Clamp text to a cl100k token budget."""
+    if max_tokens <= 0:
+        return ""
+    tokens = _safe_encode_tiktoken(text)
+    if len(tokens) <= max_tokens:
+        return text
+    return _get_tiktoken_encoding().decode(tokens[:max_tokens]).rstrip()
 
 
 def fq_table(table_name: str) -> str:
@@ -170,6 +394,7 @@ import numpy as np
 from pydantic import BaseModel, Field
 
 from .cross_encoder import CrossEncoderModel
+from .embedding_fingerprint import ensure_bank_embedding_fingerprint
 from .embeddings import Embeddings, create_embeddings_from_env
 from .interface import MemoryEngineInterface
 
@@ -272,6 +497,85 @@ def _resolve_thinking_budget(config_dict: dict, budget: "Budget | None", max_tok
 def utcnow():
     """Get current UTC time with timezone info."""
     return datetime.now(UTC)
+
+
+def _as_aware_utc(value: datetime | None) -> datetime | None:
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        return value.replace(tzinfo=UTC)
+    return value
+
+
+_PROJECTION_SELECTOR_KEY_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _projection_value_as_text(value: Any) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (str, int, float)):
+        return str(value)
+    raise ValueError("Projection selector values must be scalar JSON values")
+
+
+def _projection_path_from_key(key: str) -> tuple[str, ...]:
+    path = tuple(part for part in key.split(".") if part)
+    if not path or any(_PROJECTION_SELECTOR_KEY_RE.match(part) is None for part in path):
+        raise ValueError(f"Invalid projection selector key: {key!r}")
+    return path
+
+
+def _flatten_projection_selector(
+    selector: dict[str, Any], prefix: tuple[str, ...] = ()
+) -> list[tuple[tuple[str, ...], str | None]]:
+    if not isinstance(selector, dict) or not selector:
+        raise ValueError("Projection selector must be a non-empty object")
+
+    flattened: list[tuple[tuple[str, ...], str | None]] = []
+    for raw_key, value in selector.items():
+        if not isinstance(raw_key, str):
+            raise ValueError("Projection selector keys must be strings")
+        path = prefix + _projection_path_from_key(raw_key)
+        if isinstance(value, dict):
+            flattened.extend(_flatten_projection_selector(value, path))
+        else:
+            flattened.append((path, _projection_value_as_text(value)))
+    return flattened
+
+
+def _build_projection_selector_where(
+    selector: dict[str, Any],
+    *,
+    backend_type: str,
+    first_param: int,
+) -> tuple[str, list[str]]:
+    """Build a safe projection JSON predicate for PG/Oracle.
+
+    Projection paths are embedded only after strict identifier validation. Values
+    stay as bind parameters.
+    """
+
+    parts: list[str] = []
+    args: list[str] = []
+    param_idx = first_param
+
+    for path, text_value in _flatten_projection_selector(selector):
+        if backend_type == "oracle":
+            projection_expr = "JSON_VALUE(projection, '$." + ".".join(path) + "' RETURNING VARCHAR2(4000))"
+        else:
+            pg_path = "{" + ",".join(path) + "}"
+            projection_expr = f"projection #>> '{pg_path}'"
+
+        if text_value is None:
+            parts.append(f"{projection_expr} IS NULL")
+        else:
+            parts.append(f"{projection_expr} = ${param_idx}")
+            args.append(text_value)
+            param_idx += 1
+
+    return " AND ".join(parts), args
 
 
 # Logger for memory system
@@ -533,6 +837,7 @@ class MemoryEngine(MemoryEngineInterface):
         # Webhook manager (will be created in initialize() after pool is ready)
         self._webhook_manager = None
         self._http_client: httpx.AsyncClient | None = None
+        self._multimodal_parser = None
 
         # Initialize entity resolver (will be created in initialize())
         self.entity_resolver = None
@@ -769,7 +1074,7 @@ class MemoryEngine(MemoryEngineInterface):
         _current_schema.set(tenant_context.schema_name)
         return tenant_context.schema_name
 
-    async def _handle_batch_retain(self, task_dict: dict[str, Any]):
+    async def _handle_batch_retain(self, task_dict: dict[str, Any]) -> bool:
         """
         Handler for batch retain tasks.
 
@@ -787,10 +1092,37 @@ class MemoryEngine(MemoryEngineInterface):
         document_tags = task_dict.get("document_tags")
         operation_id = task_dict.get("operation_id")  # For batch API crash recovery
         strategy = task_dict.get("strategy")
-
-        logger.info(
-            f"[BATCH_RETAIN_TASK] Starting background batch retain for bank_id={bank_id}, {len(contents)} items, operation_id={operation_id}"
+        multimodal_command = task_dict.get("_multimodal_command")
+        retain_started = time.monotonic()
+        first_metadata = contents[0].get("metadata", {}) if contents and isinstance(contents[0], dict) else {}
+        multimodal_media_kind = (
+            str(first_metadata.get("media_kind") or "image") if isinstance(first_metadata, dict) else "image"
         )
+
+        def record_multimodal_retain(*, success: bool, reason: str | None = None, cancelled: bool = False) -> None:
+            if multimodal_command:
+                get_metrics_collector().record_multimodal_pipeline(
+                    media_kind=multimodal_media_kind,
+                    stage="retain",
+                    duration=time.monotonic() - retain_started,
+                    success=success,
+                    reason=reason,
+                    cancelled=cancelled,
+                )
+
+        if multimodal_command:
+            logger.info(
+                "[BATCH_RETAIN_TASK] Starting multimodal child operation_id=%s, items=%s",
+                operation_id,
+                len(contents),
+            )
+        else:
+            logger.info(
+                "[BATCH_RETAIN_TASK] Starting background batch retain for bank_id=%s, %s items, operation_id=%s",
+                bank_id,
+                len(contents),
+                operation_id,
+            )
 
         # Restore tenant_id/api_key_id from task payload so extensions
         # (e.g., operation validators) can attribute the operation correctly.
@@ -805,24 +1137,162 @@ class MemoryEngine(MemoryEngineInterface):
             api_key_id=task_dict.get("_api_key_id"),
             retry_count=task_dict.get("_retry_count", 0),
         )
-        await self.retain_batch_async(
+        webhook_callback = self._build_retain_outbox_callback(
             bank_id=bank_id,
             contents=contents,
-            document_tags=document_tags,
-            request_context=context,
             operation_id=operation_id,
-            strategy=strategy,
-            outbox_callback=self._build_retain_outbox_callback(
+            schema=_current_schema.get(),
+        )
+        outbox_callback = self._build_multimodal_retain_callback(
+            command_payload=multimodal_command,
+            file_metadata=task_dict.get("_file_metadata"),
+            after_publish=webhook_callback,
+        )
+
+        try:
+            await self.retain_batch_async(
                 bank_id=bank_id,
                 contents=contents,
+                document_tags=document_tags,
+                request_context=context,
                 operation_id=operation_id,
-                schema=_current_schema.get(),
-            ),
-        )
+                strategy=strategy,
+                _retain_extraction_mode=task_dict.get("_retain_extraction_mode"),
+                outbox_callback=outbox_callback,
+            )
+            if multimodal_command:
+                # The retain callback publishes the document and advances the
+                # durable command in the same transaction.  A child operation
+                # must not report success merely because retain_batch_async()
+                # returned: an absent callback or ownership race would make the
+                # async-operation row lie about recall readiness.
+                from .multimodal.ledger import LedgerInvariantError, MultimodalLedger
+
+                if not operation_id:
+                    raise LedgerInvariantError("multimodal retain child has no operation identity")
+                backend = await self._get_backend()
+                async with acquire_with_retry(backend) as conn:
+                    ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                    published_command = await ledger.get_document_command(
+                        conn,
+                        bank_id=multimodal_command["bank_id"],
+                        document_id=multimodal_command["document_id"],
+                        command_key=multimodal_command["command_key"],
+                    )
+                    published_head = await ledger.get_document_head(
+                        conn,
+                        bank_id=multimodal_command["bank_id"],
+                        document_id=multimodal_command["document_id"],
+                    )
+                if (
+                    published_command is None
+                    or published_head is None
+                    or published_command.status != "completed"
+                    or published_command.sequence != multimodal_command["sequence"]
+                    or published_command.child_retain_operation_id != uuid.UUID(operation_id)
+                    or published_head.published_sequence < published_command.sequence
+                ):
+                    raise LedgerInvariantError(
+                        "multimodal retain returned before durable document publication completed"
+                    )
+        except _MultimodalCommandSuperseded:
+            record_multimodal_retain(success=False, reason="multimodal.command_superseded")
+            # The callback raises inside the retain transaction, so all writes
+            # from its final mini-batch are rolled back.  Mark this child as a
+            # benign cancellation and do not let execute_task overwrite it as
+            # completed; the newer admitted document command owns publication.
+            if multimodal_command:
+                from .multimodal.ledger import LedgerConflictError, MultimodalLedger
+
+                backend = await self._get_backend()
+                async with acquire_with_retry(backend) as conn:
+                    async with conn.transaction():
+                        ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                        # A stale delivery can be replayed after this child
+                        # already published successfully.  Supersession is
+                        # monotone: never turn a terminal child (especially a
+                        # completed one) back into cancelled merely because
+                        # its command is now older than a newer admission.
+                        if operation_id:
+                            child_status = await conn.fetchval(
+                                f"""SELECT status
+                                    FROM {fq_table("async_operations")}
+                                    WHERE operation_id = $1 AND bank_id = $2""",
+                                uuid.UUID(operation_id),
+                                multimodal_command["bank_id"],
+                            )
+                            if child_status in {"completed", "failed"}:
+                                return False
+                        terminal_command = None
+                        try:
+                            terminal_command = await ledger.mark_document_terminal(
+                                conn,
+                                bank_id=multimodal_command["bank_id"],
+                                document_id=multimodal_command["document_id"],
+                                command_key=multimodal_command["command_key"],
+                                status="superseded",
+                                now=datetime.now(UTC),
+                            )
+                        except LedgerConflictError:
+                            # A crash after the ledger transition but before
+                            # status publication may replay this handler.  Keep
+                            # an already-superseded command convergent, while a
+                            # previously completed command remains successful.
+                            existing_command = await ledger.get_document_command(
+                                conn,
+                                bank_id=multimodal_command["bank_id"],
+                                document_id=multimodal_command["document_id"],
+                                command_key=multimodal_command["command_key"],
+                            )
+                            if existing_command is not None and existing_command.status == "superseded":
+                                terminal_command = existing_command
+                        if operation_id:
+                            await conn.execute(
+                                f"""UPDATE {fq_table("async_operations")}
+                                    SET status = 'cancelled', updated_at = NOW()
+                                    WHERE operation_id = $1""",
+                                uuid.UUID(operation_id),
+                            )
+                        if terminal_command is not None:
+                            parent_row = await conn.fetchrow(
+                                f"""SELECT result_metadata
+                                    FROM {fq_table("async_operations")}
+                                    WHERE operation_id = $1 AND bank_id = $2""",
+                                terminal_command.operation_id,
+                                terminal_command.bank_id,
+                            )
+                            if parent_row is not None:
+                                parent_metadata = conn.parse_json(parent_row["result_metadata"]) or {}
+                                multimodal_metadata = dict(parent_metadata.get("multimodal") or {})
+                                multimodal_metadata.update(
+                                    {
+                                        "stage": "failed",
+                                        "retryable": False,
+                                        "sanitized_error_code": "multimodal.command_superseded",
+                                    }
+                                )
+                                parent_metadata["multimodal"] = multimodal_metadata
+                                await conn.execute(
+                                    f"""UPDATE {fq_table("async_operations")}
+                                        SET result_metadata = $2, updated_at = NOW()
+                                        WHERE operation_id = $1 AND bank_id = $3""",
+                                    terminal_command.operation_id,
+                                    json.dumps(parent_metadata, default=_json_default),
+                                    terminal_command.bank_id,
+                                )
+            return False
+        except asyncio.CancelledError:
+            record_multimodal_retain(success=False, reason="operation.cancelled", cancelled=True)
+            raise
+        except Exception:
+            record_multimodal_retain(success=False, reason="retain.failed")
+            raise
+
+        record_multimodal_retain(success=True)
 
         # If this retain was triggered by file conversion, update document with file metadata
         file_metadata = task_dict.get("_file_metadata")
-        if file_metadata and len(contents) == 1:
+        if file_metadata and len(contents) == 1 and not multimodal_command:
             doc_id = contents[0].get("document_id")
             if doc_id:
                 backend = await self._get_backend()
@@ -843,7 +1313,64 @@ class MemoryEngine(MemoryEngineInterface):
                         file_metadata["file_content_type"],
                     )
 
-        logger.info(f"[BATCH_RETAIN_TASK] Completed background batch retain for bank_id={bank_id}")
+        if multimodal_command:
+            logger.info("[BATCH_RETAIN_TASK] Completed multimodal child operation_id=%s", operation_id)
+        else:
+            logger.info("[BATCH_RETAIN_TASK] Completed background batch retain for bank_id=%s", bank_id)
+        return True
+
+    def _build_multimodal_retain_callback(
+        self,
+        *,
+        command_payload: dict[str, Any] | None,
+        file_metadata: dict[str, Any] | None,
+        after_publish: "Callable[[asyncpg.Connection], Awaitable[None]] | None",
+    ) -> "Callable[[asyncpg.Connection], Awaitable[None]] | None":
+        """Compose ordered publication with the existing transactional outbox.
+
+        The callback runs at the end of the final retain write transaction.
+        It locks the logical-document head, rejects an obsolete command, writes
+        file provenance, and advances the publish CAS before the transaction
+        commits.  No media bytes or provider payload cross this boundary.
+        """
+
+        if not command_payload:
+            return after_publish
+
+        async def _callback(conn) -> None:
+            from .multimodal.ledger import MultimodalLedger, PublishDecision
+
+            ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+            decision, command = await ledger.lock_for_publish(
+                conn,
+                bank_id=command_payload["bank_id"],
+                document_id=command_payload["document_id"],
+                command_key=command_payload["command_key"],
+            )
+            if decision in {PublishDecision.SUPERSEDED, PublishDecision.NOT_READY}:
+                raise _MultimodalCommandSuperseded("A newer multimodal document command owns publication")
+
+            if file_metadata:
+                await conn.execute(
+                    f"""UPDATE {fq_table("documents")}
+                        SET file_storage_key = $3,
+                            file_original_name = $4,
+                            file_content_type = $5,
+                            updated_at = NOW()
+                        WHERE id = $1 AND bank_id = $2""",
+                    command.document_id,
+                    command.bank_id,
+                    file_metadata["file_storage_key"],
+                    file_metadata["file_original_name"],
+                    file_metadata["file_content_type"],
+                )
+
+            if decision is PublishDecision.PUBLISH:
+                await ledger.complete_publish(conn, command=command, now=datetime.now(UTC))
+            if after_publish is not None:
+                await after_publish(conn)
+
+        return _callback
 
     async def _handle_file_convert_retain(self, task_dict: dict[str, Any]):
         """
@@ -869,35 +1396,541 @@ class MemoryEngine(MemoryEngineInterface):
         if not all([bank_id, storage_key, document_id]):
             raise ValueError("bank_id, storage_key, and document_id are required for file_convert_retain task")
 
-        logger.info(f"[FILE_CONVERT_RETAIN] Starting for bank_id={bank_id}, document_id={document_id}, file={filename}")
+        descriptor_key = task_dict.get("descriptor_key")
+        command_key = task_dict.get("document_command_key")
+        pipeline_fingerprint = task_dict.get("pipeline_fingerprint")
+        ledgered_multimodal = bool(descriptor_key and command_key and pipeline_fingerprint and operation_id)
+        descriptor_claim_token: uuid.UUID | None = None
+        cached_descriptor = None
+        before_provider_call: Callable[[], Awaitable[None]] | None = None
+        load_video_segment_checkpoint: Callable[[Any], Awaitable[Any]] | None = None
+        save_video_segment_checkpoint: Callable[[Any], Awaitable[None]] | None = None
+        multimodal_ledger_conflict = None
+        expected_document_sequence = task_dict.get("document_sequence")
+        if isinstance(expected_document_sequence, bool) or not isinstance(expected_document_sequence, int):
+            expected_document_sequence = None
+        expected_operation_uuid = uuid.UUID(operation_id) if ledgered_multimodal else None
+        if ledgered_multimodal:
+            from .multimodal.ledger import LedgerConflictError
+
+            multimodal_ledger_conflict = LedgerConflictError
+
+        if ledgered_multimodal:
+            logger.info("[FILE_CONVERT_RETAIN] Starting multimodal operation_id=%s", operation_id)
+        else:
+            logger.info(
+                "[FILE_CONVERT_RETAIN] Starting for bank_id=%s, document_id=%s, file=%s",
+                bank_id,
+                document_id,
+                filename,
+            )
+
+        if ledgered_multimodal:
+            from .multimodal.ledger import DescriptorIdentity, LedgerInvariantError, MultimodalLedger
+
+            backend = await self._get_backend()
+            async with acquire_with_retry(backend) as conn:
+                ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                await ledger.purge_expired_video_segment_checkpoints(
+                    conn,
+                    bank_id=bank_id,
+                    now=datetime.now(UTC),
+                )
+                await ledger.purge_expired_descriptors(
+                    conn,
+                    bank_id=bank_id,
+                    now=datetime.now(UTC),
+                )
+                command = await ledger.get_document_command(
+                    conn,
+                    bank_id=bank_id,
+                    document_id=document_id,
+                    command_key=command_key,
+                )
+                if command is None:
+                    raise LedgerInvariantError("multimodal task has no durable document command")
+                if command.operation_id != uuid.UUID(operation_id):
+                    raise LedgerInvariantError("multimodal task operation does not own its document command")
+                if command.status == "pending":
+                    command = await ledger.mark_document_processing(
+                        conn,
+                        bank_id=bank_id,
+                        document_id=document_id,
+                        command_key=command_key,
+                        now=datetime.now(UTC),
+                    )
+                elif command.status in {"failed", "cancelled"}:
+                    command = await ledger.restart_document_command(
+                        conn,
+                        bank_id=bank_id,
+                        document_id=document_id,
+                        command_key=command_key,
+                        now=datetime.now(UTC),
+                    )
+                elif command.status in {"retaining", "completed"} and command.child_retain_operation_id:
+                    # Crash/retry after the child was attached is idempotent:
+                    # the durable child owns the rest of the pipeline.
+                    await conn.execute(
+                        f"""UPDATE {fq_table("async_operations")}
+                            SET status = 'completed', updated_at = NOW(), completed_at = NOW()
+                            WHERE operation_id = $1""",
+                        uuid.UUID(operation_id),
+                    )
+                    return
+                elif command.status not in {"processing"}:
+                    raise LedgerInvariantError("multimodal document command is terminal and cannot be replayed")
+
+                cached_descriptor = await ledger.get_reusable_descriptor(
+                    conn,
+                    bank_id=bank_id,
+                    descriptor_key=descriptor_key,
+                    document_id=document_id,
+                    command_key=command_key,
+                    now=datetime.now(UTC),
+                )
+                if cached_descriptor is None:
+                    config = get_config()
+                    # Extend the lease at each physical provider boundary.  The
+                    # initial window covers local decode plus one worst-case
+                    # request/repair envelope without becoming an unbounded lock.
+                    lease_seconds = max(
+                        300.0,
+                        float(config.multimodal_request_timeout_seconds)
+                        * (config.multimodal_max_retries + 1)
+                        * (config.multimodal_max_schema_repairs + 1)
+                        + 60.0,
+                    )
+                    now = datetime.now(UTC)
+                    descriptor_claim_token = uuid.uuid4()
+                    claimed = await ledger.claim_descriptor(
+                        conn,
+                        DescriptorIdentity(
+                            bank_id=bank_id,
+                            descriptor_key=descriptor_key,
+                            asset_sha256=task_dict["asset_sha256"],
+                            pipeline_fingerprint=pipeline_fingerprint,
+                        ),
+                        claim_token=descriptor_claim_token,
+                        now=now,
+                        lease_expires_at=now + timedelta(seconds=lease_seconds),
+                    )
+                    if claimed is None:
+                        raise DeferOperation(
+                            exec_date=now + timedelta(seconds=2),
+                            reason="multimodal descriptor is owned by another active worker",
+                        )
+
+                    async def _mark_provider_boundary() -> None:
+                        if operation_id and not await self._check_op_alive(operation_id):
+                            from .parsers import ParserProcessingError
+
+                            raise ParserProcessingError(
+                                "operation.cancelled",
+                                "Multimodal operation was cancelled before provider execution",
+                            )
+                        boundary_now = datetime.now(UTC)
+                        boundary_backend = await self._get_backend()
+                        async with acquire_with_retry(boundary_backend) as boundary_conn:
+                            boundary_ledger = MultimodalLedger.for_connection(
+                                boundary_conn,
+                                schema=get_current_schema(),
+                            )
+                            await boundary_ledger.renew_descriptor_lease(
+                                boundary_conn,
+                                bank_id=bank_id,
+                                descriptor_key=descriptor_key,
+                                claim_token=descriptor_claim_token,
+                                now=boundary_now,
+                                lease_expires_at=boundary_now + timedelta(seconds=lease_seconds),
+                            )
+                            await boundary_ledger.mark_provider_started(
+                                boundary_conn,
+                                bank_id=bank_id,
+                                descriptor_key=descriptor_key,
+                                claim_token=descriptor_claim_token,
+                                now=boundary_now,
+                            )
+
+                    before_provider_call = _mark_provider_boundary
+
+                    async def _load_video_segment_checkpoint(identity: Any) -> Any:
+                        checkpoint_now = datetime.now(UTC)
+                        checkpoint_backend = await self._get_backend()
+                        async with acquire_with_retry(checkpoint_backend) as checkpoint_conn:
+                            checkpoint_ledger = MultimodalLedger.for_connection(
+                                checkpoint_conn,
+                                schema=get_current_schema(),
+                            )
+                            return await checkpoint_ledger.get_video_segment_checkpoint(
+                                checkpoint_conn,
+                                bank_id=bank_id,
+                                descriptor_key=descriptor_key,
+                                claim_token=descriptor_claim_token,
+                                identity=identity,
+                                now=checkpoint_now,
+                            )
+
+                    async def _save_video_segment_checkpoint(checkpoint: Any) -> None:
+                        checkpoint_now = datetime.now(UTC)
+                        checkpoint_backend = await self._get_backend()
+                        async with acquire_with_retry(checkpoint_backend) as checkpoint_conn:
+                            checkpoint_ledger = MultimodalLedger.for_connection(
+                                checkpoint_conn,
+                                schema=get_current_schema(),
+                            )
+                            await checkpoint_ledger.checkpoint_video_segment(
+                                checkpoint_conn,
+                                bank_id=bank_id,
+                                descriptor_key=descriptor_key,
+                                claim_token=descriptor_claim_token,
+                                checkpoint=checkpoint,
+                                now=checkpoint_now,
+                                expires_at=checkpoint_now
+                                + timedelta(seconds=config.multimodal_descriptor_cache_ttl_seconds),
+                            )
+
+                    load_video_segment_checkpoint = _load_video_segment_checkpoint
+                    save_video_segment_checkpoint = _save_video_segment_checkpoint
 
         try:
-            # Retrieve file from storage
-            file_data = await self._file_storage.retrieve(storage_key)
+            if cached_descriptor is not None and cached_descriptor.status == "completed":
+                convert_result = _multimodal_convert_result_from_checkpoint(cached_descriptor)
+                get_metrics_collector().record_multimodal_pipeline(
+                    media_kind=str(convert_result.pipeline_metadata.get("media_kind") or "image"),
+                    stage="complete",
+                    duration=0.0,
+                    success=True,
+                    deduplicated=True,
+                    asset_outcome="accepted",
+                )
+            else:
+                # Retrieve source bytes only on a descriptor miss.  A durable
+                # descriptor checkpoint therefore survives source deletion.
+                file_data = await self._file_storage.retrieve(storage_key)
 
-            # Convert to markdown using the ordered fallback chain stored in the task payload.
-            # task_dict["parser"] is always a list[str] set at submission time.
-            parser_chain: list[str] = task_dict.get("parser") or []
-            if not parser_chain:
-                raise ValueError("No parser chain defined for file_convert_retain task")
-            convert_result = await self._parser_registry.convert_with_fallback(
-                parsers=parser_chain,
-                file_data=file_data,
-                filename=filename,
-                content_type=task_dict.get("content_type"),
-            )
+                # Convert using the ordered fallback chain stored at admission.
+                parser_chain: list[str] = task_dict.get("parser") or []
+                if not parser_chain:
+                    raise ValueError("No parser chain defined for file_convert_retain task")
+                convert_result = await self._parser_registry.convert_with_fallback(
+                    parsers=parser_chain,
+                    file_data=file_data,
+                    filename=filename,
+                    content_type=task_dict.get("content_type"),
+                    asset_id=task_dict.get("asset_id"),
+                    asset_sha256=task_dict.get("asset_sha256"),
+                    before_provider_call=before_provider_call,
+                    load_video_segment_checkpoint=load_video_segment_checkpoint,
+                    save_video_segment_checkpoint=save_video_segment_checkpoint,
+                )
+
+                if ledgered_multimodal and convert_result.retain_extraction_mode == "chunks":
+                    checkpoint_metadata, checkpoint_entities = _multimodal_descriptor_checkpoint_values(convert_result)
+                    checkpoint_backend = await self._get_backend()
+                    async with acquire_with_retry(checkpoint_backend) as checkpoint_conn:
+                        checkpoint_ledger = MultimodalLedger.for_connection(
+                            checkpoint_conn,
+                            schema=get_current_schema(),
+                        )
+                        checkpoint_now = datetime.now(UTC)
+                        cached_descriptor = await checkpoint_ledger.checkpoint_descriptor(
+                            checkpoint_conn,
+                            bank_id=bank_id,
+                            descriptor_key=descriptor_key,
+                            claim_token=descriptor_claim_token,
+                            canonical_markdown=convert_result.content,
+                            provenance_metadata=checkpoint_metadata,
+                            entities=checkpoint_entities,
+                            now=checkpoint_now,
+                            expires_at=checkpoint_now
+                            + timedelta(seconds=get_config().multimodal_descriptor_cache_ttl_seconds),
+                        )
+                    convert_result.pipeline_metadata["possible_duplicate_provider_attempt"] = (
+                        cached_descriptor.possible_duplicate_provider_attempt
+                    )
             markdown_content = sanitize_llm_output(convert_result.content) or ""
             winning_parser = convert_result.parser_name
+        except asyncio.CancelledError:
+            if ledgered_multimodal:
+                try:
+                    cancellation_backend = await self._get_backend()
+                    async with acquire_with_retry(cancellation_backend) as cancellation_conn:
+                        cancellation_ledger = MultimodalLedger.for_connection(
+                            cancellation_conn,
+                            schema=get_current_schema(),
+                        )
+                        await cancellation_ledger.fail_descriptor_and_mark_document_terminal(
+                            cancellation_conn,
+                            bank_id=bank_id,
+                            descriptor_key=descriptor_key,
+                            claim_token=descriptor_claim_token,
+                            document_id=document_id,
+                            command_key=command_key,
+                            status="cancelled",
+                            now=datetime.now(UTC),
+                            expected_sequence=expected_document_sequence,
+                            expected_operation_id=expected_operation_uuid,
+                        )
+                except Exception as ledger_error:
+                    logger.warning("Failed to persist sanitized multimodal cancellation: %s", ledger_error)
+            raise
+        except DeferOperation:
+            raise
         except Exception as e:
+            if (
+                ledgered_multimodal
+                and multimodal_ledger_conflict is not None
+                and isinstance(e, multimodal_ledger_conflict)
+            ):
+                # A stale worker must never terminalize the shared document
+                # command (or its async operation) after another worker has
+                # taken over the descriptor lease.  Requeue without writing a
+                # failure; the current owner will publish the command, and a
+                # later replay will observe its durable checkpoint.
+                raise DeferOperation(
+                    exec_date=datetime.now(UTC) + timedelta(seconds=2),
+                    reason="multimodal descriptor claim moved to another worker",
+                ) from None
+            from .parsers import ParserProcessingError
+
+            if ledgered_multimodal:
+                try:
+                    failure_backend = await self._get_backend()
+                    async with acquire_with_retry(failure_backend) as failure_conn:
+                        failure_ledger = MultimodalLedger.for_connection(
+                            failure_conn,
+                            schema=get_current_schema(),
+                        )
+                        try:
+                            await failure_ledger.fail_descriptor_and_mark_document_terminal(
+                                failure_conn,
+                                bank_id=bank_id,
+                                descriptor_key=descriptor_key,
+                                claim_token=descriptor_claim_token,
+                                document_id=document_id,
+                                command_key=command_key,
+                                status=(
+                                    "cancelled"
+                                    if isinstance(e, ParserProcessingError) and e.code == "operation.cancelled"
+                                    else "failed"
+                                ),
+                                now=datetime.now(UTC),
+                                expected_sequence=expected_document_sequence,
+                                expected_operation_id=expected_operation_uuid,
+                            )
+                        except multimodal_ledger_conflict:
+                            # Losing the descriptor claim is backpressure, not
+                            # a conversion failure.  Do not write failure
+                            # metadata or let execute_task terminalize the stale
+                            # operation; the new owner must finish it.
+                            raise DeferOperation(
+                                exec_date=datetime.now(UTC) + timedelta(seconds=2),
+                                reason="multimodal descriptor claim moved to another worker",
+                            ) from None
+                        except Exception:
+                            # A database outage should not hide the original
+                            # parser error; the normal sanitized failure path
+                            # below remains best-effort for that case.
+                            pass
+                except DeferOperation:
+                    raise
+                except Exception as ledger_error:
+                    logger.warning("Failed to persist sanitized multimodal ledger failure: %s", ledger_error)
+
+            if operation_id and isinstance(e, ParserProcessingError):
+                try:
+                    config = get_config()
+                    content_type = str(task_dict.get("content_type") or "")
+                    media_kind = str(
+                        task_dict.get("media_kind") or ("video" if content_type.startswith("video/") else "image")
+                    )
+                    failure_metadata = {
+                        "asset_id": task_dict.get("asset_id"),
+                        "asset_sha256": task_dict.get("asset_sha256"),
+                        "media_kind": media_kind,
+                        "pipeline_version": getattr(config, "multimodal_pipeline_version", "hms-multimodal-v1"),
+                        "descriptor_model": getattr(config, "multimodal_model", "gpt-5-mini"),
+                        "stage": "failed",
+                        "retryable": e.retryable,
+                        "sanitized_error_code": e.code,
+                        "logical_calls": e.logical_calls,
+                        "physical_attempts": e.physical_attempts,
+                    }
+                    failure_metadata = {key: value for key, value in failure_metadata.items() if value is not None}
+                    backend = await self._get_backend()
+                    async with acquire_with_retry(backend) as conn:
+                        await conn.execute(
+                            f"""
+                            UPDATE {fq_table("async_operations")}
+                            SET result_metadata = $2, updated_at = NOW()
+                            WHERE operation_id = $1
+                            """,
+                            uuid.UUID(operation_id),
+                            json.dumps(
+                                {
+                                    "original_filename": filename,
+                                    "multimodal": failure_metadata,
+                                },
+                                default=_json_default,
+                            ),
+                        )
+                except Exception as metadata_error:
+                    logger.warning(
+                        "[FILE_CONVERT_RETAIN] Failed to persist sanitized multimodal failure metadata: %s",
+                        metadata_error,
+                    )
             # Re-raise with filename context for better error reporting
-            error_msg = f"Failed to parse file '{filename}': {str(e)}"
+            error_msg = (
+                f"Multimodal file conversion failed: {str(e)}"
+                if ledgered_multimodal
+                else f"Failed to parse file '{filename}': {str(e)}"
+            )
             logger.error(f"[FILE_CONVERT_RETAIN] {error_msg}")
             raise RuntimeError(error_msg) from e
 
-        logger.info(
-            f"[FILE_CONVERT_RETAIN] Converted file for bank_id={bank_id}, "
-            f"document_id={document_id}, {len(markdown_content)} chars. Submitting retain task."
-        )
+        if ledgered_multimodal:
+            logger.info(
+                "[FILE_CONVERT_RETAIN] Multimodal operation_id=%s normalized %s chars; queuing retain",
+                operation_id,
+                len(markdown_content),
+            )
+        else:
+            logger.info(
+                f"[FILE_CONVERT_RETAIN] Converted file for bank_id={bank_id}, "
+                f"document_id={document_id}, {len(markdown_content)} chars. Submitting retain task."
+            )
+
+        is_multimodal = convert_result.retain_extraction_mode is not None
+        if is_multimodal and convert_result.retain_extraction_mode != "chunks":
+            raise RuntimeError("Multimodal parser requested an unsupported retain extraction mode")
+        if is_multimodal and task_dict.get("strategy"):
+            raise ValueError(
+                "An explicit retain strategy cannot be combined with openai_multimodal; "
+                "the canonical evidence document requires the trusted chunks mode"
+            )
+
+        if ledgered_multimodal and not is_multimodal:
+            # A typed not-applicable outcome may legitimately select a legacy
+            # parser from the explicit chain.  Release the unused multimodal
+            # command/descriptor state; the winning legacy output then follows
+            # the unchanged legacy retain path.
+            backend = await self._get_backend()
+            async with acquire_with_retry(backend) as conn:
+                ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                try:
+                    await ledger.fail_descriptor_and_mark_document_terminal(
+                        conn,
+                        bank_id=bank_id,
+                        descriptor_key=descriptor_key,
+                        claim_token=descriptor_claim_token,
+                        document_id=document_id,
+                        command_key=command_key,
+                        status="cancelled",
+                        now=datetime.now(UTC),
+                        expected_sequence=expected_document_sequence,
+                        expected_operation_id=expected_operation_uuid,
+                    )
+                except multimodal_ledger_conflict:
+                    raise DeferOperation(
+                        exec_date=datetime.now(UTC) + timedelta(seconds=2),
+                        reason="multimodal descriptor claim moved to another worker",
+                    ) from None
+            ledgered_multimodal = False
+
+        # Resolve the source lifecycle before making the child operation
+        # claimable.  Otherwise a fast worker can retain ``source_available``
+        # before the deletion attempt has established the actual state.
+        config = get_config()
+        if is_multimodal:
+            from .multimodal.source_lifecycle import SourceAvailability, resolve_source_lifecycle
+
+            source_lifecycle_started = time.monotonic()
+            source_lifecycle = await resolve_source_lifecycle(
+                self._file_storage,
+                storage_key,
+                delete_requested=config.file_delete_after_retain,
+            )
+            if source_lifecycle.availability is SourceAvailability.DELETED:
+                logger.info("[FILE_CONVERT_RETAIN] Verified converted multimodal source asset is deleted")
+                try:
+                    if ledgered_multimodal and config.file_delete_after_retain:
+                        backend = await self._get_backend()
+                        async with acquire_with_retry(backend) as conn:
+                            ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                            await ledger.mark_source_deleted(
+                                conn,
+                                bank_id=bank_id,
+                                document_id=document_id,
+                                command_key=command_key,
+                                now=datetime.now(UTC),
+                            )
+                except Exception as e:
+                    # Do not enqueue a child whose durable lifecycle state
+                    # disagrees with the object store.  A manual operation
+                    # retry can recover entirely from the descriptor cache.
+                    raise RuntimeError("Failed to checkpoint multimodal source deletion") from e
+            elif source_lifecycle.availability is SourceAvailability.UNKNOWN:
+                logger.warning("[FILE_CONVERT_RETAIN] Multimodal source availability could not be verified")
+            elif config.file_delete_after_retain:
+                logger.warning("[FILE_CONVERT_RETAIN] Multimodal source deletion did not remove the asset")
+
+            convert_result.metadata["media_source_available"] = source_lifecycle.metadata_value
+            get_metrics_collector().record_multimodal_pipeline(
+                media_kind=str(convert_result.pipeline_metadata.get("media_kind") or "image"),
+                stage="source_lifecycle",
+                duration=time.monotonic() - source_lifecycle_started,
+                success=source_lifecycle.reason is None,
+                reason=source_lifecycle.reason,
+                source_state=source_lifecycle.metric_state,
+            )
+
+        if ledgered_multimodal:
+            backend = await self._get_backend()
+            async with acquire_with_retry(backend) as conn:
+                ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                head = await ledger.get_document_head(conn, bank_id=bank_id, document_id=document_id)
+                command = await ledger.get_document_command(
+                    conn,
+                    bank_id=bank_id,
+                    document_id=document_id,
+                    command_key=command_key,
+                )
+                if head is None or command is None:
+                    raise RuntimeError("Multimodal document publication state disappeared")
+                if head.active_sequence != command.sequence:
+                    await ledger.mark_document_terminal(
+                        conn,
+                        bank_id=bank_id,
+                        document_id=document_id,
+                        command_key=command_key,
+                        status="superseded",
+                        now=datetime.now(UTC),
+                    )
+                    await conn.execute(
+                        f"""UPDATE {fq_table("async_operations")}
+                            SET status = 'completed',
+                                result_metadata = $2,
+                                updated_at = NOW(), completed_at = NOW()
+                            WHERE operation_id = $1""",
+                        uuid.UUID(operation_id),
+                        json.dumps(
+                            {
+                                "original_filename": filename,
+                                "multimodal": {
+                                    "asset_id": task_dict.get("asset_id"),
+                                    "asset_sha256": task_dict.get("asset_sha256"),
+                                    "media_kind": convert_result.pipeline_metadata.get("media_kind"),
+                                    "pipeline_version": convert_result.pipeline_metadata.get("pipeline_version"),
+                                    "descriptor_model": convert_result.pipeline_metadata.get("descriptor_model"),
+                                    "stage": "failed",
+                                    "retryable": False,
+                                    "sanitized_error_code": "multimodal.command_superseded",
+                                },
+                            },
+                            default=_json_default,
+                        ),
+                    )
+                    return
 
         # Fire file conversion hook (e.g., for Iris billing)
         if self._operation_validator:
@@ -925,14 +1958,20 @@ class MemoryEngine(MemoryEngineInterface):
             except Exception as e:
                 logger.warning(f"[FILE_CONVERT_RETAIN] on_file_convert_complete hook failed: {e}")
 
+        retain_queue_started = time.monotonic()
         # Build retain task payload
         retain_content: dict[str, Any] = {
             "content": markdown_content,
             "document_id": document_id,
             "context": task_dict.get("context"),
-            "metadata": task_dict.get("metadata", {}),
+            "metadata": {
+                **task_dict.get("metadata", {}),
+                **convert_result.metadata,
+            },
             "tags": task_dict.get("tags", []),
         }
+        if convert_result.entities:
+            retain_content["entities"] = convert_result.entities
         file_timestamp = task_dict.get("timestamp")
         if file_timestamp == "unset":
             retain_content["event_date"] = None
@@ -946,6 +1985,15 @@ class MemoryEngine(MemoryEngineInterface):
             retain_task_payload["document_tags"] = document_tags
         if task_dict.get("strategy"):
             retain_task_payload["strategy"] = task_dict["strategy"]
+        if convert_result.retain_extraction_mode:
+            retain_task_payload["_retain_extraction_mode"] = convert_result.retain_extraction_mode
+        if ledgered_multimodal:
+            retain_task_payload["_multimodal_command"] = {
+                "bank_id": bank_id,
+                "document_id": document_id,
+                "command_key": command_key,
+                "sequence": command.sequence,
+            }
 
         # Pass tenant/api_key context through to retain task
         if task_dict.get("_tenant_id"):
@@ -974,6 +2022,7 @@ class MemoryEngine(MemoryEngineInterface):
         }
         payload_json = json.dumps(full_retain_payload, default=_json_default)
 
+        retain_queue_started = time.monotonic()
         backend = await self._get_backend()
         async with acquire_with_retry(backend) as conn:
             async with conn.transaction():
@@ -991,31 +2040,90 @@ class MemoryEngine(MemoryEngineInterface):
                     payload_json,
                 )
 
+                if ledgered_multimodal:
+                    ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                    await ledger.attach_child_retain(
+                        conn,
+                        bank_id=bank_id,
+                        document_id=document_id,
+                        command_key=command_key,
+                        child_retain_operation_id=retain_operation_id,
+                        now=datetime.now(UTC),
+                    )
+
                 if operation_id:
+                    multimodal_metadata = None
+                    if is_multimodal:
+                        allowed_pipeline_fields = {
+                            "asset_id",
+                            "asset_sha256",
+                            "media_kind",
+                            "pipeline_version",
+                            "descriptor_model",
+                            "resolved_model",
+                            "provider_request_id",
+                            "input_tokens",
+                            "output_tokens",
+                            "logical_calls",
+                            "physical_attempts",
+                            "possible_duplicate_provider_attempt",
+                        }
+                        multimodal_metadata = {
+                            key: value
+                            for key, value in convert_result.pipeline_metadata.items()
+                            if key in allowed_pipeline_fields and value is not None
+                        }
+                        multimodal_metadata.update(
+                            {
+                                "stage": "retain_queued",
+                                "child_retain_operation_id": str(retain_operation_id),
+                                "retryable": False,
+                            }
+                        )
                     await conn.execute(
                         f"""
                         UPDATE {fq_table("async_operations")}
-                        SET status = 'completed', updated_at = NOW(), completed_at = NOW()
+                        SET status = 'completed',
+                            result_metadata = $2,
+                            updated_at = NOW(), completed_at = NOW()
                         WHERE operation_id = $1
                         """,
                         uuid.UUID(operation_id),
+                        json.dumps(
+                            {
+                                "original_filename": filename,
+                                **({"multimodal": multimodal_metadata} if multimodal_metadata else {}),
+                            },
+                            default=_json_default,
+                        ),
                     )
 
-        # For SyncTaskBackend: executes the retain task inline.
-        # For BrokerTaskBackend: no-op (submit_task's UPDATE skips rows whose
-        # task_payload is already set, which it is after the INSERT above).
+        if is_multimodal:
+            get_metrics_collector().record_multimodal_pipeline(
+                media_kind=str(convert_result.pipeline_metadata.get("media_kind") or "image"),
+                stage="retain_queue",
+                duration=time.monotonic() - retain_queue_started,
+                success=True,
+            )
+
+        # For SyncTaskBackend this executes the retain task inline.  Broker and
+        # worker backends observe the already-persisted task payload.
         await self._task_backend.submit_task(full_retain_payload)
 
-        logger.info(
-            f"[FILE_CONVERT_RETAIN] Completed conversion for bank_id={bank_id}, "
-            f"document_id={document_id}. Retain task submitted as operation {retain_operation_id}"
-        )
+        if ledgered_multimodal:
+            logger.info(
+                "[FILE_CONVERT_RETAIN] Multimodal operation_id=%s queued retain operation_id=%s",
+                operation_id,
+                retain_operation_id,
+            )
+        else:
+            logger.info(
+                f"[FILE_CONVERT_RETAIN] Completed conversion for bank_id={bank_id}, "
+                f"document_id={document_id}. Retain task submitted as operation {retain_operation_id}"
+            )
 
         # Delete file bytes from storage if configured (saves storage costs)
-        from ..config import get_config
-
-        config = get_config()
-        if config.file_delete_after_retain:
+        if config.file_delete_after_retain and not is_multimodal:
             try:
                 await self._file_storage.delete(storage_key)
                 logger.info(f"[FILE_CONVERT_RETAIN] Deleted file bytes for {storage_key} (conversion completed)")
@@ -1205,8 +2313,9 @@ class MemoryEngine(MemoryEngineInterface):
                 # Stage breadcrumb for the worker poller's WORKER_TASK log line.
                 # No-op outside a worker context.
                 set_stage(f"task.{task_type}")
+                handler_completed = True
                 if task_type == "batch_retain":
-                    await self._handle_batch_retain(task_dict)
+                    handler_completed = await self._handle_batch_retain(task_dict)
                 elif task_type == "file_convert_retain":
                     await self._handle_file_convert_retain(task_dict)
                 elif task_type == "consolidation":
@@ -1224,7 +2333,7 @@ class MemoryEngine(MemoryEngineInterface):
 
                 # Task succeeded - mark operation as completed
                 # file_convert_retain marks itself as completed in a transaction, skip double-marking
-                if operation_id and task_type not in ("file_convert_retain",):
+                if operation_id and task_type not in ("file_convert_retain",) and handler_completed:
                     if task_type == "consolidation":
                         # Atomically mark completed AND queue webhook delivery in one transaction
                         await self._mark_operation_completed_and_fire_webhook(
@@ -1301,6 +2410,13 @@ class MemoryEngine(MemoryEngineInterface):
                     retry_count = task_dict.get("_retry_count", 0)
                     if retry_count < 3:
                         raise RetryTaskAt(retry_at=datetime.now(UTC) + timedelta(seconds=60), message=str(e))
+                    if task_type == "batch_retain" and task_dict.get("_multimodal_command") and operation_id:
+                        # Route the terminal multimodal child failure through
+                        # the ledger-aware transaction.  Legacy tasks still
+                        # re-raise here and retain the poller's old failure
+                        # path.
+                        await self._mark_operation_failed(operation_id, str(e), error_traceback)
+                        return
                     raise
 
     async def _fire_consolidation_webhook(
@@ -1507,11 +2623,147 @@ class MemoryEngine(MemoryEngineInterface):
             logger.error(f"Failed to check operation liveness {operation_id}: {e}")
             return True  # Assume alive on DB error to avoid false-positive aborts
 
+    async def _mark_multimodal_child_operation_failed(
+        self,
+        conn,
+        *,
+        operation_id: str,
+        operation_row: Any,
+        truncated_error: str,
+    ) -> bool:
+        """Close a failed multimodal child and persist a sanitized parent view.
+
+        The operation row is inspected before taking ledger locks, then all
+        cross-table writes use the established ``head -> command -> child ->
+        parent`` order.  This keeps a late child failure from racing a newer
+        command publication and leaves the parent conversion operation
+        ``completed``: that status still means conversion itself completed,
+        while the typed multimodal metadata records that recall is not ready.
+        """
+
+        raw_task_payload = (
+            operation_row.get("task_payload") if hasattr(operation_row, "get") else operation_row["task_payload"]
+        )
+        task_payload = conn.parse_json(raw_task_payload) if raw_task_payload is not None else None
+        if not isinstance(task_payload, dict):
+            return False
+        command_payload = task_payload.get("_multimodal_command")
+        if command_payload is None:
+            return False
+        if operation_row.get("operation_type") != "retain" or task_payload.get("type") != "batch_retain":
+            return False
+        if not isinstance(command_payload, dict):
+            raise ValueError("multimodal child command marker is malformed")
+
+        bank_id = operation_row.get("bank_id")
+        command_bank_id = command_payload.get("bank_id")
+        document_id = command_payload.get("document_id")
+        command_key = command_payload.get("command_key")
+        sequence = command_payload.get("sequence")
+        if (
+            not isinstance(bank_id, str)
+            or not isinstance(command_bank_id, str)
+            or command_bank_id != bank_id
+            or not isinstance(document_id, str)
+            or not isinstance(command_key, str)
+            or not isinstance(sequence, int)
+            or isinstance(sequence, bool)
+            or sequence < 1
+        ):
+            raise ValueError("multimodal child command marker is malformed")
+
+        # A duplicate terminal delivery is already converged.  In particular,
+        # never downgrade a successfully published child to failed.
+        child_status = operation_row.get("status")
+        if child_status in {"failed", "cancelled", "completed"}:
+            return True
+        if child_status not in {"pending", "processing"}:
+            return False
+
+        from .multimodal.ledger import LedgerConflictError, MultimodalLedger
+
+        child_uuid = uuid.UUID(operation_id)
+        ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+        terminal_command = await ledger.mark_document_terminal(
+            conn,
+            bank_id=bank_id,
+            document_id=document_id,
+            command_key=command_key,
+            status="failed",
+            now=datetime.now(UTC),
+            expected_sequence=sequence,
+            expected_child_retain_operation_id=child_uuid,
+        )
+        if terminal_command.operation_id is None or terminal_command.child_retain_operation_id != child_uuid:
+            raise LedgerConflictError("multimodal child failure does not own its document command")
+
+        failed_row = await conn.fetchrow(
+            f"""
+            UPDATE {fq_table("async_operations")}
+            SET status = 'failed', error_message = $2, completed_at = NOW(), updated_at = NOW()
+            WHERE operation_id = $1 AND bank_id = $3 AND status IN ('pending', 'processing')
+            RETURNING operation_id
+            """,
+            child_uuid,
+            truncated_error,
+            bank_id,
+        )
+        if failed_row is None:
+            raise LedgerConflictError("multimodal child failure lost its operation compare-and-swap")
+
+        parent_row = await conn.fetchrow(
+            f"""
+            SELECT result_metadata
+            FROM {fq_table("async_operations")}
+            WHERE operation_id = $1 AND bank_id = $2
+            FOR UPDATE
+            """,
+            terminal_command.operation_id,
+            bank_id,
+        )
+        if parent_row is None:
+            raise LedgerConflictError("multimodal parent operation disappeared during child failure")
+
+        parent_metadata = conn.parse_json(parent_row["result_metadata"]) or {}
+        if not isinstance(parent_metadata, dict):
+            parent_metadata = {}
+        multimodal_metadata = parent_metadata.get("multimodal")
+        if not isinstance(multimodal_metadata, dict):
+            raise LedgerConflictError("multimodal parent metadata is missing its typed namespace")
+        existing_child_id = multimodal_metadata.get("child_retain_operation_id")
+        if existing_child_id is not None and str(existing_child_id) != operation_id:
+            raise LedgerConflictError("multimodal parent points to a different child operation")
+
+        multimodal_metadata = dict(multimodal_metadata)
+        multimodal_metadata.update(
+            {
+                "stage": "retain_failed",
+                "child_retain_operation_id": operation_id,
+                "child_retain_status": "failed",
+                "recall_ready": False,
+                "retryable": True,
+                "sanitized_error_code": "retain_failed",
+            }
+        )
+        parent_metadata["multimodal"] = multimodal_metadata
+        await conn.execute(
+            f"""
+            UPDATE {fq_table("async_operations")}
+            SET result_metadata = $2, updated_at = NOW()
+            WHERE operation_id = $1 AND bank_id = $3
+            """,
+            terminal_command.operation_id,
+            json.dumps(parent_metadata, default=_json_default),
+            bank_id,
+        )
+        return True
+
     async def _mark_operation_failed(self, operation_id: str, error_message: str, error_traceback: str):
         """Helper to mark an operation as failed in the database.
 
-        Also checks if this is a child operation and updates the parent if all siblings are done.
-        Uses a single transaction to avoid race conditions when multiple children fail simultaneously.
+        Multimodal child retains use the same transaction to close their
+        durable document command and update the parent status metadata. Legacy
+        child and non-child operations retain the existing failure behavior.
         """
         try:
             backend = await self._get_backend()
@@ -1521,12 +2773,34 @@ class MemoryEngine(MemoryEngineInterface):
 
             async with acquire_with_retry(backend) as conn:
                 async with conn.transaction():
-                    # Mark this operation as failed
+                    operation_row = await conn.fetchrow(
+                        f"""
+                        SELECT bank_id, operation_type, status, task_payload
+                        FROM {fq_table("async_operations")}
+                        WHERE operation_id = $1
+                        """,
+                        uuid.UUID(operation_id),
+                    )
+                    if operation_row is None:
+                        logger.info(f"Operation {operation_id} no longer exists (bank deleted), skipping mark-failed")
+                        return
+
+                    if await self._mark_multimodal_child_operation_failed(
+                        conn,
+                        operation_id=operation_id,
+                        operation_row=operation_row,
+                        truncated_error=truncated_error,
+                    ):
+                        logger.info("Marked multimodal child operation as failed: %s", operation_id)
+                        return
+
+                    # Mark legacy operations exactly as before.  The multimodal
+                    # branch above is the only path that inspects task payloads.
                     row = await conn.fetchrow(
                         f"""
                         UPDATE {fq_table("async_operations")}
                         SET status = 'failed', error_message = $2, updated_at = NOW()
-                        WHERE operation_id = $1
+                        WHERE operation_id = $1 AND status <> 'cancelled'
                         RETURNING operation_id
                         """,
                         uuid.UUID(operation_id),
@@ -1537,8 +2811,8 @@ class MemoryEngine(MemoryEngineInterface):
                         return
                     logger.info(f"Marked async operation as failed: {operation_id}")
 
-                    # Check if this is a child operation and update parent if all siblings are done
-                    # This happens in the same transaction after the child status is updated
+                    # Check if this is a legacy child operation and update its
+                    # parent if all siblings are done, preserving old semantics.
                     await self._maybe_update_parent_operation(operation_id, conn)
         except Exception as e:
             logger.error(f"Failed to mark operation as failed {operation_id}: {e}")
@@ -2022,7 +3296,12 @@ class MemoryEngine(MemoryEngineInterface):
         logger.debug(f"File storage initialized ({config.file_storage_type})")
 
         # Initialize parser registry
-        from .parsers import FileParserRegistry, IrisParser, LlamaParseParser, MarkitdownParser
+        from .parsers import (
+            FileParserRegistry,
+            IrisParser,
+            LlamaParseParser,
+            MarkitdownParser,
+        )
 
         self._parser_registry = FileParserRegistry()
         try:
@@ -2043,6 +3322,19 @@ class MemoryEngine(MemoryEngineInterface):
             logger.debug("Registered llama_parse parser")
         else:
             logger.debug("LlamaParse parser not registered (HMS_API_FILE_PARSER_LLAMA_PARSE_API_KEY not set)")
+
+        self._multimodal_parser = None
+        if config.multimodal_enabled:
+            # Importing this module also loads the optional local media stack.
+            # Keep it entirely off the legacy text/file startup path.
+            from .parsers.openai_multimodal import create_openai_multimodal_parser
+
+            self._multimodal_parser = create_openai_multimodal_parser(config)
+        if self._multimodal_parser is not None:
+            self._parser_registry.register(self._multimodal_parser)
+            logger.info("Registered opt-in openai_multimodal parser")
+        else:
+            logger.debug("openai_multimodal parser not registered (feature disabled)")
 
         # Initialize webhook manager
         from ..webhooks import WebhookManager
@@ -2162,6 +3454,13 @@ class MemoryEngine(MemoryEngineInterface):
             await self._vector_index.close()
         except Exception as e:
             logger.warning(f"Error closing semantic vector index: {e}")
+
+        if self._multimodal_parser is not None:
+            try:
+                await self._multimodal_parser.close()
+            except Exception as e:
+                logger.warning("Error closing multimodal provider: %s", e)
+            self._multimodal_parser = None
 
         if self._read_backend is not None and self._read_backend is not self._backend:
             await self._read_backend.shutdown()
@@ -2556,6 +3855,7 @@ class MemoryEngine(MemoryEngineInterface):
         operation_id: str | None = None,
         outbox_callback: "Callable[[asyncpg.Connection], Awaitable[None]] | None" = None,
         strategy: str | None = None,
+        _retain_extraction_mode: str | None = None,
     ):
         """
         Store multiple content items as memory units in ONE batch operation.
@@ -2707,9 +4007,18 @@ class MemoryEngine(MemoryEngineInterface):
             for i, sub_batch in enumerate(sub_batches, 1):
                 # Checkpoint: abort if the operation was deleted (bank was deleted) between sub-batches.
                 if operation_id and not await self._check_op_alive(operation_id):
-                    logger.info(
-                        f"[BATCH_RETAIN] bank={bank_id} operation {operation_id} cancelled (bank deleted), stopping after {i - 1}/{len(sub_batches)} sub-batches"
-                    )
+                    if _retain_extraction_mode == "chunks":
+                        logger.info(
+                            "[BATCH_RETAIN] multimodal operation %s cancelled; stopping after %s/%s sub-batches",
+                            operation_id,
+                            i - 1,
+                            len(sub_batches),
+                        )
+                    else:
+                        logger.info(
+                            f"[BATCH_RETAIN] bank={bank_id} operation {operation_id} cancelled (bank deleted), "
+                            f"stopping after {i - 1}/{len(sub_batches)} sub-batches"
+                        )
                     if return_usage:
                         return all_results, total_usage
                     return all_results
@@ -2729,6 +4038,7 @@ class MemoryEngine(MemoryEngineInterface):
                     document_tags=document_tags,
                     operation_id=operation_id,
                     strategy=strategy,
+                    _retain_extraction_mode=_retain_extraction_mode,
                     # Outbox callback runs inside the last sub-batch's transaction so the
                     # webhook delivery row is committed atomically with the final retain data.
                     outbox_callback=outbox_callback if i == len(sub_batches) else None,
@@ -2757,6 +4067,7 @@ class MemoryEngine(MemoryEngineInterface):
                 document_tags=document_tags,
                 operation_id=operation_id,
                 strategy=strategy,
+                _retain_extraction_mode=_retain_extraction_mode,
                 outbox_callback=outbox_callback,
             )
 
@@ -2801,7 +4112,7 @@ class MemoryEngine(MemoryEngineInterface):
         # Trigger consolidation as a tracked async operation if enabled
         # Resolve bank-specific config to check if observations are enabled for this bank
         config = await self._config_resolver.resolve_full_config(bank_id, request_context)
-        if config.enable_observations:
+        if config.enable_observations and _retain_extraction_mode is None:
             try:
                 await self.submit_async_consolidation(bank_id=bank_id, request_context=request_context)
             except Exception as e:
@@ -2824,6 +4135,7 @@ class MemoryEngine(MemoryEngineInterface):
         operation_id: str | None = None,
         outbox_callback: "Callable[[asyncpg.Connection], Awaitable[None]] | None" = None,
         strategy: str | None = None,
+        _retain_extraction_mode: str | None = None,
     ) -> tuple[list[list[str]], "TokenUsage", int | None]:
         """
         Internal method for batch processing without chunking logic.
@@ -2867,6 +4179,25 @@ class MemoryEngine(MemoryEngineInterface):
         if effective_strategy:
             resolved_config = apply_strategy(resolved_config, effective_strategy)
 
+        # Trusted operation-scoped override for already normalized canonical
+        # media documents.  It is deliberately applied after public strategy
+        # resolution and is never exposed as a reserved public strategy name.
+        if _retain_extraction_mode is not None:
+            if _retain_extraction_mode != "chunks":
+                raise ValueError("Unsupported trusted retain extraction mode")
+            from .multimodal.serialization import DEFAULT_CANONICAL_ATOM_MAX_CHARS
+
+            resolved_config.retain_extraction_mode = "chunks"
+            resolved_config.enable_observations = False
+            # Canonical media atoms carry their own evidence/time envelope and
+            # are rendered to this fixed upper bound.  A smaller tenant/bank
+            # chunk override would let the generic splitter sever that
+            # envelope, so clamp only this trusted operation-scoped path.
+            resolved_config.retain_chunk_size = max(
+                resolved_config.retain_chunk_size,
+                DEFAULT_CANONICAL_ATOM_MAX_CHARS,
+            )
+
         # Create parent span for retain operation
         with create_operation_span("retain", bank_id):
             return await orchestrator.retain_batch(
@@ -2886,6 +4217,7 @@ class MemoryEngine(MemoryEngineInterface):
                 schema=_current_schema.get(),
                 outbox_callback=outbox_callback,
                 db_semaphore=self._put_semaphore,
+                sanitize_log_identifiers=_retain_extraction_mode == "chunks",
             )
 
     def recall(
@@ -3281,7 +4613,25 @@ class MemoryEngine(MemoryEngineInterface):
             tracer.start()
 
         backend = await self._get_read_backend()
+        resolved_recall_config = await self._config_resolver.resolve_full_config(bank_id, request_context)
         recall_start = time.time()
+
+        # Validate the bank before producing a query vector.  Use the primary
+        # backend for identity metadata so read-replica lag cannot make a newly
+        # initialised bank appear legacy/unknown.
+        fingerprint_backend = await self._get_backend()
+        async with acquire_with_retry(fingerprint_backend) as fingerprint_conn:
+            await ensure_bank_embedding_fingerprint(
+                fingerprint_conn,
+                bank_id,
+                self.embeddings,
+                policy=getattr(resolved_recall_config, "embedding_fingerprint_policy", "strict"),
+                legacy_attestation=getattr(
+                    resolved_recall_config,
+                    "embedding_fingerprint_legacy_attestation",
+                    None,
+                ),
+            )
 
         # Buffer logs for clean output in concurrent scenarios.
         # Include a uuid suffix so two recalls on the same bank within the
@@ -3369,6 +4719,7 @@ class MemoryEngine(MemoryEngineInterface):
                         query_rewriting_strategy_name=query_rewriting_strategy_name,
                         alias_expansion_enabled=query_rewriting_enabled,
                         session_expansion_weight=session_expansion_weight,
+                        graph_config=resolved_recall_config,
                         vector_index=None if self._is_vector_index_degraded(bank_id) else self._vector_index,
                         query_vector=query_embedding,
                     )
@@ -3418,6 +4769,16 @@ class MemoryEngine(MemoryEngineInterface):
             # If no temporal results from any fact type, set to None
             if not temporal_results:
                 temporal_results = None
+
+            for retrieval in semantic_results:
+                retrieval.source_channel = "semantic"
+            for retrieval in bm25_results:
+                retrieval.source_channel = "bm25"
+            for retrieval in graph_results:
+                retrieval.source_channel = "graph"
+            if temporal_results:
+                for retrieval in temporal_results:
+                    retrieval.source_channel = "temporal"
 
             # Sort combined results by score (descending) so higher-scored results
             # get better ranks in the trace, regardless of fact type
@@ -3558,10 +4919,23 @@ class MemoryEngine(MemoryEngineInterface):
                     },
                 )
                 # Also expose each retrieval method as its own phase so
-                # benchmarks can pinpoint which sub-query drives latency.
+                # operators can pinpoint which sub-query drives latency.
                 for _method, _dur in aggregated_timings.items():
                     if _dur > 0:
-                        tracer.add_phase_metric(f"retrieval_{_method}", _dur)
+                        details = None
+                        if _method == "graph" and all_graph_timings:
+                            graph_total = max(all_graph_timings, key=lambda item: item.traverse)
+                            details = {
+                                "fact_type": graph_total.fact_type,
+                                "db_queries": graph_total.db_queries,
+                                "edge_load_time": graph_total.edge_load_time,
+                                "edge_count": graph_total.edge_count,
+                                "pattern_count": graph_total.pattern_count,
+                                "seeds_time": graph_total.seeds_time,
+                                "result_count": graph_total.result_count,
+                                "traverse": graph_total.traverse,
+                            }
+                        tracer.add_phase_metric(f"retrieval_{_method}", _dur, details)
 
             # Step 3: Merge with RRF
             step_start = time.time()
@@ -3645,7 +5019,16 @@ class MemoryEngine(MemoryEngineInterface):
             if scored_results:
                 ce = reranker_instance.cross_encoder
                 is_passthrough = ce is not None and ce.provider_name == "rrf"
-                apply_combined_scoring(scored_results, now=utcnow(), is_passthrough_reranker=is_passthrough)
+                apply_combined_scoring(
+                    scored_results,
+                    # Historical queries may ask about a past point in time.
+                    # Using wall-clock time makes every old
+                    # fact receive the same minimum recency score and can
+                    # reorder state updates incorrectly.  Keep wall-clock
+                    # time only for live queries without an explicit anchor.
+                    now=_as_aware_utc(question_date) or utcnow(),
+                    is_passthrough_reranker=is_passthrough,
+                )
                 scored_results.sort(key=lambda x: x.weight, reverse=True)
                 log_buffer.append("  [4.6] Combined scoring: ce * recency_boost(0.2) * temporal_boost(0.2)")
 
@@ -3660,7 +5043,10 @@ class MemoryEngine(MemoryEngineInterface):
                 tracer.add_phase_metric(
                     "reranking",
                     step_duration,
-                    {"reranker_type": "cross-encoder", "candidates_reranked": len(scored_results)},
+                    {
+                        "reranker_type": "cross-encoder",
+                        "candidates_reranked": len(scored_results),
+                    },
                 )
 
             # Step 5: Truncate to thinking_budget * 2 for token filtering
@@ -4534,6 +5920,11 @@ class MemoryEngine(MemoryEngineInterface):
                 )
                 bank_id = row["bank_id"] if row else None
                 fact_type = row["fact_type"] if row else None
+                affected_entity_rows = await conn.fetch(
+                    f"SELECT entity_id FROM {fq_table('unit_entities')} WHERE unit_id = $1",
+                    str(unit_uuid),
+                )
+                affected_entity_ids = [entity_row["entity_id"] for entity_row in affected_entity_rows]
 
                 # Delete the memory unit first (cascades to links and associations).
                 # The stale-observation sweep runs AFTER the delete so it also catches
@@ -4543,6 +5934,13 @@ class MemoryEngine(MemoryEngineInterface):
                 deleted = await conn.fetchval(
                     f"DELETE FROM {fq_table('memory_units')} WHERE id = $1 RETURNING id", unit_id
                 )
+                if affected_entity_ids:
+                    await backend.ops.refresh_entity_fact_counts(
+                        conn,
+                        fq_table("entities"),
+                        fq_table("unit_entities"),
+                        affected_entity_ids,
+                    )
 
                 # Invalidate observations referencing this (now-deleted) source memory
                 if bank_id and fact_type in ("experience", "world"):
@@ -4631,6 +6029,18 @@ class MemoryEngine(MemoryEngineInterface):
                             )
                             unit_ids = [str(row["id"]) for row in unit_id_rows]
 
+                        affected_entity_rows = await conn.fetch(
+                            f"""
+                            SELECT DISTINCT ue.entity_id
+                            FROM {fq_table("unit_entities")} ue
+                            JOIN {fq_table("memory_units")} mu ON mu.id = ue.unit_id
+                            WHERE mu.bank_id = $1 AND mu.fact_type = $2
+                            """,
+                            bank_id,
+                            fact_type,
+                        )
+                        affected_entity_ids = [row["entity_id"] for row in affected_entity_rows]
+
                         # Delete only memories of a specific fact type
                         units_count = await conn.fetchval(
                             f"SELECT COUNT(*) FROM {fq_table('memory_units')} WHERE bank_id = $1 AND fact_type = $2",
@@ -4642,6 +6052,13 @@ class MemoryEngine(MemoryEngineInterface):
                             bank_id,
                             fact_type,
                         )
+                        if affected_entity_ids:
+                            await backend.ops.refresh_entity_fact_counts(
+                                conn,
+                                fq_table("entities"),
+                                fq_table("unit_entities"),
+                                affected_entity_ids,
+                            )
 
                         if unit_ids:
                             invalidated_obs = await self._delete_stale_observations_for_memories(
@@ -4739,12 +6156,29 @@ class MemoryEngine(MemoryEngineInterface):
                     f"SELECT COUNT(*) FROM {fq_table('memory_units')} WHERE bank_id = $1 AND fact_type = 'observation'",
                     bank_id,
                 )
+                affected_entity_rows = await conn.fetch(
+                    f"""
+                    SELECT DISTINCT ue.entity_id
+                    FROM {fq_table("unit_entities")} ue
+                    JOIN {fq_table("memory_units")} mu ON mu.id = ue.unit_id
+                    WHERE mu.bank_id = $1 AND mu.fact_type = 'observation'
+                    """,
+                    bank_id,
+                )
+                affected_entity_ids = [row["entity_id"] for row in affected_entity_rows]
 
                 # Delete all observations
                 await conn.execute(
                     f"DELETE FROM {fq_table('memory_units')} WHERE bank_id = $1 AND fact_type = 'observation'",
                     bank_id,
                 )
+                if affected_entity_ids:
+                    await backend.ops.refresh_entity_fact_counts(
+                        conn,
+                        fq_table("entities"),
+                        fq_table("unit_entities"),
+                        affected_entity_ids,
+                    )
 
                 # Reset consolidated_at on source memories so they get re-consolidated
                 await conn.execute(
@@ -5060,6 +6494,7 @@ class MemoryEngine(MemoryEngineInterface):
                     FROM {fq_table("memory_links")} ml
                     LEFT JOIN {fq_table("entities")} e ON ml.entity_id = e.id
                     WHERE ml.from_unit_id = ANY($1::uuid[]) AND ml.to_unit_id = ANY($1::uuid[])
+                      AND ml.link_type <> 'entity'
                     ORDER BY ml.weight DESC NULLS LAST
                     LIMIT $2
                 """,
@@ -5197,16 +6632,16 @@ class MemoryEngine(MemoryEngineInterface):
                 }
             )
 
-        # Build observation-inferred links from inherited entities and shared source memories.
-        # Observations never have direct memory_links rows, so all their links must be derived.
+        # Build derived entity links and observation-inferred semantic links.
+        # Entity edges are visualization-only and are derived from unit_entities
+        # instead of reading materialized memory_links rows.
         observation_units = [unit for unit in units if unit["fact_type"] == "observation"]
-        observation_ids = {unit["id"] for unit in observation_units}
+        visible_ids = [unit["id"] for unit in units]
 
-        # Entity links: pair observations that share at least one inherited entity
-        entity_to_observations: dict[str, list] = {}
-        for obs_id in observation_ids:
-            for entity_name in entity_map.get(obs_id, []):
-                entity_to_observations.setdefault(entity_name, []).append(obs_id)
+        entity_to_visible_units: dict[str, list] = {}
+        for unit_id in visible_ids:
+            for entity_name in entity_map.get(unit_id, []):
+                entity_to_visible_units.setdefault(entity_name, []).append(unit_id)
 
         # Semantic links: pair observations that share at least one source memory
         source_to_obs_for_semantic: dict = {}
@@ -5217,22 +6652,30 @@ class MemoryEngine(MemoryEngineInterface):
 
         observation_inferred_links = []
         seen_inferred: set[tuple] = set()
+        derived_entity_links = []
 
-        for entity_name, obs_ids in entity_to_observations.items():
-            for i, obs_a in enumerate(obs_ids):
-                for obs_b in obs_ids[i + 1 :]:
-                    pair = (min(str(obs_a), str(obs_b)), max(str(obs_a), str(obs_b)), "entity", entity_name)
+        for entity_name, entity_unit_ids in entity_to_visible_units.items():
+            sorted_unit_ids = sorted(entity_unit_ids, key=str)
+            for i, unit_a in enumerate(sorted_unit_ids):
+                for unit_b in sorted_unit_ids[i + 1 :]:
+                    pair = (str(unit_a), str(unit_b), "entity", entity_name)
                     if pair not in seen_inferred:
                         seen_inferred.add(pair)
-                        observation_inferred_links.append(
+                        derived_entity_links.append(
                             {
-                                "from_unit_id": obs_a,
-                                "to_unit_id": obs_b,
+                                "from_unit_id": unit_a,
+                                "to_unit_id": unit_b,
                                 "link_type": "entity",
                                 "weight": 1.0,
                                 "entity_name": entity_name,
                             }
                         )
+                    if len(derived_entity_links) >= max_edges:
+                        break
+                if len(derived_entity_links) >= max_edges:
+                    break
+            if len(derived_entity_links) >= max_edges:
+                break
 
         for src_id, obs_ids in source_to_obs_for_semantic.items():
             for i, obs_a in enumerate(obs_ids):
@@ -5253,7 +6696,7 @@ class MemoryEngine(MemoryEngineInterface):
         # Build edges (combine direct links, copied links from sources, and observation-inferred links)
         edges = []
         seen_edges: set[tuple] = set()
-        all_links = direct_links + copied_links + observation_inferred_links
+        all_links = direct_links + copied_links + derived_entity_links + observation_inferred_links
         for row in all_links:
             from_id = str(row["from_unit_id"])
             to_id = str(row["to_unit_id"])
@@ -6032,6 +7475,99 @@ class MemoryEngine(MemoryEngineInterface):
             request_context=request_context,
         )
 
+        return result
+
+    async def reprocess_by_projection(
+        self,
+        bank_id: str,
+        selector: dict[str, Any],
+        *,
+        dry_run: bool = True,
+        request_context: "RequestContext",
+    ) -> dict[str, Any]:
+        """
+        Reprocess document-backed memory units selected by projection manifest fields.
+
+        The selector accepts dot-paths such as ``{"extraction.v": "legacy"}`` or
+        nested objects such as ``{"temporal": {"grade": "unresolved"}}``.
+        Execution is document-granular because the existing retain reprocess path
+        replaces complete document ingestions.
+        """
+        await self._authenticate_tenant(request_context)
+        if self._operation_validator:
+            from hms_api.extensions import BankWriteContext
+
+            ctx = BankWriteContext(
+                bank_id=bank_id, operation="reprocess_by_projection", request_context=request_context
+            )
+            await self._validate_operation(self._operation_validator.validate_bank_write(ctx))
+
+        backend = await self._get_backend()
+        async with acquire_with_retry(backend) as conn:
+            backend_type = getattr(conn, "backend_type", getattr(backend, "backend_type", "postgresql"))
+            selector_where, selector_args = _build_projection_selector_where(
+                selector,
+                backend_type=backend_type,
+                first_param=2,
+            )
+            rows = await conn.fetch(
+                f"""
+                SELECT id, document_id, chunk_id
+                FROM {fq_table("memory_units")}
+                WHERE bank_id = $1 AND {selector_where}
+                ORDER BY document_id NULLS LAST, chunk_id NULLS LAST, id
+                """,
+                bank_id,
+                *selector_args,
+            )
+
+        unit_ids = [str(row["id"]) for row in rows]
+        document_ids = sorted({str(row["document_id"]) for row in rows if row["document_id"]})
+        chunk_ids = sorted({str(row["chunk_id"]) for row in rows if row["chunk_id"]})
+        skipped_unit_count = sum(1 for row in rows if not row["document_id"])
+
+        result: dict[str, Any] = {
+            "bank_id": bank_id,
+            "selector": selector,
+            "dry_run": dry_run,
+            "unit_count": len(unit_ids),
+            "document_count": len(document_ids),
+            "chunk_count": len(chunk_ids),
+            "skipped_unit_count": skipped_unit_count,
+            "unit_ids": unit_ids,
+            "document_ids": document_ids,
+            "chunk_ids": chunk_ids,
+            "operations": [],
+            "operation_ids": [],
+        }
+
+        if dry_run or not document_ids:
+            return result
+
+        operations: list[dict[str, Any]] = []
+        operation_ids: list[str] = []
+        for document_id in document_ids:
+            operation = await self.reprocess_document(
+                bank_id=bank_id,
+                document_id=document_id,
+                request_context=request_context,
+            )
+            if operation is None:
+                continue
+            operation_id = str(operation.get("operation_id", ""))
+            if operation_id:
+                operation_ids.append(operation_id)
+            operations.append(
+                {
+                    "document_id": document_id,
+                    "operation_id": operation_id,
+                    "items_count": int(operation.get("items_count", 0)),
+                }
+            )
+
+        result["operations"] = operations
+        result["operation_ids"] = operation_ids
+        result["submitted_count"] = len(operations)
         return result
 
     # ==================== bank profile Methods ====================
@@ -8193,6 +9729,14 @@ class MemoryEngine(MemoryEngineInterface):
                     reflect_response_payload["delta_operations_applied"] = applied_ops_summary
                     reflect_response_payload["delta_operations_skipped"] = skipped_ops_summary
 
+            stored_max_tokens = mental_model.get("max_tokens")
+            max_token_budget = int(stored_max_tokens) if stored_max_tokens is not None else None
+            if max_token_budget is not None and count_tokens(final_content) > max_token_budget:
+                final_content = _truncate_to_token_budget(final_content, max_token_budget)
+                reflect_response_payload["text"] = final_content
+                reflect_response_payload["truncated_to_max_tokens"] = True
+                final_structured = None
+
             # Refuse to overwrite existing content with an empty render.
             # The reflect agent can return an empty answer (small models, all
             # tool-call retries failing, transient provider errors) and the
@@ -8977,7 +10521,11 @@ class MemoryEngine(MemoryEngineInterface):
         op_uuid = uuid.UUID(operation_id)
 
         async with acquire_with_retry(backend) as conn:
-            payload_column = ", task_payload" if include_payload else ""
+            # The task identity is always needed internally to verify a
+            # multimodal child's durable publication state.  It is returned to
+            # callers only when include_payload=True, preserving the legacy
+            # response contract and payload privacy boundary.
+            payload_column = ", task_payload"
             row = await conn.fetchrow(
                 f"""
                 SELECT operation_id, operation_type, created_at, updated_at, completed_at, status, error_message, result_metadata, retry_count, next_retry_at{payload_column}
@@ -8993,8 +10541,82 @@ class MemoryEngine(MemoryEngineInterface):
                 raw_rm = row["result_metadata"]
                 result_metadata = conn.parse_json(raw_rm) or {}
                 is_parent = result_metadata.get("is_parent", False)
-                raw_tp = row["task_payload"] if include_payload else None
-                task_payload = conn.parse_json(raw_tp) if include_payload else None
+                raw_tp = row.get("task_payload")
+                internal_task_payload = conn.parse_json(raw_tp) if raw_tp is not None else None
+                task_payload = internal_task_payload if include_payload else None
+
+                multimodal_metadata = result_metadata.get("multimodal")
+                if isinstance(multimodal_metadata, dict) and multimodal_metadata.get("child_retain_operation_id"):
+                    child_status = "not_found"
+                    child_operation_id = None
+                    try:
+                        child_operation_id = uuid.UUID(multimodal_metadata["child_retain_operation_id"])
+                        child_row = await conn.fetchrow(
+                            f"""
+                            SELECT status
+                            FROM {fq_table("async_operations")}
+                            WHERE operation_id = $1 AND bank_id = $2
+                            """,
+                            child_operation_id,
+                            bank_id,
+                        )
+                        if child_row is not None:
+                            child_status = child_row["status"]
+                    except (TypeError, ValueError, AttributeError):
+                        child_status = "not_found"
+
+                    # A completed async child is necessary but not sufficient:
+                    # the retain callback must also have atomically advanced
+                    # the exact document command to completed.  This makes the
+                    # derived recall_ready bit fail closed if a callback was
+                    # skipped, lost ownership, or a stale child row was marked
+                    # completed independently.
+                    publish_completed = False
+                    command_status = "missing"
+                    if child_status == "completed" and isinstance(internal_task_payload, dict):
+                        document_id = internal_task_payload.get("document_id")
+                        command_key = internal_task_payload.get("document_command_key")
+                        if isinstance(document_id, str) and isinstance(command_key, str):
+                            from .multimodal.ledger import MultimodalLedger
+
+                            ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                            command = await ledger.get_document_command(
+                                conn,
+                                bank_id=bank_id,
+                                document_id=document_id,
+                                command_key=command_key,
+                            )
+                            if command is not None:
+                                command_status = command.status
+                                head = await ledger.get_document_head(
+                                    conn,
+                                    bank_id=bank_id,
+                                    document_id=document_id,
+                                )
+                                publish_completed = (
+                                    command.status == "completed"
+                                    and command.child_retain_operation_id == child_operation_id
+                                    and head is not None
+                                    and head.published_sequence >= command.sequence
+                                )
+
+                    multimodal_metadata = dict(multimodal_metadata)
+                    multimodal_metadata["child_retain_status"] = child_status
+                    multimodal_metadata["recall_ready"] = child_status == "completed" and publish_completed
+                    if multimodal_metadata["recall_ready"]:
+                        multimodal_metadata["stage"] = "recall_ready"
+                    elif child_status in {"failed", "cancelled", "not_found"}:
+                        if multimodal_metadata.get("sanitized_error_code") == "multimodal.command_superseded":
+                            multimodal_metadata["stage"] = "failed"
+                        else:
+                            multimodal_metadata["stage"] = "retain_failed"
+                    elif child_status == "completed":
+                        if command_status in {"failed", "cancelled", "superseded"}:
+                            multimodal_metadata["stage"] = "retain_failed"
+                        else:
+                            multimodal_metadata["stage"] = "retain_queued"
+                        multimodal_metadata["retryable"] = True
+                    result_metadata = {**result_metadata, "multimodal": multimodal_metadata}
 
                 # Status may be corrected by self-healing logic below for parent operations
                 api_status = row["status"]
@@ -9119,29 +10741,70 @@ class MemoryEngine(MemoryEngineInterface):
         op_uuid = uuid.UUID(operation_id)
 
         async with acquire_with_retry(backend) as conn:
-            # Check if operation exists, belongs to this bank, and is in a cancellable state
-            result = await conn.fetchrow(
-                f"SELECT bank_id, status FROM {fq_table('async_operations')} WHERE operation_id = $1 AND bank_id = $2",
-                op_uuid,
-                bank_id,
-            )
-
-            if not result:
-                raise ValueError(f"Operation {operation_id} not found for bank {bank_id}")
-
-            if result["status"] != "pending":
-                from hms_api.extensions import OperationValidationError
-
-                raise OperationValidationError(
-                    f"Operation {operation_id} cannot be cancelled: status is '{result['status']}', only 'pending' operations can be cancelled",
-                    409,
+            async with conn.transaction():
+                # Lock the operation so a worker claim cannot race the ledger
+                # transition and leave one side pending while the other is
+                # cancelled.
+                result = await conn.fetchrow(
+                    f"""SELECT bank_id, status, operation_type, task_payload
+                        FROM {fq_table("async_operations")}
+                        WHERE operation_id = $1 AND bank_id = $2
+                        FOR UPDATE""",
+                    op_uuid,
+                    bank_id,
                 )
 
-            # Mark the operation as cancelled
-            await conn.execute(
-                f"UPDATE {fq_table('async_operations')} SET status = 'cancelled', updated_at = now() WHERE operation_id = $1",
-                op_uuid,
-            )
+                if not result:
+                    raise ValueError(f"Operation {operation_id} not found for bank {bank_id}")
+
+                if result["status"] != "pending":
+                    from hms_api.extensions import OperationValidationError
+
+                    raise OperationValidationError(
+                        f"Operation {operation_id} cannot be cancelled: status is '{result['status']}', only 'pending' operations can be cancelled",
+                        409,
+                    )
+
+                task_payload = conn.parse_json(result["task_payload"])
+                if (
+                    result["operation_type"] == "file_convert_retain"
+                    and isinstance(task_payload, dict)
+                    and task_payload.get("type") == "file_convert_retain"
+                    and task_payload.get("descriptor_key")
+                    and task_payload.get("pipeline_fingerprint")
+                    and task_payload.get("document_command_key")
+                    and task_payload.get("document_id")
+                ):
+                    from .multimodal.ledger import LedgerConflictError, MultimodalLedger
+
+                    ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                    command = await ledger.get_document_command(
+                        conn,
+                        bank_id=bank_id,
+                        document_id=task_payload["document_id"],
+                        command_key=task_payload["document_command_key"],
+                    )
+                    if command is None or command.operation_id != op_uuid:
+                        raise LedgerConflictError("multimodal cancellation does not own its document command")
+                    if command.status in {"pending", "processing", "retaining"}:
+                        await ledger.mark_document_terminal(
+                            conn,
+                            bank_id=bank_id,
+                            document_id=task_payload["document_id"],
+                            command_key=task_payload["document_command_key"],
+                            status="cancelled",
+                            now=datetime.now(UTC),
+                        )
+                    elif command.status not in {"failed", "cancelled"}:
+                        raise LedgerConflictError("multimodal document command cannot be cancelled")
+
+                await conn.execute(
+                    f"""UPDATE {fq_table("async_operations")}
+                        SET status = 'cancelled', updated_at = NOW()
+                        WHERE operation_id = $1 AND bank_id = $2 AND status = 'pending'""",
+                    op_uuid,
+                    bank_id,
+                )
 
             return {
                 "success": True,
@@ -9171,36 +10834,52 @@ class MemoryEngine(MemoryEngineInterface):
         op_uuid = uuid.UUID(operation_id)
 
         async with acquire_with_retry(backend) as conn:
-            row = await conn.fetchrow(
-                f"SELECT bank_id, status FROM {fq_table('async_operations')} WHERE operation_id = $1 AND bank_id = $2",
-                op_uuid,
-                bank_id,
-            )
-
-            if not row:
-                raise ValueError(f"Operation {operation_id} not found for bank {bank_id}")
-
-            if row["status"] not in ("failed", "cancelled"):
-                raise OperationValidationError(
-                    f"Operation {operation_id} cannot be retried: status is '{row['status']}', expected 'failed' or 'cancelled'",
-                    409,
+            async with conn.transaction():
+                row = await conn.fetchrow(
+                    f"""SELECT bank_id, status, operation_type, result_metadata
+                        FROM {fq_table("async_operations")}
+                        WHERE operation_id = $1 AND bank_id = $2
+                        FOR UPDATE""",
+                    op_uuid,
+                    bank_id,
                 )
 
-            await conn.execute(
-                f"""
-                UPDATE {fq_table("async_operations")}
-                SET status = 'pending',
-                    error_message = NULL,
-                    completed_at = NULL,
-                    next_retry_at = NULL,
-                    worker_id = NULL,
-                    claimed_at = NULL,
-                    retry_count = 0,
-                    updated_at = NOW()
-                WHERE operation_id = $1
-                """,
-                op_uuid,
-            )
+                if not row:
+                    raise ValueError(f"Operation {operation_id} not found for bank {bank_id}")
+
+                raw_metadata = row["result_metadata"]
+                result_metadata = conn.parse_json(raw_metadata) or {}
+                multimodal_metadata = result_metadata.get("multimodal") if isinstance(result_metadata, dict) else None
+                retry_completed_multimodal_parent = (
+                    row["status"] == "completed"
+                    and row["operation_type"] == "file_convert_retain"
+                    and isinstance(multimodal_metadata, dict)
+                    and multimodal_metadata.get("stage") == "retain_failed"
+                    and multimodal_metadata.get("child_retain_status") == "failed"
+                    and multimodal_metadata.get("sanitized_error_code") == "retain_failed"
+                )
+                if row["status"] not in ("failed", "cancelled") and not retry_completed_multimodal_parent:
+                    raise OperationValidationError(
+                        f"Operation {operation_id} cannot be retried: status is '{row['status']}', "
+                        "expected 'failed', 'cancelled', or a completed multimodal conversion with failed retain",
+                        409,
+                    )
+
+                await conn.execute(
+                    f"""
+                    UPDATE {fq_table("async_operations")}
+                    SET status = 'pending',
+                        error_message = NULL,
+                        completed_at = NULL,
+                        next_retry_at = NULL,
+                        worker_id = NULL,
+                        claimed_at = NULL,
+                        retry_count = 0,
+                        updated_at = NOW()
+                    WHERE operation_id = $1
+                    """,
+                    op_uuid,
+                )
 
             return {
                 "success": True,
@@ -9760,6 +11439,12 @@ class MemoryEngine(MemoryEngineInterface):
         """
         await self._authenticate_tenant(request_context)
 
+        # async_operations has a bank FK.  Match ordinary retain's lazy-bank
+        # behavior before storing assets or inserting file conversion rows.
+        _, created = await bank_utils.get_or_create_bank_profile(self._backend, bank_id)
+        if created:
+            await self._apply_default_bank_template(bank_id, request_context)
+
         config = get_config()
 
         # Validate file count
@@ -9769,15 +11454,105 @@ class MemoryEngine(MemoryEngineInterface):
         # Read all files and validate total batch size
         files_data = []
         total_batch_size = 0
+        batch_limit = config.file_conversion_max_batch_size_bytes
+        upload_chunk_size = 1024 * 1024
+        from .multimodal.admission import (
+            classify_media_hint,
+            classify_media_magic_prefix,
+            initial_multimodal_probe_bytes,
+        )
 
         for item in file_items:
             file = item["file"]
-            file_data = await file.read()
-            total_batch_size += len(file_data)
+            is_multimodal = "openai_multimodal" in item.get("parser", [])
+            if is_multimodal:
+                _reject_multimodal_transport_payload_in_metadata(
+                    item,
+                    str(getattr(file, "filename", "") or ""),
+                    document_tags,
+                )
+                if item.get("strategy"):
+                    raise ValueError(
+                        "An explicit retain strategy cannot be combined with openai_multimodal; "
+                        "the canonical evidence document requires the trusted chunks mode"
+                    )
+            remaining_batch = batch_limit - total_batch_size
+            filename = str(getattr(file, "filename", "") or "")
+            content_type = str(getattr(file, "content_type", "") or "").split(";", 1)[0].lower()
+            hinted_media_kind = (
+                classify_media_hint(filename=filename, content_type=content_type) if is_multimodal else None
+            )
+            per_file_limit = remaining_batch
+            hinted_limit = (
+                config.multimodal_max_image_bytes
+                if hinted_media_kind == "image"
+                else config.multimodal_max_video_bytes
+                if hinted_media_kind == "video"
+                else None
+            )
+
+            chunks: list[bytes] = []
+            bytes_read = 0
+            magic_prefix = bytearray()
+            detected_magic_kind = None
+            probe_read_cap = (
+                initial_multimodal_probe_bytes(
+                    image_limit=config.multimodal_max_image_bytes,
+                    video_limit=config.multimodal_max_video_bytes,
+                    chunk_size=upload_chunk_size,
+                )
+                if is_multimodal
+                else 0
+            )
+            while True:
+                read_size = min(upload_chunk_size, per_file_limit - bytes_read + 1)
+                if probe_read_cap and detected_magic_kind is None and bytes_read < probe_read_cap:
+                    read_size = min(read_size, probe_read_cap - bytes_read)
+                fallback_read = False
+                try:
+                    chunk = await file.read(read_size)
+                except TypeError:
+                    if is_multimodal:
+                        raise ValueError("Multimodal upload reader must support bounded reads") from None
+                    # Backward-compatible adapter for existing internal test
+                    # doubles exposing only read() without a size argument.
+                    chunk = await file.read()
+                    fallback_read = True
+                if not chunk:
+                    break
+                bytes_read += len(chunk)
+                if probe_read_cap and detected_magic_kind is None:
+                    missing_prefix_bytes = max(12 - len(magic_prefix), 0)
+                    magic_prefix.extend(chunk[:missing_prefix_bytes])
+                    detected_magic_kind = classify_media_magic_prefix(bytes(magic_prefix))
+                    if detected_magic_kind is not None:
+                        strict_limit = (
+                            config.multimodal_max_image_bytes
+                            if detected_magic_kind == "image"
+                            else config.multimodal_max_video_bytes
+                        )
+                        per_file_limit = min(remaining_batch, strict_limit)
+                    elif len(magic_prefix) >= 12 and hinted_limit is not None:
+                        per_file_limit = min(remaining_batch, hinted_limit)
+                if bytes_read > per_file_limit:
+                    raise ValueError("Uploaded file exceeds its configured byte budget")
+                chunks.append(chunk)
+                if fallback_read:
+                    break
+
+            if is_multimodal and detected_magic_kind is None and hinted_limit is not None:
+                # A short unknown/malformed asset may reach EOF before a
+                # complete 12-byte probe.  EOF must not bypass the hinted
+                # conservative cap.
+                per_file_limit = min(remaining_batch, hinted_limit)
+                if bytes_read > per_file_limit:
+                    raise ValueError("Uploaded file exceeds its configured byte budget")
+            file_data = b"".join(chunks)
+            total_batch_size += bytes_read
             files_data.append((item, file, file_data))
 
         # Validate total batch size
-        if total_batch_size > config.file_conversion_max_batch_size_bytes:
+        if total_batch_size > batch_limit:
             total_mb = total_batch_size / (1024 * 1024)
             raise ValueError(
                 f"Total batch size ({total_mb:.1f}MB) exceeds maximum of {config.file_conversion_max_batch_size_mb}MB"
@@ -9786,27 +11561,62 @@ class MemoryEngine(MemoryEngineInterface):
         # Submit individual operation for each file
         operation_ids = []
         for item, file, file_data in files_data:
-            # Generate storage key
-            storage_key = f"banks/{bank_id}/files/{item['document_id']}/{file.filename}"
+            # Every upload receives an immutable, operation-scoped object key.
+            # User-controlled names and logical document IDs stay in metadata,
+            # never in the storage path, so concurrent updates cannot overwrite
+            # or delete one another's source bytes.
+            asset_sha256 = hashlib.sha256(file_data).hexdigest()
+            tenant_scope = request_context.tenant_id or get_current_schema()
+            is_multimodal = "openai_multimodal" in item["parser"]
+            document_id = item.get("document_id")
+            if not document_id:
+                document_id = (
+                    _derive_anonymous_multimodal_document_id(
+                        tenant_scope=tenant_scope,
+                        bank_id=bank_id,
+                        asset_sha256=asset_sha256,
+                    )
+                    if is_multimodal
+                    else f"file_{uuid.uuid4()}"
+                )
+            filename = str(file.filename or "")
+            content_type = str(file.content_type or "application/octet-stream")
+            bank_scope = hashlib.sha256(f"{tenant_scope}\0{bank_id}".encode()).hexdigest()[:24]
+            document_scope = hashlib.sha256(document_id.encode()).hexdigest()[:24]
+            upload_id = uuid.uuid4().hex
+            # Keep the raw digest out of the storage locator.  Existing storage
+            # backends may emit locators at debug level; the unpredictable
+            # upload ID provides immutable object identity without turning a
+            # debug log into an asset-hash disclosure.  The digest remains in
+            # the scoped ledger and system-owned provenance.
+            storage_key = f"media/{bank_scope}/{document_scope}/{upload_id}"
+            asset_id = (
+                "asset_"
+                + hashlib.sha256(f"{tenant_scope}\0{bank_id}\0{document_id}\0{asset_sha256}".encode()).hexdigest()
+            )
 
             # Store file in object storage
             await self._file_storage.store(
                 file_data=file_data,
                 key=storage_key,
                 metadata={
-                    "content_type": file.content_type or "application/octet-stream",
-                    "original_filename": file.filename,
+                    "content_type": content_type,
+                    "original_filename": filename,
                     "bank_id": bank_id,
-                    "document_id": item["document_id"],
+                    "document_id": document_id,
+                    "asset_sha256": asset_sha256,
+                    "asset_id": asset_id,
                 },
             )
 
             # Create individual operation and submit task
             task_payload: dict[str, Any] = {
-                "document_id": item["document_id"],
+                "document_id": document_id,
                 "storage_key": storage_key,
-                "original_filename": file.filename,
-                "content_type": file.content_type or "application/octet-stream",
+                "original_filename": filename,
+                "content_type": content_type,
+                "asset_sha256": asset_sha256,
+                "asset_id": asset_id,
                 "parser": item["parser"],
                 "context": item.get("context"),
                 "metadata": item.get("metadata", {}),
@@ -9823,17 +11633,190 @@ class MemoryEngine(MemoryEngineInterface):
             if request_context.api_key_id:
                 task_payload["_api_key_id"] = request_context.api_key_id
 
-            result = await self._submit_async_operation(
-                bank_id=bank_id,
-                operation_type="file_convert_retain",
-                task_type="file_convert_retain",
-                task_payload=task_payload,
-                result_metadata={
-                    "original_filename": file.filename,
-                },
-                dedupe_by_bank=False,
+            initial_result_metadata: dict[str, Any] = {
+                "original_filename": filename,
+            }
+            if is_multimodal:
+                media_kind = _classify_multimodal_media_kind(
+                    file_data,
+                    filename=filename,
+                    content_type=content_type,
+                )
+                task_payload["media_kind"] = media_kind
+                initial_result_metadata["multimodal"] = {
+                    "asset_id": asset_id,
+                    "asset_sha256": asset_sha256,
+                    "media_kind": media_kind,
+                    "pipeline_version": getattr(config, "multimodal_pipeline_version", "hms-multimodal-v1"),
+                    "descriptor_model": getattr(config, "multimodal_model", "gpt-5-mini"),
+                    "stage": "stored",
+                    "retryable": False,
+                }
+
+            if not is_multimodal:
+                result = await self._submit_async_operation(
+                    bank_id=bank_id,
+                    operation_type="file_convert_retain",
+                    task_type="file_convert_retain",
+                    task_payload=task_payload,
+                    result_metadata=initial_result_metadata,
+                    dedupe_by_bank=False,
+                )
+                operation_ids.append(result["operation_id"])
+                continue
+
+            # The media descriptor and logical document update have separate
+            # identities.  This is durable database admission, not a process-
+            # local lock: concurrent API workers therefore converge on one
+            # command and one descriptor claim.
+            from .multimodal.ledger import (
+                DocumentCommandSpec,
+                MultimodalLedger,
+                derive_descriptor_key,
+                derive_document_command_key,
+                derive_retain_input_fingerprint,
             )
-            operation_ids.append(result["operation_id"])
+
+            parser = self._parser_registry.get_parser(
+                "openai_multimodal",
+                filename,
+                content_type,
+            )
+            pipeline_fingerprint_fn = getattr(parser, "pipeline_fingerprint", None)
+            if not callable(pipeline_fingerprint_fn):
+                await self._file_storage.delete(storage_key)
+                raise RuntimeError("openai_multimodal parser does not expose a pipeline fingerprint")
+            pipeline_fingerprint = pipeline_fingerprint_fn()
+            # ``update_intent`` is the hash-only representation of the caller's
+            # replace state.  Keeping raw metadata out of ledger keys/rows still
+            # lets a metadata-only update form a new ordered document command,
+            # while a byte-for-byte retry converges on the existing command.
+            metadata_intent = hashlib.sha256(
+                json.dumps(
+                    item.get("metadata") or {},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    ensure_ascii=True,
+                    default=_json_default,
+                ).encode("utf-8")
+            ).hexdigest()
+            validator_hints = _canonical_multimodal_validator_hints(
+                filename=filename,
+                content_type=content_type,
+            )
+            parser_policy = _canonical_multimodal_parser_policy(item["parser"])
+            descriptor_key = derive_descriptor_key(
+                tenant_scope=tenant_scope,
+                bank_id=bank_id,
+                asset_sha256=asset_sha256,
+                pipeline_fingerprint=pipeline_fingerprint,
+                validator_hints=validator_hints,
+                parser_policy=parser_policy,
+            )
+            update_intent = json.dumps(
+                {
+                    "mode": "replace",
+                    "metadata_sha256": metadata_intent,
+                    "parser_policy": parser_policy,
+                    "validator_hints": validator_hints,
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+            )
+            retain_input_fingerprint = derive_retain_input_fingerprint(
+                context=item.get("context"),
+                normalized_tags=[*(item.get("tags") or []), *(document_tags or [])],
+                timestamp=item.get("timestamp"),
+                explicit_strategy=item.get("strategy"),
+                update_intent=update_intent,
+            )
+            command_key = derive_document_command_key(
+                tenant_scope=tenant_scope,
+                bank_id=bank_id,
+                document_id=document_id,
+                descriptor_key=descriptor_key,
+                retain_input_fingerprint=retain_input_fingerprint,
+            )
+            operation_uuid = uuid.uuid4()
+            task_payload.update(
+                {
+                    "pipeline_fingerprint": pipeline_fingerprint,
+                    "descriptor_key": descriptor_key,
+                    "retain_input_fingerprint": retain_input_fingerprint,
+                    "document_command_key": command_key,
+                }
+            )
+            full_payload = {
+                "type": "file_convert_retain",
+                "operation_id": str(operation_uuid),
+                "bank_id": bank_id,
+                **task_payload,
+            }
+
+            backend = await self._get_backend()
+            try:
+                async with acquire_with_retry(backend) as conn:
+                    ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
+                    async with conn.transaction():
+                        admission = await ledger.admit_document_command(
+                            conn,
+                            DocumentCommandSpec(
+                                bank_id=bank_id,
+                                document_id=document_id,
+                                command_key=command_key,
+                                operation_id=operation_uuid,
+                                source_storage_key=storage_key,
+                                asset_sha256=asset_sha256,
+                                descriptor_key=descriptor_key,
+                                retain_input_fingerprint=retain_input_fingerprint,
+                                source_delete_after_retain=config.file_delete_after_retain,
+                            ),
+                            now=datetime.now(UTC),
+                        )
+                        if admission.created:
+                            full_payload["document_sequence"] = admission.command.sequence
+                            await conn.execute(
+                                f"""INSERT INTO {fq_table("async_operations")}
+                                    (operation_id, bank_id, operation_type, result_metadata, status, task_payload)
+                                    VALUES ($1, $2, $3, $4, $5, $6::jsonb)""",
+                                operation_uuid,
+                                bank_id,
+                                "file_convert_retain",
+                                json.dumps(initial_result_metadata, default=_json_default),
+                                "pending",
+                                json.dumps(full_payload, default=_json_default),
+                            )
+            except Exception:
+                # Object storage is outside the database transaction.  If
+                # durable admission fails, remove only this immutable upload.
+                try:
+                    await self._file_storage.delete(storage_key)
+                except Exception:
+                    logger.warning("Failed to clean an unadmitted multimodal source asset")
+                raise
+
+            if not admission.created:
+                # This request is an idempotent retry of a durable command.
+                # Its operation/source are not adopted by the command; return
+                # the owner and remove only this unused immutable upload.
+                try:
+                    await self._file_storage.delete(storage_key)
+                except Exception:
+                    logger.warning("Failed to clean a deduplicated multimodal retry source")
+                get_metrics_collector().record_multimodal_pipeline(
+                    media_kind=media_kind,
+                    stage="complete",
+                    duration=0.0,
+                    success=True,
+                    deduplicated=True,
+                    asset_outcome="accepted",
+                )
+                operation_ids.append(str(admission.command.operation_id))
+                continue
+
+            await self._task_backend.submit_task(full_payload)
+            operation_ids.append(str(operation_uuid))
 
         return {
             "operation_ids": operation_ids,

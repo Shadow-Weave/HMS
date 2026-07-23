@@ -65,6 +65,7 @@ class OracleOps(DataAccessOps):
         tags_list: list[str],
         observation_scopes_list: list,
         text_signals_list: list,
+        projection_jsons: list[str],
         text_search_extension: str = "native",
     ) -> list[str]:
         table = self._get_mu_table()
@@ -92,14 +93,15 @@ class OracleOps(DataAccessOps):
                     tags_value,
                     observation_scopes_list[i],
                     text_signals_list[i],
+                    projection_jsons[i] or "{}",
                 )
             )
         await conn.executemany(
             f"""
             INSERT INTO {table} (id, bank_id, text, embedding, event_date, occurred_start,
                 occurred_end, mentioned_at, context, fact_type, metadata, chunk_id, document_id,
-                tags, observation_scopes, text_signals)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                tags, observation_scopes, text_signals, projection)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
             """,
             rows_data,
         )
@@ -215,6 +217,32 @@ class OracleOps(DataAccessOps):
             list(zip(unit_ids, entity_ids)),
         )
 
+    async def refresh_entity_fact_counts(
+        self,
+        conn: DatabaseConnection,
+        entities_table: str,
+        ue_table: str,
+        entity_ids: list,
+    ) -> None:
+        seen: set[str] = set()
+        for entity_id in entity_ids:
+            entity_id_str = str(entity_id)
+            if entity_id_str in seen:
+                continue
+            seen.add(entity_id_str)
+            await conn.execute(
+                f"""
+                UPDATE {entities_table} e
+                SET fact_count = (
+                    SELECT COUNT(*)
+                    FROM {ue_table} ue
+                    WHERE ue.entity_id = e.id
+                )
+                WHERE e.id = $1
+                """,
+                entity_id,
+            )
+
     async def fetch_entity_unit_fanout(
         self,
         conn: DatabaseConnection,
@@ -325,10 +353,49 @@ class OracleOps(DataAccessOps):
         self,
         mu_table: str,
         ue_table: str,
+        entities_table: str,
         per_entity_limit: int,
+        entity_fanout_hard_cap: int = 5000,
+        entity_idf_weighting: bool = False,
     ) -> str:
         # Oracle: can't GROUP BY CLOB columns (text, context).
         # Restructure: count entities per unit_id in a subquery, then join to get full columns.
+        if entity_idf_weighting:
+            return f"""
+                seed_entities AS (
+                    SELECT DISTINCT ue.entity_id,
+                           (1.0 / LN(2.718281828 + GREATEST(e.fact_count, 1))) AS entity_weight
+                    FROM {ue_table} ue
+                    JOIN {entities_table} e ON e.id = ue.entity_id
+                    WHERE ue.unit_id = ANY($1::uuid[])
+                      AND e.fact_count <= {entity_fanout_hard_cap}
+                ),
+                entity_scores AS (
+                    SELECT t.unit_id, SUM(se.entity_weight) AS score
+                    FROM seed_entities se
+                    CROSS JOIN LATERAL (
+                        SELECT ue_target.unit_id
+                        FROM {ue_table} ue_target
+                        WHERE ue_target.entity_id = se.entity_id
+                          AND ue_target.unit_id != ALL($1::uuid[])
+                        ORDER BY ue_target.unit_id DESC
+                        FETCH FIRST {per_entity_limit} ROWS ONLY
+                    ) t
+                    GROUP BY t.unit_id
+                ),
+                entity_expanded AS (
+                    SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
+                           mu.occurred_end, mu.mentioned_at,
+                           mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
+                           es.score, 'entity' AS source
+                    FROM entity_scores es
+                    JOIN {mu_table} mu ON mu.id = es.unit_id
+                    WHERE mu.fact_type = $2
+                    ORDER BY es.score DESC
+                    FETCH FIRST $3 ROWS ONLY
+                )"""
+
+        del entities_table, entity_fanout_hard_cap
         return f"""
             seed_entities AS (
                 SELECT DISTINCT ue.entity_id
@@ -351,7 +418,7 @@ class OracleOps(DataAccessOps):
             entity_expanded AS (
                 SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                        mu.occurred_end, mu.mentioned_at,
-                       mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                       mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                        es.score, 'entity' AS source
                 FROM entity_scores es
                 JOIN {mu_table} mu ON mu.id = es.unit_id
@@ -392,7 +459,7 @@ class OracleOps(DataAccessOps):
             semantic_expanded AS (
                 SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                        mu.occurred_end, mu.mentioned_at,
-                       mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                       mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                        ss.score, 'semantic' AS source
                 FROM sem_scores ss
                 JOIN {mu_table} mu ON mu.id = ss.id
@@ -403,7 +470,7 @@ class OracleOps(DataAccessOps):
                 SELECT
                     mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                     mu.occurred_end, mu.mentioned_at,
-                    mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                    mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                     ml.weight AS score,
                     'causal' AS source,
                     ROW_NUMBER() OVER (PARTITION BY mu.id ORDER BY ml.weight DESC) AS rn_
@@ -415,11 +482,86 @@ class OracleOps(DataAccessOps):
             ),
             causal_expanded AS (
                 SELECT id, text, context, event_date, occurred_start, occurred_end, mentioned_at,
-                       fact_type, document_id, chunk_id, tags, proof_count, score, source
+                       fact_type, document_id, chunk_id, tags, projection, proof_count, score, source
                 FROM causal_ranked WHERE rn_ = 1
                 ORDER BY score DESC
                 FETCH FIRST $3 ROWS ONLY
             )"""
+
+    def build_semantic_ann_cte(
+        self,
+        mu_table: str,
+        threshold_param_idx: int,
+        limit_param_idx: int,
+        bank_param_idx: int,
+        visibility_filter_clause: str = "",
+    ) -> str:
+        del mu_table, threshold_param_idx, limit_param_idx, bank_param_idx, visibility_filter_clause
+        raise NotImplementedError("Oracle semantic ANN graph expansion is not implemented")
+
+    def build_causal_expansion_cte(
+        self,
+        ml_table: str,
+        mu_table: str,
+    ) -> str:
+        return f"""
+            causal_ranked AS (
+                SELECT
+                    mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
+                    mu.occurred_end, mu.mentioned_at,
+                    mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
+                    ml.weight AS score,
+                    'causal' AS source,
+                    ROW_NUMBER() OVER (PARTITION BY mu.id ORDER BY ml.weight DESC) AS rn_
+                FROM {ml_table} ml
+                JOIN {mu_table} mu ON ml.to_unit_id = mu.id
+                WHERE ml.from_unit_id = ANY($1::uuid[])
+                  AND ml.link_type IN ('causes', 'caused_by', 'enables', 'prevents')
+                  AND mu.fact_type = $2
+            ),
+            causal_expanded AS (
+                SELECT id, text, context, event_date, occurred_start, occurred_end, mentioned_at,
+                       fact_type, document_id, chunk_id, tags, projection, proof_count, score, source
+                FROM causal_ranked WHERE rn_ = 1
+                ORDER BY score DESC
+                FETCH FIRST $3 ROWS ONLY
+            )"""
+
+    def build_temporal_links_spreading_lateral(
+        self,
+        ml_table: str,
+        limit_param_idx: int,
+    ) -> str:
+        return f"""
+            SELECT ml.to_unit_id, ml.weight, ml.link_type
+            FROM {ml_table} ml
+            WHERE ml.from_unit_id = src.from_unit_id
+              AND ml.link_type IN ('temporal', 'causes', 'caused_by', 'enables', 'prevents')
+              AND ml.weight >= 0.1
+            ORDER BY ml.weight DESC
+            FETCH FIRST ${limit_param_idx} ROWS ONLY
+        """
+
+    def build_temporal_btree_spreading_lateral(
+        self,
+        mu_table: str,
+        ml_table: str,
+        limit_param_idx: int,
+        bank_param_idx: int,
+        fact_type_param_idx: int,
+        window_seconds_param_idx: int,
+        sigma_seconds_param_idx: int,
+    ) -> str:
+        del (
+            mu_table,
+            ml_table,
+            limit_param_idx,
+            bank_param_idx,
+            fact_type_param_idx,
+            window_seconds_param_idx,
+            sigma_seconds_param_idx,
+        )
+        raise NotImplementedError("Oracle temporal B-tree graph expansion is not implemented")
 
     async def expand_observations(
         self,
@@ -428,12 +570,22 @@ class OracleOps(DataAccessOps):
         ue_table: str,
         ml_table: str,
         seed_ids: list,
+        bank_id: str,
         budget: int,
         per_entity_limit: int,
+        semantic_mode: str = "links",
+        ann_threshold: float = 0.7,
+        ann_limit: int = 50,
+        visibility_filter_clause: str = "",
+        visibility_filter_params: list | None = None,
     ) -> tuple[list[ResultRow], list[ResultRow], list[ResultRow]]:
         import logging
 
         logger = logging.getLogger(__name__)
+        del bank_id, ann_threshold, ann_limit, visibility_filter_clause, visibility_filter_params
+
+        if semantic_mode == "ann":
+            raise NotImplementedError("Oracle semantic ANN graph expansion is not implemented")
 
         # Entity expansion via observation_sources junction table.
         # Previously used JSON_TABLE to explode source_memory_ids CLOB. The junction
@@ -470,7 +622,7 @@ class OracleOps(DataAccessOps):
             SELECT
                 mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                 mu.occurred_end, mu.mentioned_at,
-                mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                 (SELECT COUNT(*)
                  FROM {obs_sources_table} os2
                  WHERE os2.observation_id = mu.id
@@ -516,7 +668,7 @@ class OracleOps(DataAccessOps):
             semantic_expanded AS (
                 SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                        mu.occurred_end, mu.mentioned_at,
-                       mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.proof_count,
+                       mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.projection, mu.proof_count,
                        ss.score, 'semantic' AS source
                 FROM sem_scores ss
                 JOIN {mu_table} mu ON mu.id = ss.id
@@ -527,7 +679,7 @@ class OracleOps(DataAccessOps):
                 SELECT
                     mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start,
                     mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id,
-                    mu.chunk_id, mu.tags, mu.proof_count, ml.weight AS score,
+                    mu.chunk_id, mu.tags, mu.projection, mu.proof_count, ml.weight AS score,
                     'causal' AS source,
                     ROW_NUMBER() OVER (PARTITION BY mu.id ORDER BY ml.weight DESC) AS rn_
                 FROM {ml_table} ml
@@ -538,7 +690,7 @@ class OracleOps(DataAccessOps):
             ),
             causal_expanded AS (
                 SELECT id, text, context, event_date, occurred_start, occurred_end, mentioned_at,
-                       fact_type, document_id, chunk_id, tags, proof_count, score, source
+                       fact_type, document_id, chunk_id, tags, projection, proof_count, score, source
                 FROM causal_ranked WHERE rn_ = 1
                 ORDER BY score DESC
                 FETCH FIRST $2 ROWS ONLY

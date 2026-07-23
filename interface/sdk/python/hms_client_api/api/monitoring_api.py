@@ -11,12 +11,11 @@
     Do not edit the class manually.
 """  # noqa: E501
 
-import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from typing import Any
+from pydantic import StrictBool
 from hms_client_api.models.version_response import VersionResponse
 
 from hms_client_api.api_client import ApiClient, RequestSerialized
@@ -40,6 +39,7 @@ class MonitoringApi:
     @validate_call
     async def get_version(
         self,
+        include_multimodal: Annotated[Optional[StrictBool], Field(description="Include additive multimodal capability flags. The default preserves the legacy wire shape for strict older SDKs.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -55,8 +55,10 @@ class MonitoringApi:
     ) -> VersionResponse:
         """Get API version and feature flags
 
-        Returns API version information and enabled feature flags. Use this to check which capabilities are available in this deployment.
+        Returns API version information and enabled feature flags. Use include_multimodal=true to negotiate the additive multimodal capability fields.
 
+        :param include_multimodal: Include additive multimodal capability flags. The default preserves the legacy wire shape for strict older SDKs.
+        :type include_multimodal: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -80,6 +82,7 @@ class MonitoringApi:
         """ # noqa: E501
 
         _param = self._get_version_serialize(
+            include_multimodal=include_multimodal,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -88,6 +91,7 @@ class MonitoringApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             '200': "VersionResponse",
+            '422': "HTTPValidationError",
         }
         response_data = await self.api_client.call_api(
             *_param,
@@ -103,6 +107,7 @@ class MonitoringApi:
     @validate_call
     async def get_version_with_http_info(
         self,
+        include_multimodal: Annotated[Optional[StrictBool], Field(description="Include additive multimodal capability flags. The default preserves the legacy wire shape for strict older SDKs.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -118,8 +123,10 @@ class MonitoringApi:
     ) -> ApiResponse[VersionResponse]:
         """Get API version and feature flags
 
-        Returns API version information and enabled feature flags. Use this to check which capabilities are available in this deployment.
+        Returns API version information and enabled feature flags. Use include_multimodal=true to negotiate the additive multimodal capability fields.
 
+        :param include_multimodal: Include additive multimodal capability flags. The default preserves the legacy wire shape for strict older SDKs.
+        :type include_multimodal: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -143,6 +150,7 @@ class MonitoringApi:
         """ # noqa: E501
 
         _param = self._get_version_serialize(
+            include_multimodal=include_multimodal,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -151,6 +159,7 @@ class MonitoringApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             '200': "VersionResponse",
+            '422': "HTTPValidationError",
         }
         response_data = await self.api_client.call_api(
             *_param,
@@ -166,6 +175,7 @@ class MonitoringApi:
     @validate_call
     async def get_version_without_preload_content(
         self,
+        include_multimodal: Annotated[Optional[StrictBool], Field(description="Include additive multimodal capability flags. The default preserves the legacy wire shape for strict older SDKs.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -181,8 +191,10 @@ class MonitoringApi:
     ) -> RESTResponseType:
         """Get API version and feature flags
 
-        Returns API version information and enabled feature flags. Use this to check which capabilities are available in this deployment.
+        Returns API version information and enabled feature flags. Use include_multimodal=true to negotiate the additive multimodal capability fields.
 
+        :param include_multimodal: Include additive multimodal capability flags. The default preserves the legacy wire shape for strict older SDKs.
+        :type include_multimodal: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -206,6 +218,7 @@ class MonitoringApi:
         """ # noqa: E501
 
         _param = self._get_version_serialize(
+            include_multimodal=include_multimodal,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -214,6 +227,7 @@ class MonitoringApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             '200': "VersionResponse",
+            '422': "HTTPValidationError",
         }
         response_data = await self.api_client.call_api(
             *_param,
@@ -224,6 +238,7 @@ class MonitoringApi:
 
     def _get_version_serialize(
         self,
+        include_multimodal,
         _request_auth,
         _content_type,
         _headers,
@@ -246,6 +261,10 @@ class MonitoringApi:
 
         # process the path parameters
         # process the query parameters
+        if include_multimodal is not None:
+
+            _query_params.append(('include_multimodal', include_multimodal))
+
         # process the header parameters
         # process the form parameters
         # process the body parameter

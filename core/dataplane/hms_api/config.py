@@ -200,6 +200,8 @@ ENV_EMBEDDINGS_OPENAI_API_KEY = "HMS_API_EMBEDDINGS_OPENAI_API_KEY"
 ENV_EMBEDDINGS_OPENAI_MODEL = "HMS_API_EMBEDDINGS_OPENAI_MODEL"
 ENV_EMBEDDINGS_OPENAI_BASE_URL = "HMS_API_EMBEDDINGS_OPENAI_BASE_URL"
 ENV_EMBEDDINGS_OPENAI_BATCH_SIZE = "HMS_API_EMBEDDINGS_OPENAI_BATCH_SIZE"
+ENV_EMBEDDING_FINGERPRINT_POLICY = "HMS_API_EMBEDDING_FINGERPRINT_POLICY"
+ENV_EMBEDDING_FINGERPRINT_LEGACY_ATTESTATION = "HMS_API_EMBEDDING_FINGERPRINT_LEGACY_ATTESTATION"
 
 # Gemini/Vertex AI embeddings configuration
 ENV_EMBEDDINGS_GEMINI_API_KEY = "HMS_API_EMBEDDINGS_GEMINI_API_KEY"
@@ -315,6 +317,17 @@ ENV_RECALL_MAX_QUERY_TOKENS = "HMS_API_RECALL_MAX_QUERY_TOKENS"
 ENV_MENTAL_MODEL_REFRESH_CONCURRENCY = "HMS_API_MENTAL_MODEL_REFRESH_CONCURRENCY"
 ENV_LINK_EXPANSION_PER_ENTITY_LIMIT = "HMS_API_LINK_EXPANSION_PER_ENTITY_LIMIT"
 ENV_LINK_EXPANSION_TIMEOUT = "HMS_API_LINK_EXPANSION_TIMEOUT"
+ENV_GRAPH_SEMANTIC_MODE = "HMS_API_GRAPH_SEMANTIC_MODE"
+ENV_WRITE_SEMANTIC_LINKS = "HMS_API_WRITE_SEMANTIC_LINKS"
+ENV_WRITE_ENTITY_LINKS = "HMS_API_WRITE_ENTITY_LINKS"
+ENV_GRAPH_ANN_EXPANSION_THRESHOLD = "HMS_API_GRAPH_ANN_EXPANSION_THRESHOLD"
+ENV_GRAPH_ANN_EXPANSION_LIMIT = "HMS_API_GRAPH_ANN_EXPANSION_LIMIT"
+ENV_ENTITY_FANOUT_HARD_CAP = "HMS_API_ENTITY_FANOUT_HARD_CAP"
+ENV_ENTITY_IDF_WEIGHTING = "HMS_API_ENTITY_IDF_WEIGHTING"
+ENV_GRAPH_TEMPORAL_MODE = "HMS_API_GRAPH_TEMPORAL_MODE"
+ENV_WRITE_TEMPORAL_LINKS = "HMS_API_WRITE_TEMPORAL_LINKS"
+ENV_GRAPH_TEMPORAL_SIGMA_HOURS = "HMS_API_GRAPH_TEMPORAL_SIGMA_HOURS"
+ENV_EXTRACTION_PROMPT_VERSION = "HMS_API_EXTRACTION_PROMPT_VERSION"
 
 # OpenTelemetry tracing configuration
 ENV_OTEL_TRACES_ENABLED = "HMS_API_OTEL_TRACES_ENABLED"
@@ -367,6 +380,40 @@ ENV_FILE_CONVERSION_MAX_BATCH_SIZE_MB = "HMS_API_FILE_CONVERSION_MAX_BATCH_SIZE_
 ENV_FILE_CONVERSION_MAX_BATCH_SIZE = "HMS_API_FILE_CONVERSION_MAX_BATCH_SIZE"
 ENV_ENABLE_FILE_UPLOAD_API = "HMS_API_ENABLE_FILE_UPLOAD_API"
 ENV_FILE_DELETE_AFTER_RETAIN = "HMS_API_FILE_DELETE_AFTER_RETAIN"
+
+# Multimodal media description (server-static; never tenant/bank configurable).
+# Keep this role separate from the text LLM role: its transport uses Responses
+# image content parts and strict structured outputs rather than plain messages.
+ENV_MULTIMODAL_ENABLED = "HMS_API_MULTIMODAL_ENABLED"
+ENV_MULTIMODAL_PROVIDER = "HMS_API_MULTIMODAL_PROVIDER"
+ENV_MULTIMODAL_MODEL = "HMS_API_MULTIMODAL_MODEL"
+ENV_MULTIMODAL_MODEL_BEHAVIOR_VERSION = "HMS_API_MULTIMODAL_MODEL_BEHAVIOR_VERSION"
+ENV_MULTIMODAL_API_KEY = "HMS_API_MULTIMODAL_API_KEY"
+ENV_MULTIMODAL_BASE_URL = "HMS_API_MULTIMODAL_BASE_URL"
+ENV_MULTIMODAL_IMAGE_ENABLED = "HMS_API_MULTIMODAL_IMAGE_ENABLED"
+ENV_MULTIMODAL_VIDEO_ENABLED = "HMS_API_MULTIMODAL_VIDEO_ENABLED"
+ENV_MULTIMODAL_LIVE_VERIFIED = "HMS_API_MULTIMODAL_LIVE_VERIFIED"
+ENV_MULTIMODAL_CAPABILITY_RESPONSES_API = "HMS_API_MULTIMODAL_CAPABILITY_RESPONSES_API"
+ENV_MULTIMODAL_CAPABILITY_IMAGE_INPUT = "HMS_API_MULTIMODAL_CAPABILITY_IMAGE_INPUT"
+ENV_MULTIMODAL_CAPABILITY_STRUCTURED_OUTPUTS = "HMS_API_MULTIMODAL_CAPABILITY_STRUCTURED_OUTPUTS"
+ENV_MULTIMODAL_IMAGE_DETAIL = "HMS_API_MULTIMODAL_IMAGE_DETAIL"
+ENV_MULTIMODAL_MAX_IMAGE_BYTES = "HMS_API_MULTIMODAL_MAX_IMAGE_BYTES"
+ENV_MULTIMODAL_MAX_IMAGE_PIXELS = "HMS_API_MULTIMODAL_MAX_IMAGE_PIXELS"
+ENV_MULTIMODAL_MAX_VIDEO_BYTES = "HMS_API_MULTIMODAL_MAX_VIDEO_BYTES"
+ENV_MULTIMODAL_MAX_VIDEO_DURATION_SECONDS = "HMS_API_MULTIMODAL_MAX_VIDEO_DURATION_SECONDS"
+ENV_MULTIMODAL_VIDEO_PROBE_INTERVAL_SECONDS = "HMS_API_MULTIMODAL_VIDEO_PROBE_INTERVAL_SECONDS"
+ENV_MULTIMODAL_VIDEO_MAX_FRAMES = "HMS_API_MULTIMODAL_VIDEO_MAX_FRAMES"
+ENV_MULTIMODAL_VIDEO_COVERAGE_RATIO = "HMS_API_MULTIMODAL_VIDEO_COVERAGE_RATIO"
+ENV_MULTIMODAL_MAX_FRAMES_PER_CALL = "HMS_API_MULTIMODAL_MAX_FRAMES_PER_CALL"
+ENV_MULTIMODAL_MAX_OUTPUT_TOKENS = "HMS_API_MULTIMODAL_MAX_OUTPUT_TOKENS"
+ENV_MULTIMODAL_REQUEST_TIMEOUT_SECONDS = "HMS_API_MULTIMODAL_REQUEST_TIMEOUT_SECONDS"
+ENV_MULTIMODAL_MAX_RETRIES = "HMS_API_MULTIMODAL_MAX_RETRIES"
+ENV_MULTIMODAL_MAX_SCHEMA_REPAIRS = "HMS_API_MULTIMODAL_MAX_SCHEMA_REPAIRS"
+ENV_MULTIMODAL_MAX_CONCURRENCY = "HMS_API_MULTIMODAL_MAX_CONCURRENCY"
+ENV_MULTIMODAL_DESCRIPTOR_CACHE_TTL_SECONDS = "HMS_API_MULTIMODAL_DESCRIPTOR_CACHE_TTL_SECONDS"
+ENV_MULTIMODAL_PROMPT_VERSION = "HMS_API_MULTIMODAL_PROMPT_VERSION"
+ENV_MULTIMODAL_SCHEMA_VERSION = "HMS_API_MULTIMODAL_SCHEMA_VERSION"
+ENV_MULTIMODAL_SAMPLING_VERSION = "HMS_API_MULTIMODAL_SAMPLING_VERSION"
 
 # Observations settings (consolidated knowledge from facts)
 ENV_ENABLE_OBSERVATIONS = "HMS_API_ENABLE_OBSERVATIONS"
@@ -524,6 +571,7 @@ DEFAULT_EMBEDDINGS_OPENAI_BATCH_SIZE = 100
 DEFAULT_EMBEDDINGS_GEMINI_MODEL = "gemini-embedding-001"
 DEFAULT_EMBEDDINGS_GEMINI_OUTPUT_DIMENSIONALITY = 768
 DEFAULT_EMBEDDINGS_GEMINI_FORCE_IPV4 = False
+DEFAULT_EMBEDDING_FINGERPRINT_POLICY = "strict"
 DEFAULT_EMBEDDING_DIMENSION = 384
 
 DEFAULT_RERANKER_PROVIDER = "local"
@@ -534,7 +582,7 @@ DEFAULT_RERANKER_LOCAL_TRUST_REMOTE_CODE = (
     False  # Security: disabled by default, required for some models like jina-reranker-v2
 )
 DEFAULT_RERANKER_LOCAL_FP16 = False  # FP16 inference: opt-in, faster on MPS/CUDA (not CPU)
-DEFAULT_RERANKER_LOCAL_BUCKET_BATCHING = False  # Length-sorted bucket batching: opt-in, 36-54% speedup
+DEFAULT_RERANKER_LOCAL_BUCKET_BATCHING = False  # Length-sorted bucket batching: opt-in
 DEFAULT_RERANKER_LOCAL_BATCH_SIZE = 32  # Batch size for local reranker predict() calls
 DEFAULT_RERANKER_TEI_BATCH_SIZE = 128
 DEFAULT_RERANKER_TEI_MAX_CONCURRENT = 8
@@ -559,7 +607,9 @@ DEFAULT_RERANKER_SILICONFLOW_BASE_URL = "https://api.siliconflow.cn/v1"
 DEFAULT_RERANKER_GOOGLE_MODEL = "semantic-ranker-default-004"
 
 DEFAULT_RERANKER_QWEN3_MODEL_PATH = None
-DEFAULT_RERANKER_QWEN3_INSTRUCTION = "Given a question about the user's memory, retrieve relevant documents that can help answer this question."
+DEFAULT_RERANKER_QWEN3_INSTRUCTION = (
+    "Given a question about the user's memory, retrieve relevant documents that can help answer this question."
+)
 
 # Vector extension (pgvector, vchord, pgvectorscale, or AlloyDB ScaNN)
 DEFAULT_VECTOR_EXTENSION = "pgvector"  # Options: "pgvector", "vchord", "pgvectorscale", "scann"
@@ -604,6 +654,17 @@ DEFAULT_RECALL_MAX_QUERY_TOKENS = 500  # Maximum tokens allowed in recall query
 DEFAULT_MENTAL_MODEL_REFRESH_CONCURRENCY = 8  # Max concurrent mental model refreshes
 DEFAULT_LINK_EXPANSION_PER_ENTITY_LIMIT = 200  # Max target units per entity in graph expansion
 DEFAULT_LINK_EXPANSION_TIMEOUT = 10.0  # Timeout (seconds) for entity expansion query
+DEFAULT_GRAPH_SEMANTIC_MODE = "links"  # "links" (legacy) or "ann"
+DEFAULT_WRITE_SEMANTIC_LINKS = True
+DEFAULT_WRITE_ENTITY_LINKS = True
+DEFAULT_GRAPH_ANN_EXPANSION_THRESHOLD = 0.7
+DEFAULT_GRAPH_ANN_EXPANSION_LIMIT = 50
+DEFAULT_ENTITY_FANOUT_HARD_CAP = 5000
+DEFAULT_ENTITY_IDF_WEIGHTING = False
+DEFAULT_GRAPH_TEMPORAL_MODE = "links"  # "links" (legacy) or "btree"
+DEFAULT_WRITE_TEMPORAL_LINKS = True
+DEFAULT_GRAPH_TEMPORAL_SIGMA_HOURS = 24.0
+DEFAULT_EXTRACTION_PROMPT_VERSION = "5w-v1"
 
 # Retain settings
 DEFAULT_RETAIN_MAX_COMPLETION_TOKENS = 64000  # Max tokens for fact extraction LLM call
@@ -631,6 +692,41 @@ DEFAULT_FILE_CONVERSION_MAX_BATCH_SIZE_MB = 100  # Max total batch size in MB (a
 DEFAULT_FILE_CONVERSION_MAX_BATCH_SIZE = 10  # Max files per batch upload
 DEFAULT_ENABLE_FILE_UPLOAD_API = True  # Enable file upload endpoint
 DEFAULT_FILE_DELETE_AFTER_RETAIN = True  # Delete file bytes after retain (saves storage)
+
+# Multimodal defaults are deliberately conservative and substantially below
+# upstream provider hard limits. The global gate is off so existing file uploads
+# never start making paid/data-egressing visual calls after an upgrade.
+DEFAULT_MULTIMODAL_ENABLED = False
+DEFAULT_MULTIMODAL_PROVIDER = "openai"
+DEFAULT_MULTIMODAL_MODEL = "gpt-5-mini"
+DEFAULT_MULTIMODAL_MODEL_BEHAVIOR_VERSION = "gpt-5-mini-alias-v1"
+DEFAULT_MULTIMODAL_BASE_URL = "https://api.openai.com/v1"
+DEFAULT_MULTIMODAL_IMAGE_ENABLED = True
+DEFAULT_MULTIMODAL_VIDEO_ENABLED = False
+DEFAULT_MULTIMODAL_LIVE_VERIFIED = False
+DEFAULT_MULTIMODAL_IMAGE_DETAIL = "auto"
+DEFAULT_MULTIMODAL_MAX_IMAGE_BYTES = 20 * 1024 * 1024
+DEFAULT_MULTIMODAL_MAX_IMAGE_PIXELS = 40_000_000
+DEFAULT_MULTIMODAL_MAX_VIDEO_BYTES = 100 * 1024 * 1024
+DEFAULT_MULTIMODAL_MAX_VIDEO_DURATION_SECONDS = 600.0
+DEFAULT_MULTIMODAL_VIDEO_PROBE_INTERVAL_SECONDS = 1.0
+DEFAULT_MULTIMODAL_VIDEO_MAX_FRAMES = 24
+DEFAULT_MULTIMODAL_VIDEO_COVERAGE_RATIO = 0.6
+DEFAULT_MULTIMODAL_MAX_FRAMES_PER_CALL = 8
+DEFAULT_MULTIMODAL_MAX_OUTPUT_TOKENS = 4096
+DEFAULT_MULTIMODAL_REQUEST_TIMEOUT_SECONDS = 60.0
+DEFAULT_MULTIMODAL_MAX_RETRIES = 2
+DEFAULT_MULTIMODAL_MAX_SCHEMA_REPAIRS = 1
+DEFAULT_MULTIMODAL_MAX_CONCURRENCY = 4
+DEFAULT_MULTIMODAL_DESCRIPTOR_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60
+DEFAULT_MULTIMODAL_PROMPT_VERSION = "openai-mm-v2"
+DEFAULT_MULTIMODAL_SCHEMA_VERSION = "hms-multimodal-v1"
+DEFAULT_MULTIMODAL_SAMPLING_VERSION = "scene-coverage-v1"
+# These caps mirror the model-output schema and prevent configurations that
+# can only fail after one or more billable video map calls.  A schema-version
+# change must update both the model constraints and these startup guards.
+_MULTIMODAL_SCHEMA_MAX_EVIDENCE_IDS = 64
+_MULTIMODAL_SCHEMA_MAX_TEMPORAL_SEGMENTS = 256
 
 # Observations defaults (consolidated knowledge from facts)
 DEFAULT_ENABLE_OBSERVATIONS = True  # Observations enabled by default
@@ -809,6 +905,30 @@ def _parse_positive_int(name: str, raw: str | None, default: int) -> int:
     if parsed < 1:
         raise ValueError(f"{name} must be >= 1, got {parsed}")
     return parsed
+
+
+def _parse_strict_bool(name: str, raw: str | None, default: bool) -> bool:
+    """Parse an explicit boolean without truthiness surprises.
+
+    Multimodal flags control data egress and paid provider calls. Treating a
+    typo such as ``tru`` as false makes deployment intent ambiguous, while
+    Python truthiness would make ``"false"`` true. Fail startup instead.
+    """
+
+    if raw is None:
+        return default
+    normalized = raw.strip().lower()
+    if normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    raise ValueError(f"{name} must be 'true' or 'false', got {raw!r}")
+
+
+def _is_official_openai_base_url(base_url: str) -> bool:
+    """Return whether the URL is the built-in, officially verified endpoint."""
+
+    return base_url.rstrip("/") == DEFAULT_MULTIMODAL_BASE_URL
 
 
 def _validate_extraction_mode(mode: str) -> str:
@@ -1061,6 +1181,17 @@ class HMSConfig:
     mental_model_refresh_concurrency: int
     link_expansion_per_entity_limit: int
     link_expansion_timeout: float
+    graph_semantic_mode: str
+    write_semantic_links: bool
+    write_entity_links: bool
+    graph_ann_expansion_threshold: float
+    graph_ann_expansion_limit: int
+    entity_fanout_hard_cap: int
+    entity_idf_weighting: bool
+    graph_temporal_mode: str
+    write_temporal_links: bool
+    graph_temporal_sigma_hours: float
+    extraction_prompt_version: str
 
     # Retain settings
     retain_max_completion_tokens: int
@@ -1200,12 +1331,48 @@ class HMSConfig:
     # Defaulted fields (source-compatible additions — existing direct constructor callers keep working).
     # Keep at the end of the dataclass; Python forbids non-default fields after default fields.
     embeddings_openai_batch_size: int = DEFAULT_EMBEDDINGS_OPENAI_BATCH_SIZE
+    embedding_fingerprint_policy: Literal["strict", "warn", "off"] = DEFAULT_EMBEDDING_FINGERPRINT_POLICY
+    embedding_fingerprint_legacy_attestation: str | None = None
     vector_index_provider: str = DEFAULT_VECTOR_INDEX_PROVIDER
     milvus_uri: str = DEFAULT_MILVUS_URI
     milvus_token: str | None = DEFAULT_MILVUS_TOKEN
     milvus_db_name: str | None = DEFAULT_MILVUS_DB_NAME
     milvus_collection: str = DEFAULT_MILVUS_COLLECTION
     milvus_consistency_level: str = DEFAULT_MILVUS_CONSISTENCY_LEVEL
+
+    # Multimodal description is server-static. Defaults live at the end to keep
+    # existing direct HMSConfig(...) callers source-compatible. The credential
+    # is excluded from dataclass repr; it is also classified below as a secret.
+    multimodal_enabled: bool = DEFAULT_MULTIMODAL_ENABLED
+    multimodal_provider: str = DEFAULT_MULTIMODAL_PROVIDER
+    multimodal_model: str = DEFAULT_MULTIMODAL_MODEL
+    multimodal_model_behavior_version: str = DEFAULT_MULTIMODAL_MODEL_BEHAVIOR_VERSION
+    multimodal_api_key: str | None = field(default=None, repr=False)
+    multimodal_base_url: str = field(default=DEFAULT_MULTIMODAL_BASE_URL, repr=False)
+    multimodal_image_enabled: bool = DEFAULT_MULTIMODAL_IMAGE_ENABLED
+    multimodal_video_enabled: bool = DEFAULT_MULTIMODAL_VIDEO_ENABLED
+    multimodal_live_verified: bool = DEFAULT_MULTIMODAL_LIVE_VERIFIED
+    multimodal_capability_responses_api: bool = True
+    multimodal_capability_image_input: bool = True
+    multimodal_capability_structured_outputs: bool = True
+    multimodal_image_detail: Literal["auto", "low", "high"] = DEFAULT_MULTIMODAL_IMAGE_DETAIL
+    multimodal_max_image_bytes: int = DEFAULT_MULTIMODAL_MAX_IMAGE_BYTES
+    multimodal_max_image_pixels: int = DEFAULT_MULTIMODAL_MAX_IMAGE_PIXELS
+    multimodal_max_video_bytes: int = DEFAULT_MULTIMODAL_MAX_VIDEO_BYTES
+    multimodal_max_video_duration_seconds: float = DEFAULT_MULTIMODAL_MAX_VIDEO_DURATION_SECONDS
+    multimodal_video_probe_interval_seconds: float = DEFAULT_MULTIMODAL_VIDEO_PROBE_INTERVAL_SECONDS
+    multimodal_video_max_frames: int = DEFAULT_MULTIMODAL_VIDEO_MAX_FRAMES
+    multimodal_video_coverage_ratio: float = DEFAULT_MULTIMODAL_VIDEO_COVERAGE_RATIO
+    multimodal_max_frames_per_call: int = DEFAULT_MULTIMODAL_MAX_FRAMES_PER_CALL
+    multimodal_max_output_tokens: int = DEFAULT_MULTIMODAL_MAX_OUTPUT_TOKENS
+    multimodal_request_timeout_seconds: float = DEFAULT_MULTIMODAL_REQUEST_TIMEOUT_SECONDS
+    multimodal_max_retries: int = DEFAULT_MULTIMODAL_MAX_RETRIES
+    multimodal_max_schema_repairs: int = DEFAULT_MULTIMODAL_MAX_SCHEMA_REPAIRS
+    multimodal_max_concurrency: int = DEFAULT_MULTIMODAL_MAX_CONCURRENCY
+    multimodal_descriptor_cache_ttl_seconds: int = DEFAULT_MULTIMODAL_DESCRIPTOR_CACHE_TTL_SECONDS
+    multimodal_prompt_version: str = DEFAULT_MULTIMODAL_PROMPT_VERSION
+    multimodal_schema_version: str = DEFAULT_MULTIMODAL_SCHEMA_VERSION
+    multimodal_sampling_version: str = DEFAULT_MULTIMODAL_SAMPLING_VERSION
 
     # Class-level sets for configuration categorization
 
@@ -1248,6 +1415,9 @@ class HMSConfig:
         # External vector index credentials and endpoints
         "milvus_uri",
         "milvus_token",
+        # Multimodal provider credentials/infrastructure endpoints
+        "multimodal_api_key",
+        "multimodal_base_url",
     }
 
     # CONFIGURABLE_FIELDS: Safe behavioral settings that can be customized per-tenant/bank
@@ -1282,6 +1452,17 @@ class HMSConfig:
         "recall_include_chunks",
         "recall_max_tokens",
         "recall_chunks_max_tokens",
+        "graph_semantic_mode",
+        "write_semantic_links",
+        "write_entity_links",
+        "graph_ann_expansion_threshold",
+        "graph_ann_expansion_limit",
+        "entity_fanout_hard_cap",
+        "entity_idf_weighting",
+        "graph_temporal_mode",
+        "write_temporal_links",
+        "graph_temporal_sigma_hours",
+        "extraction_prompt_version",
         # Recall budget mapping (Budget enum -> thinking_budget integer)
         "recall_budget_function",
         "recall_budget_fixed_low",
@@ -1363,12 +1544,166 @@ class HMSConfig:
         # Validate vector_extension
         validate_extension(self.vector_extension)
 
+        valid_fingerprint_policies = ("strict", "warn", "off")
+        if self.embedding_fingerprint_policy not in valid_fingerprint_policies:
+            raise ValueError(
+                f"Invalid embedding_fingerprint_policy: {self.embedding_fingerprint_policy}. "
+                f"Must be one of: {', '.join(valid_fingerprint_policies)}"
+            )
+
+        # Multimodal settings are a server-static security/cost boundary. Keep
+        # validation here (rather than in the parser) so every worker derives the
+        # same pipeline fingerprint and bad deployments fail before processing.
+        if self.multimodal_provider != "openai":
+            raise ValueError(
+                f"{ENV_MULTIMODAL_PROVIDER} currently supports only 'openai', got {self.multimodal_provider!r}"
+            )
+        if not self.multimodal_model or not self.multimodal_model.strip():
+            raise ValueError(f"{ENV_MULTIMODAL_MODEL} must be a non-empty configured request string")
+        if not self.multimodal_base_url or not self.multimodal_base_url.strip():
+            raise ValueError(f"{ENV_MULTIMODAL_BASE_URL} must be a non-empty URL")
+        if self.multimodal_image_detail not in {"auto", "low", "high"}:
+            raise ValueError(f"{ENV_MULTIMODAL_IMAGE_DETAIL} must be one of: auto, low, high")
+
+        boolean_fields = {
+            ENV_MULTIMODAL_ENABLED: self.multimodal_enabled,
+            ENV_MULTIMODAL_IMAGE_ENABLED: self.multimodal_image_enabled,
+            ENV_MULTIMODAL_VIDEO_ENABLED: self.multimodal_video_enabled,
+            ENV_MULTIMODAL_LIVE_VERIFIED: self.multimodal_live_verified,
+            ENV_MULTIMODAL_CAPABILITY_RESPONSES_API: self.multimodal_capability_responses_api,
+            ENV_MULTIMODAL_CAPABILITY_IMAGE_INPUT: self.multimodal_capability_image_input,
+            ENV_MULTIMODAL_CAPABILITY_STRUCTURED_OUTPUTS: self.multimodal_capability_structured_outputs,
+        }
+        for name, value in boolean_fields.items():
+            if not isinstance(value, bool):
+                raise ValueError(f"{name} must be a boolean, got {value!r}")
+
+        positive_integer_fields = {
+            ENV_MULTIMODAL_MAX_IMAGE_BYTES: self.multimodal_max_image_bytes,
+            ENV_MULTIMODAL_MAX_IMAGE_PIXELS: self.multimodal_max_image_pixels,
+            ENV_MULTIMODAL_MAX_VIDEO_BYTES: self.multimodal_max_video_bytes,
+            ENV_MULTIMODAL_VIDEO_MAX_FRAMES: self.multimodal_video_max_frames,
+            ENV_MULTIMODAL_MAX_FRAMES_PER_CALL: self.multimodal_max_frames_per_call,
+            ENV_MULTIMODAL_MAX_OUTPUT_TOKENS: self.multimodal_max_output_tokens,
+            ENV_MULTIMODAL_MAX_CONCURRENCY: self.multimodal_max_concurrency,
+            ENV_MULTIMODAL_DESCRIPTOR_CACHE_TTL_SECONDS: self.multimodal_descriptor_cache_ttl_seconds,
+        }
+        for name, value in positive_integer_fields.items():
+            if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+                raise ValueError(f"{name} must be a positive integer, got {value!r}")
+
+        positive_number_fields = {
+            ENV_MULTIMODAL_MAX_VIDEO_DURATION_SECONDS: self.multimodal_max_video_duration_seconds,
+            ENV_MULTIMODAL_VIDEO_PROBE_INTERVAL_SECONDS: self.multimodal_video_probe_interval_seconds,
+            ENV_MULTIMODAL_REQUEST_TIMEOUT_SECONDS: self.multimodal_request_timeout_seconds,
+        }
+        for name, value in positive_number_fields.items():
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
+                raise ValueError(f"{name} must be a positive number, got {value!r}")
+
+        if self.multimodal_video_max_frames < 4:
+            raise ValueError(f"{ENV_MULTIMODAL_VIDEO_MAX_FRAMES} must be >= 4")
+        if (
+            isinstance(self.multimodal_video_coverage_ratio, bool)
+            or not isinstance(self.multimodal_video_coverage_ratio, (int, float))
+            or not 0 < self.multimodal_video_coverage_ratio < 1
+        ):
+            raise ValueError(f"{ENV_MULTIMODAL_VIDEO_COVERAGE_RATIO} must be > 0 and < 1")
+        if self.multimodal_max_frames_per_call > self.multimodal_video_max_frames:
+            raise ValueError(f"{ENV_MULTIMODAL_MAX_FRAMES_PER_CALL} must be <= {ENV_MULTIMODAL_VIDEO_MAX_FRAMES}")
+        if self.multimodal_max_frames_per_call > _MULTIMODAL_SCHEMA_MAX_EVIDENCE_IDS:
+            raise ValueError(
+                f"{ENV_MULTIMODAL_MAX_FRAMES_PER_CALL} must be <= "
+                f"{_MULTIMODAL_SCHEMA_MAX_EVIDENCE_IDS} for the configured multimodal schema"
+            )
+        maximum_segment_count = (
+            self.multimodal_video_max_frames + self.multimodal_max_frames_per_call - 1
+        ) // self.multimodal_max_frames_per_call
+        if maximum_segment_count > _MULTIMODAL_SCHEMA_MAX_TEMPORAL_SEGMENTS:
+            raise ValueError(
+                f"ceil({ENV_MULTIMODAL_VIDEO_MAX_FRAMES} / {ENV_MULTIMODAL_MAX_FRAMES_PER_CALL}) "
+                f"must be <= {_MULTIMODAL_SCHEMA_MAX_TEMPORAL_SEGMENTS} for the configured multimodal schema"
+            )
+        if (
+            isinstance(self.multimodal_max_retries, bool)
+            or not isinstance(self.multimodal_max_retries, int)
+            or self.multimodal_max_retries < 0
+        ):
+            raise ValueError(f"{ENV_MULTIMODAL_MAX_RETRIES} must be a non-negative integer")
+        if (
+            isinstance(self.multimodal_max_schema_repairs, bool)
+            or not isinstance(self.multimodal_max_schema_repairs, int)
+            or not 0 <= self.multimodal_max_schema_repairs <= 1
+        ):
+            raise ValueError(f"{ENV_MULTIMODAL_MAX_SCHEMA_REPAIRS} must be 0 or 1")
+
+        version_fields = {
+            ENV_MULTIMODAL_MODEL_BEHAVIOR_VERSION: self.multimodal_model_behavior_version,
+            ENV_MULTIMODAL_PROMPT_VERSION: self.multimodal_prompt_version,
+            ENV_MULTIMODAL_SCHEMA_VERSION: self.multimodal_schema_version,
+            ENV_MULTIMODAL_SAMPLING_VERSION: self.multimodal_sampling_version,
+        }
+        for name, value in version_fields.items():
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"{name} must be a non-empty version identifier")
+
+        declared_provider_capabilities = {
+            ENV_MULTIMODAL_CAPABILITY_RESPONSES_API: self.multimodal_capability_responses_api,
+            ENV_MULTIMODAL_CAPABILITY_IMAGE_INPUT: self.multimodal_capability_image_input,
+            ENV_MULTIMODAL_CAPABILITY_STRUCTURED_OUTPUTS: self.multimodal_capability_structured_outputs,
+        }
+        missing_capabilities = [name for name, declared in declared_provider_capabilities.items() if not declared]
+        if not _is_official_openai_base_url(self.multimodal_base_url) and missing_capabilities:
+            raise ValueError(
+                f"Custom {ENV_MULTIMODAL_BASE_URL} requires explicit true declarations for: "
+                f"{', '.join(missing_capabilities)}"
+            )
+        if self.multimodal_enabled:
+            if self.database_backend != "postgresql":
+                raise ValueError(
+                    f"{ENV_MULTIMODAL_ENABLED}=true currently requires "
+                    f"{ENV_DATABASE_BACKEND}=postgresql; Oracle retains static migration compatibility "
+                    "but is not runtime-qualified for multimodal file retain in this release"
+                )
+            if not self.multimodal_api_key or not self.multimodal_api_key.strip():
+                raise ValueError(f"{ENV_MULTIMODAL_API_KEY} is required when {ENV_MULTIMODAL_ENABLED}=true")
+            if missing_capabilities:
+                raise ValueError(
+                    "Multimodal provider capability declaration is incomplete: " + ", ".join(missing_capabilities)
+                )
+            if not self.multimodal_image_enabled:
+                raise ValueError(f"{ENV_MULTIMODAL_IMAGE_ENABLED} must be true when multimodal processing is enabled")
+        if self.multimodal_video_enabled and not self.multimodal_image_enabled:
+            raise ValueError(
+                f"{ENV_MULTIMODAL_VIDEO_ENABLED}=true requires {ENV_MULTIMODAL_IMAGE_ENABLED}=true because video "
+                "is transported as sampled image inputs"
+            )
+        if self.multimodal_live_verified and not self.multimodal_enabled:
+            raise ValueError(f"{ENV_MULTIMODAL_LIVE_VERIFIED}=true requires {ENV_MULTIMODAL_ENABLED}=true")
+
         # Validate text_search_extension
         valid_text_search = ("native", "vchord", "pg_textsearch")
         if self.text_search_extension not in valid_text_search:
             raise ValueError(
                 f"Invalid text_search_extension: {self.text_search_extension}. Must be one of: {', '.join(valid_text_search)}"
             )
+
+        valid_graph_semantic_modes = ("links", "ann")
+        if self.graph_semantic_mode not in valid_graph_semantic_modes:
+            raise ValueError(
+                f"Invalid graph_semantic_mode: {self.graph_semantic_mode}. "
+                f"Must be one of: {', '.join(valid_graph_semantic_modes)}"
+            )
+        if self.database_backend == "oracle" and self.graph_semantic_mode == "ann":
+            raise ValueError("HMS_API_GRAPH_SEMANTIC_MODE=ann is not supported for Oracle yet")
+        valid_graph_temporal_modes = ("links", "btree")
+        if self.graph_temporal_mode not in valid_graph_temporal_modes:
+            raise ValueError(
+                f"Invalid graph_temporal_mode: {self.graph_temporal_mode}. "
+                f"Must be one of: {', '.join(valid_graph_temporal_modes)}"
+            )
+        if self.database_backend == "oracle" and self.graph_temporal_mode == "btree":
+            raise ValueError("HMS_API_GRAPH_TEMPORAL_MODE=btree is not supported for Oracle yet")
 
         valid_vector_index_providers = ("database", "milvus")
         if self.vector_index_provider not in valid_vector_index_providers:
@@ -1454,6 +1789,15 @@ class HMSConfig:
         # Get provider first to determine default model
         llm_provider = os.getenv(ENV_LLM_PROVIDER, DEFAULT_LLM_PROVIDER)
         llm_model = os.getenv(ENV_LLM_MODEL) or _get_default_model_for_provider(llm_provider)
+
+        multimodal_provider = os.getenv(ENV_MULTIMODAL_PROVIDER, DEFAULT_MULTIMODAL_PROVIDER).lower()
+        multimodal_base_url = os.getenv(ENV_MULTIMODAL_BASE_URL) or DEFAULT_MULTIMODAL_BASE_URL
+        # The official endpoint's three capabilities are part of this version's
+        # verified built-in contract. A custom compatible endpoint starts
+        # fail-closed and requires the administrator to assert each capability.
+        official_multimodal_contract = multimodal_provider == "openai" and _is_official_openai_base_url(
+            multimodal_base_url
+        )
 
         config = cls(
             # Database
@@ -1596,6 +1940,10 @@ class HMSConfig:
                 os.getenv(ENV_EMBEDDINGS_OPENAI_BATCH_SIZE),
                 DEFAULT_EMBEDDINGS_OPENAI_BATCH_SIZE,
             ),
+            embedding_fingerprint_policy=os.getenv(
+                ENV_EMBEDDING_FINGERPRINT_POLICY, DEFAULT_EMBEDDING_FINGERPRINT_POLICY
+            ).lower(),
+            embedding_fingerprint_legacy_attestation=os.getenv(ENV_EMBEDDING_FINGERPRINT_LEGACY_ATTESTATION) or None,
             # Cohere embeddings (with backward-compatible fallback to shared API key)
             embeddings_cohere_api_key=os.getenv(ENV_EMBEDDINGS_COHERE_API_KEY) or os.getenv(ENV_COHERE_API_KEY),
             embeddings_cohere_model=os.getenv(ENV_EMBEDDINGS_COHERE_MODEL, DEFAULT_EMBEDDINGS_COHERE_MODEL),
@@ -1745,6 +2093,26 @@ class HMSConfig:
                 os.getenv(ENV_LINK_EXPANSION_PER_ENTITY_LIMIT, str(DEFAULT_LINK_EXPANSION_PER_ENTITY_LIMIT))
             ),
             link_expansion_timeout=float(os.getenv(ENV_LINK_EXPANSION_TIMEOUT, str(DEFAULT_LINK_EXPANSION_TIMEOUT))),
+            graph_semantic_mode=os.getenv(ENV_GRAPH_SEMANTIC_MODE, DEFAULT_GRAPH_SEMANTIC_MODE).lower(),
+            write_semantic_links=os.getenv(ENV_WRITE_SEMANTIC_LINKS, str(DEFAULT_WRITE_SEMANTIC_LINKS)).lower()
+            == "true",
+            write_entity_links=os.getenv(ENV_WRITE_ENTITY_LINKS, str(DEFAULT_WRITE_ENTITY_LINKS)).lower() == "true",
+            graph_ann_expansion_threshold=float(
+                os.getenv(ENV_GRAPH_ANN_EXPANSION_THRESHOLD, str(DEFAULT_GRAPH_ANN_EXPANSION_THRESHOLD))
+            ),
+            graph_ann_expansion_limit=int(
+                os.getenv(ENV_GRAPH_ANN_EXPANSION_LIMIT, str(DEFAULT_GRAPH_ANN_EXPANSION_LIMIT))
+            ),
+            entity_fanout_hard_cap=int(os.getenv(ENV_ENTITY_FANOUT_HARD_CAP, str(DEFAULT_ENTITY_FANOUT_HARD_CAP))),
+            entity_idf_weighting=os.getenv(ENV_ENTITY_IDF_WEIGHTING, str(DEFAULT_ENTITY_IDF_WEIGHTING)).lower()
+            == "true",
+            graph_temporal_mode=os.getenv(ENV_GRAPH_TEMPORAL_MODE, DEFAULT_GRAPH_TEMPORAL_MODE).lower(),
+            write_temporal_links=os.getenv(ENV_WRITE_TEMPORAL_LINKS, str(DEFAULT_WRITE_TEMPORAL_LINKS)).lower()
+            == "true",
+            graph_temporal_sigma_hours=float(
+                os.getenv(ENV_GRAPH_TEMPORAL_SIGMA_HOURS, str(DEFAULT_GRAPH_TEMPORAL_SIGMA_HOURS))
+            ),
+            extraction_prompt_version=os.getenv(ENV_EXTRACTION_PROMPT_VERSION, DEFAULT_EXTRACTION_PROMPT_VERSION),
             # Optimization flags
             skip_llm_verification=os.getenv(ENV_SKIP_LLM_VERIFICATION, "false").lower() == "true",
             lazy_reranker=os.getenv(ENV_LAZY_RERANKER, "false").lower() == "true",
@@ -1944,6 +2312,103 @@ class HMSConfig:
                     str(DEFAULT_WEBHOOK_DELIVERY_POLL_INTERVAL_SECONDS),
                 )
             ),
+            # Multimodal media description (static, opt-in)
+            multimodal_enabled=_parse_strict_bool(
+                ENV_MULTIMODAL_ENABLED, os.getenv(ENV_MULTIMODAL_ENABLED), DEFAULT_MULTIMODAL_ENABLED
+            ),
+            multimodal_provider=multimodal_provider,
+            multimodal_model=os.getenv(ENV_MULTIMODAL_MODEL, DEFAULT_MULTIMODAL_MODEL),
+            multimodal_model_behavior_version=os.getenv(
+                ENV_MULTIMODAL_MODEL_BEHAVIOR_VERSION, DEFAULT_MULTIMODAL_MODEL_BEHAVIOR_VERSION
+            ),
+            multimodal_api_key=os.getenv(ENV_MULTIMODAL_API_KEY) or None,
+            multimodal_base_url=multimodal_base_url,
+            multimodal_image_enabled=_parse_strict_bool(
+                ENV_MULTIMODAL_IMAGE_ENABLED,
+                os.getenv(ENV_MULTIMODAL_IMAGE_ENABLED),
+                DEFAULT_MULTIMODAL_IMAGE_ENABLED,
+            ),
+            multimodal_video_enabled=_parse_strict_bool(
+                ENV_MULTIMODAL_VIDEO_ENABLED,
+                os.getenv(ENV_MULTIMODAL_VIDEO_ENABLED),
+                DEFAULT_MULTIMODAL_VIDEO_ENABLED,
+            ),
+            multimodal_live_verified=_parse_strict_bool(
+                ENV_MULTIMODAL_LIVE_VERIFIED,
+                os.getenv(ENV_MULTIMODAL_LIVE_VERIFIED),
+                DEFAULT_MULTIMODAL_LIVE_VERIFIED,
+            ),
+            multimodal_capability_responses_api=_parse_strict_bool(
+                ENV_MULTIMODAL_CAPABILITY_RESPONSES_API,
+                os.getenv(ENV_MULTIMODAL_CAPABILITY_RESPONSES_API),
+                official_multimodal_contract,
+            ),
+            multimodal_capability_image_input=_parse_strict_bool(
+                ENV_MULTIMODAL_CAPABILITY_IMAGE_INPUT,
+                os.getenv(ENV_MULTIMODAL_CAPABILITY_IMAGE_INPUT),
+                official_multimodal_contract,
+            ),
+            multimodal_capability_structured_outputs=_parse_strict_bool(
+                ENV_MULTIMODAL_CAPABILITY_STRUCTURED_OUTPUTS,
+                os.getenv(ENV_MULTIMODAL_CAPABILITY_STRUCTURED_OUTPUTS),
+                official_multimodal_contract,
+            ),
+            multimodal_image_detail=os.getenv(ENV_MULTIMODAL_IMAGE_DETAIL, DEFAULT_MULTIMODAL_IMAGE_DETAIL).lower(),
+            multimodal_max_image_bytes=int(
+                os.getenv(ENV_MULTIMODAL_MAX_IMAGE_BYTES, str(DEFAULT_MULTIMODAL_MAX_IMAGE_BYTES))
+            ),
+            multimodal_max_image_pixels=int(
+                os.getenv(ENV_MULTIMODAL_MAX_IMAGE_PIXELS, str(DEFAULT_MULTIMODAL_MAX_IMAGE_PIXELS))
+            ),
+            multimodal_max_video_bytes=int(
+                os.getenv(ENV_MULTIMODAL_MAX_VIDEO_BYTES, str(DEFAULT_MULTIMODAL_MAX_VIDEO_BYTES))
+            ),
+            multimodal_max_video_duration_seconds=float(
+                os.getenv(
+                    ENV_MULTIMODAL_MAX_VIDEO_DURATION_SECONDS,
+                    str(DEFAULT_MULTIMODAL_MAX_VIDEO_DURATION_SECONDS),
+                )
+            ),
+            multimodal_video_probe_interval_seconds=float(
+                os.getenv(
+                    ENV_MULTIMODAL_VIDEO_PROBE_INTERVAL_SECONDS,
+                    str(DEFAULT_MULTIMODAL_VIDEO_PROBE_INTERVAL_SECONDS),
+                )
+            ),
+            multimodal_video_max_frames=int(
+                os.getenv(ENV_MULTIMODAL_VIDEO_MAX_FRAMES, str(DEFAULT_MULTIMODAL_VIDEO_MAX_FRAMES))
+            ),
+            multimodal_video_coverage_ratio=float(
+                os.getenv(ENV_MULTIMODAL_VIDEO_COVERAGE_RATIO, str(DEFAULT_MULTIMODAL_VIDEO_COVERAGE_RATIO))
+            ),
+            multimodal_max_frames_per_call=int(
+                os.getenv(ENV_MULTIMODAL_MAX_FRAMES_PER_CALL, str(DEFAULT_MULTIMODAL_MAX_FRAMES_PER_CALL))
+            ),
+            multimodal_max_output_tokens=int(
+                os.getenv(ENV_MULTIMODAL_MAX_OUTPUT_TOKENS, str(DEFAULT_MULTIMODAL_MAX_OUTPUT_TOKENS))
+            ),
+            multimodal_request_timeout_seconds=float(
+                os.getenv(
+                    ENV_MULTIMODAL_REQUEST_TIMEOUT_SECONDS,
+                    str(DEFAULT_MULTIMODAL_REQUEST_TIMEOUT_SECONDS),
+                )
+            ),
+            multimodal_max_retries=int(os.getenv(ENV_MULTIMODAL_MAX_RETRIES, str(DEFAULT_MULTIMODAL_MAX_RETRIES))),
+            multimodal_max_schema_repairs=int(
+                os.getenv(ENV_MULTIMODAL_MAX_SCHEMA_REPAIRS, str(DEFAULT_MULTIMODAL_MAX_SCHEMA_REPAIRS))
+            ),
+            multimodal_max_concurrency=int(
+                os.getenv(ENV_MULTIMODAL_MAX_CONCURRENCY, str(DEFAULT_MULTIMODAL_MAX_CONCURRENCY))
+            ),
+            multimodal_descriptor_cache_ttl_seconds=int(
+                os.getenv(
+                    ENV_MULTIMODAL_DESCRIPTOR_CACHE_TTL_SECONDS,
+                    str(DEFAULT_MULTIMODAL_DESCRIPTOR_CACHE_TTL_SECONDS),
+                )
+            ),
+            multimodal_prompt_version=os.getenv(ENV_MULTIMODAL_PROMPT_VERSION, DEFAULT_MULTIMODAL_PROMPT_VERSION),
+            multimodal_schema_version=os.getenv(ENV_MULTIMODAL_SCHEMA_VERSION, DEFAULT_MULTIMODAL_SCHEMA_VERSION),
+            multimodal_sampling_version=os.getenv(ENV_MULTIMODAL_SAMPLING_VERSION, DEFAULT_MULTIMODAL_SAMPLING_VERSION),
         )
         config.validate()
         return config
@@ -2023,6 +2488,15 @@ class HMSConfig:
             consolidation_provider = self.consolidation_llm_provider or self.llm_provider
             consolidation_model = self.consolidation_llm_model or self.llm_model
             logger.info(f"LLM (consolidation): provider={consolidation_provider}, model={consolidation_model}")
+        logger.info(
+            "Multimodal: enabled=%s, provider=%s, model=%s, image=%s, video_intent=%s, live_verified=%s",
+            self.multimodal_enabled,
+            self.multimodal_provider,
+            self.multimodal_model,
+            self.multimodal_image_enabled,
+            self.multimodal_video_enabled,
+            self.multimodal_live_verified,
+        )
         logger.info(f"Embeddings: provider={self.embeddings_provider}")
         logger.info(f"Reranker: provider={self.reranker_provider}")
         logger.info(f"Graph retriever: {self.graph_retriever}")

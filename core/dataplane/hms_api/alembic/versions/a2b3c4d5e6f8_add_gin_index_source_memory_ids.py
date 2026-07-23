@@ -1,14 +1,9 @@
 """Add GIN index on source_memory_ids for observation lookup performance
 
 Without this index, queries using the array overlap operator (&&) or array
-containment (@>) on source_memory_ids require a full sequential scan over all
-observation memory_units. At ~77k observations this was measured at 45ms per
-query, becoming a bottleneck during consolidation recall (57-64s timeouts) and
-user recall (18-27s average).
-
-The GIN index reduces these queries to index scans: 45ms → 0.049ms (927x
-speedup). Recall dropped from 18-27s to ~6s, and consolidation recall
-stabilised from timeout to ~15s.
+containment (@>) on source_memory_ids can require a full sequential scan over
+observation memory_units. The GIN index lets PostgreSQL use an index scan for
+these predicates.
 
 Created with CONCURRENTLY so the migration does not block reads or writes.
 CONCURRENTLY requires running outside a transaction block, so the migration

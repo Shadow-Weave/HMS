@@ -11,8 +11,8 @@ API version: 0.6.1
 package hms
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 	"fmt"
 )
 
@@ -31,6 +31,12 @@ type FeaturesInfo struct {
 	BankConfigApi bool `json:"bank_config_api"`
 	// Whether file upload/conversion API is enabled
 	FileUploadApi bool `json:"file_upload_api"`
+	// Whether the opt-in multimodal image description path is available in this deployment
+	MultimodalImage *bool `json:"multimodal_image,omitempty"`
+	// Whether the opt-in multimodal video description path and local decoder are available
+	MultimodalVideo *bool `json:"multimodal_video,omitempty"`
+	// Whether this exact multimodal deployment passed the operator-controlled live-provider gate
+	MultimodalLiveVerified *bool `json:"multimodal_live_verified,omitempty"`
 }
 
 type _FeaturesInfo FeaturesInfo
@@ -46,6 +52,12 @@ func NewFeaturesInfo(observations bool, mcp bool, worker bool, bankConfigApi boo
 	this.Worker = worker
 	this.BankConfigApi = bankConfigApi
 	this.FileUploadApi = fileUploadApi
+	var multimodalImage bool = false
+	this.MultimodalImage = &multimodalImage
+	var multimodalVideo bool = false
+	this.MultimodalVideo = &multimodalVideo
+	var multimodalLiveVerified bool = false
+	this.MultimodalLiveVerified = &multimodalLiveVerified
 	return &this
 }
 
@@ -54,6 +66,12 @@ func NewFeaturesInfo(observations bool, mcp bool, worker bool, bankConfigApi boo
 // but it doesn't guarantee that properties required by API are set
 func NewFeaturesInfoWithDefaults() *FeaturesInfo {
 	this := FeaturesInfo{}
+	var multimodalImage bool = false
+	this.MultimodalImage = &multimodalImage
+	var multimodalVideo bool = false
+	this.MultimodalVideo = &multimodalVideo
+	var multimodalLiveVerified bool = false
+	this.MultimodalLiveVerified = &multimodalLiveVerified
 	return &this
 }
 
@@ -177,8 +195,104 @@ func (o *FeaturesInfo) SetFileUploadApi(v bool) {
 	o.FileUploadApi = v
 }
 
+// GetMultimodalImage returns the MultimodalImage field value if set, zero value otherwise.
+func (o *FeaturesInfo) GetMultimodalImage() bool {
+	if o == nil || IsNil(o.MultimodalImage) {
+		var ret bool
+		return ret
+	}
+	return *o.MultimodalImage
+}
+
+// GetMultimodalImageOk returns a tuple with the MultimodalImage field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *FeaturesInfo) GetMultimodalImageOk() (*bool, bool) {
+	if o == nil || IsNil(o.MultimodalImage) {
+		return nil, false
+	}
+	return o.MultimodalImage, true
+}
+
+// HasMultimodalImage returns a boolean if a field has been set.
+func (o *FeaturesInfo) HasMultimodalImage() bool {
+	if o != nil && !IsNil(o.MultimodalImage) {
+		return true
+	}
+
+	return false
+}
+
+// SetMultimodalImage gets a reference to the given bool and assigns it to the MultimodalImage field.
+func (o *FeaturesInfo) SetMultimodalImage(v bool) {
+	o.MultimodalImage = &v
+}
+
+// GetMultimodalVideo returns the MultimodalVideo field value if set, zero value otherwise.
+func (o *FeaturesInfo) GetMultimodalVideo() bool {
+	if o == nil || IsNil(o.MultimodalVideo) {
+		var ret bool
+		return ret
+	}
+	return *o.MultimodalVideo
+}
+
+// GetMultimodalVideoOk returns a tuple with the MultimodalVideo field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *FeaturesInfo) GetMultimodalVideoOk() (*bool, bool) {
+	if o == nil || IsNil(o.MultimodalVideo) {
+		return nil, false
+	}
+	return o.MultimodalVideo, true
+}
+
+// HasMultimodalVideo returns a boolean if a field has been set.
+func (o *FeaturesInfo) HasMultimodalVideo() bool {
+	if o != nil && !IsNil(o.MultimodalVideo) {
+		return true
+	}
+
+	return false
+}
+
+// SetMultimodalVideo gets a reference to the given bool and assigns it to the MultimodalVideo field.
+func (o *FeaturesInfo) SetMultimodalVideo(v bool) {
+	o.MultimodalVideo = &v
+}
+
+// GetMultimodalLiveVerified returns the MultimodalLiveVerified field value if set, zero value otherwise.
+func (o *FeaturesInfo) GetMultimodalLiveVerified() bool {
+	if o == nil || IsNil(o.MultimodalLiveVerified) {
+		var ret bool
+		return ret
+	}
+	return *o.MultimodalLiveVerified
+}
+
+// GetMultimodalLiveVerifiedOk returns a tuple with the MultimodalLiveVerified field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *FeaturesInfo) GetMultimodalLiveVerifiedOk() (*bool, bool) {
+	if o == nil || IsNil(o.MultimodalLiveVerified) {
+		return nil, false
+	}
+	return o.MultimodalLiveVerified, true
+}
+
+// HasMultimodalLiveVerified returns a boolean if a field has been set.
+func (o *FeaturesInfo) HasMultimodalLiveVerified() bool {
+	if o != nil && !IsNil(o.MultimodalLiveVerified) {
+		return true
+	}
+
+	return false
+}
+
+// SetMultimodalLiveVerified gets a reference to the given bool and assigns it to the MultimodalLiveVerified field.
+func (o *FeaturesInfo) SetMultimodalLiveVerified(v bool) {
+	o.MultimodalLiveVerified = &v
+}
+
 func (o FeaturesInfo) MarshalJSON() ([]byte, error) {
-	toSerialize,err := o.ToMap()
+	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
 	}
@@ -192,6 +306,15 @@ func (o FeaturesInfo) ToMap() (map[string]interface{}, error) {
 	toSerialize["worker"] = o.Worker
 	toSerialize["bank_config_api"] = o.BankConfigApi
 	toSerialize["file_upload_api"] = o.FileUploadApi
+	if !IsNil(o.MultimodalImage) {
+		toSerialize["multimodal_image"] = o.MultimodalImage
+	}
+	if !IsNil(o.MultimodalVideo) {
+		toSerialize["multimodal_video"] = o.MultimodalVideo
+	}
+	if !IsNil(o.MultimodalLiveVerified) {
+		toSerialize["multimodal_live_verified"] = o.MultimodalLiveVerified
+	}
 	return toSerialize, nil
 }
 
@@ -212,10 +335,10 @@ func (o *FeaturesInfo) UnmarshalJSON(data []byte) (err error) {
 	err = json.Unmarshal(data, &allProperties)
 
 	if err != nil {
-		return err;
+		return err
 	}
 
-	for _, requiredProperty := range(requiredProperties) {
+	for _, requiredProperty := range requiredProperties {
 		if _, exists := allProperties[requiredProperty]; !exists {
 			return fmt.Errorf("no value given for required property %v", requiredProperty)
 		}
@@ -271,5 +394,3 @@ func (v *NullableFeaturesInfo) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

@@ -18,7 +18,7 @@ export HMS_GATEWAY_PORT="18081"
 
 export HMS_GATEWAY_RATE_LIMIT_PER_MINUTE="60"
 export HMS_GATEWAY_DAILY_QUOTA="1000"
-export HMS_GATEWAY_AUDIT_LOG="/root/autodl-tmp/hanyh/hmsshadow/.aaaLOG/vendor_gateway_audit.jsonl"
+export HMS_GATEWAY_AUDIT_LOG="./logs/vendor_gateway_audit.jsonl"
 export HMS_GATEWAY_SCOPE_BANK_IDS="true"
 export HMS_GATEWAY_CHECK_INTERNAL_HEALTH="true"
 ```
@@ -26,7 +26,7 @@ export HMS_GATEWAY_CHECK_INTERNAL_HEALTH="true"
 ## Run
 
 ```bash
-cd /root/autodl-tmp/hanyh/hmsshadow/vendor_sdk
+cd vendor_sdk
 python3 -m pip install -e .
 hms-vendor-gateway --host 0.0.0.0 --port 18081
 ```
@@ -78,9 +78,8 @@ Use the vendor-facing key in the gateway as `HMS_GATEWAY_API_KEYS`.
 HMS_BASE_URL=http://SERVER_IP:18081 \
 HMS_API_KEY=hms_live_vendor_key \
 python3 examples/call_gateway_pipeline.py \
-  --case examples/cases/store_errands_multi_session.json \
-  --bank-id vendor-demo-store-errands \
-  --output /tmp/hms_vendor_result.json
+  --case /path/to/case.json \
+  --bank-id vendor-demo
 ```
 
 ## Security Layer

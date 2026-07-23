@@ -82,9 +82,11 @@ hms_client_api/models/mental_model_trigger_input_tag_groups_inner.py
 hms_client_api/models/mental_model_trigger_output.py
 hms_client_api/models/mental_model_trigger_output_tag_groups_inner.py
 hms_client_api/models/model_not.py
+hms_client_api/models/multimodal_operation_metadata.py
 hms_client_api/models/not1.py
 hms_client_api/models/observation_scopes.py
 hms_client_api/models/operation_response.py
+hms_client_api/models/operation_result_metadata.py
 hms_client_api/models/operation_status_response.py
 hms_client_api/models/operations_list_response.py
 hms_client_api/models/recall_request.py

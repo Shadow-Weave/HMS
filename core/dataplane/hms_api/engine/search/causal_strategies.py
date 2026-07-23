@@ -145,7 +145,7 @@ class CausalLinkStrategy(ABC):
         Returns:
             CausalScore object with computed scores
         """
-        causal_boost_factor = self._get_causal_boost_factor(link_weight)
+        causal_boost_factor = 1.0 if context is None else self._get_causal_boost_factor(link_weight)
         decay_factor = self._get_decay_factor(context)
 
         base_score = parent_score * link_weight
@@ -183,7 +183,7 @@ class CausalLinkStrategy(ABC):
         Override for custom decay logic.
         """
         if context is None:
-            return 0.7
+            return 1.0
         return 0.7 if context.distance > 0 else 1.0
 
 

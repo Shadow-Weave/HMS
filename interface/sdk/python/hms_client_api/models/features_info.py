@@ -18,8 +18,8 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
-from typing import Any, ClassVar, Dict, List
-from typing import Optional, Set
+from typing import Any, ClassVar, Dict, List, Optional
+from typing import Set
 from typing_extensions import Self
 
 class FeaturesInfo(BaseModel):
@@ -31,7 +31,10 @@ class FeaturesInfo(BaseModel):
     worker: StrictBool = Field(description="Whether the background worker is enabled")
     bank_config_api: StrictBool = Field(description="Whether per-bank configuration API is enabled")
     file_upload_api: StrictBool = Field(description="Whether file upload/conversion API is enabled")
-    __properties: ClassVar[List[str]] = ["observations", "mcp", "worker", "bank_config_api", "file_upload_api"]
+    multimodal_image: Optional[StrictBool] = Field(default=False, description="Whether the opt-in multimodal image description path is available in this deployment")
+    multimodal_video: Optional[StrictBool] = Field(default=False, description="Whether the opt-in multimodal video description path and local decoder are available")
+    multimodal_live_verified: Optional[StrictBool] = Field(default=False, description="Whether this exact multimodal deployment passed the operator-controlled live-provider gate")
+    __properties: ClassVar[List[str]] = ["observations", "mcp", "worker", "bank_config_api", "file_upload_api", "multimodal_image", "multimodal_video", "multimodal_live_verified"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -88,8 +91,10 @@ class FeaturesInfo(BaseModel):
             "mcp": obj.get("mcp"),
             "worker": obj.get("worker"),
             "bank_config_api": obj.get("bank_config_api"),
-            "file_upload_api": obj.get("file_upload_api")
+            "file_upload_api": obj.get("file_upload_api"),
+            "multimodal_image": obj.get("multimodal_image") if obj.get("multimodal_image") is not None else False,
+            "multimodal_video": obj.get("multimodal_video") if obj.get("multimodal_video") is not None else False,
+            "multimodal_live_verified": obj.get("multimodal_live_verified") if obj.get("multimodal_live_verified") is not None else False
         })
         return _obj
-
 

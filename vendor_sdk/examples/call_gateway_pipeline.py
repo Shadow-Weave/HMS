@@ -11,10 +11,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Call the HMS vendor gateway pipeline endpoint.")
     parser.add_argument(
         "--case",
-        default=str(Path(__file__).parent / "cases" / "store_errands_multi_session.json"),
+        required=True,
         help="Path to a case JSON file.",
     )
-    parser.add_argument("--bank-id", default=os.getenv("HMS_BANK_ID", "vendor-demo-store-errands"))
+    parser.add_argument("--bank-id", default=os.getenv("HMS_BANK_ID", "vendor-demo"))
     parser.add_argument("--base-url", default=os.getenv("HMS_BASE_URL"), help="Vendor gateway base URL.")
     parser.add_argument("--api-key", default=os.getenv("HMS_API_KEY"), help="Vendor gateway API key.")
     parser.add_argument("--output", help="Optional output JSON path.")

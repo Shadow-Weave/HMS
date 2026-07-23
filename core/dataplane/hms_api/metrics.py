@@ -19,7 +19,7 @@ _resource_mod = importlib.import_module("resource") if importlib.util.find_spec(
 import threading
 import time
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Literal
 
 from opentelemetry import metrics
 from opentelemetry.exporter.prometheus import PrometheusMetricReader
@@ -48,6 +48,118 @@ LLM_DURATION_BUCKETS = (0.1, 0.25, 0.5, 1.0, 2.0, 3.0, 5.0, 10.0, 15.0, 30.0, 60
 
 # HTTP request duration buckets (millisecond-level for fast endpoints)
 HTTP_DURATION_BUCKETS = (0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0)
+
+# Multimodal dimensions are deliberately closed sets.  Metric attributes are
+# an aggregation contract, not a place to copy request values or exception
+# text: unknown future values collapse to ``other`` instead of creating an
+# unbounded time series (or leaking a tenant-controlled string).
+_MULTIMODAL_MEDIA_KINDS = frozenset({"image", "video"})
+_MULTIMODAL_STAGES = frozenset(
+    {
+        "admission",
+        "validation",
+        "decode",
+        "sample",
+        "preprocess",
+        "describe",
+        "normalize",
+        "retain_queue",
+        "retain",
+        "source_lifecycle",
+        "complete",
+        "pipeline",
+    }
+)
+_MULTIMODAL_REASONS = frozenset(
+    {
+        "none",
+        "cancelled",
+        "invalid_media",
+        "unsupported_media",
+        "resource_limit",
+        "asset_identity",
+        "provider_capability",
+        "provider_authentication",
+        "provider_rate_limit",
+        "provider_request_rejected",
+        "provider_unavailable",
+        "provider_refusal",
+        "provider_incomplete",
+        "schema_invalid",
+        "grounding_invalid",
+        "retain_failed",
+        "superseded",
+        "source_delete_failed",
+        "internal_error",
+        "other",
+    }
+)
+_MULTIMODAL_SOURCE_STATES = frozenset({"retained", "deleted", "unknown"})
+_MULTIMODAL_ASSET_OUTCOMES = frozenset({"accepted", "rejected"})
+
+
+def _bounded_multimodal_label(value: object, allowed: frozenset[str]) -> str:
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in allowed:
+            return normalized
+    return "other"
+
+
+def _multimodal_reason_bucket(reason: str | None, *, success: bool) -> str:
+    """Map typed error codes to a finite operational reason taxonomy."""
+
+    if reason is None or not reason.strip():
+        return "none" if success else "other"
+    normalized = reason.strip().lower()
+    if normalized in _MULTIMODAL_REASONS:
+        return normalized
+    if normalized == "operation.cancelled":
+        return "cancelled"
+    if normalized == "multimodal.command_superseded":
+        return "superseded"
+    if normalized == "retain_failed" or normalized.startswith("retain."):
+        return "retain_failed"
+    if normalized.startswith("grounding."):
+        return "grounding_invalid"
+    if normalized.startswith("media."):
+        if "asset_hash" in normalized:
+            return "asset_identity"
+        if any(marker in normalized for marker in ("exceeded", "too_large", "budget", "decode_timeout")):
+            return "resource_limit"
+        if any(marker in normalized for marker in ("unsupported", "disabled", "not_applicable", "decoder_unavailable")):
+            return "unsupported_media"
+        return "invalid_media"
+    if normalized.startswith("provider."):
+        suffix = normalized.removeprefix("provider.")
+        if suffix.startswith(("authentication", "unauthorized")):
+            return "provider_authentication"
+        if suffix.startswith("rate_limit"):
+            return "provider_rate_limit"
+        if suffix.startswith("request_rejected"):
+            return "provider_request_rejected"
+        if suffix.startswith(("timeout", "unavailable", "network")):
+            return "provider_unavailable"
+        if suffix.startswith("refusal"):
+            return "provider_refusal"
+        if suffix.startswith("incomplete"):
+            return "provider_incomplete"
+        if suffix.startswith(("schema_invalid", "invalid_envelope", "invalid_json", "missing_output")):
+            return "schema_invalid"
+        if suffix.startswith(("capability", "image_mime", "unsupported_model")):
+            return "provider_capability"
+        return "other"
+    if normalized.startswith("source.") and "delete" in normalized:
+        return "source_delete_failed"
+    if normalized.startswith("multimodal."):
+        return "internal_error"
+    return "other"
+
+
+def _positive_metric_count(value: int) -> int:
+    """Keep monotonic counters monotonic even if an internal caller is buggy."""
+
+    return value if isinstance(value, int) and not isinstance(value, bool) and value > 0 else 0
 
 
 def get_token_bucket(token_count: int) -> str:
@@ -208,6 +320,34 @@ class MetricsCollectorBase:
         """Set the database pool for metrics collection."""
         pass
 
+    def record_multimodal_pipeline(
+        self,
+        *,
+        media_kind: str,
+        stage: str,
+        duration: float,
+        success: bool,
+        frames: int = 0,
+        candidate_frames: int = 0,
+        selected_frames: int = 0,
+        logical_calls: int = 0,
+        physical_attempts: int = 0,
+        input_tokens: int = 0,
+        output_tokens: int = 0,
+        deduplicated: bool = False,
+        reason: str | None = None,
+        source_state: str | None = None,
+        cancelled: bool = False,
+        asset_outcome: Literal["accepted", "rejected"] | None = None,
+    ) -> None:
+        """Record bounded-cardinality multimodal pipeline telemetry."""
+        raise NotImplementedError
+
+    @contextmanager
+    def record_multimodal_in_flight(self, *, media_kind: str, stage: str):
+        """Track balanced in-flight work for one bounded pipeline stage."""
+        raise NotImplementedError
+
 
 class NoOpMetricsCollector(MetricsCollectorBase):
     """No-op metrics collector that does nothing. Used when metrics are disabled."""
@@ -240,6 +380,32 @@ class NoOpMetricsCollector(MetricsCollectorBase):
     @contextmanager
     def record_http_request(self, method: str, endpoint: str, status_code_getter: Callable[[], int]):
         """No-op HTTP request recording."""
+        yield
+
+    def record_multimodal_pipeline(
+        self,
+        *,
+        media_kind: str,
+        stage: str,
+        duration: float,
+        success: bool,
+        frames: int = 0,
+        candidate_frames: int = 0,
+        selected_frames: int = 0,
+        logical_calls: int = 0,
+        physical_attempts: int = 0,
+        input_tokens: int = 0,
+        output_tokens: int = 0,
+        deduplicated: bool = False,
+        reason: str | None = None,
+        source_state: str | None = None,
+        cancelled: bool = False,
+        asset_outcome: Literal["accepted", "rejected"] | None = None,
+    ) -> None:
+        pass
+
+    @contextmanager
+    def record_multimodal_in_flight(self, *, media_kind: str, stage: str):
         yield
 
 
@@ -285,6 +451,57 @@ class MetricsCollector(MetricsCollectorBase):
         # LLM call counter (success/failure)
         self.llm_calls_total = self.meter.create_counter(
             name="hms.llm.calls.total", description="Total number of LLM API calls", unit="calls"
+        )
+
+        self.multimodal_stage_duration = self.meter.create_histogram(
+            name="hms.multimodal.stage.duration",
+            description="Duration of a bounded multimodal pipeline stage",
+            unit="s",
+        )
+        self.multimodal_assets_total = self.meter.create_counter(
+            name="hms.multimodal.assets.total",
+            description="Terminal multimodal asset outcomes by bounded reason",
+            unit="assets",
+        )
+        self.multimodal_frames_total = self.meter.create_counter(
+            name="hms.multimodal.frames.total",
+            description="Number of candidate and selected local visual evidence frames",
+            unit="frames",
+        )
+        self.multimodal_calls_total = self.meter.create_counter(
+            name="hms.multimodal.provider.calls.total",
+            description="Logical, physical, and retry attempts for multimodal description",
+            unit="calls",
+        )
+        self.multimodal_tokens_total = self.meter.create_counter(
+            name="hms.multimodal.tokens.total",
+            description="Sanitized multimodal provider token usage",
+            unit="tokens",
+        )
+        self.multimodal_dedupe_total = self.meter.create_counter(
+            name="hms.multimodal.dedupe.total",
+            description="Multimodal descriptor cache decisions",
+            unit="operations",
+        )
+        self.multimodal_schema_failures_total = self.meter.create_counter(
+            name="hms.multimodal.schema.failures.total",
+            description="Terminal structured-output schema validation failures",
+            unit="failures",
+        )
+        self.multimodal_source_lifecycle_total = self.meter.create_counter(
+            name="hms.multimodal.source.lifecycle.total",
+            description="Terminal retained or deleted multimodal source states",
+            unit="sources",
+        )
+        self.multimodal_cancellations_total = self.meter.create_counter(
+            name="hms.multimodal.cancellations.total",
+            description="Cancelled multimodal stage executions",
+            unit="cancellations",
+        )
+        self.multimodal_in_flight = self.meter.create_up_down_counter(
+            name="hms.multimodal.in_flight",
+            description="Current multimodal work in a bounded pipeline stage",
+            unit="operations",
         )
 
         # HTTP request metrics
@@ -412,6 +629,144 @@ class MetricsCollector(MetricsCollectorBase):
                 "token_bucket": get_token_bucket(output_tokens),
             }
             self.llm_tokens_output.add(output_tokens, output_attributes)
+
+    def record_multimodal_pipeline(
+        self,
+        *,
+        media_kind: str,
+        stage: str,
+        duration: float,
+        success: bool,
+        frames: int = 0,
+        candidate_frames: int = 0,
+        selected_frames: int = 0,
+        logical_calls: int = 0,
+        physical_attempts: int = 0,
+        input_tokens: int = 0,
+        output_tokens: int = 0,
+        deduplicated: bool = False,
+        reason: str | None = None,
+        source_state: str | None = None,
+        cancelled: bool = False,
+        asset_outcome: Literal["accepted", "rejected"] | None = None,
+    ) -> None:
+        bounded_media_kind = _bounded_multimodal_label(media_kind, _MULTIMODAL_MEDIA_KINDS)
+        bounded_stage = _bounded_multimodal_label(stage, _MULTIMODAL_STAGES)
+        outcome = "cancelled" if cancelled else ("succeeded" if success else "failed")
+        bounded_reason = _multimodal_reason_bucket(reason, success=success)
+        attributes = {
+            "media_kind": bounded_media_kind,
+            "stage": bounded_stage,
+            "outcome": outcome,
+            "reason": bounded_reason,
+        }
+        self.multimodal_stage_duration.record(max(duration, 0.0), attributes)
+
+        # ``frames`` is the original selected-frame argument.  Keep it as a
+        # compatibility alias while making candidate/selected semantics
+        # explicit for new call sites; never add both selected inputs.
+        candidate_count = _positive_metric_count(candidate_frames)
+        selected_count = _positive_metric_count(selected_frames) or _positive_metric_count(frames)
+        for frame_kind, count in (("candidate", candidate_count), ("selected", selected_count)):
+            if count:
+                self.multimodal_frames_total.add(count, {**attributes, "frame_kind": frame_kind})
+
+        logical_count = _positive_metric_count(logical_calls)
+        physical_count = _positive_metric_count(physical_attempts)
+        call_counts = {
+            "logical": logical_count,
+            "physical": physical_count,
+            "retry": max(physical_count - logical_count, 0),
+        }
+        if outcome != "succeeded" and bounded_stage == "describe" and bounded_reason != "provider_capability":
+            # One failed logical provider envelope, independent of how many
+            # bounded physical retries it consumed.  Capability/MIME failures
+            # happen before provider I/O and therefore are deliberately not
+            # counted as provider failures.
+            call_counts["failure"] = 1
+        for attempt_kind, count in call_counts.items():
+            if count:
+                self.multimodal_calls_total.add(count, {**attributes, "attempt_kind": attempt_kind})
+        for direction, raw_count in (("input", input_tokens), ("output", output_tokens)):
+            count = _positive_metric_count(raw_count)
+            if count:
+                self.multimodal_tokens_total.add(
+                    count,
+                    {
+                        **attributes,
+                        "direction": direction,
+                        "token_bucket": get_token_bucket(count),
+                    },
+                )
+
+        if bounded_stage == "complete" and outcome == "succeeded":
+            self.multimodal_dedupe_total.add(
+                1,
+                {
+                    "media_kind": bounded_media_kind,
+                    "cache_result": "hit" if deduplicated else "miss",
+                },
+            )
+
+        # Asset admission is a terminal event supplied explicitly by the
+        # caller.  Do not infer it from an arbitrary failed stage: conversion
+        # can already have accepted an asset before source cleanup, queueing,
+        # or child retain later fails, and inference would count that one asset
+        # as both accepted and rejected.
+        if asset_outcome is not None:
+            self.multimodal_assets_total.add(
+                1,
+                {
+                    "media_kind": bounded_media_kind,
+                    "outcome": _bounded_multimodal_label(
+                        asset_outcome,
+                        _MULTIMODAL_ASSET_OUTCOMES,
+                    ),
+                    "reason": bounded_reason,
+                },
+            )
+
+        if outcome != "succeeded" and bounded_reason == "schema_invalid":
+            self.multimodal_schema_failures_total.add(
+                1,
+                {
+                    "media_kind": bounded_media_kind,
+                    "stage": bounded_stage,
+                    "reason": bounded_reason,
+                },
+            )
+
+        if source_state is not None:
+            self.multimodal_source_lifecycle_total.add(
+                1,
+                {
+                    "media_kind": bounded_media_kind,
+                    "state": _bounded_multimodal_label(source_state, _MULTIMODAL_SOURCE_STATES),
+                    "reason": bounded_reason,
+                },
+            )
+
+        if cancelled:
+            self.multimodal_cancellations_total.add(
+                1,
+                {
+                    "media_kind": bounded_media_kind,
+                    "stage": bounded_stage,
+                    "reason": "cancelled",
+                },
+            )
+
+    @contextmanager
+    def record_multimodal_in_flight(self, *, media_kind: str, stage: str):
+        attributes = {
+            "media_kind": _bounded_multimodal_label(media_kind, _MULTIMODAL_MEDIA_KINDS),
+            "stage": _bounded_multimodal_label(stage, _MULTIMODAL_STAGES),
+        }
+        self.multimodal_in_flight.add(1, attributes)
+        try:
+            yield
+        finally:
+            self.multimodal_in_flight.add(-1, attributes)
 
     @contextmanager
     def record_http_request(self, method: str, endpoint: str, status_code_getter: Callable[[], int]):

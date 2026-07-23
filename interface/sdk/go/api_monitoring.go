@@ -18,42 +18,100 @@ import (
 	"net/url"
 )
 
+type MonitoringAPI interface {
+
+	/*
+		GetVersion Get API version and feature flags
+
+		Returns API version information and enabled feature flags. Use include_multimodal=true to negotiate the additive multimodal capability fields.
+
+		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+		@return MonitoringAPIGetVersionRequest
+	*/
+	GetVersion(ctx context.Context) MonitoringAPIGetVersionRequest
+
+	// GetVersionExecute executes the request
+	//  @return VersionResponse
+	GetVersionExecute(r MonitoringAPIGetVersionRequest) (*VersionResponse, *http.Response, error)
+
+	/*
+		HealthEndpointHealthGet Health check endpoint
+
+		Checks the health of the API and database connection
+
+		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+		@return MonitoringAPIHealthEndpointHealthGetRequest
+	*/
+	HealthEndpointHealthGet(ctx context.Context) MonitoringAPIHealthEndpointHealthGetRequest
+
+	// HealthEndpointHealthGetExecute executes the request
+	//  @return interface{}
+	HealthEndpointHealthGetExecute(r MonitoringAPIHealthEndpointHealthGetRequest) (interface{}, *http.Response, error)
+
+	/*
+		MetricsEndpointMetricsGet Prometheus metrics endpoint
+
+		Exports metrics in Prometheus format for scraping
+
+		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+		@return MonitoringAPIMetricsEndpointMetricsGetRequest
+	*/
+	MetricsEndpointMetricsGet(ctx context.Context) MonitoringAPIMetricsEndpointMetricsGetRequest
+
+	// MetricsEndpointMetricsGetExecute executes the request
+	//  @return interface{}
+	MetricsEndpointMetricsGetExecute(r MonitoringAPIMetricsEndpointMetricsGetRequest) (interface{}, *http.Response, error)
+}
 
 // MonitoringAPIService MonitoringAPI service
 type MonitoringAPIService service
 
-type ApiGetVersionRequest struct {
-	ctx context.Context
-	ApiService *MonitoringAPIService
+// Backward-compatible aliases retained for clients generated before the
+// MonitoringAPI interface naming change in OpenAPI Generator 7.10.
+type ApiGetVersionRequest = MonitoringAPIGetVersionRequest
+type ApiHealthEndpointHealthGetRequest = MonitoringAPIHealthEndpointHealthGetRequest
+type ApiMetricsEndpointMetricsGetRequest = MonitoringAPIMetricsEndpointMetricsGetRequest
+
+type MonitoringAPIGetVersionRequest struct {
+	ctx               context.Context
+	ApiService        MonitoringAPI
+	includeMultimodal *bool
 }
 
-func (r ApiGetVersionRequest) Execute() (*VersionResponse, *http.Response, error) {
+// Include additive multimodal capability flags. The default preserves the legacy wire shape for strict older SDKs.
+func (r MonitoringAPIGetVersionRequest) IncludeMultimodal(includeMultimodal bool) MonitoringAPIGetVersionRequest {
+	r.includeMultimodal = &includeMultimodal
+	return r
+}
+
+func (r MonitoringAPIGetVersionRequest) Execute() (*VersionResponse, *http.Response, error) {
 	return r.ApiService.GetVersionExecute(r)
 }
 
 /*
 GetVersion Get API version and feature flags
 
-Returns API version information and enabled feature flags. Use this to check which capabilities are available in this deployment.
+Returns API version information and enabled feature flags. Use include_multimodal=true to negotiate the additive multimodal capability fields.
 
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiGetVersionRequest
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return MonitoringAPIGetVersionRequest
 */
-func (a *MonitoringAPIService) GetVersion(ctx context.Context) ApiGetVersionRequest {
-	return ApiGetVersionRequest{
+func (a *MonitoringAPIService) GetVersion(ctx context.Context) MonitoringAPIGetVersionRequest {
+	return MonitoringAPIGetVersionRequest{
 		ApiService: a,
-		ctx: ctx,
+		ctx:        ctx,
 	}
 }
 
 // Execute executes the request
-//  @return VersionResponse
-func (a *MonitoringAPIService) GetVersionExecute(r ApiGetVersionRequest) (*VersionResponse, *http.Response, error) {
+//
+//	@return VersionResponse
+func (a *MonitoringAPIService) GetVersionExecute(r MonitoringAPIGetVersionRequest) (*VersionResponse, *http.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodGet
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *VersionResponse
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *VersionResponse
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MonitoringAPIService.GetVersion")
@@ -67,6 +125,12 @@ func (a *MonitoringAPIService) GetVersionExecute(r ApiGetVersionRequest) (*Versi
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.includeMultimodal != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_multimodal", r.includeMultimodal, "form", "")
+	} else {
+		var defaultValue bool = false
+		r.includeMultimodal = &defaultValue
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -106,6 +170,16 @@ func (a *MonitoringAPIService) GetVersionExecute(r ApiGetVersionRequest) (*Versi
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
 		}
+		if localVarHTTPResponse.StatusCode == 422 {
+			var v HTTPValidationError
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
@@ -121,12 +195,12 @@ func (a *MonitoringAPIService) GetVersionExecute(r ApiGetVersionRequest) (*Versi
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiHealthEndpointHealthGetRequest struct {
-	ctx context.Context
-	ApiService *MonitoringAPIService
+type MonitoringAPIHealthEndpointHealthGetRequest struct {
+	ctx        context.Context
+	ApiService MonitoringAPI
 }
 
-func (r ApiHealthEndpointHealthGetRequest) Execute() (interface{}, *http.Response, error) {
+func (r MonitoringAPIHealthEndpointHealthGetRequest) Execute() (interface{}, *http.Response, error) {
 	return r.ApiService.HealthEndpointHealthGetExecute(r)
 }
 
@@ -135,24 +209,25 @@ HealthEndpointHealthGet Health check endpoint
 
 Checks the health of the API and database connection
 
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiHealthEndpointHealthGetRequest
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return MonitoringAPIHealthEndpointHealthGetRequest
 */
-func (a *MonitoringAPIService) HealthEndpointHealthGet(ctx context.Context) ApiHealthEndpointHealthGetRequest {
-	return ApiHealthEndpointHealthGetRequest{
+func (a *MonitoringAPIService) HealthEndpointHealthGet(ctx context.Context) MonitoringAPIHealthEndpointHealthGetRequest {
+	return MonitoringAPIHealthEndpointHealthGetRequest{
 		ApiService: a,
-		ctx: ctx,
+		ctx:        ctx,
 	}
 }
 
 // Execute executes the request
-//  @return interface{}
-func (a *MonitoringAPIService) HealthEndpointHealthGetExecute(r ApiHealthEndpointHealthGetRequest) (interface{}, *http.Response, error) {
+//
+//	@return interface{}
+func (a *MonitoringAPIService) HealthEndpointHealthGetExecute(r MonitoringAPIHealthEndpointHealthGetRequest) (interface{}, *http.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodGet
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  interface{}
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue interface{}
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MonitoringAPIService.HealthEndpointHealthGet")
@@ -220,12 +295,12 @@ func (a *MonitoringAPIService) HealthEndpointHealthGetExecute(r ApiHealthEndpoin
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiMetricsEndpointMetricsGetRequest struct {
-	ctx context.Context
-	ApiService *MonitoringAPIService
+type MonitoringAPIMetricsEndpointMetricsGetRequest struct {
+	ctx        context.Context
+	ApiService MonitoringAPI
 }
 
-func (r ApiMetricsEndpointMetricsGetRequest) Execute() (interface{}, *http.Response, error) {
+func (r MonitoringAPIMetricsEndpointMetricsGetRequest) Execute() (interface{}, *http.Response, error) {
 	return r.ApiService.MetricsEndpointMetricsGetExecute(r)
 }
 
@@ -234,24 +309,25 @@ MetricsEndpointMetricsGet Prometheus metrics endpoint
 
 Exports metrics in Prometheus format for scraping
 
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiMetricsEndpointMetricsGetRequest
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return MonitoringAPIMetricsEndpointMetricsGetRequest
 */
-func (a *MonitoringAPIService) MetricsEndpointMetricsGet(ctx context.Context) ApiMetricsEndpointMetricsGetRequest {
-	return ApiMetricsEndpointMetricsGetRequest{
+func (a *MonitoringAPIService) MetricsEndpointMetricsGet(ctx context.Context) MonitoringAPIMetricsEndpointMetricsGetRequest {
+	return MonitoringAPIMetricsEndpointMetricsGetRequest{
 		ApiService: a,
-		ctx: ctx,
+		ctx:        ctx,
 	}
 }
 
 // Execute executes the request
-//  @return interface{}
-func (a *MonitoringAPIService) MetricsEndpointMetricsGetExecute(r ApiMetricsEndpointMetricsGetRequest) (interface{}, *http.Response, error) {
+//
+//	@return interface{}
+func (a *MonitoringAPIService) MetricsEndpointMetricsGetExecute(r MonitoringAPIMetricsEndpointMetricsGetRequest) (interface{}, *http.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodGet
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  interface{}
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue interface{}
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MonitoringAPIService.MetricsEndpointMetricsGet")

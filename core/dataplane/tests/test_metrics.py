@@ -1,14 +1,16 @@
 """Tests for metrics instrumentation."""
-import pytest
+
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from hms_api.metrics import (
     MetricsCollector,
     MetricsCollectorBase,
     NoOpMetricsCollector,
+    create_metrics_collector,
     get_metrics_collector,
     get_token_bucket,
-    create_metrics_collector,
     initialize_metrics,
 )
 
@@ -56,6 +58,20 @@ class TestNoOpMetricsCollector:
             success=True,
         )
 
+    def test_multimodal_recording_is_noop(self):
+        collector = NoOpMetricsCollector()
+
+        collector.record_multimodal_pipeline(
+            media_kind="video",
+            stage="sample",
+            duration=0.1,
+            success=True,
+            candidate_frames=8,
+            selected_frames=4,
+        )
+        with collector.record_multimodal_in_flight(media_kind="video", stage="describe"):
+            pass
+
 
 class TestMetricsCollector:
     """Tests for the real metrics collector."""
@@ -64,13 +80,13 @@ class TestMetricsCollector:
     def mock_meter(self):
         """Create a mock meter for testing."""
         meter = MagicMock()
-        # Create separate mocks for each histogram (operation_duration, llm_duration, http_request_duration)
-        histogram_mocks = [MagicMock(), MagicMock(), MagicMock()]
+        # operation, LLM, multimodal stage, and HTTP duration histograms
+        histogram_mocks = [MagicMock() for _ in range(4)]
         meter.create_histogram.side_effect = histogram_mocks
-        # Create separate mocks for each counter
-        # (operation_total, llm_tokens_input, llm_tokens_output, llm_calls_total, http_requests_total)
-        counter_mocks = [MagicMock() for _ in range(5)]
+        # operation/LLM counters, eight multimodal counters, and HTTP total
+        counter_mocks = [MagicMock() for _ in range(13)]
         meter.create_counter.side_effect = counter_mocks
+        meter.create_up_down_counter.side_effect = [MagicMock(), MagicMock()]
         return meter
 
     @pytest.fixture
@@ -78,8 +94,10 @@ class TestMetricsCollector:
         """Create a MetricsCollector with a mock meter."""
         mock_config = MagicMock()
         mock_config.metrics_include_bank_id = False
-        with patch("hms_api.metrics.get_meter", return_value=mock_meter), \
-             patch("hms_api.config.get_config", return_value=mock_config):
+        with (
+            patch("hms_api.metrics.get_meter", return_value=mock_meter),
+            patch("hms_api.config.get_config", return_value=mock_config),
+        ):
             return MetricsCollector()
 
     def test_record_operation_records_duration(self, collector):
@@ -156,25 +174,199 @@ class TestMetricsCollector:
         assert collector.operation_duration.record.call_count == 2
         assert collector.operation_total.add.call_count == 2
 
-        # Check the calls
+        # Inner recall exits first, then outer reflect.
         calls = collector.operation_duration.record.call_args_list
-
-        # First call should be recall (inner context exits first)
         recall_attrs = calls[0][0][1]
         assert recall_attrs["operation"] == "recall"
         assert recall_attrs["source"] == "reflect"
-
-        # Second call should be reflect (outer context exits last)
         reflect_attrs = calls[1][0][1]
         assert reflect_attrs["operation"] == "reflect"
         assert reflect_attrs["source"] == "api"
+
+    def test_multimodal_metrics_use_bounded_labels_and_attempt_counts(self, collector):
+        # Multimodal labels must not consult or expose the tenant/schema.
+        with patch("hms_api.metrics._get_tenant", side_effect=AssertionError("tenant label forbidden")):
+            collector.record_multimodal_pipeline(
+                media_kind="video",
+                stage="describe",
+                duration=1.25,
+                success=True,
+                candidate_frames=12,
+                selected_frames=5,
+                logical_calls=4,
+                physical_attempts=6,
+                input_tokens=800,
+                output_tokens=200,
+            )
+
+        duration_args = collector.multimodal_stage_duration.record.call_args[0]
+        assert duration_args[0] == 1.25
+        assert duration_args[1] == {
+            "media_kind": "video",
+            "stage": "describe",
+            "outcome": "succeeded",
+            "reason": "none",
+        }
+        assert not ({"tenant", "schema", "bank_id", "document_id", "asset_hash"} & duration_args[1].keys())
+        assert collector.multimodal_calls_total.add.call_count == 3
+        retry_call = next(
+            call
+            for call in collector.multimodal_calls_total.add.call_args_list
+            if call.args[1]["attempt_kind"] == "retry"
+        )
+        assert retry_call.args[0] == 2
+        frame_counts = {
+            call.args[1]["frame_kind"]: call.args[0] for call in collector.multimodal_frames_total.add.call_args_list
+        }
+        assert frame_counts == {"candidate": 12, "selected": 5}
+        token_directions = {
+            call.args[1]["direction"]: call.args[0] for call in collector.multimodal_tokens_total.add.call_args_list
+        }
+        assert token_directions == {"input": 800, "output": 200}
+
+        collector.record_multimodal_pipeline(
+            media_kind="image",
+            stage="complete",
+            duration=0.5,
+            success=True,
+            deduplicated=True,
+            asset_outcome="accepted",
+        )
+        dedupe_count, dedupe_attributes = collector.multimodal_dedupe_total.add.call_args.args
+        assert dedupe_count == 1
+        assert dedupe_attributes == {"media_kind": "image", "cache_result": "hit"}
+        accepted_count, accepted_attributes = collector.multimodal_assets_total.add.call_args.args
+        assert accepted_count == 1
+        assert accepted_attributes == {
+            "media_kind": "image",
+            "outcome": "accepted",
+            "reason": "none",
+        }
+
+    def test_multimodal_failure_metrics_have_typed_bounded_reasons(self, collector):
+        collector.record_multimodal_pipeline(
+            media_kind="image",
+            stage="describe",
+            duration=0.25,
+            success=False,
+            reason="provider.schema_invalid",
+            logical_calls=1,
+            physical_attempts=2,
+            asset_outcome="rejected",
+        )
+
+        _, rejected = collector.multimodal_assets_total.add.call_args.args
+        assert rejected == {
+            "media_kind": "image",
+            "outcome": "rejected",
+            "reason": "schema_invalid",
+        }
+        collector.multimodal_schema_failures_total.add.assert_called_once_with(
+            1,
+            {
+                "media_kind": "image",
+                "stage": "describe",
+                "reason": "schema_invalid",
+            },
+        )
+        failure_call = next(
+            call
+            for call in collector.multimodal_calls_total.add.call_args_list
+            if call.args[1]["attempt_kind"] == "failure"
+        )
+        assert failure_call.args[0] == 1
+
+        # Arbitrary request/error strings cannot become labels or leak through
+        # an unknown future call site.
+        sentinel = "data:image/png;base64,PRIVATE_TENANT_PAYLOAD"
+        collector.record_multimodal_pipeline(
+            media_kind=sentinel,
+            stage=sentinel,
+            duration=0.0,
+            success=False,
+            reason=sentinel,
+            asset_outcome="rejected",
+        )
+        all_attributes = [
+            call.args[1]
+            for instrument in (
+                collector.multimodal_stage_duration,
+                collector.multimodal_assets_total,
+                collector.multimodal_schema_failures_total,
+            )
+            for call in instrument.record.call_args_list + instrument.add.call_args_list
+        ]
+        assert all(sentinel not in str(attributes) for attributes in all_attributes)
+        assert collector.multimodal_stage_duration.record.call_args.args[1] == {
+            "media_kind": "other",
+            "stage": "other",
+            "outcome": "failed",
+            "reason": "other",
+        }
+
+    def test_multimodal_source_cancellation_and_in_flight_metrics(self, collector):
+        collector.record_multimodal_pipeline(
+            media_kind="video",
+            stage="source_lifecycle",
+            duration=0.02,
+            success=True,
+            source_state="deleted",
+        )
+        collector.multimodal_source_lifecycle_total.add.assert_called_once_with(
+            1,
+            {"media_kind": "video", "state": "deleted", "reason": "none"},
+        )
+
+        collector.record_multimodal_pipeline(
+            media_kind="video",
+            stage="describe",
+            duration=0.4,
+            success=False,
+            reason="operation.cancelled",
+            cancelled=True,
+        )
+        collector.multimodal_cancellations_total.add.assert_called_once_with(
+            1,
+            {"media_kind": "video", "stage": "describe", "reason": "cancelled"},
+        )
+
+        with pytest.raises(RuntimeError, match="provider stopped"):
+            with collector.record_multimodal_in_flight(media_kind="video", stage="describe"):
+                raise RuntimeError("provider stopped")
+        assert collector.multimodal_in_flight.add.call_args_list == [
+            ((1, {"media_kind": "video", "stage": "describe"}),),
+            ((-1, {"media_kind": "video", "stage": "describe"}),),
+        ]
+
+    def test_multimodal_stage_failure_does_not_infer_a_second_asset_outcome(self, collector):
+        collector.record_multimodal_pipeline(
+            media_kind="image",
+            stage="complete",
+            duration=0.1,
+            success=True,
+            asset_outcome="accepted",
+        )
+        collector.record_multimodal_pipeline(
+            media_kind="image",
+            stage="retain",
+            duration=0.2,
+            success=False,
+            reason="retain.failed",
+        )
+
+        collector.multimodal_assets_total.add.assert_called_once_with(
+            1,
+            {"media_kind": "image", "outcome": "accepted", "reason": "none"},
+        )
 
     def test_record_operation_includes_bank_id_when_enabled(self):
         """Test that bank_id is included in attributes when metrics_include_bank_id is enabled."""
         mock_config = MagicMock()
         mock_config.metrics_include_bank_id = True
-        with patch("hms_api.metrics.get_meter") as mock_get_meter, \
-             patch("hms_api.config.get_config", return_value=mock_config):
+        with (
+            patch("hms_api.metrics.get_meter") as mock_get_meter,
+            patch("hms_api.config.get_config", return_value=mock_config),
+        ):
             mock_get_meter.return_value = MagicMock()
             collector = MetricsCollector()
 
@@ -192,6 +384,7 @@ class TestGetMetricsCollector:
         """Test that get_metrics_collector returns NoOpMetricsCollector by default."""
         # Reset global state
         import hms_api.metrics as metrics_module
+
         original_collector = metrics_module._metrics_collector
 
         try:
@@ -207,6 +400,7 @@ class TestMetricsCollectorBase:
 
     def test_is_abstract(self):
         """Test that MetricsCollectorBase methods are abstract."""
+
         # Create a class that inherits but doesn't implement
         class IncompleteCollector(MetricsCollectorBase):
             pass
@@ -275,13 +469,13 @@ class TestLLMMetrics:
     def mock_meter(self):
         """Create a mock meter for testing."""
         meter = MagicMock()
-        # Create separate mocks for each histogram (operation_duration, llm_duration, http_request_duration)
-        histogram_mocks = [MagicMock(), MagicMock(), MagicMock()]
+        # operation, LLM, multimodal stage, and HTTP duration histograms
+        histogram_mocks = [MagicMock() for _ in range(4)]
         meter.create_histogram.side_effect = histogram_mocks
-        # Create separate mocks for each counter
-        # (operation_total, llm_tokens_input, llm_tokens_output, llm_calls_total, http_requests_total)
-        counter_mocks = [MagicMock() for _ in range(5)]
+        # operation/LLM counters, eight multimodal counters, and HTTP total
+        counter_mocks = [MagicMock() for _ in range(13)]
         meter.create_counter.side_effect = counter_mocks
+        meter.create_up_down_counter.side_effect = [MagicMock(), MagicMock()]
         return meter
 
     @pytest.fixture
@@ -289,8 +483,10 @@ class TestLLMMetrics:
         """Create a MetricsCollector with a mock meter."""
         mock_config = MagicMock()
         mock_config.metrics_include_bank_id = False
-        with patch("hms_api.metrics.get_meter", return_value=mock_meter), \
-             patch("hms_api.config.get_config", return_value=mock_config):
+        with (
+            patch("hms_api.metrics.get_meter", return_value=mock_meter),
+            patch("hms_api.config.get_config", return_value=mock_config),
+        ):
             return MetricsCollector()
 
     def test_record_llm_call_records_duration(self, collector):

@@ -856,6 +856,12 @@ class EntityResolver:
                 unit_id,
                 entity_id,
             )
+            await self._ops.refresh_entity_fact_counts(
+                conn,
+                fq_table("entities"),
+                fq_table("unit_entities"),
+                [entity_id],
+            )
 
             # Update co-occurrence cache: find other entities in this unit
             rows = await conn.fetch(
@@ -948,6 +954,12 @@ class EntityResolver:
             conn,
             fq_table("unit_entities"),
             unit_ids,
+            entity_ids,
+        )
+        await self._ops.refresh_entity_fact_counts(
+            conn,
+            fq_table("entities"),
+            fq_table("unit_entities"),
             entity_ids,
         )
 

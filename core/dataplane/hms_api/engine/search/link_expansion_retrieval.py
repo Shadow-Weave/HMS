@@ -28,17 +28,103 @@ import asyncio
 import logging
 import math
 import time
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
-from ...config import get_config
+from ...config import (
+    DEFAULT_ENTITY_FANOUT_HARD_CAP,
+    DEFAULT_ENTITY_IDF_WEIGHTING,
+    DEFAULT_GRAPH_ANN_EXPANSION_LIMIT,
+    DEFAULT_GRAPH_ANN_EXPANSION_THRESHOLD,
+    DEFAULT_GRAPH_SEMANTIC_MODE,
+    DEFAULT_LINK_EXPANSION_PER_ENTITY_LIMIT,
+    DEFAULT_LINK_EXPANSION_TIMEOUT,
+    _get_raw_config,
+)
 from ..db_utils import acquire_with_retry
 from ..memory_engine import fq_table
 from .graph_retrieval import GraphRetriever
-from .tags import TagGroup, TagsMatch, filter_results_by_tag_groups, filter_results_by_tags
+from .tags import (
+    TagGroup,
+    TagsMatch,
+    build_tag_groups_where_clause,
+    build_tags_where_clause_simple,
+    filter_results_by_tag_groups,
+    filter_results_by_tags,
+)
 from .types import GraphRetrievalTimings, RetrievalResult
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class GraphExpansionConfig:
+    """Small read-side subset of HMSConfig used by graph expansion."""
+
+    link_expansion_per_entity_limit: int = DEFAULT_LINK_EXPANSION_PER_ENTITY_LIMIT
+    link_expansion_timeout: float = DEFAULT_LINK_EXPANSION_TIMEOUT
+    graph_semantic_mode: str = DEFAULT_GRAPH_SEMANTIC_MODE
+    graph_ann_expansion_threshold: float = DEFAULT_GRAPH_ANN_EXPANSION_THRESHOLD
+    graph_ann_expansion_limit: int = DEFAULT_GRAPH_ANN_EXPANSION_LIMIT
+    entity_fanout_hard_cap: int = DEFAULT_ENTITY_FANOUT_HARD_CAP
+    entity_idf_weighting: bool = DEFAULT_ENTITY_IDF_WEIGHTING
+
+
+def _resolve_graph_config(config: Any | None) -> GraphExpansionConfig:
+    source = config if config is not None else _get_raw_config()
+    return GraphExpansionConfig(
+        link_expansion_per_entity_limit=getattr(
+            source,
+            "link_expansion_per_entity_limit",
+            DEFAULT_LINK_EXPANSION_PER_ENTITY_LIMIT,
+        ),
+        link_expansion_timeout=getattr(source, "link_expansion_timeout", DEFAULT_LINK_EXPANSION_TIMEOUT),
+        graph_semantic_mode=getattr(source, "graph_semantic_mode", DEFAULT_GRAPH_SEMANTIC_MODE),
+        graph_ann_expansion_threshold=getattr(
+            source,
+            "graph_ann_expansion_threshold",
+            DEFAULT_GRAPH_ANN_EXPANSION_THRESHOLD,
+        ),
+        graph_ann_expansion_limit=getattr(source, "graph_ann_expansion_limit", DEFAULT_GRAPH_ANN_EXPANSION_LIMIT),
+        entity_fanout_hard_cap=getattr(source, "entity_fanout_hard_cap", DEFAULT_ENTITY_FANOUT_HARD_CAP),
+        entity_idf_weighting=getattr(source, "entity_idf_weighting", DEFAULT_ENTITY_IDF_WEIGHTING),
+    )
+
+
+def _build_visibility_filter_clause(
+    *,
+    tags: list[str] | None,
+    tags_match: TagsMatch,
+    tag_groups: list[TagGroup] | None,
+    created_after: datetime | None,
+    created_before: datetime | None,
+    first_param_idx: int,
+    table_alias: str,
+) -> tuple[str, list[Any]]:
+    tags_clause = build_tags_where_clause_simple(tags, first_param_idx, table_alias=table_alias, match=tags_match)
+    tag_groups_param_start = first_param_idx + (1 if tags else 0)
+    groups_clause, groups_params, next_idx = build_tag_groups_where_clause(
+        tag_groups,
+        tag_groups_param_start,
+        table_alias=table_alias,
+    )
+
+    params: list[Any] = []
+    if tags:
+        params.append(tags)
+    params.extend(groups_params)
+
+    created_range_clause = ""
+    if created_after is not None:
+        params.append(created_after)
+        created_range_clause += f" AND {table_alias}updated_at > ${next_idx}"
+        next_idx += 1
+    if created_before is not None:
+        params.append(created_before)
+        created_range_clause += f" AND {table_alias}updated_at < ${next_idx}"
+
+    return f"{tags_clause}\n{groups_clause}\n{created_range_clause}", params
 
 
 async def _find_semantic_seeds(
@@ -83,6 +169,7 @@ async def _find_semantic_seeds(
         f"""
         SELECT id, text, context, event_date, occurred_start, occurred_end,
                mentioned_at, fact_type, document_id, chunk_id, tags, proof_count,
+               projection,
                1 - (embedding <=> $1::vector) AS similarity
         FROM {fq_table("memory_units")}
         WHERE bank_id = $2
@@ -135,6 +222,7 @@ class LinkExpansionRetriever(GraphRetriever):
         tag_groups: list[TagGroup] | None = None,
         created_after: "datetime | None" = None,
         created_before: "datetime | None" = None,
+        graph_config: Any | None = None,
     ) -> tuple[list[RetrievalResult], GraphRetrievalTimings | None]:
         """
         Retrieve facts by expanding links from seeds.
@@ -156,6 +244,7 @@ class LinkExpansionRetriever(GraphRetriever):
         """
         start_time = time.time()
         timings = GraphRetrievalTimings(fact_type=fact_type)
+        config = _resolve_graph_config(graph_config)
 
         async with acquire_with_retry(pool) as conn:
             # Find seeds if not provided
@@ -196,11 +285,32 @@ class LinkExpansionRetriever(GraphRetriever):
             ops = pool.ops
             if fact_type == "observation":
                 entity_rows, semantic_rows, causal_rows = await self._expand_observations(
-                    conn, seed_ids, budget, ops=ops
+                    conn,
+                    seed_ids,
+                    bank_id,
+                    budget,
+                    ops=ops,
+                    config=config,
+                    tags=tags,
+                    tags_match=tags_match,
+                    tag_groups=tag_groups,
+                    created_after=created_after,
+                    created_before=created_before,
                 )
             else:
                 entity_rows, semantic_rows, causal_rows = await self._expand_combined(
-                    conn, seed_ids, fact_type, budget, ops=ops
+                    conn,
+                    seed_ids,
+                    bank_id,
+                    fact_type,
+                    budget,
+                    ops=ops,
+                    config=config,
+                    tags=tags,
+                    tags_match=tags_match,
+                    tag_groups=tag_groups,
+                    created_after=created_after,
+                    created_before=created_before,
                 )
 
             timings.edge_load_time = time.time() - query_start
@@ -271,10 +381,17 @@ class LinkExpansionRetriever(GraphRetriever):
         self,
         conn,
         seed_ids: list,
+        bank_id: str,
         fact_type: str,
         budget: int,
         *,
         ops,
+        config: GraphExpansionConfig | None = None,
+        tags: list[str] | None = None,
+        tags_match: TagsMatch = "any",
+        tag_groups: list[TagGroup] | None = None,
+        created_after: datetime | None = None,
+        created_before: datetime | None = None,
     ) -> tuple[list, list, list]:
         """
         Single-roundtrip CTE query combining entity, semantic, and causal expansions.
@@ -290,15 +407,48 @@ class LinkExpansionRetriever(GraphRetriever):
                     idx_memory_links_to_type_weight (to_unit_id, link_type, weight DESC)
                     → replaces costly BitmapAnd of two separate scans
         """
-        config = get_config()
+        config = config or _resolve_graph_config(None)
         ml = fq_table("memory_links")
         mu = fq_table("memory_units")
         ue = fq_table("unit_entities")
+        ent = fq_table("entities")
 
         per_entity_limit = config.link_expansion_per_entity_limit
 
-        entity_cte = ops.build_entity_expansion_cte(mu, ue, per_entity_limit)
-        semantic_causal_cte = ops.build_semantic_causal_cte(ml, mu)
+        entity_cte = ops.build_entity_expansion_cte(
+            mu,
+            ue,
+            ent,
+            per_entity_limit,
+            config.entity_fanout_hard_cap,
+            config.entity_idf_weighting,
+        )
+        if config.graph_semantic_mode == "ann":
+            visibility_filter_clause, visibility_filter_params = _build_visibility_filter_clause(
+                tags=tags,
+                tags_match=tags_match,
+                tag_groups=tag_groups,
+                created_after=created_after,
+                created_before=created_before,
+                first_param_idx=7,
+                table_alias="mu_inner.",
+            )
+            semantic_causal_cte = (
+                f"{ops.build_semantic_ann_cte(mu, 4, 5, 6, visibility_filter_clause)},\n"
+                f"{ops.build_causal_expansion_cte(ml, mu)}"
+            )
+            params = [
+                seed_ids,
+                fact_type,
+                budget,
+                config.graph_ann_expansion_threshold,
+                config.graph_ann_expansion_limit,
+                bank_id,
+            ]
+            params.extend(visibility_filter_params)
+        else:
+            semantic_causal_cte = ops.build_semantic_causal_cte(ml, mu)
+            params = [seed_ids, fact_type, budget]
 
         full_query = f"""
             WITH {entity_cte},
@@ -309,8 +459,6 @@ class LinkExpansionRetriever(GraphRetriever):
             UNION ALL
             SELECT * FROM causal_expanded
             """
-
-        params = [seed_ids, fact_type, budget]
 
         try:
             all_rows = await asyncio.wait_for(
@@ -340,9 +488,16 @@ class LinkExpansionRetriever(GraphRetriever):
         self,
         conn,
         seed_ids: list,
+        bank_id: str,
         budget: int,
         *,
         ops,
+        config: GraphExpansionConfig | None = None,
+        tags: list[str] | None = None,
+        tags_match: TagsMatch = "any",
+        tag_groups: list[TagGroup] | None = None,
+        created_after: datetime | None = None,
+        created_before: datetime | None = None,
     ) -> tuple[list, list, list]:
         """
         Observation-specific expansion.
@@ -353,6 +508,7 @@ class LinkExpansionRetriever(GraphRetriever):
 
         Semantic and causal expansions run as a second combined CTE query.
         """
+        config = config or _resolve_graph_config(None)
         source_ids_found: list = []
         if logger.isEnabledFor(logging.DEBUG):
             debug_rows = await conn.fetch(
@@ -371,11 +527,19 @@ class LinkExpansionRetriever(GraphRetriever):
                 f"{len(source_ids_found)} source_memory_ids found"
             )
 
-        config = get_config()
         ue = fq_table("unit_entities")
         ml = fq_table("memory_links")
         mu = fq_table("memory_units")
         per_entity_limit = config.link_expansion_per_entity_limit
+        visibility_filter_clause, visibility_filter_params = _build_visibility_filter_clause(
+            tags=tags,
+            tags_match=tags_match,
+            tag_groups=tag_groups,
+            created_after=created_after,
+            created_before=created_before,
+            first_param_idx=7,
+            table_alias="mu_inner.",
+        )
 
         # Delegate to DataAccessOps. Both backends now use the observation_sources
         # junction table with standard SQL joins (previously PG used native array
@@ -386,6 +550,12 @@ class LinkExpansionRetriever(GraphRetriever):
             ue,
             ml,
             seed_ids,
+            bank_id,
             budget,
             per_entity_limit,
+            semantic_mode=config.graph_semantic_mode,
+            ann_threshold=config.graph_ann_expansion_threshold,
+            ann_limit=config.graph_ann_expansion_limit,
+            visibility_filter_clause=visibility_filter_clause,
+            visibility_filter_params=visibility_filter_params,
         )

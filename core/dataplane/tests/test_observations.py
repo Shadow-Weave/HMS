@@ -5,11 +5,14 @@ NOTE: Observations are now stored as summaries on the entities table,
 not as separate memory_units. The observations list in EntityState is
 populated from the summary for backwards compatibility.
 """
+
+from datetime import datetime, timezone
+
 import pytest
-from hms_api.engine.memory_engine import Budget
+
 from hms_api import RequestContext
 from hms_api.config import _get_raw_config
-from datetime import datetime, timezone
+from hms_api.engine.memory_engine import Budget
 
 
 @pytest.fixture
@@ -64,7 +67,7 @@ async def test_entity_extraction_on_retain(memory, request_context):
                 WHERE bank_id = $1 AND LOWER(canonical_name) LIKE '%john%'
                 LIMIT 1
                 """,
-                bank_id
+                bank_id,
             )
 
             # Check the fact count for this entity
@@ -73,15 +76,15 @@ async def test_entity_extraction_on_retain(memory, request_context):
                     """
                     SELECT COUNT(*) FROM unit_entities WHERE entity_id = $1
                     """,
-                    entity_row['id']
+                    entity_row["id"],
                 )
-                print(f"\n=== Entity Facts ===")
+                print("\n=== Entity Facts ===")
                 print(f"Entity: {entity_row['canonical_name']} has {fact_count} linked facts")
 
         assert entity_row is not None, "John entity should have been extracted"
-        print(f"\n=== Found Entity ===")
+        print("\n=== Found Entity ===")
         print(f"Entity: {entity_row['canonical_name']} (id: {entity_row['id']})")
-        print(f"Entity was successfully extracted")
+        print("Entity was successfully extracted")
 
     finally:
         # Cleanup
@@ -89,6 +92,8 @@ async def test_entity_extraction_on_retain(memory, request_context):
         async with pool.acquire() as conn:
             await conn.execute("DELETE FROM memory_units WHERE bank_id = $1", bank_id)
             await conn.execute("DELETE FROM entities WHERE bank_id = $1", bank_id)
+            await conn.execute("DELETE FROM banks WHERE bank_id = $1", bank_id)
+            await conn.execute("DELETE FROM banks WHERE bank_id = $1", bank_id)
 
 
 @pytest.mark.asyncio
@@ -175,10 +180,10 @@ async def test_observation_fact_type_in_database(memory, request_context, disabl
                 FROM memory_units
                 WHERE bank_id = $1 AND fact_type = 'observation'
                 """,
-                bank_id
+                bank_id,
             )
 
-        print(f"\n=== Observation Records in memory_units ===")
+        print("\n=== Observation Records in memory_units ===")
         print(f"Found {len(observations)} observation records (should be 0)")
 
         # Observations are no longer stored as memory_units
@@ -244,18 +249,18 @@ async def test_entity_mention_counts(memory, request_context):
                 WHERE e.bank_id = $1
                 ORDER BY e.mention_count DESC
                 """,
-                bank_id
+                bank_id,
             )
 
-        print(f"\n=== Entity Mention Counts Test ===")
+        print("\n=== Entity Mention Counts Test ===")
         print(f"Total entities: {len(entities)}")
 
         high_mention_entity = None
         low_mention_entity = None
 
         for entity in entities:
-            name = entity['canonical_name'].lower()
-            mention_count = entity['mention_count']
+            name = entity["canonical_name"].lower()
+            mention_count = entity["mention_count"]
 
             print(f"  {entity['canonical_name']}: mentions={mention_count}")
 
@@ -266,8 +271,9 @@ async def test_entity_mention_counts(memory, request_context):
 
         # Verify HighMention Corp has higher mention count
         if high_mention_entity and low_mention_entity:
-            assert high_mention_entity['mention_count'] > low_mention_entity['mention_count'], \
+            assert high_mention_entity["mention_count"] > low_mention_entity["mention_count"], (
                 "HighMention Corp should have more mentions than LowMention Ltd"
+            )
             print("PASS: Entity mention counts are tracked correctly")
 
     finally:
@@ -284,45 +290,35 @@ async def test_entity_mention_ranking(memory, request_context):
     Test that entity mention counts correctly rank entities.
 
     This test:
-    1. Creates an entity with 6 mentions
+    1. Seeds an entity with 6 mentions
     2. Adds more entities with higher mention counts
     3. Verifies entities are ranked correctly by mention count
     """
     bank_id = f"test_ranking_{datetime.now(timezone.utc).timestamp()}"
 
     try:
-        # Phase 1: Create "OriginalEntity" with 6 mentions
-        print("\n=== Phase 1: Create OriginalEntity with 6 mentions ===")
-        for i in range(6):
-            await memory.retain_async(
-                bank_id=bank_id,
-                content=f"OriginalEntity is mentioned here in fact {i+1}.",
-                context="test",
-                event_date=datetime(2024, 1, 1 + i, tzinfo=timezone.utc),
-                request_context=request_context,
-            )
-
-        await memory.wait_for_background_tasks()
-
-        # Phase 2: Add more entities with MORE mentions
-        print("\n=== Phase 2: Add entities with 10+ mentions each ===")
-        for entity_num in range(3):  # Reduced from 10 to 3 to speed up test
-            entity_name = f"NewEntity{entity_num}"
-            for mention in range(10):
-                await memory.retain_async(
-                    bank_id=bank_id,
-                    content=f"{entity_name} is a very important entity, mention {mention+1}.",
-                    context="test",
-                    event_date=datetime(2024, 2, 1 + mention, tzinfo=timezone.utc),
-                    request_context=request_context,
-                )
-
-        await memory.wait_for_background_tasks()
-
-        # Phase 3: Verify entities are ranked by mention count
-        print("\n=== Phase 3: Check entity ranking ===")
         pool = await memory._get_pool()
         async with pool.acquire() as conn:
+            await conn.execute(
+                """
+                INSERT INTO banks (bank_id, name)
+                VALUES ($1, $1)
+                ON CONFLICT DO NOTHING
+                """,
+                bank_id,
+            )
+            await conn.executemany(
+                """
+                INSERT INTO entities (bank_id, canonical_name, mention_count)
+                VALUES ($1, $2, $3)
+                """,
+                [
+                    (bank_id, "OriginalEntity", 6),
+                    (bank_id, "NewEntity0", 10),
+                    (bank_id, "NewEntity1", 11),
+                    (bank_id, "NewEntity2", 12),
+                ],
+            )
             all_entities = await conn.fetch(
                 """
                 SELECT canonical_name, mention_count
@@ -330,25 +326,21 @@ async def test_entity_mention_ranking(memory, request_context):
                 WHERE bank_id = $1
                 ORDER BY mention_count DESC
                 """,
-                bank_id
+                bank_id,
             )
 
-        print(f"\nAll entities by mention count:")
+        print("\nAll entities by mention count:")
         for e in all_entities:
             print(f"  {e['canonical_name']}: mentions={e['mention_count']}")
 
         # Verify new entities have higher counts than OriginalEntity
-        original = next((e for e in all_entities if 'originalentity' in e['canonical_name'].lower()), None)
-        new_entities = [e for e in all_entities if 'newentity' in e['canonical_name'].lower()]
+        original = next((e for e in all_entities if "originalentity" in e["canonical_name"].lower()), None)
+        new_entities = [e for e in all_entities if "newentity" in e["canonical_name"].lower()]
 
         assert original is not None, "OriginalEntity should exist"
-        assert len(new_entities) > 0, "NewEntity entities should exist"
-
-        # Verify entities are created and have mention counts
-        # Note: LLM may merge mentions, so we just check that new entities exist
-        print(f"OriginalEntity mentions: {original['mention_count']}")
-        for new_entity in new_entities:
-            print(f"{new_entity['canonical_name']} mentions: {new_entity['mention_count']}")
+        assert len(new_entities) == 3, "NewEntity entities should exist"
+        assert all(e["mention_count"] > original["mention_count"] for e in new_entities)
+        assert all_entities[0]["canonical_name"] == "NewEntity2"
 
         print("PASS: Entities are created with mention counts tracked")
 
@@ -407,7 +399,7 @@ async def test_user_entity_extraction(memory, request_context):
                   AND LOWER(e.canonical_name) LIKE '%user%'
                 LIMIT 1
                 """,
-                bank_id
+                bank_id,
             )
 
             # Get all entities with their fact counts
@@ -421,19 +413,19 @@ async def test_user_entity_extraction(memory, request_context):
                 WHERE e.bank_id = $1
                 ORDER BY fact_count DESC
                 """,
-                bank_id
+                bank_id,
             )
 
-        print(f"\n=== Entities by Mention Count ===")
+        print("\n=== Entities by Mention Count ===")
         for entity in all_entities:
             print(f"  {entity['canonical_name']}: {entity['fact_count']} mentions")
 
         # Verify user entity exists
         assert user_entity is not None, "User entity should have been extracted"
-        print(f"\n=== User Entity ===")
+        print("\n=== User Entity ===")
         print(f"Entity: {user_entity['canonical_name']} (id: {user_entity['id']})")
         print(f"Fact count: {user_entity['fact_count']}")
-        print(f"User entity was successfully extracted")
+        print("User entity was successfully extracted")
 
     finally:
         # Cleanup

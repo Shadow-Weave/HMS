@@ -28,7 +28,7 @@ class VersionResponse(BaseModel):
     Response model for the version/info endpoint.
     """ # noqa: E501
     api_version: StrictStr = Field(description="API version string")
-    features: FeaturesInfo = Field(description="Enabled feature flags")
+    features: FeaturesInfo
     __properties: ClassVar[List[str]] = ["api_version", "features"]
 
     model_config = ConfigDict(

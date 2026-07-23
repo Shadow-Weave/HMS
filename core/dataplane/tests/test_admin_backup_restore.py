@@ -6,6 +6,7 @@ The backup/restore operations truncate tables, which would cause deadlocks
 and race conditions if run against the shared public schema.
 """
 
+import json
 import tempfile
 import uuid
 import zipfile
@@ -16,13 +17,95 @@ import pytest
 import pytest_asyncio
 
 import hms_api.admin.cli as admin_cli
-from hms_api.admin.cli import _backup, _restore, BACKUP_TABLES
+from hms_api.admin.cli import BACKUP_TABLES, _backup, _restore
 from hms_api.extensions import Tenant
 from hms_api.migrations import run_migrations
 
-
 # Run these tests sequentially since they do full DB backup/restore
 pytestmark = pytest.mark.xdist_group(name="backup_restore")
+
+
+MULTIMODAL_BACKUP_TABLES = [
+    "multimodal_descriptor_cache",
+    "multimodal_segment_checkpoints",
+    "multimodal_document_heads",
+    "multimodal_document_commands",
+]
+
+
+def test_multimodal_backup_tables_follow_foreign_key_dependency_order():
+    """Parents must be restored before multimodal rows that reference them."""
+    positions = {table: BACKUP_TABLES.index(table) for table in ["banks", *MULTIMODAL_BACKUP_TABLES]}
+
+    assert positions["banks"] < positions["multimodal_descriptor_cache"]
+    assert positions["banks"] < positions["multimodal_document_heads"]
+    assert positions["multimodal_descriptor_cache"] < positions["multimodal_segment_checkpoints"]
+    assert positions["multimodal_document_heads"] < positions["multimodal_document_commands"]
+
+
+@pytest.mark.asyncio
+async def test_restore_version_one_backup_skips_missing_multimodal_tables(tmp_path, monkeypatch, capsys):
+    """A version-one archive made before multimodal tables existed remains restorable."""
+    legacy_tables = [table for table in BACKUP_TABLES if table not in MULTIMODAL_BACKUP_TABLES]
+    backup_path = tmp_path / "legacy-v1.zip"
+    manifest = {
+        "version": "1",
+        "created_at": "2026-07-22T00:00:00+00:00",
+        "schema": "public",
+        "tables": {table: {"rows": 0, "size_bytes": len(table)} for table in legacy_tables},
+    }
+    with zipfile.ZipFile(backup_path, "w") as zf:
+        zf.writestr("manifest.json", json.dumps(manifest))
+        for table in legacy_tables:
+            zf.writestr(f"{table}.bin", table.encode())
+
+    class FakeTransaction:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, traceback):
+            return False
+
+    class FakeConnection:
+        def __init__(self):
+            self.copied_tables: list[str] = []
+            self.closed = False
+
+        def transaction(self):
+            return FakeTransaction()
+
+        async def execute(self, query: str):
+            return query
+
+        async def copy_to_table(self, table: str, *, schema_name: str, source, format: str):
+            assert schema_name == "restore_target"
+            assert format == "binary"
+            assert source.read() == table.encode()
+            self.copied_tables.append(table)
+
+        async def close(self):
+            self.closed = True
+
+    connection = FakeConnection()
+
+    async def fake_connect(database_url: str):
+        assert database_url == "postgresql://legacy-backup"
+        return connection
+
+    monkeypatch.setattr(admin_cli.asyncpg, "connect", fake_connect)
+
+    restored_manifest = await _restore(
+        "postgresql://legacy-backup",
+        backup_path,
+        schema="restore_target",
+    )
+
+    assert restored_manifest["version"] == admin_cli.MANIFEST_VERSION == "1"
+    assert connection.copied_tables == legacy_tables
+    assert connection.closed is True
+    output = capsys.readouterr().out
+    for table in MULTIMODAL_BACKUP_TABLES:
+        assert f"{table}: skipped (not in backup)" in output
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -87,7 +170,7 @@ async def test_backup_restore_roundtrip(backup_test_schema):
             "The team uses PostgreSQL for their database.",
         ]:
             await conn.execute(
-                f"""INSERT INTO {_fq('memory_units')}
+                f"""INSERT INTO {_fq("memory_units")}
                     (bank_id, text, fact_type, embedding, event_date)
                     VALUES ($1, $2, 'world', $3::vector, NOW())""",
                 bank_id,
@@ -189,7 +272,7 @@ async def test_backup_restore_preserves_all_column_types(backup_test_schema):
         embedding_list = embeddings.encode(["John Smith engineer"])[0]
         embedding_str = "[" + ",".join(str(x) for x in embedding_list) + "]"
         await conn.execute(
-            f"""INSERT INTO {_fq('memory_units')}
+            f"""INSERT INTO {_fq("memory_units")}
                 (bank_id, text, fact_type, embedding, event_date, metadata)
                 VALUES ($1, $2, 'world', $3::vector, NOW(), $4)""",
             bank_id,
@@ -200,7 +283,7 @@ async def test_backup_restore_preserves_all_column_types(backup_test_schema):
 
         # Create an entity
         await conn.execute(
-            f"""INSERT INTO {_fq('entities')}
+            f"""INSERT INTO {_fq("entities")}
                 (bank_id, canonical_name, metadata)
                 VALUES ($1, $2, $3)""",
             bank_id,
@@ -211,12 +294,12 @@ async def test_backup_restore_preserves_all_column_types(backup_test_schema):
         # Get original data
         original_unit = await conn.fetchrow(
             f"""SELECT id, embedding, event_date, created_at, metadata, text
-               FROM {_fq('memory_units')} WHERE bank_id = $1 LIMIT 1""",
+               FROM {_fq("memory_units")} WHERE bank_id = $1 LIMIT 1""",
             bank_id,
         )
         original_entity = await conn.fetchrow(
             f"""SELECT id, first_seen, last_seen, metadata, canonical_name
-               FROM {_fq('entities')} WHERE bank_id = $1 LIMIT 1""",
+               FROM {_fq("entities")} WHERE bank_id = $1 LIMIT 1""",
             bank_id,
         )
         original_bank = await conn.fetchrow(
@@ -252,12 +335,12 @@ async def test_backup_restore_preserves_all_column_types(backup_test_schema):
         try:
             restored_unit = await conn.fetchrow(
                 f"""SELECT id, embedding, event_date, created_at, metadata, text
-                   FROM {_fq('memory_units')} WHERE bank_id = $1 LIMIT 1""",
+                   FROM {_fq("memory_units")} WHERE bank_id = $1 LIMIT 1""",
                 bank_id,
             )
             restored_entity = await conn.fetchrow(
                 f"""SELECT id, first_seen, last_seen, metadata, canonical_name
-                   FROM {_fq('entities')} WHERE bank_id = $1 LIMIT 1""",
+                   FROM {_fq("entities")} WHERE bank_id = $1 LIMIT 1""",
                 bank_id,
             )
             restored_bank = await conn.fetchrow(
@@ -271,7 +354,9 @@ async def test_backup_restore_preserves_all_column_types(backup_test_schema):
         assert restored_unit is not None, "Should have restored memory unit"
         assert restored_unit["id"] == original_unit["id"], "UUID should match exactly"
         assert restored_unit["text"] == original_unit["text"], "Text should match"
-        assert list(restored_unit["embedding"]) == list(original_unit["embedding"]), "Vector embedding should match exactly"
+        assert list(restored_unit["embedding"]) == list(original_unit["embedding"]), (
+            "Vector embedding should match exactly"
+        )
         assert restored_unit["event_date"] == original_unit["event_date"], "Timestamp should match exactly"
         assert restored_unit["created_at"] == original_unit["created_at"], "Created timestamp should match"
         assert restored_unit["metadata"] == original_unit["metadata"], "JSONB metadata should match"

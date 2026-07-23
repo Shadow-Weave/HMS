@@ -107,6 +107,7 @@ import type {
   GetOperationStatusErrors,
   GetOperationStatusResponses,
   GetVersionData,
+  GetVersionErrors,
   GetVersionResponses,
   HealthEndpointHealthGetData,
   HealthEndpointHealthGetResponses,
@@ -237,12 +238,12 @@ export const healthEndpointHealthGet = <ThrowOnError extends boolean = false>(
 /**
  * Get API version and feature flags
  *
- * Returns API version information and enabled feature flags. Use this to check which capabilities are available in this deployment.
+ * Returns API version information and enabled feature flags. Use include_multimodal=true to negotiate the additive multimodal capability fields.
  */
 export const getVersion = <ThrowOnError extends boolean = false>(
   options?: Options<GetVersionData, ThrowOnError>
 ) =>
-  (options?.client ?? client).get<GetVersionResponses, unknown, ThrowOnError>({
+  (options?.client ?? client).get<GetVersionResponses, GetVersionErrors, ThrowOnError>({
     url: "/version",
     ...options,
   });

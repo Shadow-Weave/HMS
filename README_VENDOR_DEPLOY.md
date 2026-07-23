@@ -15,8 +15,6 @@ docker-compose.yml
 .env.example
 README_VENDOR_DEPLOY.md
 vendor_sdk/
-examples/cases/store_errands_multi_session.json
-examples/outputs/store_errands_visual.html
 scripts/generate_keys.sh
 scripts/start.sh
 scripts/smoke_test.sh
@@ -59,7 +57,7 @@ By default the smoke test checks:
 2. missing-key requests return `401`
 3. `POST /v1/vendor/organize` returns `evidence_packet`
 
-To run the full retain + recall + evidence ledger path, set:
+To run the full retain + recall + result-formatting path, set:
 
 ```bash
 HMS_SMOKE_RUN_PIPELINE=1
@@ -125,7 +123,7 @@ POST /v1/vendor/pipeline
 This demonstrates:
 
 ```text
-retain sessions -> recall question -> organize evidence ledger
+retain sessions -> recall question -> format recalled rows
 ```
 
 Other endpoints:
@@ -153,7 +151,7 @@ POST /v1/vendor/organize
 Stable pieces:
 
 - The SDK package is small and has a clear surface: dataclasses, `HMSVendorClient`, CLI, gateway, and local evidence organizer.
-- The default vendor workflow is now centered on `/v1/vendor/pipeline`, which is the right demo path for retain + recall + ledger.
+- The default vendor workflow is centered on `/v1/vendor/pipeline`, which covers retain, recall, and ordered result formatting.
 - Gateway auth separates public `hms_live_*` keys from the internal HMS API key.
 - Gateway audit logs redact authorization headers, API keys, bearer tokens, common model keys, and email addresses.
 - The gateway now scopes bank IDs by vendor key hash. This prevents different vendors from sharing an internal bank when they use the same external `bank_id`.
@@ -165,7 +163,7 @@ Current limitations:
 - `HMS_GATEWAY_API_KEYS` is a static comma-separated list. For many vendors, move key metadata to a database with owner, quota, status, and rotation timestamps.
 - Gateway audit logging is file-based JSONL. For production, ship it to object storage or centralized logging and set retention policy.
 - Nginx provides coarse IP rate limiting. Vendor-level enforcement still lives in the gateway.
-- The local evidence organizer is deterministic and lightweight. It is suitable for exposing an answer-time ledger, but it is not a substitute for the model's final answer reasoning.
+- The local formatter preserves recall order and adds no filtering, scoring, deduplication, or answer instructions.
 
 ## Bank Isolation
 
@@ -218,6 +216,6 @@ PUBLIC_BASE_URL=https://hms.your-domain.com
 - Never expose `hms-api:18080` directly to the public internet.
 - Never expose Postgres.
 - Do not let multiple vendors intentionally share one public `bank_id`.
-- Prefer `/v1/vendor/pipeline` for vendor demos; `/recall` alone does not show retain or ledger behavior.
+- Prefer `/v1/vendor/pipeline` for vendor demos; `/recall` alone does not show retain and result-formatting behavior.
 - Rotate `hms_live_*` keys per vendor. Do not reuse a key across companies.
 - Back up `./volumes/postgres` and `./logs/vendor_gateway_audit.jsonl`.

@@ -20,7 +20,7 @@ class GatewayTest(unittest.TestCase):
         payload = {
             "authorization": "Bearer hms_live_abcdefghijklmnopqrstuvwxyz",
             "email": "user@example.com",
-            "nested": {"api_key": "sk-abcdefghijklmnopqrstuvwxyz"},
+            "nested": {"api_key": "provider-key-placeholder-value"},
         }
 
         redacted = _redact(payload)

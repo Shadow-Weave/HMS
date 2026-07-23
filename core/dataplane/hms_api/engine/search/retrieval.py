@@ -188,6 +188,8 @@ async def retrieve_temporal_combined(
     created_after: datetime | None = None,
     created_before: datetime | None = None,
     session_expansion_weight: float = 0.3,
+    graph_config: Any | None = None,
+    ops: Any | None = None,
 ) -> dict[str, list[RetrievalResult]]:
     """
     Temporal retrieval for multiple fact types in a single query.
@@ -217,6 +219,8 @@ async def retrieve_temporal_combined(
         created_before=created_before,
         start_date=start_date,
         end_date=end_date,
+        graph_config=graph_config,
+        ops=ops,
     )
 
 
@@ -239,6 +243,7 @@ async def retrieve_all_fact_types_parallel(
     query_rewriting_strategy_name: str = "llm_based",
     alias_expansion_enabled: bool = True,
     session_expansion_weight: float = 0.3,
+    graph_config: Any | None = None,
     vector_index: Any | None = None,
     query_vector: list[float] | None = None,
 ) -> MultiFactTypeRetrievalResult:
@@ -332,6 +337,8 @@ async def retrieve_all_fact_types_parallel(
                 created_after=created_after,
                 created_before=created_before,
                 session_expansion_weight=session_expansion_weight,
+                graph_config=graph_config,
+                ops=pool.ops,
             )
             temporal_time = time.time() - temporal_start
 
@@ -356,6 +363,7 @@ async def retrieve_all_fact_types_parallel(
             tag_groups=tag_groups,
             created_after=created_after,
             created_before=created_before,
+            graph_config=graph_config,
         )
         return ft, results, time.time() - graph_start, graph_timing
 

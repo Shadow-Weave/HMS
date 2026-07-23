@@ -97,8 +97,22 @@ async def test_hierarchical_fields_categorization():
     assert "mcp_enabled_tools" in configurable
     assert "retain_chunk_batch_size" in configurable
 
+    # Memory graph switches are behavioral settings and
+    # must remain bank-configurable for staged rollout and rollback.
+    assert "graph_semantic_mode" in configurable
+    assert "graph_ann_expansion_threshold" in configurable
+    assert "graph_ann_expansion_limit" in configurable
+    assert "write_semantic_links" in configurable
+    assert "write_entity_links" in configurable
+    assert "entity_fanout_hard_cap" in configurable
+    assert "entity_idf_weighting" in configurable
+    assert "graph_temporal_mode" in configurable
+    assert "graph_temporal_sigma_hours" in configurable
+    assert "write_temporal_links" in configurable
+    assert "extraction_prompt_version" in configurable
+
     # Verify count is correct
-    assert len(configurable) == 35
+    assert len(configurable) == 46
 
     # Verify credential fields (NEVER exposed)
     assert "llm_api_key" in credentials
@@ -457,8 +471,11 @@ async def test_config_get_bank_config_no_static_or_credential_fields_leak(memory
         for field in expected_configurable:
             assert field in config, f"Expected configurable field '{field}' missing from config"
 
-        # Should have a small number of configurable fields (not hundreds)
-        assert len(config) < 50, f"Too many fields returned: {len(config)}"
+        # The response should be exactly the public configurable field set:
+        # broad enough to include staged rollout switches, but not static or
+        # credential settings.
+        assert set(config) == configurable_fields
+        assert len(config) == 51
 
     finally:
         await memory.delete_bank(bank_id, request_context=request_context)

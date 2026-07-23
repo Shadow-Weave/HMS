@@ -4,6 +4,7 @@ import logging
 from datetime import timedelta
 
 import obstore as obs
+from obstore.exceptions import NotFoundError
 from obstore.store import S3Store
 
 from .base import FileStorage
@@ -64,7 +65,7 @@ class S3FileStorage(FileStorage):
         try:
             await obs.head_async(self._store, key)
             return True
-        except Exception:
+        except NotFoundError:
             return False
 
     async def get_download_url(self, key: str, expires_in: int = 3600) -> str:

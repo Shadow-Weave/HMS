@@ -5,6 +5,7 @@ These dataclasses replace Dict[str, Any] types throughout the recall pipeline,
 providing type safety and making data flow explicit.
 """
 
+import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
@@ -48,6 +49,7 @@ class RetrievalResult:
     chunk_id: str | None = None
     tags: list[str] | None = None  # Visibility scope tags
     metadata: dict[str, str] | None = None  # User-provided metadata
+    projection: dict[str, Any] | None = None  # Versioned projection manifest
     proof_count: int | None = None  # Number of supporting memories (observations only)
 
     # Retrieval-specific scores (only one will be set depending on retrieval method)
@@ -56,10 +58,17 @@ class RetrievalResult:
     activation: float | None = None  # Graph retrieval (spreading activation)
     temporal_score: float | None = None  # Temporal retrieval
     temporal_proximity: float | None = None  # Temporal retrieval
+    source_channel: str | None = None  # Optional provenance for diagnostics/tracing
 
     @classmethod
     def from_db_row(cls, row: dict[str, Any]) -> "RetrievalResult":
         """Create from a database row (asyncpg Record converted to dict)."""
+        projection = row.get("projection")
+        if isinstance(projection, str):
+            try:
+                projection = json.loads(projection)
+            except json.JSONDecodeError:
+                projection = None
         return cls(
             id=str(row["id"]),
             text=row["text"],
@@ -73,12 +82,14 @@ class RetrievalResult:
             chunk_id=row.get("chunk_id"),
             tags=row.get("tags"),
             metadata=row.get("metadata"),
+            projection=projection,
             proof_count=row.get("proof_count"),
             similarity=row.get("similarity"),
             bm25_score=row.get("bm25_score"),
             activation=row.get("activation"),
             temporal_score=row.get("temporal_score"),
             temporal_proximity=row.get("temporal_proximity"),
+            source_channel=row.get("source_channel"),
         )
 
 
@@ -158,8 +169,10 @@ class ScoredResult:
             "chunk_id": self.retrieval.chunk_id,
             "tags": self.retrieval.tags,
             "metadata": self.retrieval.metadata,
+            "projection": self.retrieval.projection,
             "semantic_similarity": self.retrieval.similarity,
             "bm25_score": self.retrieval.bm25_score,
+            "source_channel": self.retrieval.source_channel,
         }
 
         # Add temporal scores if present

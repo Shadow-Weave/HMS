@@ -5,13 +5,14 @@ which migrations have run before inserting the orphan seed data.
 """
 
 import asyncio
+import os
 import uuid
 from pathlib import Path
 
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import create_engine, text, inspect
+from sqlalchemy import create_engine, inspect, text
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -20,26 +21,34 @@ from sqlalchemy import create_engine, text, inspect
 _SCRIPT_LOCATION = str(Path(__file__).parent.parent / "hms_api" / "alembic")
 
 
-def _alembic_cfg(db_url: str) -> Config:
+def _alembic_cfg(db_url: str, schema: str | None = None) -> Config:
     cfg = Config()
     cfg.set_main_option("script_location", _SCRIPT_LOCATION)
     cfg.set_main_option("sqlalchemy.url", db_url)
     cfg.set_main_option("prepend_sys_path", ".")
     cfg.set_main_option("path_separator", "os")
+    if schema:
+        cfg.set_main_option("target_schema", schema)
     return cfg
 
 
-def _upgrade(db_url: str, revision: str) -> None:
-    command.upgrade(_alembic_cfg(db_url), revision)
+def _upgrade(db_url: str, revision: str, schema: str | None = None) -> None:
+    command.upgrade(_alembic_cfg(db_url, schema), revision)
 
 
-def _downgrade(db_url: str, revision: str) -> None:
-    command.downgrade(_alembic_cfg(db_url), revision)
+def _downgrade(db_url: str, revision: str, schema: str | None = None) -> None:
+    command.downgrade(_alembic_cfg(db_url, schema), revision)
+
+
+def _set_search_path(conn, schema: str | None) -> None:
+    if schema:
+        conn.execute(text(f'SET search_path TO "{schema}", public'))
 
 
 # ---------------------------------------------------------------------------
 # Fixture: fresh database at the revision just before the backsweep
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="module")
 def pre_backsweep_db_url():
@@ -53,6 +62,26 @@ def pre_backsweep_db_url():
     exist), then stamp the revision back to pre-backsweep so Alembic
     treats the backsweep as not-yet-applied.
     """
+    external_url = os.getenv("HMS_API_DATABASE_URL")
+    if external_url:
+        schema = f"backsweep_{uuid.uuid4().hex[:12]}"
+        try:
+            _upgrade(external_url, "heads", schema)
+            command.stamp(_alembic_cfg(external_url, schema), "f6g7h8i9j0k1")
+            yield external_url, schema
+        finally:
+            engine = create_engine(external_url)
+            try:
+                with engine.connect() as conn:
+                    conn.execute(text(f'DROP SCHEMA IF EXISTS "{schema}" CASCADE'))
+                    conn.commit()
+            finally:
+                engine.dispose()
+        return
+
+    if hasattr(os, "geteuid") and os.geteuid() == 0:
+        pytest.skip("embedded PostgreSQL cannot run initdb as root; set HMS_API_DATABASE_URL to use an external DB")
+
     from hms_api.pg0 import EmbeddedPostgres
 
     pg0 = EmbeddedPostgres(name="hms-backsweep-test", port=5562)
@@ -66,12 +95,13 @@ def pre_backsweep_db_url():
     # pre-backsweep so the backsweep migration will actually run.
     _upgrade(url, "heads")
     command.stamp(_alembic_cfg(url), "f6g7h8i9j0k1")
-    return url
+    yield url, None
 
 
 # ---------------------------------------------------------------------------
 # The test
 # ---------------------------------------------------------------------------
+
 
 def test_backsweep_removes_orphans_and_preserves_legit_rows(pre_backsweep_db_url):
     """
@@ -93,21 +123,22 @@ def test_backsweep_removes_orphans_and_preserves_legit_rows(pre_backsweep_db_url
     D. Non-observation (world), bank exists, no sources (not relevant)
        → Pass 1 must not touch these (bank exists).
     """
-    db_url = pre_backsweep_db_url
+    db_url, schema = pre_backsweep_db_url
     engine = create_engine(db_url)
 
     alive_bank = f"bank_{uuid.uuid4().hex[:8]}"
     ghost_bank = f"bank_{uuid.uuid4().hex[:8]}"  # never inserted into banks
 
     # UUIDs for memory units
-    id_pass1_world = uuid.uuid4()       # A: world unit, ghost bank
-    id_pass1_obs = uuid.uuid4()         # A: observation, ghost bank
-    id_pass2_obs = uuid.uuid4()         # B: observation, all sources gone
-    id_keep_obs = uuid.uuid4()          # C: observation with one live source
-    id_keep_world = uuid.uuid4()        # D: world unit, alive bank
-    id_live_source = uuid.uuid4()       # live source for C
+    id_pass1_world = uuid.uuid4()  # A: world unit, ghost bank
+    id_pass1_obs = uuid.uuid4()  # A: observation, ghost bank
+    id_pass2_obs = uuid.uuid4()  # B: observation, all sources gone
+    id_keep_obs = uuid.uuid4()  # C: observation with one live source
+    id_keep_world = uuid.uuid4()  # D: world unit, alive bank
+    id_live_source = uuid.uuid4()  # live source for C
 
     with engine.connect() as conn:
+        _set_search_path(conn, schema)
         # --- banks ---
         conn.execute(text("INSERT INTO banks (bank_id) VALUES (:b)"), {"b": alive_bank})
 
@@ -143,14 +174,14 @@ def test_backsweep_removes_orphans_and_preserves_legit_rows(pre_backsweep_db_url
         conn.commit()
 
     # --- apply the backsweep ---
-    _upgrade(db_url, "g7h8i9j0k1l2")
+    _upgrade(db_url, "g7h8i9j0k1l2", schema)
 
     # --- verify ---
     with engine.connect() as conn:
+        _set_search_path(conn, schema)
+
         def exists(uid):
-            return conn.execute(
-                text("SELECT 1 FROM memory_units WHERE id = :id"), {"id": uid}
-            ).fetchone() is not None
+            return conn.execute(text("SELECT 1 FROM memory_units WHERE id = :id"), {"id": uid}).fetchone() is not None
 
         # Must be gone
         assert not exists(id_pass1_world), "Pass 1: world unit with ghost bank should be deleted"

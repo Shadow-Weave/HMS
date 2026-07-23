@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   contact:
     name: Memory System
@@ -27,8 +27,22 @@ paths:
   /version:
     get:
       description: Returns API version information and enabled feature flags. Use
-        this to check which capabilities are available in this deployment.
+        include_multimodal=true to negotiate the additive multimodal capability fields.
       operationId: get_version
+      parameters:
+      - description: Include additive multimodal capability flags. The default preserves
+          the legacy wire shape for strict older SDKs.
+        explode: true
+        in: query
+        name: include_multimodal
+        required: false
+        schema:
+          default: false
+          description: Include additive multimodal capability flags. The default preserves
+            the legacy wire shape for strict older SDKs.
+          title: Include Multimodal
+          type: boolean
+        style: form
       responses:
         "200":
           content:
@@ -36,6 +50,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
           description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
       summary: Get API version and feature flags
       tags:
       - Monitoring
@@ -72,6 +92,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Type
           type: string
         style: form
       - explode: true
@@ -89,6 +110,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Q
           type: string
         style: form
       - explode: true
@@ -97,9 +119,9 @@ paths:
         required: false
         schema:
           items:
-            nullable: true
             type: string
           nullable: true
+          title: Tags
           type: array
         style: form
       - explode: true
@@ -117,6 +139,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Document Id
           type: string
         style: form
       - explode: true
@@ -125,6 +148,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Chunk Id
           type: string
         style: form
       - explode: false
@@ -133,6 +157,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -172,6 +197,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Type
           type: string
         style: form
       - explode: true
@@ -180,6 +206,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Q
           type: string
         style: form
       - explode: true
@@ -188,6 +215,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Consolidation State
           type: string
         style: form
       - explode: true
@@ -214,6 +242,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -261,6 +290,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -306,6 +336,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -347,6 +378,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -398,6 +430,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -433,6 +466,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -470,6 +504,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -534,6 +569,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -594,6 +630,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -654,6 +691,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -700,6 +738,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -747,6 +786,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -784,9 +824,11 @@ paths:
         name: tags
         required: false
         schema:
+          description: Filter by tags
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
         style: form
       - description: How to match tags
@@ -848,6 +890,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -887,6 +930,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -938,6 +982,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -998,6 +1043,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1042,6 +1088,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -1094,6 +1141,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1139,6 +1187,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1176,9 +1225,11 @@ paths:
         name: tags
         required: false
         schema:
+          description: Filter by tags
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
         style: form
       - description: How to match tags
@@ -1234,6 +1285,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1270,6 +1322,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -1321,6 +1374,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1364,6 +1418,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1408,6 +1463,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -1453,7 +1509,10 @@ paths:
         name: q
         required: false
         schema:
+          description: Case-insensitive substring filter on document ID (e.g. 'report'
+            matches 'report-2024')
           nullable: true
+          title: Q
           type: string
         style: form
       - description: Filter documents by tags
@@ -1462,9 +1521,11 @@ paths:
         name: tags
         required: false
         schema:
+          description: Filter documents by tags
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
         style: form
       - description: "How to match tags: 'any', 'all', 'any_strict', 'all_strict'"
@@ -1502,6 +1563,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1572,6 +1634,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1620,6 +1683,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1636,6 +1700,52 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Reprocess document
+      tags:
+      - Documents
+  /v1/default/banks/{bank_id}/projections/reprocess:
+    post:
+      description: "Select memory units by projection manifest fields and re-run the\
+        \ existing document reprocess path. Use dry_run=true to inspect affected units,\
+        \ chunks, and documents before submitting work."
+      operationId: reprocess_by_projection
+      parameters:
+      - explode: false
+        in: path
+        name: bank_id
+        required: true
+        schema:
+          title: Bank Id
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: authorization
+        required: false
+        schema:
+          nullable: true
+          title: Authorization
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReprocessProjectionRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReprocessProjectionResponse'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Reprocess by projection manifest
       tags:
       - Documents
   /v1/default/banks/{bank_id}/documents/{document_id}:
@@ -1673,6 +1783,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1717,6 +1828,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1766,6 +1878,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -1813,7 +1926,10 @@ paths:
         name: q
         required: false
         schema:
+          description: "Wildcard pattern to filter tags (e.g., 'user:*' for user:alice,\
+            \ '*-admin' for role-admin). Use '*' as wildcard. Case-insensitive."
           nullable: true
+          title: Q
           type: string
         style: form
       - description: "Where to read tags from: 'memories' (memory_units, default)\
@@ -1860,6 +1976,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1897,6 +2014,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -1937,7 +2055,10 @@ paths:
         name: status
         required: false
         schema:
+          description: "Filter by status: pending, processing, completed, failed,\
+            \ or cancelled"
           nullable: true
+          title: Status
           type: string
         style: form
       - description: "Filter by operation type: retain, consolidation, refresh_mental_model,\
@@ -1947,7 +2068,10 @@ paths:
         name: type
         required: false
         schema:
+          description: "Filter by operation type: retain, consolidation, refresh_mental_model,\
+            \ file_convert_retain, webhook_delivery"
           nullable: true
+          title: Type
           type: string
         style: form
       - description: Maximum number of operations to return
@@ -1992,6 +2116,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2037,6 +2162,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2096,6 +2222,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2141,6 +2268,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2180,6 +2308,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2217,6 +2346,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -2262,6 +2392,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -2307,6 +2438,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2344,6 +2476,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -2387,6 +2520,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -2445,6 +2579,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2484,6 +2619,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2536,6 +2672,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2576,6 +2713,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2624,6 +2762,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2662,6 +2801,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2700,6 +2840,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2739,6 +2880,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -2783,6 +2925,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2820,6 +2963,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2857,6 +3001,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -2908,6 +3053,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -2953,6 +3099,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -3016,7 +3163,9 @@ paths:
         name: cursor
         required: false
         schema:
+          description: Pagination cursor (created_at of last item)
           nullable: true
+          title: Cursor
           type: string
         style: form
       - explode: false
@@ -3025,6 +3174,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -3065,7 +3215,9 @@ paths:
         name: type
         required: false
         schema:
+          description: "Optional fact type filter (world, experience, opinion)"
           nullable: true
+          title: Type
           type: string
         style: form
       - explode: false
@@ -3074,6 +3226,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -3134,6 +3287,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -3206,6 +3360,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       requestBody:
@@ -3249,7 +3404,9 @@ paths:
         name: action
         required: false
         schema:
+          description: Filter by action type
           nullable: true
+          title: Action
           type: string
         style: form
       - description: "Filter by transport (http, mcp, system)"
@@ -3258,7 +3415,9 @@ paths:
         name: transport
         required: false
         schema:
+          description: "Filter by transport (http, mcp, system)"
           nullable: true
+          title: Transport
           type: string
         style: form
       - description: Filter from this ISO datetime (inclusive)
@@ -3267,7 +3426,9 @@ paths:
         name: start_date
         required: false
         schema:
+          description: Filter from this ISO datetime (inclusive)
           nullable: true
+          title: Start Date
           type: string
         style: form
       - description: Filter until this ISO datetime (exclusive)
@@ -3276,7 +3437,9 @@ paths:
         name: end_date
         required: false
         schema:
+          description: Filter until this ISO datetime (exclusive)
           nullable: true
+          title: End Date
           type: string
         style: form
       - description: Max items to return
@@ -3310,6 +3473,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -3347,7 +3511,9 @@ paths:
         name: action
         required: false
         schema:
+          description: Filter by action type
           nullable: true
+          title: Action
           type: string
         style: form
       - description: "Time period: 1d, 7d, or 30d"
@@ -3367,6 +3533,7 @@ paths:
         required: false
         schema:
           nullable: true
+          title: Authorization
           type: string
         style: simple
       responses:
@@ -3406,6 +3573,7 @@ components:
       required:
       - content
       title: AddBackgroundRequest
+      type: object
     AsyncOperationSubmitResponse:
       description: Response model for submitting an async operation.
       example:
@@ -3422,22 +3590,9 @@ components:
       - operation_id
       - status
       title: AsyncOperationSubmitResponse
+      type: object
     AuditLogEntry:
       description: A single audit log entry.
-      example:
-        duration_ms: 5
-        request:
-          key: ""
-        metadata:
-          key: ""
-        bank_id: bank_id
-        response:
-          key: ""
-        action: action
-        started_at: started_at
-        id: id
-        transport: transport
-        ended_at: ended_at
       properties:
         id:
           title: Id
@@ -3450,25 +3605,36 @@ components:
           type: string
         bank_id:
           nullable: true
+          title: Bank Id
           type: string
         started_at:
           nullable: true
+          title: Started At
           type: string
         ended_at:
           nullable: true
+          title: Ended At
           type: string
         duration_ms:
+          description: Server-computed duration in milliseconds (started_at → ended_at).
+            Null if not yet completed.
           nullable: true
+          title: Duration Ms
           type: integer
         request:
-          additionalProperties: {}
+          additionalProperties: true
           nullable: true
+          title: Request
+          type: object
         response:
-          additionalProperties: {}
+          additionalProperties: true
           nullable: true
+          title: Response
+          type: object
         metadata:
-          additionalProperties: {}
+          additionalProperties: true
           title: Metadata
+          type: object
       required:
       - action
       - bank_id
@@ -3480,40 +3646,9 @@ components:
       - started_at
       - transport
       title: AuditLogEntry
+      type: object
     AuditLogListResponse:
       description: Response model for list audit logs endpoint.
-      example:
-        total: 0
-        offset: 1
-        bank_id: bank_id
-        limit: 6
-        items:
-        - duration_ms: 5
-          request:
-            key: ""
-          metadata:
-            key: ""
-          bank_id: bank_id
-          response:
-            key: ""
-          action: action
-          started_at: started_at
-          id: id
-          transport: transport
-          ended_at: ended_at
-        - duration_ms: 5
-          request:
-            key: ""
-          metadata:
-            key: ""
-          bank_id: bank_id
-          response:
-            key: ""
-          action: action
-          started_at: started_at
-          id: id
-          transport: transport
-          ended_at: ended_at
       properties:
         bank_id:
           title: Bank Id
@@ -3530,6 +3665,7 @@ components:
         items:
           items:
             $ref: '#/components/schemas/AuditLogEntry'
+          title: Items
           type: array
       required:
       - bank_id
@@ -3538,13 +3674,9 @@ components:
       - offset
       - total
       title: AuditLogListResponse
+      type: object
     AuditLogStatsBucket:
       description: A single time bucket in audit log stats.
-      example:
-        total: 6
-        time: time
-        actions:
-          key: 0
       properties:
         time:
           title: Time
@@ -3553,6 +3685,7 @@ components:
           additionalProperties:
             type: integer
           title: Actions
+          type: object
         total:
           title: Total
           type: integer
@@ -3561,22 +3694,9 @@ components:
       - time
       - total
       title: AuditLogStatsBucket
+      type: object
     AuditLogStatsResponse:
       description: Response model for audit log stats endpoint.
-      example:
-        period: period
-        trunc: trunc
-        bank_id: bank_id
-        buckets:
-        - total: 6
-          time: time
-          actions:
-            key: 0
-        - total: 6
-          time: time
-          actions:
-            key: 0
-        start: start
       properties:
         bank_id:
           title: Bank Id
@@ -3593,6 +3713,7 @@ components:
         buckets:
           items:
             $ref: '#/components/schemas/AuditLogStatsBucket'
+          title: Buckets
           type: array
       required:
       - bank_id
@@ -3601,6 +3722,7 @@ components:
       - start
       - trunc
       title: AuditLogStatsResponse
+      type: object
     BackgroundResponse:
       description: "Response model for background update. Deprecated: use MissionResponse\
         \ instead."
@@ -3611,13 +3733,16 @@ components:
           title: Mission
           type: string
         background:
+          description: "Deprecated: same as mission"
           nullable: true
+          title: Background
           type: string
         disposition:
           $ref: '#/components/schemas/DispositionTraits'
       required:
       - mission
       title: BackgroundResponse
+      type: object
     BankConfigResponse:
       description: Response model for bank configuration.
       example:
@@ -3635,19 +3760,22 @@ components:
           title: Bank Id
           type: string
         config:
-          additionalProperties: {}
+          additionalProperties: true
           description: Fully resolved configuration with all hierarchical overrides
             applied (Python field names)
           title: Config
+          type: object
         overrides:
-          additionalProperties: {}
+          additionalProperties: true
           description: Bank-specific configuration overrides only (Python field names)
           title: Overrides
+          type: object
       required:
       - bank_id
       - config
       - overrides
       title: BankConfigResponse
+      type: object
     BankConfigUpdate:
       description: Request model for updating bank configuration.
       example:
@@ -3657,14 +3785,16 @@ components:
           retain_extraction_mode: verbose
       properties:
         updates:
-          additionalProperties: {}
+          additionalProperties: true
           description: Configuration overrides. Keys can be in Python field format
             (llm_provider) or environment variable format (HMS_API_LLM_PROVIDER).
             Only hierarchical fields can be overridden per-bank.
           title: Updates
+          type: object
       required:
       - updates
       title: BankConfigUpdate
+      type: object
     BankListItem:
       description: Bank list item with profile summary and stats.
       properties:
@@ -3673,17 +3803,21 @@ components:
           type: string
         name:
           nullable: true
+          title: Name
           type: string
         disposition:
           $ref: '#/components/schemas/DispositionTraits'
         mission:
           nullable: true
+          title: Mission
           type: string
         created_at:
           nullable: true
+          title: Created At
           type: string
         updated_at:
           nullable: true
+          title: Updated At
           type: string
         fact_count:
           default: 0
@@ -3691,11 +3825,13 @@ components:
           type: integer
         last_document_at:
           nullable: true
+          title: Last Document At
           type: string
       required:
       - bank_id
       - disposition
       title: BankListItem
+      type: object
     BankListResponse:
       description: Response model for listing all banks.
       example:
@@ -3715,10 +3851,12 @@ components:
         banks:
           items:
             $ref: '#/components/schemas/BankListItem'
+          title: Banks
           type: array
       required:
       - banks
       title: BankListResponse
+      type: object
     BankProfileResponse:
       description: Response model for bank profile.
       example:
@@ -3745,7 +3883,9 @@ components:
           title: Mission
           type: string
         background:
+          description: "Deprecated: use mission instead"
           nullable: true
+          title: Background
           type: string
       required:
       - bank_id
@@ -3753,6 +3893,7 @@ components:
       - mission
       - name
       title: BankProfileResponse
+      type: object
     BankStatsResponse:
       description: Response model for bank statistics endpoint.
       example:
@@ -3800,19 +3941,24 @@ components:
           additionalProperties:
             type: integer
           title: Nodes By Fact Type
+          type: object
         links_by_link_type:
           additionalProperties:
             type: integer
           title: Links By Link Type
+          type: object
         links_by_fact_type:
           additionalProperties:
             type: integer
           title: Links By Fact Type
+          type: object
         links_breakdown:
           additionalProperties:
             additionalProperties:
               type: integer
+            type: object
           title: Links Breakdown
+          type: object
         pending_operations:
           title: Pending Operations
           type: integer
@@ -3825,8 +3971,11 @@ components:
           description: "Async operations grouped by status (pending, processing, completed,\
             \ failed, cancelled)."
           title: Operations By Status
+          type: object
         last_consolidated_at:
+          description: When consolidation last ran (ISO format)
           nullable: true
+          title: Last Consolidated At
           type: string
         pending_consolidation:
           default: 0
@@ -3856,6 +4005,7 @@ components:
       - total_links
       - total_nodes
       title: BankStatsResponse
+      type: object
     BankTemplateConfig:
       description: |-
         Bank configuration fields within a template manifest.
@@ -3864,110 +4014,176 @@ components:
         (API keys, base URLs) are intentionally excluded for security.
       properties:
         reflect_mission:
+          description: Mission/context for Reflect operations
           nullable: true
+          title: Reflect Mission
           type: string
         retain_mission:
+          description: Steers what gets extracted during retain
           nullable: true
+          title: Retain Mission
           type: string
         retain_extraction_mode:
+          description: "Fact extraction mode: 'concise' (default), 'verbose', or 'custom'"
           nullable: true
+          title: Retain Extraction Mode
           type: string
         retain_custom_instructions:
+          description: Custom extraction prompt (when mode='custom')
           nullable: true
+          title: Retain Custom Instructions
           type: string
         retain_chunk_size:
+          description: Max token size for each content chunk
           nullable: true
+          title: Retain Chunk Size
           type: integer
         enable_observations:
+          description: Toggle observation consolidation
           nullable: true
+          title: Enable Observations
           type: boolean
         observations_mission:
+          description: Controls what gets synthesised
           nullable: true
+          title: Observations Mission
           type: string
         disposition_skepticism:
+          description: Skepticism trait (1-5)
           maximum: 5.0
           minimum: 1.0
           nullable: true
+          title: Disposition Skepticism
           type: integer
         disposition_literalism:
+          description: Literalism trait (1-5)
           maximum: 5.0
           minimum: 1.0
           nullable: true
+          title: Disposition Literalism
           type: integer
         disposition_empathy:
+          description: Empathy trait (1-5)
           maximum: 5.0
           minimum: 1.0
           nullable: true
+          title: Disposition Empathy
           type: integer
         entity_labels:
+          description: Controlled vocabulary for entity labels
           items:
-            additionalProperties: {}
+            additionalProperties: true
+            type: object
           nullable: true
+          title: Entity Labels
           type: array
         entities_allow_free_form:
+          description: Allow entities outside the label vocabulary
           nullable: true
+          title: Entities Allow Free Form
           type: boolean
         retain_default_strategy:
+          description: Name of the default retain strategy (key into retain_strategies
+            map)
           nullable: true
+          title: Retain Default Strategy
           type: string
         retain_strategies:
-          additionalProperties: {}
+          additionalProperties: true
+          description: Map of retain strategy name to per-strategy config dict
           nullable: true
+          title: Retain Strategies
+          type: object
         retain_chunk_batch_size:
+          description: Max chunks per streaming batch (0 disables batching)
           nullable: true
+          title: Retain Chunk Batch Size
           type: integer
         mcp_enabled_tools:
+          description: MCP tool allowlist for this bank (None = all tools)
           items:
             type: string
           nullable: true
+          title: Mcp Enabled Tools
           type: array
         consolidation_llm_batch_size:
+          description: LLM batch size for observation consolidation
           nullable: true
+          title: Consolidation Llm Batch Size
           type: integer
         consolidation_source_facts_max_tokens:
+          description: Max tokens of source facts per consolidation batch
           nullable: true
+          title: Consolidation Source Facts Max Tokens
           type: integer
         consolidation_source_facts_max_tokens_per_observation:
+          description: Max tokens of source facts per observation
           nullable: true
+          title: Consolidation Source Facts Max Tokens Per Observation
           type: integer
         max_observations_per_scope:
+          description: Max observations to retain per consolidation scope
           nullable: true
+          title: Max Observations Per Scope
           type: integer
         reflect_source_facts_max_tokens:
+          description: Max tokens of source facts per reflect call
           nullable: true
+          title: Reflect Source Facts Max Tokens
           type: integer
         llm_gemini_safety_settings:
+          description: Per-bank Gemini/VertexAI safety filter settings
           items: {}
           nullable: true
+          title: Llm Gemini Safety Settings
           type: array
         recall_budget_function:
+          description: "Recall budget mapping function: 'fixed' or 'adaptive'"
           nullable: true
+          title: Recall Budget Function
           type: string
         recall_budget_fixed_low:
+          description: Fixed thinking_budget for budget=low (function='fixed')
           nullable: true
+          title: Recall Budget Fixed Low
           type: integer
         recall_budget_fixed_mid:
+          description: Fixed thinking_budget for budget=mid (function='fixed')
           nullable: true
+          title: Recall Budget Fixed Mid
           type: integer
         recall_budget_fixed_high:
+          description: Fixed thinking_budget for budget=high (function='fixed')
           nullable: true
+          title: Recall Budget Fixed High
           type: integer
         recall_budget_adaptive_low:
+          description: Ratio of max_tokens for budget=low (function='adaptive')
           nullable: true
+          title: Recall Budget Adaptive Low
           type: number
         recall_budget_adaptive_mid:
+          description: Ratio of max_tokens for budget=mid (function='adaptive')
           nullable: true
+          title: Recall Budget Adaptive Mid
           type: number
         recall_budget_adaptive_high:
+          description: Ratio of max_tokens for budget=high (function='adaptive')
           nullable: true
+          title: Recall Budget Adaptive High
           type: number
         recall_budget_min:
+          description: Floor for the adaptive function (after clamping)
           nullable: true
+          title: Recall Budget Min
           type: integer
         recall_budget_max:
+          description: Ceiling for the adaptive function (after clamping)
           nullable: true
+          title: Recall Budget Max
           type: integer
       title: BankTemplateConfig
+      type: object
     BankTemplateDirective:
       description: |-
         A directive definition within a bank template manifest.
@@ -3999,32 +4215,15 @@ components:
           description: Tags for filtering
           items:
             type: string
+          title: Tags
           type: array
       required:
       - content
       - name
       title: BankTemplateDirective
+      type: object
     BankTemplateImportResponse:
       description: Response model for the bank template import endpoint.
-      example:
-        operation_ids:
-        - operation_ids
-        - operation_ids
-        directives_created:
-        - directives_created
-        - directives_created
-        bank_id: bank_id
-        mental_models_updated:
-        - mental_models_updated
-        - mental_models_updated
-        directives_updated:
-        - directives_updated
-        - directives_updated
-        config_applied: true
-        mental_models_created:
-        - mental_models_created
-        - mental_models_created
-        dry_run: false
       properties:
         bank_id:
           description: Bank that was imported into
@@ -4039,30 +4238,35 @@ components:
           description: IDs of newly created mental models
           items:
             type: string
+          title: Mental Models Created
           type: array
         mental_models_updated:
           default: []
           description: IDs of updated mental models
           items:
             type: string
+          title: Mental Models Updated
           type: array
         directives_created:
           default: []
           description: Names of newly created directives
           items:
             type: string
+          title: Directives Created
           type: array
         directives_updated:
           default: []
           description: Names of updated directives
           items:
             type: string
+          title: Directives Updated
           type: array
         operation_ids:
           default: []
           description: Operation IDs for mental model content generation (async)
           items:
             type: string
+          title: Operation Ids
           type: array
         dry_run:
           default: false
@@ -4073,6 +4277,7 @@ components:
       - bank_id
       - config_applied
       title: BankTemplateImportResponse
+      type: object
     BankTemplateManifest:
       description: |-
         A bank template manifest for import/export.
@@ -4104,18 +4309,25 @@ components:
         bank:
           $ref: '#/components/schemas/BankTemplateConfig'
         mental_models:
+          description: Mental models to create or update (matched by id). Omit to
+            leave unchanged.
           items:
             $ref: '#/components/schemas/BankTemplateMentalModel'
           nullable: true
+          title: Mental Models
           type: array
         directives:
+          description: Directives to create or update (matched by name). Omit to leave
+            unchanged.
           items:
             $ref: '#/components/schemas/BankTemplateDirective'
           nullable: true
+          title: Directives
           type: array
       required:
       - version
       title: BankTemplateManifest
+      type: object
     BankTemplateMentalModel:
       description: A mental model definition within a bank template manifest.
       properties:
@@ -4137,6 +4349,7 @@ components:
           description: Tags for scoped visibility
           items:
             type: string
+          title: Tags
           type: array
         max_tokens:
           default: 2048
@@ -4152,6 +4365,7 @@ components:
       - name
       - source_query
       title: BankTemplateMentalModel
+      type: object
     Body_file_retain:
       properties:
         files:
@@ -4159,6 +4373,7 @@ components:
           items:
             format: binary
             type: string
+          title: Files
           type: array
         request:
           description: JSON string with FileRetainRequest model
@@ -4168,6 +4383,7 @@ components:
       - files
       - request
       title: Body_file_retain
+      type: object
     Budget:
       description: Budget levels for recall/reflect operations.
       enum:
@@ -4197,6 +4413,7 @@ components:
       - operation_id
       - success
       title: CancelOperationResponse
+      type: object
     ChildOperationStatus:
       description: Status of a child operation (for batch operations).
       properties:
@@ -4208,17 +4425,21 @@ components:
           type: string
         sub_batch_index:
           nullable: true
+          title: Sub Batch Index
           type: integer
         items_count:
           nullable: true
+          title: Items Count
           type: integer
         error_message:
           nullable: true
+          title: Error Message
           type: string
       required:
       - operation_id
       - status
       title: ChildOperationStatus
+      type: object
     ChunkData:
       description: Chunk data for a single chunk.
       properties:
@@ -4241,6 +4462,7 @@ components:
       - id
       - text
       title: ChunkData
+      type: object
     ChunkIncludeOptions:
       description: Options for including chunks in recall results.
       properties:
@@ -4250,6 +4472,7 @@ components:
           title: Max Tokens
           type: integer
       title: ChunkIncludeOptions
+      type: object
     ChunkResponse:
       description: Response model for get chunk endpoint.
       example:
@@ -4286,6 +4509,7 @@ components:
       - created_at
       - document_id
       title: ChunkResponse
+      type: object
     ClearMemoryObservationsResponse:
       description: Response model for clearing observations for a specific memory.
       example:
@@ -4297,11 +4521,9 @@ components:
       required:
       - deleted_count
       title: ClearMemoryObservationsResponse
+      type: object
     ConsolidationResponse:
       description: Response model for consolidation trigger endpoint.
-      example:
-        deduplicated: false
-        operation_id: operation_id
       properties:
         operation_id:
           description: ID of the async consolidation operation
@@ -4315,6 +4537,7 @@ components:
       required:
       - operation_id
       title: ConsolidationResponse
+      type: object
     CreateBankRequest:
       description: Request model for creating/updating a bank.
       example:
@@ -4324,63 +4547,86 @@ components:
           Ignore meeting logistics.
       properties:
         name:
+          description: "Deprecated: display label only, not advertised"
           nullable: true
+          title: Name
           type: string
         disposition:
           $ref: '#/components/schemas/DispositionTraits'
         disposition_skepticism:
+          description: "Deprecated: use update_bank_config instead"
           maximum: 5.0
           minimum: 1.0
           nullable: true
+          title: Disposition Skepticism
           type: integer
         disposition_literalism:
+          description: "Deprecated: use update_bank_config instead"
           maximum: 5.0
           minimum: 1.0
           nullable: true
+          title: Disposition Literalism
           type: integer
         disposition_empathy:
+          description: "Deprecated: use update_bank_config instead"
           maximum: 5.0
           minimum: 1.0
           nullable: true
+          title: Disposition Empathy
           type: integer
         mission:
+          description: "Deprecated: use update_bank_config with reflect_mission instead"
           nullable: true
+          title: Mission
           type: string
         background:
+          description: "Deprecated: use update_bank_config with reflect_mission instead"
           nullable: true
+          title: Background
           type: string
         reflect_mission:
+          description: Mission/context for Reflect operations. Guides how Reflect
+            interprets and uses memories.
           nullable: true
+          title: Reflect Mission
           type: string
         retain_mission:
+          description: Steers what gets extracted during retain(). Injected alongside
+            built-in extraction rules.
           nullable: true
+          title: Retain Mission
           type: string
         retain_extraction_mode:
+          description: "Fact extraction mode: 'concise' (default), 'verbose', or 'custom'."
           nullable: true
+          title: Retain Extraction Mode
           type: string
         retain_custom_instructions:
+          description: Custom extraction prompt. Only active when retain_extraction_mode
+            is 'custom'.
           nullable: true
+          title: Retain Custom Instructions
           type: string
         retain_chunk_size:
+          description: Maximum token size for each content chunk during retain.
           nullable: true
+          title: Retain Chunk Size
           type: integer
         enable_observations:
+          description: Toggle automatic observation consolidation after retain().
           nullable: true
+          title: Enable Observations
           type: boolean
         observations_mission:
+          description: Controls what gets synthesised into observations. Replaces
+            built-in consolidation rules entirely.
           nullable: true
+          title: Observations Mission
           type: string
       title: CreateBankRequest
+      type: object
     CreateDirectiveRequest:
       description: Request model for creating a directive.
-      example:
-        is_active: true
-        name: name
-        priority: 0
-        content: content
-        tags:
-        - tags
-        - tags
       properties:
         name:
           description: Human-readable name for the directive
@@ -4405,11 +4651,13 @@ components:
           description: Tags for filtering
           items:
             type: string
+          title: Tags
           type: array
       required:
       - content
       - name
       title: CreateDirectiveRequest
+      type: object
     CreateMentalModelRequest:
       description: Request model for creating a mental model.
       example:
@@ -4423,7 +4671,10 @@ components:
           refresh_after_consolidation: false
       properties:
         id:
+          description: Optional custom ID for the mental model (alphanumeric lowercase
+            with hyphens)
           nullable: true
+          title: Id
           type: string
         name:
           description: Human-readable name for the mental model
@@ -4438,6 +4689,7 @@ components:
           description: Tags for scoped visibility
           items:
             type: string
+          title: Tags
           type: array
         max_tokens:
           default: 2048
@@ -4452,14 +4704,14 @@ components:
       - name
       - source_query
       title: CreateMentalModelRequest
+      type: object
     CreateMentalModelResponse:
       description: Response model for mental model creation.
-      example:
-        operation_id: operation_id
-        mental_model_id: mental_model_id
       properties:
         mental_model_id:
+          description: ID of the created mental model
           nullable: true
+          title: Mental Model Id
           type: string
         operation_id:
           description: Operation ID to track refresh progress
@@ -4468,29 +4720,18 @@ components:
       required:
       - operation_id
       title: CreateMentalModelResponse
+      type: object
     CreateWebhookRequest:
       description: Request model for registering a webhook.
-      example:
-        event_types:
-        - event_types
-        - event_types
-        secret: secret
-        http_config:
-          headers:
-            key: headers
-          method: POST
-          timeout_seconds: 0
-          params:
-            key: params
-        url: url
-        enabled: true
       properties:
         url:
           description: HTTP(S) endpoint URL to deliver events to
           title: Url
           type: string
         secret:
+          description: HMAC-SHA256 signing secret (optional)
           nullable: true
+          title: Secret
           type: string
         event_types:
           default:
@@ -4498,6 +4739,7 @@ components:
           description: "List of event types to deliver. Currently supported: 'consolidation.completed'"
           items:
             type: string
+          title: Event Types
           type: array
         enabled:
           default: true
@@ -4509,6 +4751,7 @@ components:
       required:
       - url
       title: CreateWebhookRequest
+      type: object
     DeleteDocumentResponse:
       description: Response model for delete document endpoint.
       example:
@@ -4535,6 +4778,7 @@ components:
       - message
       - success
       title: DeleteDocumentResponse
+      type: object
     DeleteResponse:
       description: Response model for delete operations.
       example:
@@ -4547,61 +4791,30 @@ components:
           type: boolean
         message:
           nullable: true
+          title: Message
           type: string
         deleted_count:
           nullable: true
+          title: Deleted Count
           type: integer
       required:
       - success
       title: DeleteResponse
+      type: object
     DirectiveListResponse:
       description: Response model for listing directives.
-      example:
-        items:
-        - is_active: true
-          updated_at: updated_at
-          bank_id: bank_id
-          name: name
-          created_at: created_at
-          id: id
-          priority: 0
-          content: content
-          tags:
-          - tags
-          - tags
-        - is_active: true
-          updated_at: updated_at
-          bank_id: bank_id
-          name: name
-          created_at: created_at
-          id: id
-          priority: 0
-          content: content
-          tags:
-          - tags
-          - tags
       properties:
         items:
           items:
             $ref: '#/components/schemas/DirectiveResponse'
+          title: Items
           type: array
       required:
       - items
       title: DirectiveListResponse
+      type: object
     DirectiveResponse:
       description: Response model for a directive.
-      example:
-        is_active: true
-        updated_at: updated_at
-        bank_id: bank_id
-        name: name
-        created_at: created_at
-        id: id
-        priority: 0
-        content: content
-        tags:
-        - tags
-        - tags
       properties:
         id:
           title: Id
@@ -4627,12 +4840,15 @@ components:
           default: []
           items:
             type: string
+          title: Tags
           type: array
         created_at:
           nullable: true
+          title: Created At
           type: string
         updated_at:
           nullable: true
+          title: Updated At
           type: string
       required:
       - bank_id
@@ -4640,6 +4856,7 @@ components:
       - id
       - name
       title: DirectiveResponse
+      type: object
     DispositionTraits:
       description: Disposition traits that influence how memories are formed and interpreted.
       example:
@@ -4670,6 +4887,7 @@ components:
       - literalism
       - skepticism
       title: DispositionTraits
+      type: object
     DocumentResponse:
       description: Response model for get document endpoint.
       example:
@@ -4701,6 +4919,7 @@ components:
           type: string
         content_hash:
           nullable: true
+          title: Content Hash
           type: string
         created_at:
           title: Created At
@@ -4714,19 +4933,29 @@ components:
         nodes_by_fact_type:
           additionalProperties:
             type: integer
+          description: "Memory count per fact type (world, experience, observation)"
           nullable: true
+          title: Nodes By Fact Type
+          type: object
         tags:
           default: []
           description: Tags associated with this document
           items:
             type: string
+          title: Tags
           type: array
         document_metadata:
-          additionalProperties: {}
+          additionalProperties: true
+          description: Document metadata
           nullable: true
+          title: Document Metadata
+          type: object
         retain_params:
-          additionalProperties: {}
+          additionalProperties: true
+          description: Parameters used during retain
           nullable: true
+          title: Retain Params
+          type: object
       required:
       - bank_id
       - content_hash
@@ -4736,6 +4965,7 @@ components:
       - original_text
       - updated_at
       title: DocumentResponse
+      type: object
     EntityDetailResponse:
       description: Response model for entity detail endpoint.
       example:
@@ -4759,16 +4989,21 @@ components:
           type: integer
         first_seen:
           nullable: true
+          title: First Seen
           type: string
         last_seen:
           nullable: true
+          title: Last Seen
           type: string
         metadata:
-          additionalProperties: {}
+          additionalProperties: true
           nullable: true
+          title: Metadata
+          type: object
         observations:
           items:
             $ref: '#/components/schemas/EntityObservationResponse'
+          title: Observations
           type: array
       required:
       - canonical_name
@@ -4776,6 +5011,7 @@ components:
       - mention_count
       - observations
       title: EntityDetailResponse
+      type: object
     EntityGraphResponse:
       description: Response model for entity co-occurrence graph endpoint.
       example:
@@ -4806,11 +5042,15 @@ components:
       properties:
         nodes:
           items:
-            additionalProperties: {}
+            additionalProperties: true
+            type: object
+          title: Nodes
           type: array
         edges:
           items:
-            additionalProperties: {}
+            additionalProperties: true
+            type: object
+          title: Edges
           type: array
         total_entities:
           title: Total Entities
@@ -4828,6 +5068,7 @@ components:
       - total_edges
       - total_entities
       title: EntityGraphResponse
+      type: object
     EntityIncludeOptions:
       description: Options for including entity observations in recall results.
       properties:
@@ -4837,6 +5078,7 @@ components:
           title: Max Tokens
           type: integer
       title: EntityIncludeOptions
+      type: object
     EntityInput:
       description: Entity to associate with retained content.
       properties:
@@ -4845,11 +5087,14 @@ components:
           title: Text
           type: string
         type:
+          description: "Optional entity type (e.g., 'PERSON', 'ORG', 'CONCEPT')"
           nullable: true
+          title: Type
           type: string
       required:
       - text
       title: EntityInput
+      type: object
     EntityListItem:
       description: Entity list item with summary.
       example:
@@ -4870,18 +5115,23 @@ components:
           type: integer
         first_seen:
           nullable: true
+          title: First Seen
           type: string
         last_seen:
           nullable: true
+          title: Last Seen
           type: string
         metadata:
-          additionalProperties: {}
+          additionalProperties: true
           nullable: true
+          title: Metadata
+          type: object
       required:
       - canonical_name
       - id
       - mention_count
       title: EntityListItem
+      type: object
     EntityListResponse:
       description: Response model for entity list endpoint.
       example:
@@ -4898,6 +5148,7 @@ components:
         items:
           items:
             $ref: '#/components/schemas/EntityListItem'
+          title: Items
           type: array
         total:
           title: Total
@@ -4914,6 +5165,7 @@ components:
       - offset
       - total
       title: EntityListResponse
+      type: object
     EntityObservationResponse:
       description: An observation about an entity.
       properties:
@@ -4922,10 +5174,12 @@ components:
           type: string
         mentioned_at:
           nullable: true
+          title: Mentioned At
           type: string
       required:
       - text
       title: EntityObservationResponse
+      type: object
     EntityStateResponse:
       description: Current mental model of an entity.
       properties:
@@ -4938,12 +5192,14 @@ components:
         observations:
           items:
             $ref: '#/components/schemas/EntityObservationResponse'
+          title: Observations
           type: array
       required:
       - canonical_name
       - entity_id
       - observations
       title: EntityStateResponse
+      type: object
     FactsIncludeOptions:
       description: Options for including facts (based_on) in reflect results.
       properties: {}
@@ -4972,6 +5228,24 @@ components:
           description: Whether file upload/conversion API is enabled
           title: File Upload Api
           type: boolean
+        multimodal_image:
+          default: false
+          description: Whether the opt-in multimodal image description path is available
+            in this deployment
+          title: Multimodal Image
+          type: boolean
+        multimodal_video:
+          default: false
+          description: Whether the opt-in multimodal video description path and local
+            decoder are available
+          title: Multimodal Video
+          type: boolean
+        multimodal_live_verified:
+          default: false
+          description: Whether this exact multimodal deployment passed the operator-controlled
+            live-provider gate
+          title: Multimodal Live Verified
+          type: boolean
       required:
       - bank_config_api
       - file_upload_api
@@ -4979,6 +5253,7 @@ components:
       - observations
       - worker
       title: FeaturesInfo
+      type: object
     FileRetainResponse:
       description: Response model for file upload endpoint.
       example:
@@ -4992,10 +5267,12 @@ components:
             \ GET /v1/default/banks/{bank_id}/operations to list operations."
           items:
             type: string
+          title: Operation Ids
           type: array
       required:
       - operation_ids
       title: FileRetainResponse
+      type: object
     GraphDataResponse:
       description: Response model for graph data endpoint.
       example:
@@ -5022,15 +5299,21 @@ components:
       properties:
         nodes:
           items:
-            additionalProperties: {}
+            additionalProperties: true
+            type: object
+          title: Nodes
           type: array
         edges:
           items:
-            additionalProperties: {}
+            additionalProperties: true
+            type: object
+          title: Edges
           type: array
         table_rows:
           items:
-            additionalProperties: {}
+            additionalProperties: true
+            type: object
+          title: Table Rows
           type: array
         total_units:
           title: Total Units
@@ -5045,31 +5328,16 @@ components:
       - table_rows
       - total_units
       title: GraphDataResponse
+      type: object
     HTTPValidationError:
-      example:
-        detail:
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          input: ""
-          ctx: "{}"
-          type: type
-          url: url
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          input: ""
-          ctx: "{}"
-          type: type
-          url: url
       properties:
         detail:
           items:
             $ref: '#/components/schemas/ValidationError'
+          title: Detail
           type: array
       title: HTTPValidationError
+      type: object
     IncludeOptions:
       description: Options for including additional data in recall results.
       properties:
@@ -5080,29 +5348,14 @@ components:
         source_facts:
           $ref: '#/components/schemas/SourceFactsIncludeOptions'
       title: IncludeOptions
+      type: object
     ListChunksResponse:
       description: Response model for listing chunks of a document.
-      example:
-        total: 0
-        offset: 1
-        limit: 6
-        items:
-        - bank_id: user123
-          chunk_id: user123_session_1_0
-          chunk_index: 0
-          chunk_text: This is the first chunk of the document...
-          created_at: 2024-01-15T10:30:00Z
-          document_id: session_1
-        - bank_id: user123
-          chunk_id: user123_session_1_0
-          chunk_index: 0
-          chunk_text: This is the first chunk of the document...
-          created_at: 2024-01-15T10:30:00Z
-          document_id: session_1
       properties:
         items:
           items:
             $ref: '#/components/schemas/ChunkResponse'
+          title: Items
           type: array
         total:
           title: Total
@@ -5119,6 +5372,7 @@ components:
       - offset
       - total
       title: ListChunksResponse
+      type: object
     ListDocumentsResponse:
       description: Response model for list documents endpoint.
       example:
@@ -5139,7 +5393,9 @@ components:
       properties:
         items:
           items:
-            additionalProperties: {}
+            additionalProperties: true
+            type: object
+          title: Items
           type: array
         total:
           title: Total
@@ -5156,6 +5412,7 @@ components:
       - offset
       - total
       title: ListDocumentsResponse
+      type: object
     ListMemoryUnitsResponse:
       description: Response model for list memory units endpoint.
       example:
@@ -5172,7 +5429,9 @@ components:
       properties:
         items:
           items:
-            additionalProperties: {}
+            additionalProperties: true
+            type: object
+          title: Items
           type: array
         total:
           title: Total
@@ -5189,6 +5448,7 @@ components:
       - offset
       - total
       title: ListMemoryUnitsResponse
+      type: object
     ListTagsResponse:
       description: Response model for list tags endpoint.
       example:
@@ -5206,6 +5466,7 @@ components:
         items:
           items:
             $ref: '#/components/schemas/TagItem'
+          title: Items
           type: array
         total:
           title: Total
@@ -5222,22 +5483,9 @@ components:
       - offset
       - total
       title: ListTagsResponse
+      type: object
     MemoriesTimeseriesResponse:
       description: Time-series of memory ingestion bucketed by time and fact type.
-      example:
-        time_field: created_at
-        period: period
-        trunc: trunc
-        bank_id: bank_id
-        buckets:
-        - world: 0
-          observation: 1
-          time: time
-          experience: 6
-        - world: 0
-          observation: 1
-          time: time
-          experience: 6
       properties:
         bank_id:
           title: Bank Id
@@ -5262,12 +5510,14 @@ components:
             \ period."
           items:
             $ref: '#/components/schemas/MemoryTimeseriesBucket'
+          title: Buckets
           type: array
       required:
       - bank_id
       - period
       - trunc
       title: MemoriesTimeseriesResponse
+      type: object
     MemoryItem:
       description: Single memory item for retain.
       example:
@@ -5293,45 +5543,59 @@ components:
           $ref: '#/components/schemas/Timestamp'
         context:
           nullable: true
+          title: Context
           type: string
         metadata:
           additionalProperties:
             type: string
           nullable: true
+          title: Metadata
+          type: object
         document_id:
+          description: Optional document ID for this memory item.
           nullable: true
+          title: Document Id
           type: string
         entities:
+          description: Optional entities to combine with auto-extracted entities.
           items:
             $ref: '#/components/schemas/EntityInput'
           nullable: true
+          title: Entities
           type: array
         tags:
+          description: Optional tags for visibility scoping. Memories with tags can
+            be filtered during recall.
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
         observation_scopes:
           $ref: '#/components/schemas/ObservationScopes'
         strategy:
+          description: Named retain strategy for this item. Overrides the bank's default
+            strategy for this item only. Strategies are defined in the bank config
+            under 'retain_strategies'.
           nullable: true
+          title: Strategy
           type: string
         update_mode:
+          description: How to handle an existing document with the same document_id.
+            'replace' (default) deletes old data and reprocesses from scratch. 'append'
+            concatenates new content to the existing document text and reprocesses.
           enum:
           - replace
           - append
           nullable: true
+          title: Update Mode
           type: string
       required:
       - content
       title: MemoryItem
+      type: object
     MemoryTimeseriesBucket:
       description: One bucket in the memory ingestion time-series.
-      example:
-        world: 0
-        observation: 1
-        time: time
-        experience: 6
       properties:
         time:
           description: Bucket start timestamp in ISO-8601 (UTC).
@@ -5355,132 +5619,21 @@ components:
       required:
       - time
       title: MemoryTimeseriesBucket
+      type: object
     MentalModelListResponse:
       description: Response model for listing mental models.
-      example:
-        items:
-        - source_query: source_query
-          max_tokens: 0
-          bank_id: bank_id
-          reflect_response:
-            key: ""
-          name: name
-          created_at: created_at
-          id: id
-          trigger:
-            mode: full
-            refresh_after_consolidation: false
-            recall_chunks_max_tokens: 1
-            tag_groups:
-            - match: any_strict
-              tags:
-              - tags
-              - tags
-            - match: any_strict
-              tags:
-              - tags
-              - tags
-            fact_types:
-            - world
-            - world
-            exclude_mental_model_ids:
-            - exclude_mental_model_ids
-            - exclude_mental_model_ids
-            include_chunks: true
-            tags_match: any
-            exclude_mental_models: false
-            recall_max_tokens: 6
-          last_refreshed_at: last_refreshed_at
-          is_stale: true
-          content: content
-          tags:
-          - tags
-          - tags
-        - source_query: source_query
-          max_tokens: 0
-          bank_id: bank_id
-          reflect_response:
-            key: ""
-          name: name
-          created_at: created_at
-          id: id
-          trigger:
-            mode: full
-            refresh_after_consolidation: false
-            recall_chunks_max_tokens: 1
-            tag_groups:
-            - match: any_strict
-              tags:
-              - tags
-              - tags
-            - match: any_strict
-              tags:
-              - tags
-              - tags
-            fact_types:
-            - world
-            - world
-            exclude_mental_model_ids:
-            - exclude_mental_model_ids
-            - exclude_mental_model_ids
-            include_chunks: true
-            tags_match: any
-            exclude_mental_models: false
-            recall_max_tokens: 6
-          last_refreshed_at: last_refreshed_at
-          is_stale: true
-          content: content
-          tags:
-          - tags
-          - tags
       properties:
         items:
           items:
             $ref: '#/components/schemas/MentalModelResponse'
+          title: Items
           type: array
       required:
       - items
       title: MentalModelListResponse
+      type: object
     MentalModelResponse:
       description: Response model for a mental model (stored reflect response).
-      example:
-        source_query: source_query
-        max_tokens: 0
-        bank_id: bank_id
-        reflect_response:
-          key: ""
-        name: name
-        created_at: created_at
-        id: id
-        trigger:
-          mode: full
-          refresh_after_consolidation: false
-          recall_chunks_max_tokens: 1
-          tag_groups:
-          - match: any_strict
-            tags:
-            - tags
-            - tags
-          - match: any_strict
-            tags:
-            - tags
-            - tags
-          fact_types:
-          - world
-          - world
-          exclude_mental_model_ids:
-          - exclude_mental_model_ids
-          - exclude_mental_model_ids
-          include_chunks: true
-          tags_match: any
-          exclude_mental_models: false
-          recall_max_tokens: 6
-        last_refreshed_at: last_refreshed_at
-        is_stale: true
-        content: content
-        tags:
-        - tags
-        - tags
       properties:
         id:
           title: Id
@@ -5493,37 +5646,54 @@ components:
           type: string
         source_query:
           nullable: true
+          title: Source Query
           type: string
         content:
+          description: The mental model content as well-formatted markdown (auto-generated
+            from reflect endpoint)
           nullable: true
+          title: Content
           type: string
         tags:
           default: []
           items:
             type: string
+          title: Tags
           type: array
         max_tokens:
           nullable: true
+          title: Max Tokens
           type: integer
         trigger:
           $ref: '#/components/schemas/MentalModelTrigger-Output'
         last_refreshed_at:
           nullable: true
+          title: Last Refreshed At
           type: string
         created_at:
           nullable: true
+          title: Created At
           type: string
         reflect_response:
-          additionalProperties: {}
+          additionalProperties: true
+          description: Full reflect API response payload including based_on facts
+            and observations
           nullable: true
+          title: Reflect Response
+          type: object
         is_stale:
+          description: "True when new memories matching this mental model's tag/fact_type\
+            \ scope have been ingested since last_refreshed_at, or consolidation has\
+            \ pending items. Only populated when detail=full."
           nullable: true
+          title: Is Stale
           type: boolean
       required:
       - bank_id
       - id
       - name
       title: MentalModelResponse
+      type: object
     MentalModelTrigger-Input:
       description: Trigger settings for a mental model.
       properties:
@@ -5547,6 +5717,8 @@ components:
           title: Refresh After Consolidation
           type: boolean
         fact_types:
+          description: "Filter which fact types are retrieved during reflect. None\
+            \ means all types (world, experience, observation)."
           items:
             enum:
             - world
@@ -5554,6 +5726,7 @@ components:
             - observation
             type: string
           nullable: true
+          title: Fact Types
           type: array
         exclude_mental_models:
           default: false
@@ -5562,58 +5735,57 @@ components:
           title: Exclude Mental Models
           type: boolean
         exclude_mental_model_ids:
+          description: Exclude specific mental models by ID from the reflect loop.
           items:
             type: string
           nullable: true
+          title: Exclude Mental Model Ids
           type: array
         tags_match:
+          description: "Override how the model's tags filter memories during refresh.\
+            \ If not set, defaults to 'all_strict' when the model has tags (security\
+            \ isolation) or 'any' when the model has no tags. Set to 'any' to include\
+            \ untagged memories alongside tagged ones during refresh."
           enum:
           - any
           - all
           - any_strict
           - all_strict
           nullable: true
+          title: Tags Match
           type: string
         tag_groups:
+          description: "Compound boolean tag expressions to use during refresh instead\
+            \ of the model's own tags. When set, these tag groups are passed to reflect\
+            \ and the model's flat tags are NOT used for filtering. Supports nested\
+            \ and/or/not expressions for complex tag-based scoping."
           items:
-            $ref: '#/components/schemas/MentalModelTrigger_Input_tag_groups_inner'
+            $ref: '#/components/schemas/Tag_Groups_inner'
           nullable: true
+          title: Tag Groups
           type: array
         include_chunks:
+          description: Override whether the internal recall used during refresh returns
+            raw chunk text. None means use the bank/global config default (recall_include_chunks).
           nullable: true
+          title: Include Chunks
           type: boolean
         recall_max_tokens:
+          description: Override the token budget for facts returned by the internal
+            recall during refresh. None means use the bank/global config default (recall_max_tokens).
           nullable: true
+          title: Recall Max Tokens
           type: integer
         recall_chunks_max_tokens:
+          description: Override the token budget for raw chunks returned by the internal
+            recall during refresh. None means use the bank/global config default (recall_chunks_max_tokens).
           nullable: true
+          title: Recall Chunks Max Tokens
           type: integer
       title: MentalModelTrigger
+      type: object
     MentalModelTrigger-Output:
       description: Trigger settings for a mental model.
-      example:
-        mode: full
-        refresh_after_consolidation: false
-        recall_chunks_max_tokens: 1
-        tag_groups:
-        - match: any_strict
-          tags:
-          - tags
-          - tags
-        - match: any_strict
-          tags:
-          - tags
-          - tags
-        fact_types:
-        - world
-        - world
-        exclude_mental_model_ids:
-        - exclude_mental_model_ids
-        - exclude_mental_model_ids
-        include_chunks: true
-        tags_match: any
-        exclude_mental_models: false
-        recall_max_tokens: 6
       properties:
         mode:
           default: full
@@ -5635,6 +5807,8 @@ components:
           title: Refresh After Consolidation
           type: boolean
         fact_types:
+          description: "Filter which fact types are retrieved during reflect. None\
+            \ means all types (world, experience, observation)."
           items:
             enum:
             - world
@@ -5642,6 +5816,7 @@ components:
             - observation
             type: string
           nullable: true
+          title: Fact Types
           type: array
         exclude_mental_models:
           default: false
@@ -5650,33 +5825,176 @@ components:
           title: Exclude Mental Models
           type: boolean
         exclude_mental_model_ids:
+          description: Exclude specific mental models by ID from the reflect loop.
           items:
             type: string
           nullable: true
+          title: Exclude Mental Model Ids
           type: array
         tags_match:
+          description: "Override how the model's tags filter memories during refresh.\
+            \ If not set, defaults to 'all_strict' when the model has tags (security\
+            \ isolation) or 'any' when the model has no tags. Set to 'any' to include\
+            \ untagged memories alongside tagged ones during refresh."
           enum:
           - any
           - all
           - any_strict
           - all_strict
           nullable: true
+          title: Tags Match
           type: string
         tag_groups:
+          description: "Compound boolean tag expressions to use during refresh instead\
+            \ of the model's own tags. When set, these tag groups are passed to reflect\
+            \ and the model's flat tags are NOT used for filtering. Supports nested\
+            \ and/or/not expressions for complex tag-based scoping."
           items:
-            $ref: '#/components/schemas/MentalModelTrigger_Output_tag_groups_inner'
+            $ref: '#/components/schemas/Tag_Groups_inner_1'
           nullable: true
+          title: Tag Groups
           type: array
         include_chunks:
+          description: Override whether the internal recall used during refresh returns
+            raw chunk text. None means use the bank/global config default (recall_include_chunks).
           nullable: true
+          title: Include Chunks
           type: boolean
         recall_max_tokens:
+          description: Override the token budget for facts returned by the internal
+            recall during refresh. None means use the bank/global config default (recall_max_tokens).
           nullable: true
+          title: Recall Max Tokens
           type: integer
         recall_chunks_max_tokens:
+          description: Override the token budget for raw chunks returned by the internal
+            recall during refresh. None means use the bank/global config default (recall_chunks_max_tokens).
           nullable: true
+          title: Recall Chunks Max Tokens
           type: integer
       title: MentalModelTrigger
+      type: object
+    MultimodalOperationMetadata:
+      additionalProperties: false
+      description: "Stable, payload-free status for a multimodal file-retain operation."
+      properties:
+        asset_id:
+          maxLength: 4096
+          minLength: 1
+          nullable: true
+          title: Asset Id
+          type: string
+        asset_sha256:
+          nullable: true
+          pattern: "^[0-9a-f]{64}$"
+          title: Asset Sha256
+          type: string
+        media_kind:
+          enum:
+          - image
+          - video
+          nullable: true
+          title: Media Kind
+          type: string
+        pipeline_version:
+          maxLength: 256
+          minLength: 1
+          nullable: true
+          title: Pipeline Version
+          type: string
+        descriptor_model:
+          maxLength: 256
+          minLength: 1
+          nullable: true
+          title: Descriptor Model
+          type: string
+        resolved_model:
+          maxLength: 256
+          minLength: 1
+          nullable: true
+          title: Resolved Model
+          type: string
+        stage:
+          enum:
+          - received
+          - stored
+          - validated
+          - preprocessed
+          - describing
+          - normalized
+          - retain_queued
+          - retain_failed
+          - recall_ready
+          - failed
+          nullable: true
+          title: Stage
+          type: string
+        child_retain_operation_id:
+          nullable: true
+          pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          title: Child Retain Operation Id
+          type: string
+        child_retain_status:
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - cancelled
+          - not_found
+          nullable: true
+          title: Child Retain Status
+          type: string
+        recall_ready:
+          nullable: true
+          title: Recall Ready
+          type: boolean
+        retryable:
+          nullable: true
+          title: Retryable
+          type: boolean
+        sanitized_error_code:
+          maxLength: 128
+          nullable: true
+          pattern: "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+          title: Sanitized Error Code
+          type: string
+        provider_request_id:
+          maxLength: 512
+          minLength: 1
+          nullable: true
+          title: Provider Request Id
+          type: string
+        input_tokens:
+          format: int64
+          minimum: 0.0
+          nullable: true
+          title: Input Tokens
+          type: integer
+        output_tokens:
+          format: int64
+          minimum: 0.0
+          nullable: true
+          title: Output Tokens
+          type: integer
+        logical_calls:
+          format: int64
+          minimum: 0.0
+          nullable: true
+          title: Logical Calls
+          type: integer
+        physical_attempts:
+          format: int64
+          minimum: 0.0
+          nullable: true
+          title: Physical Attempts
+          type: integer
+        possible_duplicate_provider_attempt:
+          nullable: true
+          title: Possible Duplicate Provider Attempt
+          type: boolean
+      title: MultimodalOperationMetadata
+      type: object
     OperationResponse:
       description: Response model for a single async operation.
       example:
@@ -5698,6 +6016,7 @@ components:
           type: integer
         document_id:
           nullable: true
+          title: Document Id
           type: string
         created_at:
           title: Created At
@@ -5707,12 +6026,21 @@ components:
           type: string
         error_message:
           nullable: true
+          title: Error Message
           type: string
         retry_count:
+          description: Number of times this operation has been retried after failure.
           nullable: true
+          title: Retry Count
           type: integer
         next_retry_at:
+          description: "When the worker will next attempt this operation. For a pending\
+            \ operation, a value in the future indicates the task is waiting rather\
+            \ than available for immediate pickup — for example, an extension may\
+            \ have raised DeferOperation to park the task until some backpressure\
+            \ window opens. Always null for completed tasks."
           nullable: true
+          title: Next Retry At
           type: string
       required:
       - created_at
@@ -5722,6 +6050,19 @@ components:
       - status
       - task_type
       title: OperationResponse
+      type: object
+    OperationResultMetadata:
+      additionalProperties: true
+      description: |-
+        Operation metadata with a stable multimodal namespace.
+
+        Existing operation types may continue to return their legacy metadata
+        keys. Only ``multimodal`` is a versioned public sub-contract.
+      properties:
+        multimodal:
+          $ref: '#/components/schemas/MultimodalOperationMetadata'
+      title: OperationResultMetadata
+      type: object
     OperationStatusResponse:
       description: Response model for getting a single operation status.
       example:
@@ -5747,40 +6088,58 @@ components:
           type: string
         operation_type:
           nullable: true
+          title: Operation Type
           type: string
         created_at:
           nullable: true
+          title: Created At
           type: string
         updated_at:
           nullable: true
+          title: Updated At
           type: string
         completed_at:
           nullable: true
+          title: Completed At
           type: string
         error_message:
           nullable: true
+          title: Error Message
           type: string
         retry_count:
+          description: Number of times this operation has been retried after failure.
           nullable: true
+          title: Retry Count
           type: integer
         next_retry_at:
+          description: "When the worker will next attempt this operation. For a pending\
+            \ operation, a value in the future indicates the task is parked (e.g.\
+            \ by an extension raising DeferOperation) rather than awaiting immediate\
+            \ pickup."
           nullable: true
+          title: Next Retry At
           type: string
         result_metadata:
-          additionalProperties: {}
-          nullable: true
+          $ref: '#/components/schemas/OperationResultMetadata'
         child_operations:
+          description: Child operations for batch operations (if applicable)
           items:
             $ref: '#/components/schemas/ChildOperationStatus'
           nullable: true
+          title: Child Operations
           type: array
         task_payload:
-          additionalProperties: {}
+          additionalProperties: true
+          description: Raw task payload (params the operation was submitted with).
+            Only populated when include_payload=true.
           nullable: true
+          title: Task Payload
+          type: object
       required:
       - operation_id
       - status
       title: OperationStatusResponse
+      type: object
     OperationsListResponse:
       description: Response model for list operations endpoint.
       example:
@@ -5809,6 +6168,7 @@ components:
         operations:
           items:
             $ref: '#/components/schemas/OperationResponse'
+          title: Operations
           type: array
       required:
       - bank_id
@@ -5817,6 +6177,7 @@ components:
       - operations
       - total
       title: OperationsListResponse
+      type: object
     RecallRequest:
       description: Request model for recall endpoint.
       example:
@@ -5839,9 +6200,12 @@ components:
           title: Query
           type: string
         types:
+          description: "List of fact types to recall: 'world', 'experience', 'observation'.\
+            \ Defaults to world and experience if not specified."
           items:
             type: string
           nullable: true
+          title: Types
           type: array
         budget:
           $ref: '#/components/schemas/Budget'
@@ -5854,14 +6218,19 @@ components:
           title: Trace
           type: boolean
         query_timestamp:
+          description: "ISO format date string (e.g., '2023-05-30T23:40:00')"
           nullable: true
+          title: Query Timestamp
           type: string
         include:
           $ref: '#/components/schemas/IncludeOptions'
         tags:
+          description: "Filter memories by tags. If not specified, all memories are\
+            \ returned."
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
         tags_match:
           default: any
@@ -5876,13 +6245,18 @@ components:
           title: Tags Match
           type: string
         tag_groups:
+          description: "Compound tag filter using boolean groups. Groups in the list\
+            \ are AND-ed. Each group is a leaf {tags, match} or compound {and: [...]},\
+            \ {or: [...]}, {not: ...}."
           items:
-            $ref: '#/components/schemas/MentalModelTrigger_Input_tag_groups_inner'
+            $ref: '#/components/schemas/Tag_Groups_inner'
           nullable: true
+          title: Tag Groups
           type: array
       required:
       - query
       title: RecallRequest
+      type: object
     RecallResponse:
       description: Response model for recall endpoints.
       example:
@@ -5917,25 +6291,38 @@ components:
         results:
           items:
             $ref: '#/components/schemas/RecallResult'
+          title: Results
           type: array
         trace:
-          additionalProperties: {}
+          additionalProperties: true
           nullable: true
+          title: Trace
+          type: object
         entities:
           additionalProperties:
             $ref: '#/components/schemas/EntityStateResponse'
+          description: Entity states for entities mentioned in results
           nullable: true
+          title: Entities
+          type: object
         chunks:
           additionalProperties:
             $ref: '#/components/schemas/ChunkData'
+          description: "Chunks for facts, keyed by chunk_id"
           nullable: true
+          title: Chunks
+          type: object
         source_facts:
           additionalProperties:
             $ref: '#/components/schemas/RecallResult'
+          description: "Source facts for observation-type results, keyed by fact ID"
           nullable: true
+          title: Source Facts
+          type: object
       required:
       - results
       title: RecallResponse
+      type: object
     RecallResult:
       description: Single recall result item.
       example:
@@ -5965,48 +6352,61 @@ components:
           type: string
         type:
           nullable: true
+          title: Type
           type: string
         entities:
           items:
             type: string
           nullable: true
+          title: Entities
           type: array
         context:
           nullable: true
+          title: Context
           type: string
         occurred_start:
           nullable: true
+          title: Occurred Start
           type: string
         occurred_end:
           nullable: true
+          title: Occurred End
           type: string
         mentioned_at:
           nullable: true
+          title: Mentioned At
           type: string
         document_id:
           nullable: true
+          title: Document Id
           type: string
         metadata:
           additionalProperties:
             type: string
           nullable: true
+          title: Metadata
+          type: object
         chunk_id:
           nullable: true
+          title: Chunk Id
           type: string
         tags:
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
         source_fact_ids:
           items:
             type: string
           nullable: true
+          title: Source Fact Ids
           type: array
       required:
       - id
       - text
       title: RecallResult
+      type: object
     RecoverConsolidationResponse:
       description: Response model for recovering failed consolidation.
       example:
@@ -6018,6 +6418,7 @@ components:
       required:
       - retried_count
       title: RecoverConsolidationResponse
+      type: object
     ReflectBasedOn:
       description: "Evidence the response is based on: memories, mental models, and\
         \ directives."
@@ -6027,20 +6428,24 @@ components:
           description: Memory facts used to generate the response
           items:
             $ref: '#/components/schemas/ReflectFact'
+          title: Memories
           type: array
         mental_models:
           default: []
           description: Mental models used during reflection
           items:
             $ref: '#/components/schemas/ReflectMentalModel'
+          title: Mental Models
           type: array
         directives:
           default: []
           description: Directives applied during reflection
           items:
             $ref: '#/components/schemas/ReflectDirective'
+          title: Directives
           type: array
       title: ReflectBasedOn
+      type: object
     ReflectDirective:
       description: A directive applied during reflect.
       properties:
@@ -6061,6 +6466,7 @@ components:
       - id
       - name
       title: ReflectDirective
+      type: object
     ReflectFact:
       description: A fact used in think response.
       example:
@@ -6073,6 +6479,7 @@ components:
       properties:
         id:
           nullable: true
+          title: Id
           type: string
         text:
           description: "Fact text. When type='observation', this contains markdown-formatted\
@@ -6081,30 +6488,33 @@ components:
           type: string
         type:
           nullable: true
+          title: Type
           type: string
         context:
           nullable: true
+          title: Context
           type: string
         occurred_start:
           nullable: true
+          title: Occurred Start
           type: string
         occurred_end:
           nullable: true
+          title: Occurred End
           type: string
       required:
       - text
       title: ReflectFact
+      type: object
     ReflectIncludeOptions:
       description: Options for including additional data in reflect results.
       properties:
         facts:
-          description: Options for including facts (based_on) in reflect results.
-          properties: {}
-          title: FactsIncludeOptions
-          type: object
+          $ref: '#/components/schemas/FactsIncludeOptions'
         tool_calls:
           $ref: '#/components/schemas/ToolCallsIncludeOptions'
       title: ReflectIncludeOptions
+      type: object
     ReflectLLMCall:
       description: An LLM call made during reflect agent execution.
       properties:
@@ -6120,6 +6530,7 @@ components:
       - duration_ms
       - scope
       title: ReflectLLMCall
+      type: object
     ReflectMentalModel:
       description: A mental model used during reflect.
       properties:
@@ -6132,12 +6543,15 @@ components:
           title: Text
           type: string
         context:
+          description: Additional context
           nullable: true
+          title: Context
           type: string
       required:
       - id
       - text
       title: ReflectMentalModel
+      type: object
     ReflectRequest:
       description: Request model for reflect endpoint.
       example:
@@ -6168,7 +6582,12 @@ components:
         budget:
           $ref: '#/components/schemas/Budget'
         context:
+          deprecated: true
+          description: "DEPRECATED: Additional context is now concatenated with the\
+            \ query. Pass context directly in the query field instead. If provided,\
+            \ it will be appended to the query for backward compatibility."
           nullable: true
+          title: Context
           type: string
         max_tokens:
           default: 4096
@@ -6178,12 +6597,20 @@ components:
         include:
           $ref: '#/components/schemas/ReflectIncludeOptions'
         response_schema:
-          additionalProperties: {}
+          additionalProperties: true
+          description: "Optional JSON Schema for structured output. When provided,\
+            \ the response will include a 'structured_output' field with the LLM response\
+            \ parsed according to this schema."
           nullable: true
+          title: Response Schema
+          type: object
         tags:
+          description: "Filter memories by tags during reflection. If not specified,\
+            \ all memories are considered."
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
         tags_match:
           default: any
@@ -6198,11 +6625,17 @@ components:
           title: Tags Match
           type: string
         tag_groups:
+          description: "Compound tag filter using boolean groups. Groups in the list\
+            \ are AND-ed. Each group is a leaf {tags, match} or compound {and: [...]},\
+            \ {or: [...]}, {not: ...}."
           items:
-            $ref: '#/components/schemas/MentalModelTrigger_Input_tag_groups_inner'
+            $ref: '#/components/schemas/Tag_Groups_inner'
           nullable: true
+          title: Tag Groups
           type: array
         fact_types:
+          description: "Filter which fact types are retrieved during reflect. None\
+            \ means all types (world, experience, observation)."
           items:
             enum:
             - world
@@ -6210,6 +6643,7 @@ components:
             - observation
             type: string
           nullable: true
+          title: Fact Types
           type: array
         exclude_mental_models:
           default: false
@@ -6218,13 +6652,16 @@ components:
           title: Exclude Mental Models
           type: boolean
         exclude_mental_model_ids:
+          description: Exclude specific mental models by ID from the reflect loop.
           items:
             type: string
           nullable: true
+          title: Exclude Mental Model Ids
           type: array
       required:
       - query
       title: ReflectRequest
+      type: object
     ReflectResponse:
       description: Response model for think endpoint.
       example:
@@ -6276,8 +6713,12 @@ components:
         based_on:
           $ref: '#/components/schemas/ReflectBasedOn'
         structured_output:
-          additionalProperties: {}
+          additionalProperties: true
+          description: Structured output parsed according to the request's response_schema.
+            Only present when response_schema was provided in the request.
           nullable: true
+          title: Structured Output
+          type: object
         usage:
           $ref: '#/components/schemas/TokenUsage'
         trace:
@@ -6285,6 +6726,7 @@ components:
       required:
       - text
       title: ReflectResponse
+      type: object
     ReflectToolCall:
       description: A tool call made during reflect agent execution.
       properties:
@@ -6293,12 +6735,17 @@ components:
           title: Tool
           type: string
         input:
-          additionalProperties: {}
+          additionalProperties: true
           description: Tool input parameters
           title: Input
+          type: object
         output:
-          additionalProperties: {}
+          additionalProperties: true
+          description: Tool output (only included when include.tool_calls.output is
+            true)
           nullable: true
+          title: Output
+          type: object
         duration_ms:
           description: Execution time in milliseconds
           title: Duration Ms
@@ -6313,6 +6760,7 @@ components:
       - input
       - tool
       title: ReflectToolCall
+      type: object
     ReflectTrace:
       description: Execution trace of LLM and tool calls during reflection.
       properties:
@@ -6321,20 +6769,19 @@ components:
           description: Tool calls made during reflection
           items:
             $ref: '#/components/schemas/ReflectToolCall'
+          title: Tool Calls
           type: array
         llm_calls:
           default: []
           description: LLM calls made during reflection
           items:
             $ref: '#/components/schemas/ReflectLLMCall'
+          title: Llm Calls
           type: array
       title: ReflectTrace
+      type: object
     ReprocessDocumentResponse:
       description: Response model for reprocess document endpoint.
-      example:
-        items_count: 0
-        success: true
-        operation_id: operation_id
       properties:
         success:
           title: Success
@@ -6350,6 +6797,111 @@ components:
       - operation_id
       - success
       title: ReprocessDocumentResponse
+      type: object
+    ReprocessProjectionOperation:
+      description: Submitted reprocess operation for one document.
+      properties:
+        document_id:
+          title: Document Id
+          type: string
+        operation_id:
+          title: Operation Id
+          type: string
+        items_count:
+          title: Items Count
+          type: integer
+      required:
+      - document_id
+      - items_count
+      - operation_id
+      title: ReprocessProjectionOperation
+      type: object
+    ReprocessProjectionRequest:
+      description: Request model for projection-based reprocessing.
+      properties:
+        selector:
+          additionalProperties: true
+          description: "Projection selector, e.g. {'extraction.v': 'legacy'} or {'temporal':\
+            \ {'grade': 'unresolved'}}."
+          title: Selector
+          type: object
+        dry_run:
+          default: true
+          description: Only return affected counts and ids without submitting work.
+          title: Dry Run
+          type: boolean
+      required:
+      - selector
+      title: ReprocessProjectionRequest
+      type: object
+    ReprocessProjectionResponse:
+      description: Response model for projection-based reprocessing.
+      properties:
+        success:
+          title: Success
+          type: boolean
+        dry_run:
+          title: Dry Run
+          type: boolean
+        bank_id:
+          title: Bank Id
+          type: string
+        selector:
+          additionalProperties: true
+          title: Selector
+          type: object
+        unit_count:
+          title: Unit Count
+          type: integer
+        document_count:
+          title: Document Count
+          type: integer
+        chunk_count:
+          title: Chunk Count
+          type: integer
+        skipped_unit_count:
+          default: 0
+          title: Skipped Unit Count
+          type: integer
+        unit_ids:
+          items:
+            type: string
+          title: Unit Ids
+          type: array
+        document_ids:
+          items:
+            type: string
+          title: Document Ids
+          type: array
+        chunk_ids:
+          items:
+            type: string
+          title: Chunk Ids
+          type: array
+        operation_ids:
+          items:
+            type: string
+          title: Operation Ids
+          type: array
+        operations:
+          items:
+            $ref: '#/components/schemas/ReprocessProjectionOperation'
+          title: Operations
+          type: array
+        submitted_count:
+          default: 0
+          title: Submitted Count
+          type: integer
+      required:
+      - bank_id
+      - chunk_count
+      - document_count
+      - dry_run
+      - selector
+      - success
+      - unit_count
+      title: ReprocessProjectionResponse
+      type: object
     RetainRequest:
       description: Request model for retain endpoint.
       example:
@@ -6365,6 +6917,7 @@ components:
         items:
           items:
             $ref: '#/components/schemas/MemoryItem'
+          title: Items
           type: array
         async:
           default: false
@@ -6373,13 +6926,17 @@ components:
           title: Async
           type: boolean
         document_tags:
+          deprecated: true
+          description: Deprecated. Use item-level tags instead.
           items:
             type: string
           nullable: true
+          title: Document Tags
           type: array
       required:
       - items
       title: RetainRequest
+      type: object
     RetainResponse:
       description: Response model for retain endpoint.
       example:
@@ -6406,12 +6963,20 @@ components:
           title: Async
           type: boolean
         operation_id:
+          description: "Operation ID for tracking async operations. Use GET /v1/default/banks/{bank_id}/operations\
+            \ to list operations. Only present when async=true. When items use different\
+            \ per-item strategies, use operation_ids instead."
           nullable: true
+          title: Operation Id
           type: string
         operation_ids:
+          description: Operation IDs when items were submitted as multiple strategy
+            groups (async=true with mixed per-item strategies). operation_id is set
+            to the first entry for backward compatibility.
           items:
             type: string
           nullable: true
+          title: Operation Ids
           type: array
         usage:
           $ref: '#/components/schemas/TokenUsage'
@@ -6421,6 +6986,7 @@ components:
       - items_count
       - success
       title: RetainResponse
+      type: object
     RetryOperationResponse:
       description: Response model for retry operation endpoint.
       example:
@@ -6442,6 +7008,7 @@ components:
       - operation_id
       - success
       title: RetryOperationResponse
+      type: object
     SourceFactsIncludeOptions:
       description: Options for including source facts for observation-type results.
       properties:
@@ -6457,37 +7024,38 @@ components:
           title: Max Tokens Per Observation
           type: integer
       title: SourceFactsIncludeOptions
+      type: object
     TagGroupAnd-Input:
       description: "Compound AND group: all child filters must match."
       properties:
         and:
           items:
-            $ref: '#/components/schemas/MentalModelTrigger_Input_tag_groups_inner'
+            $ref: '#/components/schemas/Tag_Groups_inner'
+          title: And
           type: array
       required:
       - and
       title: TagGroupAnd
+      type: object
     TagGroupAnd-Output:
       description: "Compound AND group: all child filters must match."
       properties:
         and:
           items:
-            $ref: '#/components/schemas/MentalModelTrigger_Output_tag_groups_inner'
+            $ref: '#/components/schemas/Tag_Groups_inner_1'
+          title: And
           type: array
       required:
       - and
       title: TagGroupAnd
+      type: object
     TagGroupLeaf:
       description: "A leaf tag filter: matches memories by tag list and match mode."
-      example:
-        match: any_strict
-        tags:
-        - tags
-        - tags
       properties:
         tags:
           items:
             type: string
+          title: Tags
           type: array
         match:
           default: any_strict
@@ -6501,6 +7069,7 @@ components:
       required:
       - tags
       title: TagGroupLeaf
+      type: object
     TagGroupNot-Input:
       description: "Compound NOT group: child filter must NOT match."
       properties:
@@ -6509,6 +7078,7 @@ components:
       required:
       - not
       title: TagGroupNot
+      type: object
     TagGroupNot-Output:
       description: "Compound NOT group: child filter must NOT match."
       properties:
@@ -6517,26 +7087,31 @@ components:
       required:
       - not
       title: TagGroupNot
+      type: object
     TagGroupOr-Input:
       description: "Compound OR group: at least one child filter must match."
       properties:
         or:
           items:
-            $ref: '#/components/schemas/MentalModelTrigger_Input_tag_groups_inner'
+            $ref: '#/components/schemas/Tag_Groups_inner'
+          title: Or
           type: array
       required:
       - or
       title: TagGroupOr
+      type: object
     TagGroupOr-Output:
       description: "Compound OR group: at least one child filter must match."
       properties:
         or:
           items:
-            $ref: '#/components/schemas/MentalModelTrigger_Output_tag_groups_inner'
+            $ref: '#/components/schemas/Tag_Groups_inner_1'
+          title: Or
           type: array
       required:
       - or
       title: TagGroupOr
+      type: object
     TagItem:
       description: Single tag with usage count.
       properties:
@@ -6552,6 +7127,7 @@ components:
       - count
       - tag
       title: TagItem
+      type: object
     TokenUsage:
       description: |-
         Token usage metrics for LLM calls.
@@ -6579,6 +7155,7 @@ components:
           title: Total Tokens
           type: integer
       title: TokenUsage
+      type: object
     ToolCallsIncludeOptions:
       description: Options for including tool calls in reflect results.
       properties:
@@ -6589,48 +7166,48 @@ components:
           title: Output
           type: boolean
       title: ToolCallsIncludeOptions
+      type: object
     UpdateDirectiveRequest:
       description: Request model for updating a directive.
-      example:
-        is_active: true
-        name: name
-        priority: 0
-        content: content
-        tags:
-        - tags
-        - tags
       properties:
         name:
+          description: New name
           nullable: true
+          title: Name
           type: string
         content:
+          description: New content
           nullable: true
+          title: Content
           type: string
         priority:
+          description: New priority
           nullable: true
+          title: Priority
           type: integer
         is_active:
+          description: New active status
           nullable: true
+          title: Is Active
           type: boolean
         tags:
+          description: New tags
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
       title: UpdateDirectiveRequest
+      type: object
     UpdateDispositionRequest:
       description: Request model for updating disposition traits.
-      example:
-        disposition:
-          empathy: 3
-          literalism: 3
-          skepticism: 3
       properties:
         disposition:
           $ref: '#/components/schemas/DispositionTraits'
       required:
       - disposition
       title: UpdateDispositionRequest
+      type: object
     UpdateDocumentRequest:
       description: Request model for updating a document's mutable fields.
       example:
@@ -6639,21 +7216,24 @@ components:
         - team-b
       properties:
         tags:
+          description: New tags for the document and its memory units. Triggers observation
+            invalidation and re-consolidation.
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
       title: UpdateDocumentRequest
+      type: object
     UpdateDocumentResponse:
       description: Response model for update document endpoint.
-      example:
-        success: true
       properties:
         success:
           default: true
           title: Success
           type: boolean
       title: UpdateDocumentResponse
+      type: object
     UpdateMentalModelRequest:
       description: Request model for updating a mental model.
       example:
@@ -6667,73 +7247,70 @@ components:
           refresh_after_consolidation: true
       properties:
         name:
+          description: New name for the mental model
           nullable: true
+          title: Name
           type: string
         source_query:
+          description: New source query for the mental model
           nullable: true
+          title: Source Query
           type: string
         max_tokens:
+          description: Maximum tokens for generated content
           maximum: 8192.0
           minimum: 256.0
           nullable: true
+          title: Max Tokens
           type: integer
         tags:
+          description: Tags for scoped visibility
           items:
             type: string
           nullable: true
+          title: Tags
           type: array
         trigger:
           $ref: '#/components/schemas/MentalModelTrigger-Input'
       title: UpdateMentalModelRequest
+      type: object
     UpdateWebhookRequest:
       description: Request model for updating a webhook. Only provided fields are
         updated.
-      example:
-        event_types:
-        - event_types
-        - event_types
-        secret: secret
-        http_config:
-          headers:
-            key: headers
-          method: POST
-          timeout_seconds: 0
-          params:
-            key: params
-        url: url
-        enabled: true
       properties:
         url:
+          description: HTTP(S) endpoint URL
           nullable: true
+          title: Url
           type: string
         secret:
+          description: HMAC-SHA256 signing secret. Omit to keep existing; send null
+            to clear.
           nullable: true
+          title: Secret
           type: string
         event_types:
+          description: List of event types
           items:
             type: string
           nullable: true
+          title: Event Types
           type: array
         enabled:
+          description: Whether this webhook is active
           nullable: true
+          title: Enabled
           type: boolean
         http_config:
           $ref: '#/components/schemas/WebhookHttpConfig'
       title: UpdateWebhookRequest
+      type: object
     ValidationError:
-      example:
-        msg: msg
-        loc:
-        - ValidationError_loc_inner
-        - ValidationError_loc_inner
-        input: ""
-        ctx: "{}"
-        type: type
-        url: url
       properties:
         loc:
           items:
-            $ref: '#/components/schemas/ValidationError_loc_inner'
+            $ref: '#/components/schemas/Location_inner'
+          title: Location
           type: array
         msg:
           title: Message
@@ -6741,18 +7318,17 @@ components:
         type:
           title: Error Type
           type: string
-        input: {}
+        input:
+          title: Input
         ctx:
           title: Context
           type: object
-        url:
-          title: URL
-          type: string
       required:
       - loc
       - msg
       - type
       title: ValidationError
+      type: object
     VersionResponse:
       description: Response model for the version/info endpoint.
       example:
@@ -6761,6 +7337,9 @@ components:
           bank_config_api: false
           file_upload_api: true
           mcp: true
+          multimodal_image: false
+          multimodal_live_verified: false
+          multimodal_video: false
           observations: false
           worker: true
       properties:
@@ -6774,70 +7353,32 @@ components:
       - api_version
       - features
       title: VersionResponse
+      type: object
     WebhookDeliveryListResponse:
       description: Response model for listing webhook deliveries.
-      example:
-        next_cursor: next_cursor
-        items:
-        - last_response_body: last_response_body
-          last_attempt_at: last_attempt_at
-          created_at: created_at
-          last_response_status: 6
-          url: url
-          event_type: event_type
-          updated_at: updated_at
-          webhook_id: webhook_id
-          next_retry_at: next_retry_at
-          id: id
-          last_error: last_error
-          status: status
-          attempts: 0
-        - last_response_body: last_response_body
-          last_attempt_at: last_attempt_at
-          created_at: created_at
-          last_response_status: 6
-          url: url
-          event_type: event_type
-          updated_at: updated_at
-          webhook_id: webhook_id
-          next_retry_at: next_retry_at
-          id: id
-          last_error: last_error
-          status: status
-          attempts: 0
       properties:
         items:
           items:
             $ref: '#/components/schemas/WebhookDeliveryResponse'
+          title: Items
           type: array
         next_cursor:
           nullable: true
+          title: Next Cursor
           type: string
       required:
       - items
       title: WebhookDeliveryListResponse
+      type: object
     WebhookDeliveryResponse:
       description: Response model for a webhook delivery record.
-      example:
-        last_response_body: last_response_body
-        last_attempt_at: last_attempt_at
-        created_at: created_at
-        last_response_status: 6
-        url: url
-        event_type: event_type
-        updated_at: updated_at
-        webhook_id: webhook_id
-        next_retry_at: next_retry_at
-        id: id
-        last_error: last_error
-        status: status
-        attempts: 0
       properties:
         id:
           title: Id
           type: string
         webhook_id:
           nullable: true
+          title: Webhook Id
           type: string
         url:
           title: Url
@@ -6853,24 +7394,31 @@ components:
           type: integer
         next_retry_at:
           nullable: true
+          title: Next Retry At
           type: string
         last_error:
           nullable: true
+          title: Last Error
           type: string
         last_response_status:
           nullable: true
+          title: Last Response Status
           type: integer
         last_response_body:
           nullable: true
+          title: Last Response Body
           type: string
         last_attempt_at:
           nullable: true
+          title: Last Attempt At
           type: string
         created_at:
           nullable: true
+          title: Created At
           type: string
         updated_at:
           nullable: true
+          title: Updated At
           type: string
       required:
       - attempts
@@ -6880,15 +7428,9 @@ components:
       - url
       - webhook_id
       title: WebhookDeliveryResponse
+      type: object
     WebhookHttpConfig:
       description: HTTP delivery configuration for a webhook.
-      example:
-        headers:
-          key: headers
-        method: POST
-        timeout_seconds: 0
-        params:
-          key: params
       properties:
         method:
           default: POST
@@ -6905,94 +7447,49 @@ components:
             type: string
           description: Custom HTTP headers
           title: Headers
+          type: object
         params:
           additionalProperties:
             type: string
           description: Custom HTTP query parameters
           title: Params
+          type: object
       title: WebhookHttpConfig
+      type: object
     WebhookListResponse:
       description: Response model for listing webhooks.
-      example:
-        items:
-        - event_types:
-          - event_types
-          - event_types
-          updated_at: updated_at
-          bank_id: bank_id
-          created_at: created_at
-          id: id
-          secret: secret
-          http_config:
-            headers:
-              key: headers
-            method: POST
-            timeout_seconds: 0
-            params:
-              key: params
-          url: url
-          enabled: true
-        - event_types:
-          - event_types
-          - event_types
-          updated_at: updated_at
-          bank_id: bank_id
-          created_at: created_at
-          id: id
-          secret: secret
-          http_config:
-            headers:
-              key: headers
-            method: POST
-            timeout_seconds: 0
-            params:
-              key: params
-          url: url
-          enabled: true
       properties:
         items:
           items:
             $ref: '#/components/schemas/WebhookResponse'
+          title: Items
           type: array
       required:
       - items
       title: WebhookListResponse
+      type: object
     WebhookResponse:
       description: Response model for a webhook.
-      example:
-        event_types:
-        - event_types
-        - event_types
-        updated_at: updated_at
-        bank_id: bank_id
-        created_at: created_at
-        id: id
-        secret: secret
-        http_config:
-          headers:
-            key: headers
-          method: POST
-          timeout_seconds: 0
-          params:
-            key: params
-        url: url
-        enabled: true
       properties:
         id:
           title: Id
           type: string
         bank_id:
           nullable: true
+          title: Bank Id
           type: string
         url:
           title: Url
           type: string
         secret:
+          description: Signing secret (redacted in responses)
           nullable: true
+          title: Secret
           type: string
         event_types:
           items:
             type: string
+          title: Event Types
           type: array
         enabled:
           title: Enabled
@@ -7001,9 +7498,11 @@ components:
           $ref: '#/components/schemas/WebhookHttpConfig'
         created_at:
           nullable: true
+          title: Created At
           type: string
         updated_at:
           nullable: true
+          title: Updated At
           type: string
       required:
       - bank_id
@@ -7012,6 +7511,7 @@ components:
       - id
       - url
       title: WebhookResponse
+      type: object
     Timestamp:
       anyOf:
       - format: date-time
@@ -7042,13 +7542,13 @@ components:
         \ which combinations to use."
       nullable: true
       title: ObservationScopes
-    MentalModelTrigger_Input_tag_groups_inner:
+    Tag_Groups_inner:
       anyOf:
       - $ref: '#/components/schemas/TagGroupLeaf'
       - $ref: '#/components/schemas/TagGroupAnd-Input'
       - $ref: '#/components/schemas/TagGroupOr-Input'
       - $ref: '#/components/schemas/TagGroupNot-Input'
-    MentalModelTrigger_Output_tag_groups_inner:
+    Tag_Groups_inner_1:
       anyOf:
       - $ref: '#/components/schemas/TagGroupLeaf'
       - $ref: '#/components/schemas/TagGroupAnd-Output'
@@ -7068,7 +7568,7 @@ components:
       - $ref: '#/components/schemas/TagGroupOr-Output'
       - $ref: '#/components/schemas/TagGroupNot-Output'
       title: Not
-    ValidationError_loc_inner:
+    Location_inner:
       anyOf:
       - type: string
       - type: integer

@@ -34,6 +34,10 @@ app = typer.Typer(name="hms-admin", help="HMS administrative commands")
 # Import must happen in this order due to foreign key constraints
 BACKUP_TABLES = [
     "banks",
+    "multimodal_descriptor_cache",
+    "multimodal_segment_checkpoints",
+    "multimodal_document_heads",
+    "multimodal_document_commands",
     "documents",
     "entities",
     "chunks",

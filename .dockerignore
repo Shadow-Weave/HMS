@@ -28,7 +28,7 @@ Thumbs.db
 # Build artifacts
 **/target
 **/*.log
-.aaaLOG
+.*LOG
 logs
 volumes
 

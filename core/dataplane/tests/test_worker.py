@@ -906,7 +906,9 @@ class TestWorkerPoller:
         assert row["worker_id"] is None
 
     @pytest.mark.asyncio
-    async def test_claim_batch_allows_non_consolidation_when_consolidation_processing(self, pool, backend, clean_operations):
+    async def test_claim_batch_allows_non_consolidation_when_consolidation_processing(
+        self, pool, backend, clean_operations
+    ):
         """Test that non-consolidation tasks are still claimed even if consolidation is processing."""
         from hms_api.worker import WorkerPoller
 
@@ -945,8 +947,9 @@ class TestWorkerPoller:
         claimed = await poller.claim_batch()
 
         # Should claim the retain task (non-consolidation tasks are unaffected)
-        assert len(claimed) == 1
-        assert claimed[0].operation_id == str(retain_op_id)
+        my_claims = [c for c in claimed if c.task_dict.get("bank_id") == bank_id]
+        assert len(my_claims) == 1
+        assert my_claims[0].operation_id == str(retain_op_id)
 
 
 class TestWorkerRecovery:
@@ -2554,8 +2557,7 @@ class TestMarkFailedParentPropagation:
         # downstream filters that classify failures by error_message lose all
         # signal once a batch has children.
         assert "DB constraint violation" in (parent_row["error_message"] or ""), (
-            f"Parent error_message should inherit child's reason, "
-            f"got: {parent_row['error_message']!r}"
+            f"Parent error_message should inherit child's reason, got: {parent_row['error_message']!r}"
         )
 
     @pytest.mark.asyncio
@@ -2586,7 +2588,9 @@ class TestMarkFailedParentPropagation:
         assert parent_row["status"] == "failed"
 
     @pytest.mark.asyncio
-    async def test_mark_failed_does_not_finalise_parent_when_siblings_still_pending(self, pool, backend, clean_operations):
+    async def test_mark_failed_does_not_finalise_parent_when_siblings_still_pending(
+        self, pool, backend, clean_operations
+    ):
         """Parent is NOT updated while other siblings are still processing/pending."""
         from hms_api.worker import WorkerPoller
 

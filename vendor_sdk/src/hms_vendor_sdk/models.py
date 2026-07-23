@@ -194,7 +194,6 @@ class VendorCase:
     sessions: list[SessionRecord | dict[str, Any]]
     question_date: str | None = None
     bank_profile: dict[str, Any] = field(default_factory=dict)
-    expected_answer: str | None = None
     notes: str | None = None
 
     def to_dict(self) -> dict[str, Any]:

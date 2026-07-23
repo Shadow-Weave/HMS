@@ -12,7 +12,7 @@ import re
 import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, Request, UploadFile
 
@@ -36,7 +36,16 @@ def _parse_metadata(metadata: Any) -> dict[str, Any]:
 
 from typing import Callable
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    StrictInt,
+    StrictStr,
+    field_validator,
+    model_validator,
+)
 
 from hms_api import MemoryEngine
 
@@ -74,6 +83,7 @@ def FieldWithDefault(default_factory: Callable, **kwargs) -> Any:
 
 from hms_api.config import get_config
 from hms_api.engine.memory_engine import Budget, _current_schema, _get_tiktoken_encoding, fq_table
+from hms_api.engine.multimodal.security import contains_encoded_media_payload
 from hms_api.engine.providers.none_llm import LLMNotAvailableError
 from hms_api.engine.response_models import VALID_RECALL_FACT_TYPES, MemoryFact, TokenUsage
 from hms_api.engine.search.tags import TagGroup, TagsMatch
@@ -1432,6 +1442,42 @@ class ReprocessDocumentResponse(BaseModel):
     items_count: int
 
 
+class ReprocessProjectionRequest(BaseModel):
+    """Request model for projection-based reprocessing."""
+
+    selector: dict[str, Any] = Field(
+        description="Projection selector, e.g. {'extraction.v': 'legacy'} or {'temporal': {'grade': 'unresolved'}}."
+    )
+    dry_run: bool = Field(default=True, description="Only return affected counts and ids without submitting work.")
+
+
+class ReprocessProjectionOperation(BaseModel):
+    """Submitted reprocess operation for one document."""
+
+    document_id: str
+    operation_id: str
+    items_count: int
+
+
+class ReprocessProjectionResponse(BaseModel):
+    """Response model for projection-based reprocessing."""
+
+    success: bool
+    dry_run: bool
+    bank_id: str
+    selector: dict[str, Any]
+    unit_count: int
+    document_count: int
+    chunk_count: int
+    skipped_unit_count: int = 0
+    unit_ids: list[str] = Field(default_factory=list)
+    document_ids: list[str] = Field(default_factory=list)
+    chunk_ids: list[str] = Field(default_factory=list)
+    operation_ids: list[str] = Field(default_factory=list)
+    operations: list[ReprocessProjectionOperation] = Field(default_factory=list)
+    submitted_count: int = 0
+
+
 class DeleteResponse(BaseModel):
     """Response model for delete operations."""
 
@@ -2263,6 +2309,85 @@ class ChildOperationStatus(BaseModel):
     error_message: str | None = None
 
 
+MultimodalPipelineStage = Literal[
+    "received",
+    "stored",
+    "validated",
+    "preprocessed",
+    "describing",
+    "normalized",
+    "retain_queued",
+    "retain_failed",
+    "recall_ready",
+    "failed",
+]
+OperationLifecycleStatus = Literal["pending", "processing", "completed", "failed", "cancelled", "not_found"]
+MAX_PUBLIC_MULTIMODAL_COUNTER = 9_223_372_036_854_775_807
+PublicMultimodalCounter = Annotated[
+    StrictInt,
+    Field(ge=0, json_schema_extra={"format": "int64"}),
+]
+
+
+def _exclude_none(value: Any) -> bool:
+    """Omit absent typed child fields without changing legacy parent output."""
+
+    return value is None
+
+
+class MultimodalOperationMetadata(BaseModel):
+    """Stable, payload-free status for a multimodal file-retain operation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    asset_id: StrictStr | None = Field(default=None, min_length=1, max_length=4_096, exclude_if=_exclude_none)
+    asset_sha256: StrictStr | None = Field(default=None, pattern=r"^[0-9a-f]{64}$", exclude_if=_exclude_none)
+    media_kind: Literal["image", "video"] | None = Field(default=None, exclude_if=_exclude_none)
+    pipeline_version: StrictStr | None = Field(default=None, min_length=1, max_length=256, exclude_if=_exclude_none)
+    descriptor_model: StrictStr | None = Field(default=None, min_length=1, max_length=256, exclude_if=_exclude_none)
+    resolved_model: StrictStr | None = Field(default=None, min_length=1, max_length=256, exclude_if=_exclude_none)
+    stage: MultimodalPipelineStage | None = Field(default=None, exclude_if=_exclude_none)
+    child_retain_operation_id: StrictStr | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        exclude_if=_exclude_none,
+    )
+    child_retain_status: OperationLifecycleStatus | None = Field(default=None, exclude_if=_exclude_none)
+    recall_ready: StrictBool | None = Field(default=None, exclude_if=_exclude_none)
+    retryable: StrictBool | None = Field(default=None, exclude_if=_exclude_none)
+    sanitized_error_code: StrictStr | None = Field(
+        default=None,
+        max_length=128,
+        pattern=r"^[a-z0-9]+(?:[._-][a-z0-9]+)*$",
+        exclude_if=_exclude_none,
+    )
+    provider_request_id: StrictStr | None = Field(default=None, min_length=1, max_length=512, exclude_if=_exclude_none)
+    input_tokens: PublicMultimodalCounter | None = Field(default=None, exclude_if=_exclude_none)
+    output_tokens: PublicMultimodalCounter | None = Field(default=None, exclude_if=_exclude_none)
+    logical_calls: PublicMultimodalCounter | None = Field(default=None, exclude_if=_exclude_none)
+    physical_attempts: PublicMultimodalCounter | None = Field(default=None, exclude_if=_exclude_none)
+    possible_duplicate_provider_attempt: StrictBool | None = Field(default=None, exclude_if=_exclude_none)
+
+    @field_validator("input_tokens", "output_tokens", "logical_calls", "physical_attempts")
+    @classmethod
+    def _counter_must_fit_public_int64(cls, value: int | None) -> int | None:
+        if value is not None and value > MAX_PUBLIC_MULTIMODAL_COUNTER:
+            raise ValueError("public multimodal counter exceeds signed int64")
+        return value
+
+
+class OperationResultMetadata(BaseModel):
+    """Operation metadata with a stable multimodal namespace.
+
+    Existing operation types may continue to return their legacy metadata
+    keys. Only ``multimodal`` is a versioned public sub-contract.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    multimodal: MultimodalOperationMetadata | None = Field(default=None, exclude_if=_exclude_none)
+
+
 class OperationStatusResponse(BaseModel):
     """Response model for getting a single operation status."""
 
@@ -2281,7 +2406,7 @@ class OperationStatusResponse(BaseModel):
     )
 
     operation_id: str
-    status: Literal["pending", "processing", "completed", "failed", "cancelled", "not_found"]
+    status: OperationLifecycleStatus
     operation_type: str | None = None
     created_at: str | None = None
     updated_at: str | None = None
@@ -2300,9 +2425,12 @@ class OperationStatusResponse(BaseModel):
             "immediate pickup."
         ),
     )
-    result_metadata: dict[str, Any] | None = Field(
+    result_metadata: OperationResultMetadata | None = Field(
         default=None,
-        description="Internal metadata for debugging. Structure may change without notice. Not for production use.",
+        description=(
+            "Operation metadata. The optional multimodal namespace is a stable public contract; "
+            "other keys remain operation-specific and may change."
+        ),
     )
     child_operations: list[ChildOperationStatus] | None = Field(
         default=None, description="Child operations for batch operations (if applicable)"
@@ -2311,6 +2439,119 @@ class OperationStatusResponse(BaseModel):
         default=None,
         description="Raw task payload (params the operation was submitted with). Only populated when include_payload=true.",
     )
+
+
+_SAFE_MULTIMODAL_TEXT_METADATA_FIELDS = frozenset(
+    {
+        "asset_id",
+        "asset_sha256",
+        "media_kind",
+        "pipeline_version",
+        "descriptor_model",
+        "resolved_model",
+        "stage",
+        "child_retain_operation_id",
+        "child_retain_status",
+        "sanitized_error_code",
+        "provider_request_id",
+    }
+)
+_SAFE_MULTIMODAL_BOOL_METADATA_FIELDS = frozenset({"recall_ready", "retryable", "possible_duplicate_provider_attempt"})
+_SAFE_MULTIMODAL_COUNTER_METADATA_FIELDS = frozenset(
+    {"input_tokens", "output_tokens", "logical_calls", "physical_attempts"}
+)
+_SAFE_MULTIMODAL_ENUM_METADATA_FIELDS = {
+    "media_kind": frozenset({"image", "video"}),
+    "stage": frozenset(
+        {
+            "received",
+            "stored",
+            "validated",
+            "preprocessed",
+            "describing",
+            "normalized",
+            "retain_queued",
+            "retain_failed",
+            "recall_ready",
+            "failed",
+        }
+    ),
+    "child_retain_status": frozenset({"pending", "processing", "completed", "failed", "cancelled", "not_found"}),
+}
+_SAFE_MULTIMODAL_UUID_FIELDS = frozenset({"child_retain_operation_id"})
+_SAFE_MULTIMODAL_SHA256_FIELDS = frozenset({"asset_sha256"})
+_SAFE_MULTIMODAL_ERROR_CODE_RE = re.compile(r"^[a-z0-9]+(?:[._-][a-z0-9]+)*$")
+_SAFE_MULTIMODAL_TEXT_MAX_LENGTHS = {
+    "asset_id": 4_096,
+    "asset_sha256": 64,
+    "media_kind": 5,
+    "pipeline_version": 256,
+    "descriptor_model": 256,
+    "resolved_model": 256,
+    "stage": 32,
+    "child_retain_operation_id": 36,
+    "child_retain_status": 10,
+    "sanitized_error_code": 128,
+    "provider_request_id": 512,
+}
+
+
+def _sanitize_internal_multimodal_result_metadata(result: dict[str, Any]) -> dict[str, Any]:
+    """Validate and redact the public multimodal status map before HTTP.
+
+    The producer emits a fixed allowlist, while this second boundary protects
+    clients from malformed historical rows and prevents transport payloads or
+    unbounded provider text from entering the stable public namespace.
+    """
+
+    metadata = result.get("result_metadata")
+    if not isinstance(metadata, dict) or "multimodal" not in metadata:
+        return result
+    raw_multimodal = metadata.get("multimodal")
+    if not isinstance(raw_multimodal, dict):
+        return {**result, "result_metadata": {**metadata, "multimodal": {}}}
+
+    safe: dict[str, str | bool | int] = {}
+    for key, value in raw_multimodal.items():
+        if key in _SAFE_MULTIMODAL_TEXT_METADATA_FIELDS:
+            if not isinstance(value, str) or not value or len(value) > _SAFE_MULTIMODAL_TEXT_MAX_LENGTHS[key]:
+                continue
+            if contains_encoded_media_payload(value):
+                continue
+            allowed_values = _SAFE_MULTIMODAL_ENUM_METADATA_FIELDS.get(key)
+            if allowed_values is not None and value not in allowed_values:
+                continue
+            if key in _SAFE_MULTIMODAL_UUID_FIELDS:
+                try:
+                    parsed_uuid = uuid.UUID(value)
+                except ValueError:
+                    continue
+                if str(parsed_uuid) != value:
+                    continue
+            if key in _SAFE_MULTIMODAL_SHA256_FIELDS and not re.fullmatch(r"[0-9a-f]{64}", value):
+                continue
+            if key == "sanitized_error_code" and (
+                len(value) > 128 or _SAFE_MULTIMODAL_ERROR_CODE_RE.fullmatch(value) is None
+            ):
+                continue
+            safe[key] = value
+        elif key in _SAFE_MULTIMODAL_BOOL_METADATA_FIELDS:
+            if isinstance(value, bool):
+                safe[key] = value
+        elif key in _SAFE_MULTIMODAL_COUNTER_METADATA_FIELDS:
+            if type(value) is int and 0 <= value <= MAX_PUBLIC_MULTIMODAL_COUNTER:
+                safe[key] = value
+
+    if safe.get("recall_ready") is True and not (
+        safe.get("stage") == "recall_ready"
+        and safe.get("child_retain_status") == "completed"
+        and "child_retain_operation_id" in safe
+    ):
+        # Historical or corrupted rows must never create a false-ready public
+        # signal. The durable producer is the only authority that may set the
+        # complete child/publication tuple.
+        safe["recall_ready"] = False
+    return {**result, "result_metadata": {**metadata, "multimodal": safe}}
 
 
 class AsyncOperationSubmitResponse(BaseModel):
@@ -2337,6 +2578,66 @@ class FeaturesInfo(BaseModel):
     worker: bool = Field(description="Whether the background worker is enabled")
     bank_config_api: bool = Field(description="Whether per-bank configuration API is enabled")
     file_upload_api: bool = Field(description="Whether file upload/conversion API is enabled")
+    multimodal_image: bool = Field(
+        default=False,
+        description="Whether the opt-in multimodal image description path is available in this deployment",
+    )
+    multimodal_video: bool = Field(
+        default=False,
+        description="Whether the opt-in multimodal video description path and local decoder are available",
+    )
+    multimodal_live_verified: bool = Field(
+        default=False,
+        description="Whether this exact multimodal deployment passed the operator-controlled live-provider gate",
+    )
+
+
+def _public_multimodal_capabilities(config: Any) -> dict[str, bool]:
+    """Derive conservative, non-secret multimodal capability flags.
+
+    This is a local static/runtime check only. It never contacts the provider,
+    opens media, or exposes credentials. PostgreSQL is the runtime-qualified
+    database for this release; Oracle retains static migration compatibility
+    but is deliberately not advertised as multimodal-capable.
+    """
+
+    provider_ready = all(
+        getattr(config, field_name, False) is True
+        for field_name in (
+            "multimodal_capability_responses_api",
+            "multimodal_capability_image_input",
+            "multimodal_capability_structured_outputs",
+        )
+    )
+    parser_allowlist = getattr(config, "file_parser_allowlist", None)
+    parser_available = parser_allowlist is None or "openai_multimodal" in parser_allowlist
+    image_available = bool(
+        getattr(config, "database_backend", None) == "postgresql"
+        and getattr(config, "enable_file_upload_api", False) is True
+        and getattr(config, "multimodal_enabled", False) is True
+        and getattr(config, "multimodal_image_enabled", False) is True
+        and parser_available
+        and provider_ready
+    )
+
+    video_available = False
+    video_requested = image_available and getattr(config, "multimodal_video_enabled", False) is True
+    if video_requested:
+        try:
+            from hms_api.engine.multimodal.video import video_decoder_available
+
+            video_available = video_decoder_available()
+        except (ImportError, OSError):
+            video_available = False
+
+    exact_runtime_available = image_available and (not video_requested or video_available)
+    return {
+        "multimodal_image": image_available,
+        "multimodal_video": video_available,
+        "multimodal_live_verified": bool(
+            exact_runtime_available and getattr(config, "multimodal_live_verified", False) is True
+        ),
+    }
 
 
 class VersionResponse(BaseModel):
@@ -2352,6 +2653,9 @@ class VersionResponse(BaseModel):
                     "worker": True,
                     "bank_config_api": False,
                     "file_upload_api": True,
+                    "multimodal_image": False,
+                    "multimodal_video": False,
+                    "multimodal_live_verified": False,
                 },
             }
         }
@@ -2916,13 +3220,22 @@ def _register_routes(app: FastAPI):
     @app.get(
         "/version",
         response_model=VersionResponse,
+        response_model_exclude_unset=True,
         summary="Get API version and feature flags",
         description="Returns API version information and enabled feature flags. "
-        "Use this to check which capabilities are available in this deployment.",
+        "Use include_multimodal=true to negotiate the additive multimodal capability fields.",
         tags=["Monitoring"],
         operation_id="get_version",
     )
-    async def version_endpoint() -> VersionResponse:
+    async def version_endpoint(
+        include_multimodal: bool = Query(
+            default=False,
+            description=(
+                "Include additive multimodal capability flags. The default preserves the legacy wire shape "
+                "for strict older SDKs."
+            ),
+        ),
+    ) -> VersionResponse:
         """
         Get API version and enabled features.
 
@@ -2936,15 +3249,19 @@ def _register_routes(app: FastAPI):
         from hms_api.config import _get_raw_config
 
         config = _get_raw_config()
+        feature_values: dict[str, bool] = {
+            "observations": config.enable_observations,
+            "mcp": config.mcp_enabled,
+            "worker": config.worker_enabled,
+            "bank_config_api": config.enable_bank_config_api,
+            "file_upload_api": config.enable_file_upload_api,
+        }
+        if include_multimodal:
+            feature_values.update(_public_multimodal_capabilities(config))
+
         return VersionResponse(
             api_version=__version__,
-            features=FeaturesInfo(
-                observations=config.enable_observations,
-                mcp=config.mcp_enabled,
-                worker=config.worker_enabled,
-                bank_config_api=config.enable_bank_config_api,
-                file_upload_api=config.enable_file_upload_api,
-            ),
+            features=FeaturesInfo(**feature_values),
         )
 
     @app.get(
@@ -4318,6 +4635,43 @@ def _register_routes(app: FastAPI):
             logger.error(f"Error in /v1/default/banks/{bank_id}/documents/{document_id}/reprocess: {error_detail}")
             raise HTTPException(status_code=500, detail=str(e))
 
+    @app.post(
+        "/v1/default/banks/{bank_id}/projections/reprocess",
+        response_model=ReprocessProjectionResponse,
+        summary="Reprocess by projection manifest",
+        description="Select memory units by projection manifest fields and re-run the existing document reprocess path. "
+        "Use dry_run=true to inspect affected units, chunks, and documents before submitting work.",
+        operation_id="reprocess_by_projection",
+        tags=["Documents"],
+    )
+    @audited("reprocess_by_projection", request_param="body")
+    async def api_reprocess_by_projection(
+        bank_id: str,
+        body: ReprocessProjectionRequest,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        """Reprocess documents whose memory units match a projection selector."""
+        try:
+            result = await app.state.memory.reprocess_by_projection(
+                bank_id=bank_id,
+                selector=body.selector,
+                dry_run=body.dry_run,
+                request_context=request_context,
+            )
+            return ReprocessProjectionResponse(success=True, **result)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        except OperationValidationError as e:
+            raise HTTPException(status_code=e.status_code, detail=e.reason)
+        except (AuthenticationError, HTTPException):
+            raise
+        except Exception as e:
+            import traceback
+
+            error_detail = f"{str(e)}\n\nTraceback:\n{traceback.format_exc()}"
+            logger.error(f"Error in /v1/default/banks/{bank_id}/projections/reprocess: {error_detail}")
+            raise HTTPException(status_code=500, detail=str(e))
+
     @app.get(
         "/v1/default/banks/{bank_id}/documents/{document_id:path}",
         response_model=DocumentResponse,
@@ -4630,6 +4984,7 @@ def _register_routes(app: FastAPI):
             result = await app.state.memory.get_operation_status(
                 bank_id, operation_id, request_context=request_context, include_payload=include_payload
             )
+            result = _sanitize_internal_multimodal_result_metadata(result)
             return OperationStatusResponse(**result)
         except OperationValidationError as e:
             raise HTTPException(status_code=e.status_code, detail=e.reason)
@@ -5952,38 +6307,152 @@ def _register_routes(app: FastAPI):
             if request_data.parser is not None:
                 _validate_parsers(_resolve_parser(request_data.parser), "request-level parser")
 
-            # Prepare file items and calculate total batch size
-            import io
-
+            # Prepare file items while enforcing the batch budget during the
+            # read.  UploadFile.read() without a size would buffer an arbitrary
+            # request before the legacy post-read limit check could run.
             file_items = []
             total_batch_size = 0
+            batch_limit = config.file_conversion_max_batch_size_bytes
+            upload_chunk_size = 1024 * 1024
+            from hms_api.engine.multimodal.admission import (
+                classify_media_hint,
+                classify_media_magic_prefix,
+                initial_multimodal_probe_bytes,
+            )
 
             for i, file in enumerate(files):
-                # Read file content to check size
-                file_content = await file.read()
-                total_batch_size += len(file_content)
+                # Resolve parser and metadata before reading so an explicit
+                # multimodal upload can use its stricter media byte budget.
+                file_meta = request_data.files_metadata[i] if request_data.files_metadata else FileRetainMetadata()
+                raw_parser = file_meta.parser if file_meta.parser is not None else request_data.parser
+                parser_chain = _resolve_parser(raw_parser)
+                _validate_parsers(parser_chain, f"file '{file.filename}'")
+                is_multimodal = "openai_multimodal" in parser_chain
+                # Missing and empty IDs remain anonymous.  Multimodal keeps
+                # that marker until the engine can include the raw hash in a
+                # scoped stable ID; legacy parsers receive the historical
+                # random UUID immediately.
+                doc_id = file_meta.document_id or None
+                if doc_id is None and not is_multimodal:
+                    doc_id = f"file_{uuid.uuid4()}"
+
+                remaining_batch = batch_limit - total_batch_size
+                content_type = str(file.content_type or "").split(";", 1)[0].lower()
+                filename = str(file.filename or "")
+                hinted_media_kind = (
+                    classify_media_hint(filename=filename, content_type=content_type) if is_multimodal else None
+                )
+                media_kind_hint = hinted_media_kind or "other"
+                hinted_limit = (
+                    config.multimodal_max_image_bytes
+                    if hinted_media_kind == "image"
+                    else config.multimodal_max_video_bytes
+                    if hinted_media_kind == "video"
+                    else None
+                )
+                # Do not trust a MIME/extension hint to choose the initial
+                # budget.  Read only the bounded magic probe first, then use
+                # the detected family; a hint is merely the fallback limit
+                # when the header is unknown.
+                per_file_limit = remaining_batch
+
+                chunks: list[bytes] = []
+                file_size = 0
+                magic_prefix = bytearray()
+                detected_magic_kind = None
+                probe_read_cap = (
+                    initial_multimodal_probe_bytes(
+                        image_limit=config.multimodal_max_image_bytes,
+                        video_limit=config.multimodal_max_video_bytes,
+                        chunk_size=upload_chunk_size,
+                    )
+                    if is_multimodal
+                    else 0
+                )
+                while True:
+                    read_size = min(upload_chunk_size, per_file_limit - file_size + 1)
+                    if probe_read_cap and detected_magic_kind is None and file_size < probe_read_cap:
+                        read_size = min(read_size, probe_read_cap - file_size)
+                    chunk = await file.read(read_size)
+                    if not chunk:
+                        break
+                    file_size += len(chunk)
+                    total_batch_size += len(chunk)
+                    if probe_read_cap and detected_magic_kind is None:
+                        missing_prefix_bytes = max(12 - len(magic_prefix), 0)
+                        magic_prefix.extend(chunk[:missing_prefix_bytes])
+                        detected_magic_kind = classify_media_magic_prefix(bytes(magic_prefix))
+                        if detected_magic_kind is not None:
+                            media_kind_hint = detected_magic_kind
+                            strict_limit = (
+                                config.multimodal_max_image_bytes
+                                if detected_magic_kind == "image"
+                                else config.multimodal_max_video_bytes
+                            )
+                            per_file_limit = min(remaining_batch, strict_limit)
+                        elif len(magic_prefix) >= 12 and hinted_limit is not None:
+                            per_file_limit = min(remaining_batch, hinted_limit)
+                    if file_size > per_file_limit or total_batch_size > batch_limit:
+                        if file_size > per_file_limit and per_file_limit < remaining_batch:
+                            get_metrics_collector().record_multimodal_pipeline(
+                                media_kind=media_kind_hint,
+                                stage="admission",
+                                duration=0.0,
+                                success=False,
+                                reason="media.upload_bytes_exceeded",
+                                asset_outcome="rejected",
+                            )
+                            raise HTTPException(
+                                status_code=400,
+                                detail="Uploaded multimodal file exceeds its configured byte budget",
+                            )
+                        total_mb = total_batch_size / (1024 * 1024)
+                        raise HTTPException(
+                            status_code=400,
+                            detail=(
+                                f"Total batch size ({total_mb:.1f}MB) exceeds maximum of "
+                                f"{config.file_conversion_max_batch_size_mb}MB"
+                            ),
+                        )
+                    chunks.append(chunk)
+                if is_multimodal and detected_magic_kind is None and hinted_limit is not None:
+                    # A short unknown/malformed asset can reach EOF before a
+                    # complete 12-byte probe.  Still enforce the untrusted
+                    # hint's conservative cap; never let EOF bypass it.
+                    per_file_limit = min(remaining_batch, hinted_limit)
+                    if file_size > per_file_limit:
+                        get_metrics_collector().record_multimodal_pipeline(
+                            media_kind=media_kind_hint,
+                            stage="admission",
+                            duration=0.0,
+                            success=False,
+                            reason="media.upload_bytes_exceeded",
+                            asset_outcome="rejected",
+                        )
+                        raise HTTPException(
+                            status_code=400,
+                            detail="Uploaded multimodal file exceeds its configured byte budget",
+                        )
+                file_content = b"".join(chunks)
 
                 # Create a mock UploadFile with the necessary attributes
                 class FileWrapper:
                     def __init__(self, content, filename, content_type):
                         self._content = content
+                        self._offset = 0
                         self.filename = filename
                         self.content_type = content_type
 
-                    async def read(self):
-                        return self._content
+                    async def read(self, size: int = -1):
+                        if size is None or size < 0:
+                            result = self._content[self._offset :]
+                            self._offset = len(self._content)
+                            return result
+                        result = self._content[self._offset : self._offset + size]
+                        self._offset += len(result)
+                        return result
 
                 wrapped_file = FileWrapper(file_content, file.filename, file.content_type)
-
-                # Get per-file metadata
-                file_meta = request_data.files_metadata[i] if request_data.files_metadata else FileRetainMetadata()
-                doc_id = file_meta.document_id or f"file_{uuid.uuid4()}"
-
-                # Resolve and validate per-file parser chain
-                # Priority: per-file > request-level > server default
-                raw_parser = file_meta.parser if file_meta.parser is not None else request_data.parser
-                parser_chain = _resolve_parser(raw_parser)
-                _validate_parsers(parser_chain, f"file '{file.filename}'")
 
                 item = {
                     "file": wrapped_file,
@@ -5996,14 +6465,6 @@ def _register_routes(app: FastAPI):
                     "strategy": file_meta.strategy,
                 }
                 file_items.append(item)
-
-            # Check total batch size after processing all files
-            if total_batch_size > config.file_conversion_max_batch_size_bytes:
-                total_mb = total_batch_size / (1024 * 1024)
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Total batch size ({total_mb:.1f}MB) exceeds maximum of {config.file_conversion_max_batch_size_mb}MB",
-                )
 
             result = await app.state.memory.submit_async_file_retain(
                 bank_id=bank_id,

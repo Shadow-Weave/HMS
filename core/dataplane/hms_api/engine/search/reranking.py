@@ -100,8 +100,11 @@ def apply_combined_scoring(
     for sr in scored_results:
         # Recency: linear decay over 365 days → [0.1, 1.0]; neutral 0.5 if no date.
         sr.recency = 0.5
-        if sr.retrieval.occurred_start:
-            occurred = sr.retrieval.occurred_start
+        # Event time is the strongest signal, but extracted facts often only
+        # retain an end time or the time they were mentioned.  Treating those
+        # rows as timeless makes historical ranking collapse to a tie.
+        occurred = sr.retrieval.occurred_start or sr.retrieval.occurred_end or sr.retrieval.mentioned_at
+        if occurred:
             if occurred.tzinfo is None:
                 occurred = occurred.replace(tzinfo=UTC)
             days_ago = (now - occurred).total_seconds() / 86400

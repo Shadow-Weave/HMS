@@ -7,10 +7,124 @@ This test verifies the new behavior where:
 3. Chunks are fetched in batches to handle varying chunk sizes
 """
 
+import re
+import uuid
+from unittest.mock import patch
+
 import pytest
 import pytest_asyncio
 
+from hms_api.engine.consolidation.consolidator import _ConsolidationBatchResponse, _CreateAction
+from hms_api.engine.llm_wrapper import TokenUsage
 from hms_api.engine.memory_engine import Budget
+
+
+def _mock_fact(what: str, *entities: str) -> dict:
+    return {
+        "what": what,
+        "when": "N/A",
+        "where": "N/A",
+        "who": ", ".join(entities) if entities else "N/A",
+        "why": "N/A",
+        "fact_type": "world",
+        "entities": [{"text": entity} for entity in entities],
+        "causal_relations": [],
+    }
+
+
+def _facts_for_prompt(prompt: str) -> list[dict]:
+    lower = prompt.lower()
+    facts = []
+
+    if "quantum" in lower or "mit" in lower:
+        facts.append(
+            _mock_fact(
+                "The MIT quantum computing research team works on quantum error correction and topological qubits.",
+                "MIT",
+                "quantum computing",
+            )
+        )
+    if "alice" in lower:
+        facts.append(
+            _mock_fact(
+                "Alice is a software engineer who specializes in Python programming and machine learning.",
+                "Alice",
+                "Python",
+                "machine learning",
+            )
+        )
+    if "bob" in lower:
+        facts.append(
+            _mock_fact(
+                "Bob is a data scientist with expertise in natural language processing and computer vision.",
+                "Bob",
+                "natural language processing",
+                "computer vision",
+            )
+        )
+    if "charlie" in lower:
+        facts.append(
+            _mock_fact(
+                "Charlie is the CTO of an AI healthcare company building medical image analysis models.",
+                "Charlie",
+                "AI healthcare",
+                "medical image analysis",
+            )
+        )
+    if "python" in lower:
+        facts.append(
+            _mock_fact(
+                "Python is widely used for machine learning, data science, and scikit-learn model training.",
+                "Python",
+                "machine learning",
+                "scikit-learn",
+            )
+        )
+    if "javascript" in lower:
+        facts.append(
+            _mock_fact(
+                "JavaScript is commonly used for web development and frontend applications.",
+                "JavaScript",
+                "web development",
+            )
+        )
+    if "sarah" in lower:
+        facts.append(
+            _mock_fact(
+                "Sarah is a product manager at a fintech company and works on user experience design.",
+                "Sarah",
+                "fintech",
+                "user experience design",
+            )
+        )
+
+    return facts or [_mock_fact("The retained document contains useful test information.", "test document")]
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def mock_chunk_test_llm_calls():
+    async def mock_call(self, *args, **kwargs):
+        scope = kwargs.get("scope", "memory")
+        if scope == "consolidation":
+            prompt = (kwargs.get("messages") or [{}])[-1].get("content", "")
+            fact_ids = re.findall(r"\[([0-9a-f-]{36})\]", prompt)
+            creates = [
+                _CreateAction(text=f"Observation for source fact {fact_id[:8]}", source_fact_ids=[fact_id])
+                for fact_id in fact_ids[:8]
+            ]
+            return _ConsolidationBatchResponse(creates=creates)
+
+        if scope == "retain_extract_facts":
+            prompt = (kwargs.get("messages") or [{}])[-1].get("content", "")
+            response = {"facts": _facts_for_prompt(prompt)}
+            if kwargs.get("return_usage", False):
+                return response, TokenUsage(input_tokens=len(prompt) // 4, output_tokens=64, total_tokens=64)
+            return response
+
+        return ""
+
+    with patch("hms_api.engine.llm_wrapper.LLMProvider.call", new=mock_call):
+        yield
 
 
 @pytest.mark.asyncio
@@ -23,19 +137,21 @@ async def test_recall_chunks_independent_of_max_tokens(memory, request_context):
     - Still return chunks (up to max_chunk_tokens)
     - Chunks should come from top-scored results before token filtering
     """
-    bank_id = "test-chunks-independence"
+    bank_id = f"test-chunks-independence-{uuid.uuid4().hex[:8]}"
 
     try:
-
         # Retain some test content with substantial size to generate chunks
-        test_content = """
+        test_content = (
+            """
         The quantum computing research team at MIT has made significant breakthroughs.
         Dr. Sarah Chen leads the team and focuses on quantum error correction.
         The team published three papers in Nature Physics this year.
         Their work on topological qubits shows promise for scalable quantum computers.
         Collaborators include IBM Research and Google Quantum AI.
         The research is funded by a $5M NSF grant running through 2026.
-        """ * 10  # Repeat to ensure we get multiple chunks
+        """
+            * 10
+        )  # Repeat to ensure we get multiple chunks
 
         await memory.retain_async(
             bank_id=bank_id,
@@ -95,10 +211,9 @@ async def test_recall_chunks_batching_with_varying_sizes(memory, request_context
     2. The system handles varying chunk sizes across documents
     3. Token budget is respected across multiple batch fetches
     """
-    bank_id = "test-chunks-batching"
+    bank_id = f"test-chunks-batching-{uuid.uuid4().hex[:8]}"
 
     try:
-
         # Retain multiple documents with different content sizes
         # Document 1: Short content (small chunks)
         await memory.retain_async(
@@ -109,12 +224,15 @@ async def test_recall_chunks_batching_with_varying_sizes(memory, request_context
         )
 
         # Document 2: Medium content
-        content_bob = """
+        content_bob = (
+            """
         Bob works as a data scientist at a tech startup in San Francisco.
         He has expertise in natural language processing and computer vision.
         Bob completed his PhD at Stanford University in 2020.
         He leads a team of five engineers working on AI-powered recommendation systems.
-        """ * 5
+        """
+            * 5
+        )
         await memory.retain_async(
             bank_id=bank_id,
             content=content_bob,
@@ -123,14 +241,17 @@ async def test_recall_chunks_batching_with_varying_sizes(memory, request_context
         )
 
         # Document 3: Long content (large chunks)
-        content_charlie = """
+        content_charlie = (
+            """
         Charlie is the CTO of a growing AI company focused on healthcare applications.
         He has over 15 years of experience in software architecture and distributed systems.
         Charlie's team builds machine learning models for medical image analysis and diagnosis.
         The company recently raised $50 million in Series B funding.
         They have partnerships with major hospitals in the United States and Europe.
         Charlie holds several patents in medical imaging and deep learning.
-        """ * 20
+        """
+            * 20
+        )
         await memory.retain_async(
             bank_id=bank_id,
             content=content_charlie,
@@ -175,10 +296,9 @@ async def test_recall_chunks_ordering_by_relevance(memory, request_context):
     Chunks should be ordered based on the top-scored (reranked) results,
     not in document order or random order.
     """
-    bank_id = "test-chunks-ordering"
+    bank_id = f"test-chunks-ordering-{uuid.uuid4().hex[:8]}"
 
     try:
-
         # Retain content with different relevance to query
         await memory.retain_async(
             bank_id=bank_id,
@@ -223,8 +343,9 @@ async def test_recall_chunks_ordering_by_relevance(memory, request_context):
         all_chunk_text = " ".join(chunk.chunk_text for chunk in result.chunks.values())
         # At least some chunks should mention Python (higher relevance)
         # This is a soft check since exact ordering depends on scoring
-        assert "Python" in all_chunk_text or "python" in all_chunk_text.lower(), \
+        assert "Python" in all_chunk_text or "python" in all_chunk_text.lower(), (
             "Chunks should include content about Python (relevant to query)"
+        )
 
     finally:
         # Cleanup
@@ -239,17 +360,20 @@ async def test_recall_chunks_for_observations(memory, request_context):
     Observations have no direct chunk_id (they are synthesized from source memories).
     When include_chunks=True, chunks should be resolved via source_memory_ids.
     """
-    bank_id = "test-chunks-observations"
+    bank_id = f"test-chunks-observations-{uuid.uuid4().hex[:8]}"
 
     try:
         # Retain content that will generate observations via consolidation
-        test_content = """
+        test_content = (
+            """
         Alice is a senior software engineer at a large technology company.
         She specializes in distributed systems and has 10 years of experience.
         Alice leads a team of 8 engineers working on cloud infrastructure.
         She holds a PhD in computer science from Stanford University.
         Alice has published several papers on fault-tolerant distributed systems.
-        """ * 8
+        """
+            * 8
+        )
 
         await memory.retain_async(
             bank_id=bank_id,
@@ -293,10 +417,9 @@ async def test_recall_chunks_without_include_flag(memory, request_context):
 
     This ensures backward compatibility - chunks are only fetched when explicitly requested.
     """
-    bank_id = "test-chunks-no-include"
+    bank_id = f"test-chunks-no-include-{uuid.uuid4().hex[:8]}"
 
     try:
-
         # Retain content
         test_content = """
         Sarah is a product manager at a fintech company in New York.
@@ -321,8 +444,7 @@ async def test_recall_chunks_without_include_flag(memory, request_context):
 
         # Should have facts but no chunks
         assert len(result.results) > 0, "Should return facts"
-        assert result.chunks is None or len(result.chunks) == 0, \
-            "Should NOT return chunks when include_chunks=False"
+        assert result.chunks is None or len(result.chunks) == 0, "Should NOT return chunks when include_chunks=False"
 
     finally:
         # Cleanup

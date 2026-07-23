@@ -550,19 +550,19 @@ async def create_temporal_links_batch_per_fact(
             lateral_event_dates = [_normalize_datetime(e[1]) for e in new_unit_entries]
             lateral_fact_types = [e[2] for e in new_unit_entries]
             # Bidirectional index scan: instead of scanning all units in the 24h
-            # window (O(N) — 164k rows at scale) and sorting by proximity, we scan
+            # window (O(N)) and sorting by proximity, we scan
             # the nearest K units in each direction using the B-tree index on
             # (bank_id, fact_type, event_date). This reads only 2×K rows per probe
-            # regardless of bank size — 120x faster at 164k units (0.6ms vs 74ms).
+            # instead of transferring the full time window.
             TEMPORAL_LATERAL_BATCH = 500
             half_limit = MAX_TEMPORAL_LINKS_PER_UNIT  # fetch K in each direction, take top K combined
             mu = fq_table("memory_units")
 
             # Bidirectional index scan: instead of scanning all units in the 24h
-            # window (O(N) — 164k rows at scale) and sorting by proximity, we scan
+            # window (O(N)) and sorting by proximity, we scan
             # the nearest K units in each direction using the B-tree index on
             # (bank_id, fact_type, event_date). This reads only 2×K rows per probe
-            # regardless of bank size — 120x faster at 164k units (0.6ms vs 74ms).
+            # instead of transferring the full time window.
             rows = await ops.fetch_temporal_neighbors(
                 conn,
                 mu,
@@ -687,9 +687,8 @@ async def compute_semantic_links_ann(
         fact_types = ["world"] * len(unit_ids)
 
     # No exclude_uuids — large exclusion lists (8k+ UUIDs) force PostgreSQL to
-    # sequential-scan every HNSW probe result against the array, destroying
-    # performance (67s for 8k seeds). Self-links are harmless (ON CONFLICT DO
-    # NOTHING handles duplicates in memory_links).
+    # sequential-scan every HNSW probe result against the array. Self-links are
+    # harmless (ON CONFLICT DO NOTHING handles duplicates in memory_links).
     #
     # The entire CREATE TEMP TABLE → COPY → SELECT sequence MUST run inside a
     # single transaction. Callers may connect through pgBouncer in `transaction`
@@ -705,11 +704,9 @@ async def compute_semantic_links_ann(
     # end handles both.
     rows: list = []
     async with conn.transaction():
-        # Transaction-local ef_search. Default 400 is tuned for recall precision
-        # but at 164k units each HNSW probe takes 94ms. ef_search=60 gives 2.7ms
-        # per probe (35x faster) with sufficient accuracy for top-50 semantic
-        # link creation. SET LOCAL auto-reverts at commit, so we don't pollute
-        # the pool for subsequent recall queries.
+        # Transaction-local ef_search bounds ANN work during semantic link
+        # creation. SET LOCAL auto-reverts at commit, so the setting does not
+        # leak to later recall queries through the connection pool.
         await conn.execute("SET LOCAL hnsw.ef_search = 60")
 
         t_setup = time_mod.time()

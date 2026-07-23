@@ -21,7 +21,6 @@ from .client import HMSVendorClient, HMSVendorError
 from .models import RecallBundle, RecallItem
 from .organizer import EvidenceOrganizer
 
-
 SECRET_PATTERNS = [
     re.compile(r"sk-[A-Za-z0-9_\-]{12,}"),
     re.compile(r"hms_(?:live|test)_[A-Za-z0-9_\-]{12,}"),
@@ -38,7 +37,7 @@ class GatewayConfig(BaseModel):
     external_api_keys: list[str] = Field(default_factory=list)
     rate_limit_per_minute: int = 60
     daily_quota: int = 1000
-    audit_log_path: str = ".aaaLOG/vendor_gateway_audit.jsonl"
+    audit_log_path: str = "./logs/vendor_gateway_audit.jsonl"
     scope_bank_ids: bool = True
     check_internal_health: bool = True
     max_sessions_per_request: int = 100
@@ -56,7 +55,7 @@ class GatewayConfig(BaseModel):
             external_api_keys=external_api_keys,
             rate_limit_per_minute=int(os.getenv("HMS_GATEWAY_RATE_LIMIT_PER_MINUTE", "60")),
             daily_quota=int(os.getenv("HMS_GATEWAY_DAILY_QUOTA", "1000")),
-            audit_log_path=os.getenv("HMS_GATEWAY_AUDIT_LOG", ".aaaLOG/vendor_gateway_audit.jsonl"),
+            audit_log_path=os.getenv("HMS_GATEWAY_AUDIT_LOG", "./logs/vendor_gateway_audit.jsonl"),
             scope_bank_ids=_env_bool("HMS_GATEWAY_SCOPE_BANK_IDS", True),
             check_internal_health=_env_bool("HMS_GATEWAY_CHECK_INTERNAL_HEALTH", True),
             max_sessions_per_request=int(os.getenv("HMS_GATEWAY_MAX_SESSIONS_PER_REQUEST", "100")),

@@ -17,6 +17,7 @@ from typing import Any
 from ...worker.stage import set_stage
 from ..db.base import DatabaseBackend
 from ..db_utils import acquire_with_retry
+from ..embedding_fingerprint import embedding_model_version, ensure_bank_embedding_fingerprint
 from ..memory_engine import count_tokens, fq_table
 from . import bank_utils
 
@@ -109,6 +110,10 @@ from .types import (
 logger = logging.getLogger(__name__)
 
 
+def _embedding_model_version(embeddings_model) -> str:
+    return embedding_model_version(embeddings_model)
+
+
 def _build_retain_params(contents_dicts, document_tags=None, doc_contents=None):
     """Build retain_params and merged_tags from content dicts."""
     if doc_contents is not None:
@@ -187,11 +192,13 @@ async def _pre_resolve_phase1(
         # Skipped in streaming mode — deferred to Phase 3 to avoid O(bank_size)
         # scaling bottleneck that makes later streaming batches progressively slower.
         semantic_ann_links = []
-        if not skip_semantic_ann:
+        if not skip_semantic_ann and all(embedding is not None for embedding in embeddings):
             fact_types = [fact.fact_type for fact in processed_facts]
             semantic_ann_links = await compute_semantic_links_ann(
                 resolve_conn, bank_id, placeholder_unit_ids, embeddings, fact_types=fact_types, log_buffer=log_buffer
             )
+        elif not skip_semantic_ann:
+            log_buffer.append("  Semantic ANN precompute: skipped (missing embeddings)")
 
     return Phase1Result(
         entities=EntityResolutionResult(
@@ -242,6 +249,7 @@ def _remap_phase1_results(
 
 async def _insert_facts_and_links(
     conn,
+    embeddings_model,
     entity_resolver,
     bank_id: str,
     contents: list[RetainContent],
@@ -268,6 +276,17 @@ async def _insert_facts_and_links(
     Entity link building is deferred to Phase 3 (post-transaction, best-effort).
     """
     set_stage("retain.phase2.insert_facts")
+    # This runs inside the caller's write transaction.  The bank row lock and
+    # conditional NULL initialisation prevent concurrent writers from mixing
+    # embeddings from two semantic spaces.
+    await ensure_bank_embedding_fingerprint(
+        conn,
+        bank_id,
+        embeddings_model,
+        policy=getattr(config, "embedding_fingerprint_policy", "strict"),
+        for_write=True,
+        legacy_attestation=getattr(config, "embedding_fingerprint_legacy_attestation", None),
+    )
     unit_ids = await fact_storage.insert_facts_batch(conn, bank_id, processed_facts, ops=ops)
     step_start = time.time()
     log_buffer.append(f"  Insert facts: {len(unit_ids)} units in {time.time() - step_start:.3f}s")
@@ -303,25 +322,39 @@ async def _insert_facts_and_links(
 
         # Create temporal links
         step_start = time.time()
-        temporal_link_count = await link_creation.create_temporal_links_batch(conn, bank_id, unit_ids, ops=ops)
+        temporal_link_count = await link_creation.create_temporal_links_batch(
+            conn,
+            bank_id,
+            unit_ids,
+            ops=ops,
+            write_temporal_links=getattr(config, "write_temporal_links", True),
+        )
         log_buffer.append(f"  Temporal links: {temporal_link_count} links in {time.time() - step_start:.3f}s")
 
         # Create semantic links (within-batch + pre-computed ANN from Phase 1)
-        if skip_semantic_links:
+        if not getattr(config, "write_semantic_links", True):
+            log_buffer.append("  Semantic links: skipped (mode=ann)")
+            semantic_link_count = 0
+        elif skip_semantic_links:
             log_buffer.append("  Semantic links: skipped (deferred to final ANN pass)")
             semantic_link_count = 0
         else:
             step_start = time.time()
             embeddings_for_links = [fact.embedding for fact in processed_facts]
-            semantic_link_count = await link_creation.create_semantic_links_batch(
-                conn,
-                bank_id,
-                unit_ids,
-                embeddings_for_links,
-                pre_computed_ann_links=semantic_ann_links,
-                ops=ops,
-            )
-            log_buffer.append(f"  Semantic links: {semantic_link_count} links in {time.time() - step_start:.3f}s")
+            if not all(embedding is not None for embedding in embeddings_for_links):
+                semantic_link_count = 0
+                log_buffer.append("  Semantic links: skipped (missing embeddings)")
+            else:
+                semantic_link_count = await link_creation.create_semantic_links_batch(
+                    conn,
+                    bank_id,
+                    unit_ids,
+                    embeddings_for_links,
+                    pre_computed_ann_links=semantic_ann_links,
+                    ops=ops,
+                    write_semantic_links=getattr(config, "write_semantic_links", True),
+                )
+                log_buffer.append(f"  Semantic links: {semantic_link_count} links in {time.time() - step_start:.3f}s")
 
         # NOTE: Entity links are NOT inserted here. They are deferred to
         # Phase 3 (post-transaction, best-effort) since retrieval uses the
@@ -351,6 +384,7 @@ async def _build_and_insert_entity_links_phase3(
     entity_resolver,
     bank_id: str,
     phase3_ctx: Phase3Context,
+    config,
     log_buffer: list[str],
 ) -> None:
     """
@@ -361,6 +395,10 @@ async def _build_and_insert_entity_links_phase3(
     the unit_entities self-join instead.
     """
     set_stage("retain.phase3.entity_links")
+    if not getattr(config, "write_entity_links", True):
+        log_buffer.append("  Entity links (viz): skipped (write_entity_links=false)")
+        return
+
     p3_unit_ids = phase3_ctx.unit_ids
     p3_resolved = phase3_ctx.resolved_entity_ids
     p3_entity_to_unit = phase3_ctx.entity_to_unit
@@ -426,12 +464,124 @@ async def _extract_and_embed(
 
     step_start = time.time()
     augmented_texts = embedding_processing.augment_texts_with_dates(extracted_facts, format_date_fn)
-    embeddings = await embedding_processing.generate_embeddings_batch(embeddings_model, augmented_texts)
-    log_buffer.append(f"  Generate embeddings: {len(embeddings)} embeddings in {time.time() - step_start:.3f}s")
+    try:
+        embeddings = await embedding_processing.generate_embeddings_batch(embeddings_model, augmented_texts)
+        log_buffer.append(f"  Generate embeddings: {len(embeddings)} embeddings in {time.time() - step_start:.3f}s")
+    except Exception as exc:
+        logger.warning("Embedding generation failed; retaining facts with projection.embedding.ok=false: %s", exc)
+        embeddings = [None] * len(extracted_facts)
+        log_buffer.append(f"  Generate embeddings: failed, storing {len(embeddings)} facts without embeddings")
 
-    processed_facts = [ProcessedFact.from_extracted_fact(ef, emb) for ef, emb in zip(extracted_facts, embeddings)]
+    embedding_version = _embedding_model_version(embeddings_model)
+    extraction_version = getattr(config, "extraction_prompt_version", "5w-v1")
+    processed_facts = [
+        ProcessedFact.from_extracted_fact(
+            ef,
+            emb,
+            extraction_prompt_version=extraction_version,
+            embedding_model_version=embedding_version,
+        )
+        for ef, emb in zip(extracted_facts, embeddings)
+    ]
 
     return extracted_facts, processed_facts, chunks, usage
+
+
+class _RetainLogBuffer(list[str]):
+    """Redact private identifiers only for trusted operation-scoped retains."""
+
+    def __init__(self, *, sanitized: bool, secrets: tuple[str | None, ...] = ()) -> None:
+        super().__init__()
+        self._sanitized = sanitized
+        self._secrets = {secret for secret in secrets if secret}
+
+    def add_secret(self, secret: str | None) -> None:
+        if secret:
+            self._secrets.add(secret)
+
+    def redact(self, message: str) -> str:
+        if not self._sanitized:
+            return message
+        for secret in sorted(self._secrets, key=len, reverse=True):
+            message = message.replace(secret, "<redacted>")
+        return message
+
+    def append(self, message: str) -> None:
+        super().append(self.redact(message))
+
+
+def _log_identifier(value: str | None, *, sanitized: bool) -> str:
+    return "<redacted>" if sanitized and value else str(value)
+
+
+class RetainPublicationAborted(RuntimeError):
+    """The retain no longer owns a document state that it could publish.
+
+    Returning a normal result from this condition is unsafe for callers that
+    use ``outbox_callback`` as a transactional publication fence: the async
+    child would be marked completed even though that callback never committed.
+    Keep the message identifier-free because worker failures are persisted.
+    """
+
+
+async def _consume_streaming_batches(
+    chunk_queue: asyncio.Queue,
+    *,
+    chunk_batch_size: int,
+    process_batch: Callable[[list[tuple], int, bool], Awaitable[None]],
+    producer_error: list[BaseException],
+    pipeline_aborted: list[bool],
+) -> None:
+    """Drain enriched chunks while preserving a real final-batch boundary.
+
+    A full batch cannot be submitted as non-final until either another item is
+    observed or the producer terminates.  Holding one full batch as lookahead
+    makes an exact multiple of ``chunk_batch_size`` indistinguishable from a
+    partial last batch in the *right* way: both invoke ``process_batch`` once
+    with ``is_last=True``.  That is where the transactional publication callback
+    is attached.
+
+    Producer failure and document takeover deliberately suppress the final
+    batch callback.  They must propagate as failures instead of allowing the
+    enclosing async operation to report a false successful publication.
+    """
+
+    if chunk_batch_size <= 0:
+        raise ValueError("chunk_batch_size must be positive")
+
+    batch: list[tuple] = []
+    consumer_batch_idx = 0
+
+    while True:
+        item = await chunk_queue.get()
+        if item is None:
+            # The producer records extraction failures before publishing the
+            # sentinel.  Do not commit a remaining partial document, and let the
+            # caller re-raise the original provider/extraction exception.
+            if producer_error:
+                return
+            if pipeline_aborted[0]:
+                raise RetainPublicationAborted("Retain publication ownership was lost")
+            if batch:
+                await process_batch(batch, consumer_batch_idx, True)
+                if pipeline_aborted[0]:
+                    raise RetainPublicationAborted("Retain publication ownership was lost")
+            return
+
+        if pipeline_aborted[0]:
+            # Keep draining so a producer blocked on the bounded queue can
+            # finish and publish its sentinel.  No further work may be written.
+            continue
+
+        # A real successor proves that the pending full batch is not the last.
+        if len(batch) >= chunk_batch_size:
+            await process_batch(batch, consumer_batch_idx, False)
+            consumer_batch_idx += 1
+            batch = []
+            if pipeline_aborted[0]:
+                continue
+
+        batch.append(item)
 
 
 async def retain_batch(
@@ -451,6 +601,7 @@ async def retain_batch(
     schema: str | None = None,
     outbox_callback: Callable[["asyncpg.Connection"], Awaitable[None]] | None = None,
     db_semaphore: "asyncio.Semaphore | None" = None,
+    sanitize_log_identifiers: bool = False,
 ) -> tuple[list[list[str]], TokenUsage, int | None]:
     """
     Process a batch of content through the retain pipeline.
@@ -470,7 +621,7 @@ async def retain_batch(
     start_time = time.time()
     total_chars = sum(len(item.get("content", "")) for item in contents_dicts)
 
-    log_buffer = []
+    log_buffer = _RetainLogBuffer(sanitized=sanitize_log_identifiers, secrets=(bank_id,))
     log_buffer.append(f"{'=' * 60}")
     log_buffer.append(f"RETAIN_BATCH START: {bank_id}")
     log_buffer.append(f"Batch size: {len(contents_dicts)} content items, {total_chars:,} chars")
@@ -479,6 +630,18 @@ async def retain_batch(
     # Get bank profile
     profile = await bank_utils.get_bank_profile(pool, bank_id)
     agent_name = profile["name"]
+
+    # Fail before extraction/embedding work when an existing non-empty bank is
+    # known to be incompatible.  The write path repeats this check under a row
+    # lock because this preflight alone cannot close concurrent-writer races.
+    async with acquire_with_retry(pool) as fingerprint_conn:
+        await ensure_bank_embedding_fingerprint(
+            fingerprint_conn,
+            bank_id,
+            embeddings_model,
+            policy=getattr(config, "embedding_fingerprint_policy", "strict"),
+            legacy_attestation=getattr(config, "embedding_fingerprint_legacy_attestation", None),
+        )
 
     # Convert dicts to RetainContent objects
     contents = _build_contents(contents_dicts, document_tags)
@@ -524,6 +687,7 @@ async def retain_batch(
                     schema=schema,
                     outbox_callback=outbox_callback,
                     db_semaphore=db_semaphore,
+                    sanitize_log_identifiers=sanitize_log_identifiers,
                 )
                 for group_idx, orig_idx in enumerate(original_indices[doc_key]):
                     if group_idx < len(group_ids):
@@ -560,6 +724,7 @@ async def retain_batch(
             pass
     if not effective_doc_id:
         effective_doc_id = str(uuid.uuid4())
+    log_buffer.add_secret(effective_doc_id)
 
     # Record effective_doc_id on the operation (idempotent set-append). Captures
     # both user-provided and generated ids so the operation shows every document
@@ -639,6 +804,12 @@ async def retain_batch(
                 f"{datetime.fromtimestamp(start_time, tz=UTC).isoformat()})"
             )
             logger.info("\n" + "\n".join(log_buffer) + "\n")
+            if outbox_callback is not None:
+                # A publication callback is not a notification after the fact;
+                # multimodal retain uses it as the ledger CAS that proves this
+                # document command actually published.  A stale no-op cannot
+                # satisfy that contract and must not look like child success.
+                raise RetainPublicationAborted("Retain was superseded before publication")
             # No new content was processed — report 0 so callers can skip
             # billing cleanly instead of falling back to full-content billing.
             return [[] for _ in contents], TokenUsage(), 0
@@ -665,6 +836,7 @@ async def retain_batch(
             schema,
             outbox_callback,
             db_semaphore,
+            sanitize_log_identifiers,
         )
         if delta_result is not None:
             return delta_result
@@ -721,6 +893,7 @@ async def retain_batch(
         schema=schema,
         outbox_callback=outbox_callback,
         db_semaphore=db_semaphore,
+        sanitize_log_identifiers=sanitize_log_identifiers,
     )
 
 
@@ -736,6 +909,7 @@ async def _run_final_semantic_ann(
     pool: Any,
     bank_id: str,
     unit_ids: list[str],
+    config,
     log_buffer: list[str],
 ) -> None:
     """
@@ -747,6 +921,10 @@ async def _run_final_semantic_ann(
     one efficient pass that sees the full bank.
     """
     from .link_utils import _bulk_insert_links, compute_semantic_links_ann
+
+    if not getattr(config, "write_semantic_links", True):
+        log_buffer.append("[streaming] Final ANN: semantic links skipped (mode=ann)")
+        return
 
     if not unit_ids:
         return
@@ -858,7 +1036,8 @@ async def _streaming_retain_batch(
     schema: str | None = None,
     outbox_callback: Callable[["asyncpg.Connection"], Awaitable[None]] | None = None,
     db_semaphore: "asyncio.Semaphore | None" = None,
-) -> tuple[list[list[str]], TokenUsage]:
+    sanitize_log_identifiers: bool = False,
+) -> tuple[list[list[str]], TokenUsage, int | None]:
     """
     Process a large document in streaming mini-batches to bound memory usage.
 
@@ -902,6 +1081,22 @@ async def _streaming_retain_batch(
     # Memory: sanitized_content is only needed for the hash; free it immediately.
     sanitized_content = ""
     is_recovery = False
+
+    async def _finalize_existing_publication() -> None:
+        """Publish an already-written/recovered document under a row lock."""
+
+        if outbox_callback is None:
+            return
+        async with acquire_with_retry(pool) as conn:
+            async with conn.transaction():
+                existing_hash = await conn.fetchval(
+                    f"SELECT content_hash FROM {fq_table('documents')} WHERE id = $1 AND bank_id = $2 FOR UPDATE",
+                    effective_doc_id,
+                    bank_id,
+                )
+                if existing_hash != new_content_hash:
+                    raise RetainPublicationAborted("Retain publication ownership was lost")
+                await outbox_callback(conn)
 
     try:
         async with acquire_with_retry(pool) as conn:
@@ -1016,39 +1211,13 @@ async def _streaming_retain_batch(
     # Drains enriched chunks from the queue in batches and runs
     # Phase 1 (entity resolution) -> Phase 2 (write txn) -> Phase 3 (ANN fire-and-forget).
     async def _db_consumer() -> None:
-        batch: list[tuple] = []
-        consumer_batch_idx = 0
-
-        while True:
-            item = await chunk_queue.get()
-            if item is None:
-                # Process any remaining items
-                if batch and not pipeline_aborted[0]:
-                    await _process_db_batch(
-                        batch,
-                        consumer_batch_idx,
-                        is_last=True,
-                    )
-                break
-
-            batch.append(item)
-
-            if len(batch) >= chunk_batch_size:
-                if pipeline_aborted[0]:
-                    # Another request took over the document — discard this batch
-                    log_buffer.append(
-                        f"[streaming] Consumer: discarding batch of {len(batch)} chunks "
-                        f"(pipeline aborted due to concurrent takeover)"
-                    )
-                    batch = []
-                    continue
-                await _process_db_batch(
-                    batch,
-                    consumer_batch_idx,
-                    is_last=False,
-                )
-                consumer_batch_idx += 1
-                batch = []
+        await _consume_streaming_batches(
+            chunk_queue,
+            chunk_batch_size=chunk_batch_size,
+            process_batch=_process_db_batch,
+            producer_error=producer_error,
+            pipeline_aborted=pipeline_aborted,
+        )
 
     async def _process_db_batch(
         batch: list[tuple],
@@ -1096,6 +1265,14 @@ async def _streaming_retain_batch(
             if not doc_tracking_done[0]:
                 async with acquire_with_retry(pool) as conn:
                     async with conn.transaction():
+                        await ensure_bank_embedding_fingerprint(
+                            conn,
+                            bank_id,
+                            embeddings_model,
+                            policy=getattr(config, "embedding_fingerprint_policy", "strict"),
+                            for_write=True,
+                            legacy_attestation=getattr(config, "embedding_fingerprint_legacy_attestation", None),
+                        )
                         await conn.execute(
                             f"INSERT INTO {fq_table('documents')} (id, bank_id, original_text, content_hash) "
                             f"VALUES ($1, $2, '', '__pending__') "
@@ -1129,12 +1306,16 @@ async def _streaming_retain_batch(
                                 merged_tags,
                                 ops=pool.ops,
                             )
+                        if is_last and outbox_callback is not None:
+                            await outbox_callback(conn)
                         doc_tracking_done[0] = True
                         # Memory: combined_content has been persisted; release
                         # it now so the rest of the consumer loop doesn't pin
                         # a multi-MB string. Nothing reads it after tracking.
                         combined_content = ""
                         log_buffer.append(f"[streaming] Document {effective_doc_id} tracked (0 facts in first batch)")
+            elif is_last:
+                await _finalize_existing_publication()
             log_buffer.append(
                 f"[streaming] Consumer batch {consumer_batch_idx + 1}: "
                 f"0 facts extracted from {len(batch)} chunks, skipping"
@@ -1282,6 +1463,7 @@ async def _streaming_retain_batch(
                     # mode; they are created in a single final ANN pass after all batches.
                     batch_result_ids, phase3_ctx = await _insert_facts_and_links(
                         conn,
+                        embeddings_model,
                         entity_resolver,
                         bank_id,
                         batch_contents,
@@ -1305,7 +1487,7 @@ async def _streaming_retain_batch(
                     try:
                         await entity_resolver.flush_pending_stats()
                         await _build_and_insert_entity_links_phase3(
-                            pool, entity_resolver, bank_id, phase3_ctx, log_buffer
+                            pool, entity_resolver, bank_id, phase3_ctx, config, log_buffer
                         )
                     except Exception:
                         logger.warning(f"Phase 3 stats (consumer batch {consumer_batch_idx + 1}) failed", exc_info=True)
@@ -1386,6 +1568,14 @@ async def _streaming_retain_batch(
         if not doc_tracking_done[0] and not pipeline_aborted[0]:
             async with acquire_with_retry(pool) as conn:
                 async with conn.transaction():
+                    await ensure_bank_embedding_fingerprint(
+                        conn,
+                        bank_id,
+                        embeddings_model,
+                        policy=getattr(config, "embedding_fingerprint_policy", "strict"),
+                        for_write=True,
+                        legacy_attestation=getattr(config, "embedding_fingerprint_legacy_attestation", None),
+                    )
                     await conn.execute(
                         f"INSERT INTO {fq_table('documents')} (id, bank_id, original_text, content_hash) "
                         f"VALUES ($1, $2, '', '__pending__') "
@@ -1418,6 +1608,8 @@ async def _streaming_retain_batch(
                             merged_tags,
                             ops=pool.ops,
                         )
+                    if outbox_callback is not None:
+                        await outbox_callback(conn)
                     doc_tracking_done[0] = True
                     # Memory: combined_content has been persisted and won't be
                     # read again — release the per-document text now.
@@ -1468,6 +1660,7 @@ async def _streaming_retain_batch(
             )
             all_unit_ids = [row["id"] for row in rows]
             log_buffer.append(f"[streaming] Recovery: loaded {len(all_unit_ids)} unit IDs from DB")
+        await _finalize_existing_publication()
 
     # ---------------------------------------------------------------------------
     # Final ANN pass: create semantic links for ALL committed units at once.
@@ -1477,12 +1670,13 @@ async def _streaming_retain_batch(
     if all_unit_ids and not pipeline_aborted[0]:
         ann_start = time.time()
         try:
-            await _run_final_semantic_ann(pool, bank_id, all_unit_ids, log_buffer)
+            await _run_final_semantic_ann(pool, bank_id, all_unit_ids, config, log_buffer)
         except Exception:
             # ANN pass is best-effort. FK violations can occur if a concurrent
             # retain cascade-deleted our units between the batch commit and here.
+            log_document_id = _log_identifier(effective_doc_id, sanitized=sanitize_log_identifiers)
             logger.warning(
-                f"[streaming] Final ANN pass failed for document {effective_doc_id} "
+                f"[streaming] Final ANN pass failed for document {log_document_id} "
                 f"(units may have been superseded by concurrent retain)",
                 exc_info=True,
             )
@@ -1502,6 +1696,9 @@ async def _streaming_retain_batch(
     log_buffer.append(f"Document: {effective_doc_id}")
     log_buffer.append(f"{'=' * 60}")
     logger.info("\n" + "\n".join(log_buffer) + "\n")
+
+    if pipeline_aborted[0]:
+        raise RetainPublicationAborted("Retain publication ownership was lost")
 
     # Map all unit_ids back to the original content items.
     # For streaming mode with a single document, all units belong to content 0.
@@ -1537,6 +1734,7 @@ async def _try_delta_retain(
     schema,
     outbox_callback,
     db_semaphore: "asyncio.Semaphore | None" = None,
+    sanitize_log_identifiers: bool = False,
 ) -> tuple[list[list[str]], TokenUsage, int | None] | None:
     """
     Attempt delta retain for a document upsert. Returns result tuple if delta
@@ -1571,7 +1769,8 @@ async def _try_delta_retain(
         return None
 
     if any(c.content_hash is None for c in existing_chunks):
-        logger.info(f"Delta retain skipped for {effective_doc_id}: existing chunks lack content_hash (pre-migration)")
+        log_document_id = _log_identifier(effective_doc_id, sanitized=sanitize_log_identifiers)
+        logger.info(f"Delta retain skipped for {log_document_id}: existing chunks lack content_hash (pre-migration)")
         return None
 
     # Chunk new content and classify changes
@@ -1604,7 +1803,8 @@ async def _try_delta_retain(
     )
 
     if not unchanged_indices:
-        logger.info(f"Delta retain: no unchanged chunks for {effective_doc_id}, falling back to full retain")
+        log_document_id = _log_identifier(effective_doc_id, sanitized=sanitize_log_identifiers)
+        logger.info(f"Delta retain: no unchanged chunks for {log_document_id}, falling back to full retain")
         return None
 
     chunks_to_process = changed_indices + new_indices
@@ -1659,7 +1859,7 @@ async def _try_delta_retain(
     result_unit_ids: list[list[str]] = []
     log_buffer_pre_db = len(log_buffer)
 
-    async def _run_delta_db_work() -> None:
+    async def _run_delta_db_work() -> bool:
         nonlocal result_unit_ids
         del log_buffer[log_buffer_pre_db:]
         for pf in processed_facts:
@@ -1669,7 +1869,14 @@ async def _try_delta_retain(
 
         # PHASE 1 — Entity Resolution + Semantic ANN (separate connection, read-heavy)
         phase1 = await _pre_resolve_phase1(
-            pool, entity_resolver, bank_id, delta_contents, processed_facts, config, log_buffer
+            pool,
+            entity_resolver,
+            bank_id,
+            delta_contents,
+            processed_facts,
+            config,
+            log_buffer,
+            skip_semantic_ann=not getattr(config, "write_semantic_links", True),
         )
 
         # PHASE 2 — Core Write Transaction (atomic)
@@ -1692,8 +1899,12 @@ async def _try_delta_retain(
                         f"since chunks were loaded — aborting delta, falling back to full retain"
                     )
                     logger.info("\n" + "\n".join(log_buffer) + "\n")
-                    # Return None to fall back to streaming (which has full FOR UPDATE protection)
-                    return None
+                    # Tell the caller to fall back to streaming (which has full
+                    # FOR UPDATE protection).  This result must be propagated:
+                    # treating the empty ``result_unit_ids`` as a successful
+                    # delta would skip the publication callback while allowing
+                    # an async child operation to be marked completed.
+                    return False
 
                 # Update document metadata (no delete)
                 step_start = time.time()
@@ -1768,6 +1979,7 @@ async def _try_delta_retain(
                 # since extracted_facts have content_index relative to delta_contents.
                 result_unit_ids, phase3_ctx = await _insert_facts_and_links(
                     conn,
+                    embeddings_model,
                     entity_resolver,
                     bank_id,
                     delta_contents,
@@ -1786,7 +1998,14 @@ async def _try_delta_retain(
             # PHASE 3 — Best-Effort Display Data (post-transaction)
             try:
                 await entity_resolver.flush_pending_stats()
-                await _build_and_insert_entity_links_phase3(pool, entity_resolver, bank_id, phase3_ctx, log_buffer)
+                await _build_and_insert_entity_links_phase3(
+                    pool,
+                    entity_resolver,
+                    bank_id,
+                    phase3_ctx,
+                    config,
+                    log_buffer,
+                )
             except Exception:
                 logger.warning("Phase 3 (best-effort display data) failed — retrieval unaffected", exc_info=True)
 
@@ -1800,11 +2019,24 @@ async def _try_delta_retain(
             log_buffer.append(f"{'=' * 60}")
             logger.info("\n" + "\n".join(log_buffer) + "\n")
 
+        return True
+
     if db_semaphore is not None:
         async with db_semaphore:
-            await _run_delta_db_work()
+            delta_committed = await _run_delta_db_work()
     else:
-        await _run_delta_db_work()
+        delta_committed = await _run_delta_db_work()
+    if not delta_committed:
+        entity_resolver.discard_pending_stats()
+        if outbox_callback is not None:
+            # A publication-fenced request must not re-enter streaming after it
+            # has proved that another writer changed the document.  Streaming's
+            # first batch establishes new ownership before the final callback;
+            # doing that here could let an obsolete command overwrite already
+            # published data before its final CAS rejects it.  Fail this attempt
+            # and let the operation retry/reconcile from a fresh snapshot.
+            raise RetainPublicationAborted("Document changed during retain publication")
+        return None
     # Count content + context tokens that actually went through extraction.
     # ``delta_contents`` holds the per-chunk RetainContent items for the
     # changed/new chunks (see ``_build_delta_contents``) — i.e. exactly what

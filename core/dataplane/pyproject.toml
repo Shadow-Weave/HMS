@@ -73,6 +73,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+multimodal-video = [
+    # Local, bounded video probing/decoding.  Video bytes are never sent to
+    # the vision provider; selected frames reuse the image input path.
+    "av>=14.0.0",
+]
 local-ml = [
     # Local ML models for embeddings/reranking
     "sentence-transformers>=3.3.0",

@@ -37,7 +37,6 @@ def reciprocal_rank_fusion(result_lists: list[list[RetrievalResult]], k: int = 6
 
     for source_idx, results in enumerate(result_lists):
         source_name = source_names[source_idx] if source_idx < len(source_names) else f"source_{source_idx}"
-
         for rank, retrieval in enumerate(results, start=1):
             # Type check to catch tuple issues
             if isinstance(retrieval, tuple):

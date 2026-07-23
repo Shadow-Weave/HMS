@@ -5,6 +5,14 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# Local generated data, dumps, caches, and reports
+artifacts*/
+.tmp/
+.hf_cache/
+torchinductor_root/
+README_*_VERSION.md
+lab/evaluation/baselines/
 .coverage
 htmlcov/
 
@@ -31,12 +39,28 @@ target/
 *.pem
 *.key
 
-# Local benchmark/runtime outputs
-.aaaDATA/
-.aaaLOG/
-.aaaRESULT/
+# Local evaluation/runtime outputs
+.*DATA/
+.*LOG/
+.*RESULT/
+lab/evaluation/**/datasets/
+lab/evaluation/**/results/
 logs/
 *.log
+
+# Result-bearing reports, generated demos, and local test material
+docs/dev/
+docs/*_replay.html
+docs/assets/*_replay.svg
+docs/*_demo.html
+docs/assets/*_demo.svg
+examples/outputs/
+vendor_sdk/examples/outputs/
+core/dataplane/tests/fixtures/
+core/dataplane/tests/perf/
+core/dataplane/tests/test_*_golden.py
+core/dataplane/tests/test_*_output_ratio.py
+goal*.md
 
 # Local service state
 .mcp.json
@@ -53,9 +77,6 @@ nltk_data/
 Thumbs.db
 .env
 .sesskey
-.aaaDATA/
-.aaaLOG/
-.aaaRESULT/
 *.log
 *.pyc
 __pycache__/

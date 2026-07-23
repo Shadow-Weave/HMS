@@ -11,8 +11,8 @@ API version: 0.6.1
 package hms
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 	"fmt"
 )
 
@@ -21,17 +21,21 @@ var _ MappedNullable = &OperationStatusResponse{}
 
 // OperationStatusResponse Response model for getting a single operation status.
 type OperationStatusResponse struct {
-	OperationId string `json:"operation_id"`
-	Status string `json:"status"`
+	OperationId   string         `json:"operation_id"`
+	Status        string         `json:"status"`
 	OperationType NullableString `json:"operation_type,omitempty"`
-	CreatedAt NullableString `json:"created_at,omitempty"`
-	UpdatedAt NullableString `json:"updated_at,omitempty"`
-	CompletedAt NullableString `json:"completed_at,omitempty"`
-	ErrorMessage NullableString `json:"error_message,omitempty"`
+	CreatedAt     NullableString `json:"created_at,omitempty"`
+	UpdatedAt     NullableString `json:"updated_at,omitempty"`
+	CompletedAt   NullableString `json:"completed_at,omitempty"`
+	ErrorMessage  NullableString `json:"error_message,omitempty"`
+	// Number of times this operation has been retried after failure.
 	RetryCount NullableInt32 `json:"retry_count,omitempty"`
-	NextRetryAt NullableString `json:"next_retry_at,omitempty"`
-	ResultMetadata map[string]interface{} `json:"result_metadata,omitempty"`
+	// When the worker will next attempt this operation. For a pending operation, a value in the future indicates the task is parked (e.g. by an extension raising DeferOperation) rather than awaiting immediate pickup.
+	NextRetryAt    NullableString           `json:"next_retry_at,omitempty"`
+	ResultMetadata *OperationResultMetadata `json:"result_metadata,omitempty"`
+	// Child operations for batch operations (if applicable)
 	ChildOperations []ChildOperationStatus `json:"child_operations,omitempty"`
+	// Raw task payload (params the operation was submitted with). Only populated when include_payload=true.
 	TaskPayload map[string]interface{} `json:"task_payload,omitempty"`
 }
 
@@ -136,6 +140,7 @@ func (o *OperationStatusResponse) HasOperationType() bool {
 func (o *OperationStatusResponse) SetOperationType(v string) {
 	o.OperationType.Set(&v)
 }
+
 // SetOperationTypeNil sets the value for OperationType to be an explicit nil
 func (o *OperationStatusResponse) SetOperationTypeNil() {
 	o.OperationType.Set(nil)
@@ -178,6 +183,7 @@ func (o *OperationStatusResponse) HasCreatedAt() bool {
 func (o *OperationStatusResponse) SetCreatedAt(v string) {
 	o.CreatedAt.Set(&v)
 }
+
 // SetCreatedAtNil sets the value for CreatedAt to be an explicit nil
 func (o *OperationStatusResponse) SetCreatedAtNil() {
 	o.CreatedAt.Set(nil)
@@ -220,6 +226,7 @@ func (o *OperationStatusResponse) HasUpdatedAt() bool {
 func (o *OperationStatusResponse) SetUpdatedAt(v string) {
 	o.UpdatedAt.Set(&v)
 }
+
 // SetUpdatedAtNil sets the value for UpdatedAt to be an explicit nil
 func (o *OperationStatusResponse) SetUpdatedAtNil() {
 	o.UpdatedAt.Set(nil)
@@ -262,6 +269,7 @@ func (o *OperationStatusResponse) HasCompletedAt() bool {
 func (o *OperationStatusResponse) SetCompletedAt(v string) {
 	o.CompletedAt.Set(&v)
 }
+
 // SetCompletedAtNil sets the value for CompletedAt to be an explicit nil
 func (o *OperationStatusResponse) SetCompletedAtNil() {
 	o.CompletedAt.Set(nil)
@@ -304,6 +312,7 @@ func (o *OperationStatusResponse) HasErrorMessage() bool {
 func (o *OperationStatusResponse) SetErrorMessage(v string) {
 	o.ErrorMessage.Set(&v)
 }
+
 // SetErrorMessageNil sets the value for ErrorMessage to be an explicit nil
 func (o *OperationStatusResponse) SetErrorMessageNil() {
 	o.ErrorMessage.Set(nil)
@@ -346,6 +355,7 @@ func (o *OperationStatusResponse) HasRetryCount() bool {
 func (o *OperationStatusResponse) SetRetryCount(v int32) {
 	o.RetryCount.Set(&v)
 }
+
 // SetRetryCountNil sets the value for RetryCount to be an explicit nil
 func (o *OperationStatusResponse) SetRetryCountNil() {
 	o.RetryCount.Set(nil)
@@ -388,6 +398,7 @@ func (o *OperationStatusResponse) HasNextRetryAt() bool {
 func (o *OperationStatusResponse) SetNextRetryAt(v string) {
 	o.NextRetryAt.Set(&v)
 }
+
 // SetNextRetryAtNil sets the value for NextRetryAt to be an explicit nil
 func (o *OperationStatusResponse) SetNextRetryAtNil() {
 	o.NextRetryAt.Set(nil)
@@ -398,21 +409,20 @@ func (o *OperationStatusResponse) UnsetNextRetryAt() {
 	o.NextRetryAt.Unset()
 }
 
-// GetResultMetadata returns the ResultMetadata field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *OperationStatusResponse) GetResultMetadata() map[string]interface{} {
-	if o == nil {
-		var ret map[string]interface{}
+// GetResultMetadata returns the ResultMetadata field value if set, zero value otherwise.
+func (o *OperationStatusResponse) GetResultMetadata() OperationResultMetadata {
+	if o == nil || IsNil(o.ResultMetadata) {
+		var ret OperationResultMetadata
 		return ret
 	}
-	return o.ResultMetadata
+	return *o.ResultMetadata
 }
 
 // GetResultMetadataOk returns a tuple with the ResultMetadata field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *OperationStatusResponse) GetResultMetadataOk() (map[string]interface{}, bool) {
+func (o *OperationStatusResponse) GetResultMetadataOk() (*OperationResultMetadata, bool) {
 	if o == nil || IsNil(o.ResultMetadata) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
 	return o.ResultMetadata, true
 }
@@ -426,9 +436,9 @@ func (o *OperationStatusResponse) HasResultMetadata() bool {
 	return false
 }
 
-// SetResultMetadata gets a reference to the given map[string]interface{} and assigns it to the ResultMetadata field.
-func (o *OperationStatusResponse) SetResultMetadata(v map[string]interface{}) {
-	o.ResultMetadata = v
+// SetResultMetadata gets a reference to the given OperationResultMetadata and assigns it to the ResultMetadata field.
+func (o *OperationStatusResponse) SetResultMetadata(v OperationResultMetadata) {
+	o.ResultMetadata = &v
 }
 
 // GetChildOperations returns the ChildOperations field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -498,7 +508,7 @@ func (o *OperationStatusResponse) SetTaskPayload(v map[string]interface{}) {
 }
 
 func (o OperationStatusResponse) MarshalJSON() ([]byte, error) {
-	toSerialize,err := o.ToMap()
+	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
 	}
@@ -530,7 +540,7 @@ func (o OperationStatusResponse) ToMap() (map[string]interface{}, error) {
 	if o.NextRetryAt.IsSet() {
 		toSerialize["next_retry_at"] = o.NextRetryAt.Get()
 	}
-	if o.ResultMetadata != nil {
+	if !IsNil(o.ResultMetadata) {
 		toSerialize["result_metadata"] = o.ResultMetadata
 	}
 	if o.ChildOperations != nil {
@@ -556,10 +566,10 @@ func (o *OperationStatusResponse) UnmarshalJSON(data []byte) (err error) {
 	err = json.Unmarshal(data, &allProperties)
 
 	if err != nil {
-		return err;
+		return err
 	}
 
-	for _, requiredProperty := range(requiredProperties) {
+	for _, requiredProperty := range requiredProperties {
 		if _, exists := allProperties[requiredProperty]; !exists {
 			return fmt.Errorf("no value given for required property %v", requiredProperty)
 		}
@@ -615,5 +625,3 @@ func (v *NullableOperationStatusResponse) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

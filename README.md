@@ -76,6 +76,21 @@ response = client.responses.create(
 per-user `bank_id`; optionally set `session_id` to accumulate one conversation
 as a tracked HMS document.
 
+## Opt-in Image and Video Memory
+
+The dataplane includes an opt-in `openai_multimodal` file parser. Images are
+validated and normalized locally; videos are decoded locally into a bounded,
+deterministic frame set. The visual description is rendered as grounded
+canonical Markdown and then enters the existing document, chunk, embedding,
+link, and recall pipeline. Raw video is never sent to the description provider.
+
+The feature is disabled by default. Its current runtime support matrix is
+PostgreSQL; enabling the media path with Oracle fails closed while ordinary HMS
+Oracle support remains unchanged. Real-provider quality is a separate operator
+qualification and is false by default. See the
+[multimodal operator guide](docs/multimodal_memory.md) and the
+[system architecture guide](docs/system_architecture_and_multimodal.md).
+
 ## Memory Flow
 
 ```text
@@ -96,19 +111,6 @@ HMS keeps source provenance and temporal metadata alongside extracted memory,
 so applications can inspect where recalled information came from and when it
 was observed.
 
-## Visual Demo
-
-The repository includes a database-free illustration of how retrieved sessions
-can be organized into grounded evidence before generation.
-
-![Memory evidence organization demo](docs/assets/memory_pipeline_demo.svg)
-
-Open the standalone page directly in a browser:
-
-```text
-docs/memory_pipeline_demo.html
-```
-
 ## Repository Layout
 
 ```text
@@ -119,8 +121,6 @@ docs/memory_pipeline_demo.html
 │   └── local-suite/
 ├── deploy/
 ├── docs/
-│   ├── assets/
-│   └── memory_pipeline_demo.html
 ├── examples/
 ├── interface/
 ├── scripts/

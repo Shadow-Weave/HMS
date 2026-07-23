@@ -294,6 +294,9 @@ class Bank(Base):
         JSONB, nullable=False, server_default=sql_text('\'{"skepticism": 3, "literalism": 3, "empathy": 3}\'::jsonb')
     )
     background: Mapped[str] = mapped_column(Text, nullable=False, server_default="")
+    # Dedicated system metadata.  This must not live in ``config`` because
+    # bank-config reset/import APIs are user-facing and may replace that JSON.
+    embedding_fingerprint: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 

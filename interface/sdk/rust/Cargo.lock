@@ -329,6 +329,7 @@ dependencies = [
  "prettyplease",
  "progenitor",
  "progenitor-client",
+ "regress",
  "regex",
  "reqwest",
  "serde",

@@ -193,8 +193,12 @@ class TestPostgreSQLDialect:
 
     def test_build_semantic_arm(self, d):
         arm = d.build_semantic_arm(
-            table="schema.memory_units", cols="id, text", fact_type="world",
-            embedding_param="$1", bank_id_param="$2", fetch_limit=100,
+            table="schema.memory_units",
+            cols="id, text",
+            fact_type="world",
+            embedding_param="$1",
+            bank_id_param="$2",
+            fetch_limit=100,
         )
         assert "1 - (embedding <=> $1::vector)" in arm
         assert "fact_type = 'world'" in arm
@@ -203,8 +207,12 @@ class TestPostgreSQLDialect:
 
     def test_build_bm25_arm_native(self, d):
         arm = d.build_bm25_arm(
-            table="schema.memory_units", cols="id, text", fact_type="world",
-            bank_id_param="$2", limit_param="$3", text_param="$4",
+            table="schema.memory_units",
+            cols="id, text",
+            fact_type="world",
+            bank_id_param="$2",
+            limit_param="$3",
+            text_param="$4",
         )
         assert "ts_rank_cd" in arm
         assert "to_tsquery" in arm
@@ -213,8 +221,12 @@ class TestPostgreSQLDialect:
 
     def test_build_bm25_arm_vchord(self, d):
         arm = d.build_bm25_arm(
-            table="t", cols="id", fact_type="world",
-            bank_id_param="$2", limit_param="$3", text_param="$4",
+            table="t",
+            cols="id",
+            fact_type="world",
+            bank_id_param="$2",
+            limit_param="$3",
+            text_param="$4",
             text_search_extension="vchord",
         )
         assert "to_bm25query" in arm
@@ -274,8 +286,12 @@ class TestOracleDialect:
 
     def test_build_semantic_arm(self, d):
         arm = d.build_semantic_arm(
-            table="memory_units", cols="id, text", fact_type="world",
-            embedding_param=":1", bank_id_param=":2", fetch_limit=100,
+            table="memory_units",
+            cols="id, text",
+            fact_type="world",
+            embedding_param=":1",
+            bank_id_param=":2",
+            fetch_limit=100,
         )
         assert "VECTOR_DISTANCE" in arm
         assert "fact_type = 'world'" in arm
@@ -284,8 +300,12 @@ class TestOracleDialect:
 
     def test_build_bm25_arm(self, d):
         arm = d.build_bm25_arm(
-            table="memory_units", cols="id, text", fact_type="world",
-            bank_id_param=":2", limit_param=":3", text_param=":4",
+            table="memory_units",
+            cols="id, text",
+            fact_type="world",
+            bank_id_param=":2",
+            limit_param=":3",
+            text_param=":4",
             arm_index=0,
         )
         assert "CONTAINS" in arm
@@ -296,12 +316,22 @@ class TestOracleDialect:
     def test_build_bm25_arm_unique_labels(self, d):
         """Each arm_index produces a unique SCORE label to avoid conflicts in UNION ALL."""
         arm0 = d.build_bm25_arm(
-            table="t", cols="id", fact_type="world",
-            bank_id_param=":2", limit_param=":3", text_param=":4", arm_index=0,
+            table="t",
+            cols="id",
+            fact_type="world",
+            bank_id_param=":2",
+            limit_param=":3",
+            text_param=":4",
+            arm_index=0,
         )
         arm1 = d.build_bm25_arm(
-            table="t", cols="id", fact_type="experience",
-            bank_id_param=":2", limit_param=":3", text_param=":4", arm_index=1,
+            table="t",
+            cols="id",
+            fact_type="experience",
+            bank_id_param=":2",
+            limit_param=":3",
+            text_param=":4",
+            arm_index=1,
         )
         assert "SCORE(10)" in arm0
         assert "SCORE(11)" in arm1
@@ -387,9 +417,7 @@ class TestOracleQueryRewriter:
         """Verify JSONB ->> boolean comparison is rewritten to JSON_VALUE."""
         from hms_api.engine.db.oracle import _rewrite_pg_to_oracle
 
-        query, _, _ = _rewrite_pg_to_oracle(
-            "WHERE (trigger->>'refresh_after_consolidation')::boolean = true"
-        )
+        query, _, _ = _rewrite_pg_to_oracle("WHERE (trigger->>'refresh_after_consolidation')::boolean = true")
         assert "JSON_VALUE" in query
         assert "'true'" in query
         assert "->>" not in query
@@ -398,9 +426,7 @@ class TestOracleQueryRewriter:
         """Verify ->> works with quoted column names."""
         from hms_api.engine.db.oracle import _rewrite_pg_to_oracle
 
-        query, _, _ = _rewrite_pg_to_oracle(
-            "ORDER BY (result_metadata->>'sub_batch_index')::int"
-        )
+        query, _, _ = _rewrite_pg_to_oracle("ORDER BY (result_metadata->>'sub_batch_index')::int")
         assert "JSON_VALUE" in query
         assert "->>" not in query
 
@@ -486,6 +512,7 @@ class TestOracleOpsInsertFactsBatch:
             tags_list=[f'["tag-{i}"]' for i in range(n)],
             observation_scopes_list=[None] * n,
             text_signals_list=[None] * n,
+            projection_jsons=["{}"] * n,
         )
 
     @pytest.mark.asyncio
@@ -546,6 +573,7 @@ class TestOracleOpsInsertFactsBatch:
             tags_list=['["nature", "sky"]'],
             observation_scopes_list=["global"],
             text_signals_list=["positive"],
+            projection_jsons=['{"embedding":{"ok":true}}'],
         )
 
         query, rows_data = mock_conn.executemany.call_args.args
@@ -554,7 +582,7 @@ class TestOracleOpsInsertFactsBatch:
 
         # Verify column order matches: id, bank_id, text, embedding, event_date,
         # occurred_start, occurred_end, mentioned_at, context, fact_type, metadata,
-        # chunk_id, document_id, tags, observation_scopes, text_signals
+        # chunk_id, document_id, tags, observation_scopes, text_signals, projection
         assert row[0] == result[0], "row[0] should be the generated UUID"
         assert row[1] == "bank-42", "row[1] should be bank_id"
         assert row[2] == "The sky is blue", "row[2] should be text"
@@ -571,24 +599,23 @@ class TestOracleOpsInsertFactsBatch:
         assert row[13] == ["nature", "sky"], "row[13] should be decoded tags list"
         assert row[14] == "global", "row[14] should be observation_scopes"
         assert row[15] == "positive", "row[15] should be text_signals"
+        assert row[16] == '{"embedding":{"ok":true}}', "row[16] should be projection JSON string"
 
     @pytest.mark.asyncio
     async def test_sql_column_count_matches_values(self, ops, mock_conn):
-        """The INSERT column list and VALUES placeholders must both have 16 entries."""
+        """The INSERT column list and VALUES placeholders must both have 17 entries."""
         batch = self._make_batch(1)
         await ops.insert_facts_batch(conn=mock_conn, **batch)
 
         query, _ = mock_conn.executemany.call_args.args
         # Extract the column list between "(" and ")" after INSERT INTO ... (
         # and count the $N placeholders in VALUES
-        assert query.count("$") == 16, "VALUES clause must have 16 placeholders"
+        assert query.count("$") == 17, "VALUES clause must have 17 placeholders"
 
     @pytest.mark.asyncio
     async def test_tags_json_decoded_to_list(self, ops, mock_conn):
         """Tags JSON strings must be decoded to Python lists, not passed as strings."""
-        await ops.insert_facts_batch(
-            conn=mock_conn, **{**self._make_batch(1), "tags_list": ['["tag1", "tag2"]']}
-        )
+        await ops.insert_facts_batch(conn=mock_conn, **{**self._make_batch(1), "tags_list": ['["tag1", "tag2"]']})
         _, rows_data = mock_conn.executemany.call_args.args
         assert rows_data[0][13] == ["tag1", "tag2"]
         assert isinstance(rows_data[0][13], list)
@@ -596,9 +623,7 @@ class TestOracleOpsInsertFactsBatch:
     @pytest.mark.asyncio
     async def test_empty_tags_becomes_empty_list(self, ops, mock_conn):
         """Empty/falsy tags string must become [], not crash or pass empty string."""
-        await ops.insert_facts_batch(
-            conn=mock_conn, **{**self._make_batch(1), "tags_list": [""]}
-        )
+        await ops.insert_facts_batch(conn=mock_conn, **{**self._make_batch(1), "tags_list": [""]})
         _, rows_data = mock_conn.executemany.call_args.args
         assert rows_data[0][13] == []
 
@@ -624,3 +649,117 @@ class TestNormalizeSchema:
         assert backend.normalize_schema("public") is None
         assert backend.normalize_schema("tenant_abc") == "tenant_abc"
         assert backend.normalize_schema(None) is None
+
+
+class TestOraclePooledSchemaIsolation:
+    """CURRENT_SCHEMA must never leak across pooled tenant acquires."""
+
+    @pytest.mark.asyncio
+    async def test_reused_physical_connection_resets_default_between_tenants(self, monkeypatch):
+        from hms_api.engine.db.oracle import OracleBackend
+
+        schema_requests = iter(["tenant_a", "public", "tenant_b"])
+        monkeypatch.setattr(
+            "hms_api.engine.memory_engine.get_current_schema",
+            lambda: next(schema_requests),
+        )
+
+        class Cursor:
+            def __init__(self, calls):
+                self.calls = calls
+
+            async def execute(self, query):
+                self.calls.append(query)
+
+            def close(self):
+                return None
+
+        class PhysicalConnection:
+            username = "APP_OWNER"
+
+            def __init__(self):
+                self.calls = []
+
+            def cursor(self):
+                return Cursor(self.calls)
+
+            async def commit(self):
+                return None
+
+            async def rollback(self):
+                return None
+
+        class Pool:
+            def __init__(self, connection):
+                self.connection = connection
+
+            async def acquire(self):
+                return self.connection
+
+            async def release(self, connection):
+                assert connection is self.connection
+
+        physical = PhysicalConnection()
+        backend = OracleBackend()
+        backend._pool = Pool(physical)
+        backend._session_user = "APP_OWNER"
+
+        for _ in range(3):
+            async with backend.acquire():
+                pass
+
+        assert physical.calls == [
+            'ALTER SESSION SET CURRENT_SCHEMA = "tenant_a"',
+            'ALTER SESSION SET CURRENT_SCHEMA = "APP_OWNER"',
+            'ALTER SESSION SET CURRENT_SCHEMA = "tenant_b"',
+        ]
+
+    @pytest.mark.asyncio
+    async def test_session_user_fallback_is_server_derived_and_identifier_is_escaped(self, monkeypatch):
+        from hms_api.engine.db.oracle import OracleBackend
+
+        monkeypatch.setattr(
+            "hms_api.engine.memory_engine.get_current_schema",
+            lambda: "public",
+        )
+
+        class Cursor:
+            def __init__(self, calls):
+                self.calls = calls
+
+            async def execute(self, query):
+                self.calls.append(query)
+
+            async def fetchone(self):
+                return ("APP_OWNER",)
+
+            def close(self):
+                return None
+
+        class PhysicalConnection:
+            username = None
+
+            def __init__(self):
+                self.calls = []
+
+            def cursor(self):
+                return Cursor(self.calls)
+
+        physical = PhysicalConnection()
+        backend = OracleBackend()
+        await backend._set_session_schema(physical)
+
+        # A subsequent unusual-but-valid quoted identifier remains one SQL
+        # identifier token; it cannot terminate the ALTER statement.
+        monkeypatch.setattr(
+            "hms_api.engine.memory_engine.get_current_schema",
+            lambda: 'tenant"; DROP TABLE banks; --',
+        )
+        await backend._set_session_schema(physical)
+
+        assert physical.calls == [
+            "SELECT SYS_CONTEXT('USERENV', 'SESSION_USER') FROM DUAL",
+            'ALTER SESSION SET CURRENT_SCHEMA = "APP_OWNER"',
+            'ALTER SESSION SET CURRENT_SCHEMA = "tenant""; DROP TABLE banks; --"',
+        ]
+        assert backend._session_user == "APP_OWNER"

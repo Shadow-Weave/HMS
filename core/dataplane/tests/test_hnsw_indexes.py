@@ -7,13 +7,13 @@ Covers:
 - Per-bank vector indexes dropped on bank deletion
 - retrieve_semantic_bm25_combined groups results correctly by fact_type and source
 """
+
 import uuid
 from datetime import datetime, timezone
 
 import pytest
 
 from hms_api.engine.retain.bank_utils import _BANK_INDEX_FACT_TYPES, _bank_index_name
-
 
 # ---------------------------------------------------------------------------
 # Unit tests — no DB required
@@ -142,9 +142,9 @@ async def test_retain_idempotent_bank_creation(memory, request_context):
 @pytest.mark.asyncio
 async def test_retrieve_semantic_bm25_grouped_by_fact_type(memory, request_context):
     """
-    retrieve_semantic_bm25_combined must return a dict keyed by fact_type with
-    (semantic_list, bm25_list) tuples.  All returned facts must belong to their
-    declared fact_type.
+    retrieve_semantic_bm25_combined returns grouped retrieval results plus query
+    analysis metadata. All returned facts must belong to their declared
+    fact_type.
     """
     from hms_api.engine.search.retrieval import retrieve_semantic_bm25_combined
 
@@ -152,10 +152,7 @@ async def test_retrieve_semantic_bm25_grouped_by_fact_type(memory, request_conte
     try:
         await memory.retain_async(
             bank_id=bank_id,
-            content=(
-                "Alice is a software engineer at TechCorp. "
-                "She visited Paris in 2023 for a conference."
-            ),
+            content=("Alice is a software engineer at TechCorp. She visited Paris in 2023 for a conference."),
             context="background",
             event_date=datetime(2023, 6, 1, tzinfo=timezone.utc),
             request_context=request_context,
@@ -166,7 +163,7 @@ async def test_retrieve_semantic_bm25_grouped_by_fact_type(memory, request_conte
 
         fact_types = ["world", "experience"]
         async with memory._pool.acquire() as conn:
-            results = await retrieve_semantic_bm25_combined(
+            results, query_analysis = await retrieve_semantic_bm25_combined(
                 conn=conn,
                 query_emb_str=query_emb_str,
                 query_text="software engineer Alice",
@@ -177,6 +174,7 @@ async def test_retrieve_semantic_bm25_grouped_by_fact_type(memory, request_conte
 
         # Must return an entry for every requested fact_type
         assert set(results.keys()) == set(fact_types)
+        assert isinstance(query_analysis, dict)
 
         for ft, (sem, bm25) in results.items():
             # Semantic and BM25 lists must be lists

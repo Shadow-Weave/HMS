@@ -12,7 +12,12 @@ import re
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from ...config import get_config
+from ...config import (
+    DEFAULT_GRAPH_TEMPORAL_MODE,
+    DEFAULT_GRAPH_TEMPORAL_SIGMA_HOURS,
+    _get_raw_config,
+    get_config,
+)
 from ..db_utils import acquire_with_retry
 from ..memory_engine import fq_table, get_current_schema
 from ..sql import create_sql_dialect
@@ -47,6 +52,14 @@ from .types import (
 logger = logging.getLogger(__name__)
 
 UTC = timezone.utc
+
+
+def _resolve_temporal_graph_config(config: Any | None) -> tuple[str, float]:
+    source = config if config is not None else _get_raw_config()
+    return (
+        getattr(source, "graph_temporal_mode", DEFAULT_GRAPH_TEMPORAL_MODE),
+        getattr(source, "graph_temporal_sigma_hours", DEFAULT_GRAPH_TEMPORAL_SIGMA_HOURS),
+    )
 
 
 def tokenize_query(query_text: str) -> list[str]:
@@ -484,7 +497,6 @@ class SemanticBM25Retrieval(RetrievalStrategy):
 
         # Get question_date from kwargs for LLM-driven analysis
         question_date = kwargs.get("question_date")
-
         # Perform query expansion/analysis
         expansion_result = await self._expand_query(query_text, question_date)
         rewritten_query = expansion_result["rewritten_query"]
@@ -521,7 +533,7 @@ class SemanticBM25Retrieval(RetrievalStrategy):
 
         cols = (
             "id, text, context, event_date, occurred_start, occurred_end, mentioned_at, "
-            "fact_type, document_id, chunk_id, tags, metadata, proof_count"
+            "fact_type, document_id, chunk_id, tags, metadata, projection, proof_count"
         )
         table = fq_table("memory_units")
         config = get_config()
@@ -694,6 +706,10 @@ class TemporalRetrieval(RetrievalStrategy):
         if start_date is None or end_date is None:
             return {ft: [] for ft in fact_types}
 
+        from ..db.ops_postgresql import PostgreSQLOps
+
+        graph_temporal_mode, graph_temporal_sigma_hours = _resolve_temporal_graph_config(kwargs.get("graph_config"))
+        ops = kwargs.get("ops") or PostgreSQLOps()
         if start_date.tzinfo is None:
             start_date = start_date.replace(tzinfo=UTC)
         if end_date.tzinfo is None:
@@ -713,7 +729,6 @@ class TemporalRetrieval(RetrievalStrategy):
         if created_before is not None:
             created_range_params.append(created_before)
             created_range_clause += f" AND updated_at < ${_next_idx}"
-            _next_idx += 1
 
         params: List = [query_embedding_str, bank_id, fact_types, start_date, end_date, 0.1]
         if tags:
@@ -748,7 +763,7 @@ class TemporalRetrieval(RetrievalStrategy):
                   {created_range_clause}
             ),
             sim_ranked AS (
-                SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start, mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.proof_count, mu.document_id, mu.chunk_id, mu.tags, mu.metadata,
+                SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start, mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.proof_count, mu.document_id, mu.chunk_id, mu.tags, mu.metadata, mu.projection,
                        1 - (mu.embedding <=> $1::vector) AS similarity,
                        ROW_NUMBER() OVER (PARTITION BY mu.fact_type ORDER BY mu.embedding <=> $1::vector) AS sim_rn
                 FROM date_ranked dr
@@ -756,7 +771,7 @@ class TemporalRetrieval(RetrievalStrategy):
                 WHERE dr.rn <= 50
                   AND (1 - (mu.embedding <=> $1::vector)) >= $6
             )
-            SELECT id, text, context, event_date, occurred_start, occurred_end, mentioned_at, fact_type, proof_count, document_id, chunk_id, tags, metadata, similarity
+            SELECT id, text, context, event_date, occurred_start, occurred_end, mentioned_at, fact_type, proof_count, document_id, chunk_id, tags, metadata, projection, similarity
             FROM sim_ranked
             WHERE sim_rn <= 10
             """,
@@ -817,39 +832,62 @@ class TemporalRetrieval(RetrievalStrategy):
             budget_remaining = limit - len(ft_entry_points)
             batch_size = 20
             per_source_limit = 10
+            temporal_window_seconds = 24 * 3600.0
+            temporal_sigma_seconds = graph_temporal_sigma_hours * 3600.0
             max_iterations = 5
             iteration = 0
 
-            spreading_tags_clause = build_tags_where_clause_simple(tags, 7, table_alias="mu.", match=tags_match)
-            spreading_groups_param_start = 7 + (1 if tags else 0)
+            spreading_filter_start = 9 if graph_temporal_mode == "btree" else 7
+            spreading_tags_clause = build_tags_where_clause_simple(
+                tags, spreading_filter_start, table_alias="mu.", match=tags_match
+            )
+            spreading_groups_param_start = spreading_filter_start + (1 if tags else 0)
             spreading_groups_clause, spreading_groups_params, _ = build_tag_groups_where_clause(
                 tag_groups, spreading_groups_param_start, table_alias="mu."
             )
-
+            spreading_next_idx = spreading_groups_param_start + len(spreading_groups_params)
+            spreading_created_range_clause = ""
+            spreading_created_range_params: List[Any] = []
+            if created_after is not None:
+                spreading_created_range_params.append(created_after)
+                spreading_created_range_clause += f" AND mu.updated_at > ${spreading_next_idx}"
+                spreading_next_idx += 1
+            if created_before is not None:
+                spreading_created_range_params.append(created_before)
+                spreading_created_range_clause += f" AND mu.updated_at < ${spreading_next_idx}"
             while frontier and budget_remaining > 0 and iteration < max_iterations:
                 iteration += 1
                 batch_ids = frontier[:batch_size]
                 frontier = frontier[batch_size:]
 
                 spreading_params = [query_embedding_str, batch_ids, ft, 0.1, per_source_limit, bank_id]
+                if graph_temporal_mode == "btree":
+                    spreading_lateral = ops.build_temporal_btree_spreading_lateral(
+                        fq_table("memory_units"),
+                        fq_table("memory_links"),
+                        5,
+                        6,
+                        3,
+                        7,
+                        8,
+                    )
+                    spreading_params.extend([temporal_window_seconds, temporal_sigma_seconds])
+                else:
+                    spreading_lateral = ops.build_temporal_links_spreading_lateral(fq_table("memory_links"), 5)
                 if tags:
                     spreading_params.append(tags)
                 spreading_params.extend(spreading_groups_params)
+                spreading_params.extend(spreading_created_range_params)
 
                 neighbors = await conn.fetch(
                     f"""
-                    SELECT src.from_unit_id, mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start, mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.metadata,
+                    SELECT src.from_unit_id, mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start, mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.document_id, mu.chunk_id, mu.tags, mu.metadata, mu.projection,
                            l.weight, l.link_type,
                            1 - (mu.embedding <=> $1::vector) AS similarity
                     FROM unnest($2::uuid[]) AS src(from_unit_id)
+                    JOIN {fq_table("memory_units")} src_mu ON src_mu.id = src.from_unit_id
                     CROSS JOIN LATERAL (
-                        SELECT ml.to_unit_id, ml.weight, ml.link_type
-                        FROM {fq_table("memory_links")} ml
-                        WHERE ml.from_unit_id = src.from_unit_id
-                          AND ml.link_type IN ('temporal', 'causes', 'caused_by', 'enables', 'prevents')
-                          AND ml.weight >= 0.1
-                        ORDER BY ml.weight DESC
-                        LIMIT $5
+                        {spreading_lateral}
                     ) l
                     JOIN {fq_table("memory_units")} mu ON mu.id = l.to_unit_id
                     WHERE mu.bank_id = $6
@@ -858,6 +896,7 @@ class TemporalRetrieval(RetrievalStrategy):
                       AND (1 - (mu.embedding <=> $1::vector)) >= $4
                       {spreading_tags_clause}
                       {spreading_groups_clause}
+                      {spreading_created_range_clause}
                     """,
                     *spreading_params,
                 )
@@ -919,22 +958,45 @@ class TemporalRetrieval(RetrievalStrategy):
             if self._session_expansion_weight > 0 and ft_entry_points:
                 doc_ids = [ep["document_id"] for ep in ft_entry_points if ep.get("document_id")]
                 if doc_ids:
+                    session_filter_start = 6
+                    session_tags_clause = build_tags_where_clause_simple(
+                        tags, session_filter_start, table_alias="mu.", match=tags_match
+                    )
+                    session_groups_param_start = session_filter_start + (1 if tags else 0)
+                    session_groups_clause, session_groups_params, session_next_idx = build_tag_groups_where_clause(
+                        tag_groups, session_groups_param_start, table_alias="mu."
+                    )
+                    session_created_range_clause = ""
+                    session_created_range_params: List[Any] = []
+                    if created_after is not None:
+                        session_created_range_params.append(created_after)
+                        session_created_range_clause += f" AND mu.updated_at > ${session_next_idx}"
+                        session_next_idx += 1
+                    if created_before is not None:
+                        session_created_range_params.append(created_before)
+                        session_created_range_clause += f" AND mu.updated_at < ${session_next_idx}"
+
+                    session_params: List[Any] = [query_embedding_str, bank_id, ft, doc_ids, limit]
+                    if tags:
+                        session_params.append(tags)
+                    session_params.extend(session_groups_params)
+                    session_params.extend(session_created_range_params)
+
                     session_neighbors = await conn.fetch(
                         f"""
-                        SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start, mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.proof_count, mu.document_id, mu.chunk_id, mu.tags, mu.metadata,
+                        SELECT mu.id, mu.text, mu.context, mu.event_date, mu.occurred_start, mu.occurred_end, mu.mentioned_at, mu.fact_type, mu.proof_count, mu.document_id, mu.chunk_id, mu.tags, mu.metadata, mu.projection,
                                1 - (mu.embedding <=> $1::vector) AS similarity
                         FROM {fq_table("memory_units")} mu
                         WHERE mu.bank_id = $2
                           AND mu.fact_type = $3
                           AND mu.document_id = ANY($4::text[])
                           AND mu.embedding IS NOT NULL
+                          {session_tags_clause}
+                          {session_groups_clause}
+                          {session_created_range_clause}
                         LIMIT $5
                         """,
-                        query_embedding_str,
-                        bank_id,
-                        ft,
-                        doc_ids,
-                        limit,
+                        *session_params,
                     )
 
                     result_ids = {r.id for r in results}
@@ -998,6 +1060,7 @@ class LinkExpansionGraphRetrieval(GraphRetrievalStrategy):
         tag_groups: List[TagGroup] | None = None,
         created_after: datetime | None = None,
         created_before: datetime | None = None,
+        graph_config: Any | None = None,
     ) -> tuple[List[RetrievalResult], GraphRetrievalTimings | None]:
         return await self._delegate.retrieve(
             pool=pool,
@@ -1013,6 +1076,7 @@ class LinkExpansionGraphRetrieval(GraphRetrievalStrategy):
             tag_groups=tag_groups,
             created_after=created_after,
             created_before=created_before,
+            graph_config=graph_config,
         )
 
 

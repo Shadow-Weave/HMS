@@ -1,24 +1,22 @@
 """Add covering and composite indexes to speed up link expansion graph retrieval.
 
-Two indexes target the two bottlenecks identified by EXPLAIN ANALYZE on a 17M-row
-memory_links table:
+Two indexes target common link-expansion query-plan bottlenecks:
 
 1. idx_memory_links_to_type_weight  (to_unit_id, link_type, weight DESC)
    The semantic incoming direction — finding facts that consider seeds as their
    nearest neighbour — currently hits an expensive BitmapAnd of two separate
    bitmap scans (to_unit_id bitmap ∩ link_type bitmap).  A composite index
-   on (to_unit_id, link_type) turns this into a single index scan and reduces
-   latency from ~36 ms to < 5 ms per query.
+   on (to_unit_id, link_type) turns this into a single index scan.
 
 2. idx_memory_links_entity_covering  (from_unit_id) INCLUDE (to_unit_id, entity_id)
    WHERE link_type = 'entity'
    The entity co-occurrence expansion uses COUNT(DISTINCT ml.entity_id) and
    joins on ml.to_unit_id.  Without a covering index the planner must read
-   ~2 500 heap pages to fetch entity_id and to_unit_id after the bitmap index
-   scan, adding ~230 ms of random I/O.  INCLUDE adds those two columns to the
+   heap pages to fetch entity_id and to_unit_id after the bitmap index scan.
+   INCLUDE adds those two columns to the
    index leaf pages so the entire query can be served from the index (index-only
    scan), eliminating the heap reads entirely.
-   Partial index (WHERE link_type = 'entity') keeps index size ~40 % smaller.
+   A partial predicate limits the index to entity links.
 
 Both indexes are created with CONCURRENTLY so the migration does not block
 concurrent reads or writes on memory_links.  CONCURRENTLY requires running
@@ -66,8 +64,7 @@ def _pg_upgrade() -> None:
 
     # Covering index for entity co-occurrence expansion.
     # Enables an index-only scan: entity_id and to_unit_id are read from the
-    # index leaf pages instead of the heap, eliminating ~2 500 random heap-page
-    # reads per expansion query.
+    # index leaf pages instead of the heap.
     op.execute("COMMIT")
     op.execute(
         f"CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_memory_links_entity_covering "

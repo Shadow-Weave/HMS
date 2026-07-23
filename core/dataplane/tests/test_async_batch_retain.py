@@ -645,7 +645,7 @@ async def test_operation_status_exposes_retry_count_and_next_retry_at(memory, re
 @pytest.mark.asyncio
 async def test_list_operations_exclude_parents(memory, request_context):
     """list_operations with exclude_parents=True hides parent batch operations."""
-    bank_id = "test_exclude_parents"
+    bank_id = f"test_exclude_parents_{uuid.uuid4().hex[:8]}"
     pool = await memory._get_pool()
     await _ensure_bank(pool, bank_id)
 

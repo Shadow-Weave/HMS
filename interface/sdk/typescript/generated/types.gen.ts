@@ -1618,6 +1618,24 @@ export type FeaturesInfo = {
    * Whether file upload/conversion API is enabled
    */
   file_upload_api: boolean;
+  /**
+   * Multimodal Image
+   *
+   * Whether the opt-in multimodal image description path is available in this deployment
+   */
+  multimodal_image?: boolean;
+  /**
+   * Multimodal Video
+   *
+   * Whether the opt-in multimodal video description path and local decoder are available
+   */
+  multimodal_video?: boolean;
+  /**
+   * Multimodal Live Verified
+   *
+   * Whether this exact multimodal deployment passed the operator-controlled live-provider gate
+   */
+  multimodal_live_verified?: boolean;
 };
 
 /**
@@ -2142,6 +2160,50 @@ export type MentalModelTriggerOutput = {
 };
 
 /**
+ * MultimodalOperationMetadata
+ *
+ * Stable, payload-free status for a multimodal file-retain operation.
+ */
+export type MultimodalOperationMetadata = {
+  asset_id?: string | null;
+  asset_sha256?: string | null;
+  media_kind?: "image" | "video" | null;
+  pipeline_version?: string | null;
+  descriptor_model?: string | null;
+  resolved_model?: string | null;
+  stage?:
+    | "received"
+    | "stored"
+    | "validated"
+    | "preprocessed"
+    | "describing"
+    | "normalized"
+    | "retain_queued"
+    | "retain_failed"
+    | "recall_ready"
+    | "failed"
+    | null;
+  child_retain_operation_id?: string | null;
+  child_retain_status?:
+    | "pending"
+    | "processing"
+    | "completed"
+    | "failed"
+    | "cancelled"
+    | "not_found"
+    | null;
+  recall_ready?: boolean | null;
+  retryable?: boolean | null;
+  sanitized_error_code?: string | null;
+  provider_request_id?: string | null;
+  input_tokens?: number | null;
+  output_tokens?: number | null;
+  logical_calls?: number | null;
+  physical_attempts?: number | null;
+  possible_duplicate_provider_attempt?: boolean | null;
+};
+
+/**
  * OperationResponse
  *
  * Response model for a single async operation.
@@ -2187,6 +2249,17 @@ export type OperationResponse = {
    * When the worker will next attempt this operation. For a pending operation, a value in the future indicates the task is waiting rather than available for immediate pickup — for example, an extension may have raised DeferOperation to park the task until some backpressure window opens. Always null for completed tasks.
    */
   next_retry_at?: string | null;
+};
+
+/**
+ * OperationResultMetadata
+ *
+ * Operation metadata with a stable multimodal namespace. Existing operation
+ * types may continue to return arbitrary legacy sibling keys.
+ */
+export type OperationResultMetadata = {
+  multimodal?: MultimodalOperationMetadata | null;
+  [key: string]: unknown | MultimodalOperationMetadata | null | undefined;
 };
 
 /**
@@ -2238,11 +2311,9 @@ export type OperationStatusResponse = {
   /**
    * Result Metadata
    *
-   * Internal metadata for debugging. Structure may change without notice. Not for production use.
+   * Operation metadata. The optional multimodal namespace is a stable public contract; other keys remain operation-specific and may change.
    */
-  result_metadata?: {
-    [key: string]: unknown;
-  } | null;
+  result_metadata?: OperationResultMetadata | null;
   /**
    * Child Operations
    *
@@ -3435,9 +3506,25 @@ export type HealthEndpointHealthGetResponses = {
 export type GetVersionData = {
   body?: never;
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * Include Multimodal
+     *
+     * Include additive multimodal capability flags. The default preserves the legacy wire shape for strict older SDKs.
+     */
+    include_multimodal?: boolean;
+  };
   url: "/version";
 };
+
+export type GetVersionErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type GetVersionError = GetVersionErrors[keyof GetVersionErrors];
 
 export type GetVersionResponses = {
   /**

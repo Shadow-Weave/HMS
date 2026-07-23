@@ -68,11 +68,12 @@ async def insert_facts_batch(
     tags_list = []
     observation_scopes_list = []
     text_signals_list = []
+    projection_jsons = []
 
     for fact in facts:
         fact_texts.append(_sanitize_text(fact.fact_text))
         # Convert embedding to string for asyncpg vector type
-        embeddings.append(str(fact.embedding))
+        embeddings.append(str(fact.embedding) if fact.embedding is not None else None)
         # event_date: Use occurred_start if available, otherwise use mentioned_at
         # This maintains backward compatibility while handling None occurred_start
         event_dates.append(fact.occurred_start if fact.occurred_start is not None else fact.mentioned_at)
@@ -106,12 +107,13 @@ async def insert_facts_batch(
             except (ValueError, AttributeError):
                 pass
         text_signals_list.append(" ".join(signal_parts) if signal_parts else None)
+        projection_jsons.append(json.dumps(fact.projection or {}))
 
     # Batch insert all facts — delegates to DataAccessOps which handles
     # unnest (PG) vs row-by-row (Oracle) transparently.
     config = get_config()
 
-    return await ops.insert_facts_batch(
+    unit_ids = await ops.insert_facts_batch(
         conn,
         bank_id,
         fact_texts,
@@ -128,8 +130,10 @@ async def insert_facts_batch(
         tags_list,
         observation_scopes_list,
         text_signals_list,
+        projection_jsons,
         text_search_extension=config.text_search_extension,
     )
+    return unit_ids
 
 
 async def ensure_bank_exists(conn, bank_id: str, ops=None) -> None:
@@ -305,7 +309,21 @@ async def handle_document_tracking(
     # no longer exist (consolidated_at on co-source memories also stays
     # frozen). Same cleanup the explicit ``delete_document`` API performs.
     preserved_created_at = None
+    affected_entity_ids = []
     if is_first_batch:
+        if ops is not None:
+            affected_entity_rows = await conn.fetch(
+                f"""
+                SELECT DISTINCT ue.entity_id
+                FROM {fq_table("unit_entities")} ue
+                JOIN {fq_table("memory_units")} mu ON mu.id = ue.unit_id
+                WHERE mu.document_id = $1 AND mu.bank_id = $2
+                """,
+                document_id,
+                bank_id,
+            )
+            affected_entity_ids = [row["entity_id"] for row in affected_entity_rows]
+
         existing_unit_rows = await conn.fetch(
             f"""
             SELECT id FROM {fq_table("memory_units")}
@@ -331,6 +349,13 @@ async def handle_document_tracking(
             document_id,
             bank_id,
         )
+        if ops is not None and affected_entity_ids:
+            await ops.refresh_entity_fact_counts(
+                conn,
+                fq_table("entities"),
+                fq_table("unit_entities"),
+                affected_entity_ids,
+            )
         # Capture created_at before deletion so re-ingestion preserves it.
         preserved_created_at = await conn.fetchval(
             f"DELETE FROM {fq_table('documents')} WHERE id = $1 AND bank_id = $2 RETURNING created_at",

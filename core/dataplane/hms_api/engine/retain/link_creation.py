@@ -12,7 +12,13 @@ from .types import ProcessedFact
 logger = logging.getLogger(__name__)
 
 
-async def create_temporal_links_batch(conn, bank_id: str, unit_ids: list[str], ops=None) -> int:
+async def create_temporal_links_batch(
+    conn,
+    bank_id: str,
+    unit_ids: list[str],
+    ops=None,
+    write_temporal_links: bool = True,
+) -> int:
     """
     Create temporal links between facts.
 
@@ -28,6 +34,9 @@ async def create_temporal_links_batch(conn, bank_id: str, unit_ids: list[str], o
     """
     if not unit_ids:
         return 0
+    if not write_temporal_links:
+        logger.info("temporal links skipped (mode=btree)")
+        return 0
 
     return await link_utils.create_temporal_links_batch_per_fact(conn, bank_id, unit_ids, log_buffer=[], ops=ops)
 
@@ -39,6 +48,7 @@ async def create_semantic_links_batch(
     embeddings: list[list[float]],
     pre_computed_ann_links: list[tuple] | None = None,
     ops=None,
+    write_semantic_links: bool = True,
 ) -> int:
     """
     Create semantic links between facts.
@@ -57,6 +67,10 @@ async def create_semantic_links_batch(
     Returns:
         Number of semantic links created
     """
+    if not write_semantic_links:
+        logger.info("semantic links skipped (mode=ann)")
+        return 0
+
     if not unit_ids or not embeddings:
         return 0
 

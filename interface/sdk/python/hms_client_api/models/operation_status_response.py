@@ -17,10 +17,11 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from hms_client_api.models.child_operation_status import ChildOperationStatus
-from typing import Optional, Set
+from hms_client_api.models.operation_result_metadata import OperationResultMetadata
+from typing import Set
 from typing_extensions import Self
 
 class OperationStatusResponse(BaseModel):
@@ -34,11 +35,11 @@ class OperationStatusResponse(BaseModel):
     updated_at: Optional[StrictStr] = None
     completed_at: Optional[StrictStr] = None
     error_message: Optional[StrictStr] = None
-    retry_count: Optional[StrictInt] = None
-    next_retry_at: Optional[StrictStr] = None
-    result_metadata: Optional[Dict[str, Any]] = None
-    child_operations: Optional[List[ChildOperationStatus]] = None
-    task_payload: Optional[Dict[str, Any]] = None
+    retry_count: Optional[StrictInt] = Field(default=None, description="Number of times this operation has been retried after failure.")
+    next_retry_at: Optional[StrictStr] = Field(default=None, description="When the worker will next attempt this operation. For a pending operation, a value in the future indicates the task is parked (e.g. by an extension raising DeferOperation) rather than awaiting immediate pickup.")
+    result_metadata: Optional[OperationResultMetadata] = None
+    child_operations: Optional[List[ChildOperationStatus]] = Field(default=None, description="Child operations for batch operations (if applicable)")
+    task_payload: Optional[Dict[str, Any]] = Field(default=None, description="Raw task payload (params the operation was submitted with). Only populated when include_payload=true.")
     __properties: ClassVar[List[str]] = ["operation_id", "status", "operation_type", "created_at", "updated_at", "completed_at", "error_message", "retry_count", "next_retry_at", "result_metadata", "child_operations", "task_payload"]
 
     @field_validator('status')
@@ -87,6 +88,9 @@ class OperationStatusResponse(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of result_metadata
+        if self.result_metadata:
+            _dict['result_metadata'] = self.result_metadata.to_dict()
         # override the default output from pydantic by calling `to_dict()` of each item in child_operations (list)
         _items = []
         if self.child_operations:
@@ -129,11 +133,6 @@ class OperationStatusResponse(BaseModel):
         if self.next_retry_at is None and "next_retry_at" in self.model_fields_set:
             _dict['next_retry_at'] = None
 
-        # set to None if result_metadata (nullable) is None
-        # and model_fields_set contains the field
-        if self.result_metadata is None and "result_metadata" in self.model_fields_set:
-            _dict['result_metadata'] = None
-
         # set to None if child_operations (nullable) is None
         # and model_fields_set contains the field
         if self.child_operations is None and "child_operations" in self.model_fields_set:
@@ -165,7 +164,7 @@ class OperationStatusResponse(BaseModel):
             "error_message": obj.get("error_message"),
             "retry_count": obj.get("retry_count"),
             "next_retry_at": obj.get("next_retry_at"),
-            "result_metadata": obj.get("result_metadata"),
+            "result_metadata": OperationResultMetadata.from_dict(obj["result_metadata"]) if obj.get("result_metadata") is not None else None,
             "child_operations": [ChildOperationStatus.from_dict(_item) for _item in obj["child_operations"]] if obj.get("child_operations") is not None else None,
             "task_payload": obj.get("task_payload")
         })

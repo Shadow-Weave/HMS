@@ -1,9 +1,23 @@
 """File parser implementations."""
 
-import logging
-from dataclasses import dataclass
+from __future__ import annotations
 
-from .base import FileParser, UnsupportedFileTypeError
+import logging
+from collections.abc import Awaitable, Callable
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from hms_api.engine.multimodal.checkpoints import VideoSegmentCheckpoint, VideoSegmentIdentity
+
+from .base import (
+    ConversionInput,
+    FileParser,
+    ParserNotApplicableError,
+    ParserOutput,
+    ParserProcessingError,
+    UnsupportedFileTypeError,
+)
 from .iris import IrisParser
 from .llama_parse import LlamaParseParser
 from .markitdown import MarkitdownParser
@@ -11,12 +25,44 @@ from .markitdown import MarkitdownParser
 __all__ = [
     "FileParser",
     "UnsupportedFileTypeError",
+    "ParserNotApplicableError",
+    "ParserProcessingError",
+    "ConversionInput",
+    "ParserOutput",
     "IrisParser",
     "LlamaParseParser",
     "MarkitdownParser",
+    "MultimodalParserConfig",
+    "OpenAIMultimodalParser",
+    "create_openai_multimodal_parser",
     "FileParserRegistry",
     "ConvertResult",
 ]
+
+
+_MULTIMODAL_EXPORTS = {
+    "MultimodalParserConfig",
+    "OpenAIMultimodalParser",
+    "create_openai_multimodal_parser",
+}
+
+
+def __getattr__(name: str) -> Any:
+    """Load the optional media stack only when a caller asks for it.
+
+    ``parsers`` is imported on every file-enabled HMS startup.  Keeping the
+    multimodal implementation behind this PEP 562 hook prevents ordinary text
+    and legacy file paths from importing Pillow/PyAV or constructing a vision
+    provider while preserving the existing package-level import surface.
+    """
+
+    if name not in _MULTIMODAL_EXPORTS:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    from . import openai_multimodal
+
+    value = getattr(openai_multimodal, name)
+    globals()[name] = value
+    return value
 
 
 @dataclass
@@ -25,6 +71,10 @@ class ConvertResult:
 
     content: str
     parser_name: str
+    metadata: dict[str, str] = field(default_factory=dict)
+    entities: list[dict[str, str | None]] = field(default_factory=list)
+    retain_extraction_mode: str | None = None
+    pipeline_metadata: dict = field(default_factory=dict)
 
 
 logger = logging.getLogger(__name__)
@@ -86,6 +136,14 @@ class FileParserRegistry:
         file_data: bytes,
         filename: str,
         content_type: str | None = None,
+        *,
+        asset_id: str | None = None,
+        asset_sha256: str | None = None,
+        source_available: bool = True,
+        before_provider_call: Callable[[], Awaitable[None]] | None = None,
+        load_video_segment_checkpoint: Callable[[VideoSegmentIdentity], Awaitable[VideoSegmentCheckpoint | None]]
+        | None = None,
+        save_video_segment_checkpoint: Callable[[VideoSegmentCheckpoint], Awaitable[None]] | None = None,
     ) -> ConvertResult:
         """
         Try each parser in order, falling back on failure or empty content.
@@ -111,15 +169,46 @@ class FileParserRegistry:
         for name in parsers:
             parser = self.get_parser(name, filename, content_type)
             try:
-                content = await parser.convert(file_data, filename)
-                if content and content.strip():
-                    return ConvertResult(content=content, parser_name=name)
+                output = await parser.convert_input(
+                    ConversionInput(
+                        file_data=file_data,
+                        filename=filename,
+                        content_type=content_type,
+                        asset_id=asset_id,
+                        asset_sha256=asset_sha256,
+                        source_available=source_available,
+                        before_provider_call=before_provider_call,
+                        load_video_segment_checkpoint=load_video_segment_checkpoint,
+                        save_video_segment_checkpoint=save_video_segment_checkpoint,
+                    )
+                )
+                if output.content and output.content.strip():
+                    return ConvertResult(
+                        content=output.content,
+                        parser_name=name,
+                        metadata=output.metadata,
+                        entities=output.entities,
+                        retain_extraction_mode=output.retain_extraction_mode,
+                        pipeline_metadata=output.pipeline_metadata,
+                    )
                 logger.warning(f"Parser '{name}' returned empty content for '{filename}', trying next")
+                if parser.terminal_processing_failures:
+                    raise ParserProcessingError("parser.empty_output", f"Parser '{name}' returned no content")
                 last_error = RuntimeError(f"Parser '{name}' returned no content for '{filename}'")
             except UnsupportedFileTypeError as e:
                 logger.warning(f"Parser '{name}' does not support '{filename}', trying next: {e}")
                 last_error = e
+            except ParserProcessingError:
+                raise
             except Exception as e:
+                if parser.terminal_processing_failures:
+                    raise ParserProcessingError(
+                        "parser.processing_failed",
+                        f"Parser '{name}' failed after processing started",
+                        retryable=getattr(e, "retryable", False),
+                        logical_calls=getattr(e, "logical_calls", 0),
+                        physical_attempts=getattr(e, "physical_attempts", 0),
+                    ) from None
                 logger.warning(f"Parser '{name}' failed for '{filename}', trying next: {e}")
                 last_error = e
 

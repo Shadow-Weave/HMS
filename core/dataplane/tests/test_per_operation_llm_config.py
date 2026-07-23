@@ -168,7 +168,7 @@ class TestMockLLMProvider:
                 scope="test_scope",
             )
 
-        result = asyncio.get_event_loop().run_until_complete(make_call())
+        result = asyncio.run(make_call())
 
         # Verify call was recorded
         calls = provider.get_mock_calls()
@@ -197,7 +197,7 @@ class TestMockLLMProvider:
                 messages=[{"role": "user", "content": "test"}],
             )
 
-        result = asyncio.get_event_loop().run_until_complete(make_call())
+        result = asyncio.run(make_call())
         assert result == {"custom": "response"}
 
     def test_mock_provider_returns_usage_when_requested(self):
@@ -219,7 +219,7 @@ class TestMockLLMProvider:
                 return_usage=True,
             )
 
-        result, usage = asyncio.get_event_loop().run_until_complete(make_call())
+        result, usage = asyncio.run(make_call())
         assert usage.input_tokens == 10
         assert usage.output_tokens == 5
         assert usage.total_tokens == 15
@@ -302,6 +302,7 @@ class TestReflectUsesReflectLLMConfig:
         )  # type: ignore[method-assign]
         engine.list_directives = AsyncMock(return_value=[])  # type: ignore[method-assign]
         engine._get_pool = AsyncMock(return_value=SimpleNamespace())  # type: ignore[method-assign]
+        engine._get_backend = AsyncMock(return_value=SimpleNamespace())  # type: ignore[method-assign]
         engine._config_resolver = SimpleNamespace(
             resolve_full_config=AsyncMock(return_value=SimpleNamespace(llm_gemini_safety_settings=None)),
             get_bank_config=AsyncMock(return_value={}),
@@ -329,18 +330,28 @@ class TestRetryAndBackoffConfiguration:
 
     def test_global_retry_backoff_config_defaults(self):
         """Test that global retry/backoff settings have correct defaults."""
-        from hms_api.config import DEFAULT_LLM_MAX_RETRIES, get_config
+        from hms_api.config import (
+            DEFAULT_LLM_INITIAL_BACKOFF,
+            DEFAULT_LLM_MAX_BACKOFF,
+            DEFAULT_LLM_MAX_RETRIES,
+            get_config,
+        )
 
         config = get_config()
 
         # Verify global defaults
         assert config.llm_max_retries == DEFAULT_LLM_MAX_RETRIES
-        assert config.llm_initial_backoff == 1.0
-        assert config.llm_max_backoff == 60.0
+        assert config.llm_initial_backoff == DEFAULT_LLM_INITIAL_BACKOFF
+        assert config.llm_max_backoff == DEFAULT_LLM_MAX_BACKOFF
 
     def test_per_operation_retry_backoff_config_from_env(self):
         """Test that per-operation retry/backoff settings are loaded from environment."""
-        from hms_api.config import DEFAULT_LLM_MAX_RETRIES, clear_config_cache
+        from hms_api.config import (
+            DEFAULT_LLM_INITIAL_BACKOFF,
+            DEFAULT_LLM_MAX_BACKOFF,
+            DEFAULT_LLM_MAX_RETRIES,
+            clear_config_cache,
+        )
 
         # Set per-operation overrides (choose values different from the global default so the
         # "global unchanged" assertions below are meaningful).
@@ -371,8 +382,8 @@ class TestRetryAndBackoffConfiguration:
 
             # Verify global defaults remain unchanged
             assert config.llm_max_retries == DEFAULT_LLM_MAX_RETRIES
-            assert config.llm_initial_backoff == 1.0
-            assert config.llm_max_backoff == 60.0
+            assert config.llm_initial_backoff == DEFAULT_LLM_INITIAL_BACKOFF
+            assert config.llm_max_backoff == DEFAULT_LLM_MAX_BACKOFF
         finally:
             # Clean up
             os.environ.pop("HMS_API_RETAIN_LLM_MAX_RETRIES", None)

@@ -26,7 +26,7 @@ def main() -> None:
     run_case.add_argument("--reset-bank", action="store_true")
     run_case.add_argument("--retain-async", action="store_true")
     run_case.add_argument("--no-wait", action="store_true", help="Do not wait for async retain before recall.")
-    run_case.add_argument("--no-organize", action="store_true", help="Skip evidence ledger organization.")
+    run_case.add_argument("--no-organize", action="store_true", help="Skip ordered recall-result formatting.")
     run_case.add_argument("--output", help="Optional path to write the JSON result.")
 
     recall = subparsers.add_parser("recall", help="Run recall against an existing bank.")
@@ -60,7 +60,6 @@ def main() -> None:
             organize=not args.no_organize,
         ).to_dict()
         result["case_id"] = case.get("case_id")
-        result["expected_answer"] = case.get("expected_answer")
         _write_or_print(result, args.output)
         return
 

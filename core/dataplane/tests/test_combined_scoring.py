@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from hms_api.engine.search.reranking import apply_combined_scoring, _RECENCY_ALPHA, _TEMPORAL_ALPHA
+from hms_api.engine.search.reranking import _RECENCY_ALPHA, _TEMPORAL_ALPHA, apply_combined_scoring
 from hms_api.engine.search.types import MergedCandidate, RetrievalResult, ScoredResult
 
 UTC = timezone.utc
@@ -20,6 +20,8 @@ NOW = datetime(2024, 6, 1, tzinfo=UTC)
 def _make_result(
     ce_norm: float,
     occurred_start: datetime | None = None,
+    occurred_end: datetime | None = None,
+    mentioned_at: datetime | None = None,
     temporal_proximity: float | None = None,
 ) -> ScoredResult:
     retrieval = RetrievalResult(
@@ -27,6 +29,8 @@ def _make_result(
         text="test",
         fact_type="world",
         occurred_start=occurred_start,
+        occurred_end=occurred_end,
+        mentioned_at=mentioned_at,
         temporal_proximity=temporal_proximity,
     )
 
@@ -142,11 +146,25 @@ class TestBoostFormula:
         assert l_relevant.weight > l_recent.weight, "Low-CE model: relevance should still win"
 
     def test_no_occurred_start_defaults_recency_neutral(self):
-        """Missing occurred_start → recency=0.5 → no boost/penalty."""
+        """Missing all temporal provenance → recency=0.5 → no boost/penalty."""
         sr = _make_result(ce_norm=0.5, occurred_start=None)
         apply_combined_scoring([sr], now=NOW)
         assert sr.recency == 0.5
         assert abs(sr.weight - 0.5) < 1e-9
+
+    def test_occurred_end_is_used_when_start_is_missing(self):
+        """A retained interval with only an end still has usable recency."""
+        sr = _make_result(ce_norm=0.5, occurred_end=NOW)
+        apply_combined_scoring([sr], now=NOW)
+        assert sr.recency == 1.0
+        assert sr.weight > 0.5
+
+    def test_mentioned_at_is_used_as_last_temporal_fallback(self):
+        """Fact extraction commonly leaves event dates empty but preserves mention time."""
+        sr = _make_result(ce_norm=0.5, mentioned_at=NOW - timedelta(days=30))
+        apply_combined_scoring([sr], now=NOW)
+        assert sr.recency == pytest.approx(1.0 - (30 / 365))
+        assert sr.weight > 0.5
 
     def test_timezone_naive_occurred_start_handled(self):
         """Naive datetimes in occurred_start should not raise."""

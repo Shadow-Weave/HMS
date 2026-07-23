@@ -72,6 +72,19 @@ response = client.responses.create(
 `client.chat.completions.create(...)`，也支持 streaming。每个用户应使用稳定且
 独立的 `bank_id`；可以额外设置 `session_id`，把一段会话累计为 HMS 文档。
 
+## 可选的图片与视频记忆
+
+dataplane 提供显式启用的 `openai_multimodal` 文件 parser。图片在本地校验并
+规范化；视频在本地解码为有界且确定性的抽帧集合。视觉描述会被渲染为带证据的
+canonical Markdown，然后进入既有 document、chunk、embedding、link 与 recall
+主链。原始视频不会发送给描述 provider。
+
+该能力默认关闭，当前 media runtime 支持矩阵限定为 PostgreSQL；Oracle 上的普通
+HMS 能力不受影响，但未验证的 Oracle 多模态组合会 fail closed。真实 provider
+质量需要由部署方另行验收，默认不标记为已验证。详见
+[多模态运维指南](docs/multimodal_memory.md)和
+[系统架构说明](docs/system_architecture_and_multimodal.md)。
+
 ## 记忆流程
 
 ```text
@@ -91,19 +104,6 @@ Recall
 HMS 会为抽取后的记忆保留来源和时间元数据，方便应用检查召回内容来自哪里、
 何时被观察到。
 
-## 可视化 Demo
-
-仓库包含一个无需数据库即可打开的静态页面，展示 retrieved sessions 如何在
-生成前被组织为可追溯证据。
-
-![Memory evidence organization demo](docs/assets/memory_pipeline_demo.svg)
-
-可以直接在浏览器中打开：
-
-```text
-docs/memory_pipeline_demo.html
-```
-
 ## 目录结构
 
 ```text
@@ -114,8 +114,6 @@ docs/memory_pipeline_demo.html
 │   └── local-suite/
 ├── deploy/
 ├── docs/
-│   ├── assets/
-│   └── memory_pipeline_demo.html
 ├── examples/
 ├── interface/
 ├── scripts/

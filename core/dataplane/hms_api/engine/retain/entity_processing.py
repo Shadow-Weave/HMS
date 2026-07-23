@@ -111,6 +111,7 @@ async def build_entity_links(
     unit_to_entity_ids: dict[str, list[str]],
     log_buffer: list[str] = None,
     skip_unit_entities_insert: bool = False,
+    write_entity_links: bool = True,
     ops=None,
 ) -> list[EntityLink]:
     """
@@ -131,11 +132,17 @@ async def build_entity_links(
         unit_to_entity_ids: From resolve_entities()
         log_buffer: Optional buffer for detailed logging
         skip_unit_entities_insert: Skip unit_entities INSERT (already done in Phase 2)
+        write_entity_links: When False, skip building visualization-only entity links
         ops: DataAccessOps instance (from backend.ops)
 
     Returns:
         List of EntityLink objects for batch insertion
     """
+    if not write_entity_links:
+        if log_buffer is not None:
+            log_buffer.append("  Entity links (viz): skipped (write_entity_links=false)")
+        return []
+
     return await link_utils.build_entity_links_from_resolved(
         entity_resolver,
         conn,
@@ -150,7 +157,13 @@ async def build_entity_links(
     )
 
 
-async def insert_entity_links_batch(conn, entity_links: list[EntityLink], bank_id: str, ops=None) -> None:
+async def insert_entity_links_batch(
+    conn,
+    entity_links: list[EntityLink],
+    bank_id: str,
+    ops=None,
+    write_entity_links: bool = True,
+) -> None:
     """
     Insert entity links in batch.
 
@@ -159,7 +172,11 @@ async def insert_entity_links_batch(conn, entity_links: list[EntityLink], bank_i
         entity_links: List of EntityLink objects
         bank_id: Bank identifier (stored directly on memory_links for fast filtering)
         ops: DataAccessOps instance (from backend.ops)
+        write_entity_links: When False, skip inserting visualization-only entity links
     """
+    if not write_entity_links:
+        return
+
     if not entity_links:
         return
 

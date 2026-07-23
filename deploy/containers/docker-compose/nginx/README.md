@@ -32,6 +32,11 @@ docker build \
   .
 ```
 
+To enable local video decoding in this custom image, also pass
+`--build-arg INCLUDE_MULTIMODAL_VIDEO=true`. Keep
+`HMS_API_MULTIMODAL_VIDEO_ENABLED=false` when the extra is absent; the API
+advertises video capability only when PyAV is importable.
+
 3. **Update docker-compose.yml** to use your built image:
 ```yaml
 services:

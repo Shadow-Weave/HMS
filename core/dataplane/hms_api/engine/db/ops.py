@@ -91,6 +91,7 @@ class DataAccessOps(ABC):
         tags_list: list[str],
         observation_scopes_list: list,
         text_signals_list: list,
+        projection_jsons: list[str],
         text_search_extension: str = "native",
     ) -> list[str]:
         """Batch-insert facts, returning IDs.
@@ -164,6 +165,17 @@ class DataAccessOps(ABC):
         """
         ...
 
+    @abstractmethod
+    async def refresh_entity_fact_counts(
+        self,
+        conn: DatabaseConnection,
+        entities_table: str,
+        ue_table: str,
+        entity_ids: list,
+    ) -> None:
+        """Refresh entities.fact_count for a bounded list of entity IDs."""
+        ...
+
     # -- LATERAL / fan-out queries ---------------------------------------
 
     @abstractmethod
@@ -221,7 +233,10 @@ class DataAccessOps(ABC):
         self,
         mu_table: str,
         ue_table: str,
+        entities_table: str,
         per_entity_limit: int,
+        entity_fanout_hard_cap: int = 5000,
+        entity_idf_weighting: bool = False,
     ) -> str:
         """Build entity expansion CTE for link expansion retrieval.
 
@@ -245,6 +260,50 @@ class DataAccessOps(ABC):
         ...
 
     @abstractmethod
+    def build_semantic_ann_cte(
+        self,
+        mu_table: str,
+        threshold_param_idx: int,
+        limit_param_idx: int,
+        bank_param_idx: int,
+        visibility_filter_clause: str = "",
+    ) -> str:
+        """Build semantic expansion CTE from seed embeddings via ANN."""
+        ...
+
+    @abstractmethod
+    def build_causal_expansion_cte(
+        self,
+        ml_table: str,
+        mu_table: str,
+    ) -> str:
+        """Build causal-only expansion CTE for link expansion retrieval."""
+        ...
+
+    @abstractmethod
+    def build_temporal_links_spreading_lateral(
+        self,
+        ml_table: str,
+        limit_param_idx: int,
+    ) -> str:
+        """Build legacy materialized temporal+causal spreading LATERAL body."""
+        ...
+
+    @abstractmethod
+    def build_temporal_btree_spreading_lateral(
+        self,
+        mu_table: str,
+        ml_table: str,
+        limit_param_idx: int,
+        bank_param_idx: int,
+        fact_type_param_idx: int,
+        window_seconds_param_idx: int,
+        sigma_seconds_param_idx: int,
+    ) -> str:
+        """Build B-tree temporal spreading LATERAL body plus materialized causal links."""
+        ...
+
+    @abstractmethod
     async def expand_observations(
         self,
         conn: DatabaseConnection,
@@ -252,8 +311,14 @@ class DataAccessOps(ABC):
         ue_table: str,
         ml_table: str,
         seed_ids: list,
+        bank_id: str,
         budget: int,
         per_entity_limit: int,
+        semantic_mode: str = "links",
+        ann_threshold: float = 0.7,
+        ann_limit: int = 50,
+        visibility_filter_clause: str = "",
+        visibility_filter_params: list | None = None,
     ) -> tuple[list[ResultRow], list[ResultRow], list[ResultRow]]:
         """Observation-specific graph expansion.
 

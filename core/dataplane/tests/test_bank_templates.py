@@ -1,16 +1,18 @@
 """Integration tests for bank template import/export endpoints."""
 
+from datetime import datetime
+
+import httpx
 import pytest
 import pytest_asyncio
-import httpx
-from datetime import datetime
+
 from hms_api.api import create_app
 
 
 @pytest_asyncio.fixture
-async def api_client(memory):
+async def api_client(memory_no_llm_verify):
     """Create an async test client for the FastAPI app."""
-    app = create_app(memory, initialize_memory=False)
+    app = create_app(memory_no_llm_verify, initialize_memory=False)
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
         yield client
@@ -643,9 +645,7 @@ class TestDefaultBankTemplateEnvVar:
         yield default_template
 
     @pytest.mark.asyncio
-    async def test_default_template_applied_on_new_bank(
-        self, api_client, bank_id, _patched_default_template
-    ):
+    async def test_default_template_applied_on_new_bank(self, api_client, bank_id, _patched_default_template):
         """Creating a new bank applies the default template (config + mental models + directives)."""
         # Trigger bank auto-creation via GET profile
         resp = await api_client.put(f"/v1/default/banks/{bank_id}", json={})
@@ -730,9 +730,7 @@ class TestDefaultBankTemplateEnvVar:
         assert config_resp.json()["overrides"] == {}
 
     @pytest.mark.asyncio
-    async def test_default_template_malformed_is_swallowed(
-        self, api_client, bank_id, monkeypatch
-    ):
+    async def test_default_template_malformed_is_swallowed(self, api_client, bank_id, monkeypatch):
         """A malformed default template is logged and ignored — bank creation still succeeds."""
         from hms_api.config import _get_raw_config
 

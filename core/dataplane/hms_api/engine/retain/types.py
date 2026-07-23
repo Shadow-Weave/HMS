@@ -140,7 +140,7 @@ class ProcessedFact:
     # Core fact data
     fact_text: str
     fact_type: str
-    embedding: list[float]
+    embedding: list[float] | None
 
     # Temporal data
     occurred_start: datetime | None
@@ -178,6 +178,9 @@ class ProcessedFact:
     # Observation scopes for consolidation
     observation_scopes: Literal["per_tag", "combined", "all_combinations"] | list[list[str]] | None = None
 
+    # Versioned projection manifest for read-side channel readiness.
+    projection: dict = field(default_factory=dict)
+
     @property
     def is_duplicate(self) -> bool:
         """Check if this fact was marked as a duplicate."""
@@ -185,7 +188,12 @@ class ProcessedFact:
 
     @staticmethod
     def from_extracted_fact(
-        extracted_fact: "ExtractedFact", embedding: list[float], chunk_id: str | None = None
+        extracted_fact: "ExtractedFact",
+        embedding: list[float] | None,
+        chunk_id: str | None = None,
+        *,
+        extraction_prompt_version: str = "5w-v1",
+        embedding_model_version: str = "unknown",
     ) -> "ProcessedFact":
         """
         Create ProcessedFact from ExtractedFact.
@@ -205,6 +213,14 @@ class ProcessedFact:
 
         # Convert entity strings to EntityRef objects
         entities = [EntityRef(name=name) for name in extracted_fact.entities]
+        temporal_grade = "resolved" if occurred_start is not None or mentioned_at is not None else "unresolved"
+        projection = {
+            "embedding": {"v": embedding_model_version, "ok": embedding is not None},
+            "tsvector": {"v": 1, "ok": True},
+            "temporal": {"v": 1, "grade": temporal_grade},
+            "entities": {"v": 1, "ok": bool(entities)},
+            "extraction": {"v": extraction_prompt_version},
+        }
 
         return ProcessedFact(
             fact_text=extracted_fact.fact_text,
@@ -221,6 +237,7 @@ class ProcessedFact:
             content_index=extracted_fact.content_index,
             tags=extracted_fact.tags,
             observation_scopes=extracted_fact.observation_scopes,
+            projection=projection,
         )
 
 

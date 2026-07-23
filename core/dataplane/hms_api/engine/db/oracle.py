@@ -40,6 +40,22 @@ from .result import DictResultRow as ResultRow
 logger = logging.getLogger(__name__)
 
 
+def _quote_oracle_identifier(identifier: str) -> str:
+    """Quote one Oracle identifier without interpolating executable SQL.
+
+    Tenant/schema names are data at the application boundary.  Oracle's quoted
+    identifier escaping (doubling a double quote) keeps even an unusual name
+    inside one identifier token; control characters are rejected because they
+    make diagnostics and SQL text ambiguous.
+    """
+
+    if not isinstance(identifier, str) or not identifier:
+        raise ValueError("Oracle schema identifier must be a non-empty string")
+    if any(ord(char) < 0x20 or ord(char) == 0x7F for char in identifier):
+        raise ValueError("Oracle schema identifier contains a control character")
+    return f'"{identifier.replace(chr(34), chr(34) * 2)}"'
+
+
 class RewriteResult(NamedTuple):
     """Result of rewriting a PostgreSQL query to Oracle SQL."""
 
@@ -151,6 +167,11 @@ _JSON_COL_NAMES = {
     "result_metadata",
     "task_payload",
     "history",
+    "embedding_fingerprint",
+    # Multimodal durable descriptor/segment checkpoint JSON CLOBs.
+    "provenance_metadata",
+    "entities",
+    "segment_json",
 }
 
 
@@ -682,11 +703,14 @@ class OracleConnection(DatabaseConnection):
         """Tell oracledb to bind typed input sizes for ambiguous parameters.
 
         Must be called AFTER _expand_any_lists so we only register sizes for
-        params that still exist in the final query.  Handles two cases:
+        params that still exist in the final query.  Handles three cases:
 
         1. JSON strings: Oracle's thin driver defaults short strings like '[]'
            to VARCHAR2 which fails with ORA-00932 when the column is CLOB.
-        2. NULL datetime params: When a None param appears in COALESCE with
+        2. Multimodal canonical Markdown: this is arbitrary text rather than
+           JSON-looking, but its checkpoint column is a CLOB and can exceed
+           Oracle's VARCHAR2 bind limit.
+        3. NULL datetime params: When a None param appears in COALESCE with
            SYSTIMESTAMP, Oracle defaults it to VARCHAR2 causing a type mismatch.
            We detect COALESCE(:N, SYSTIMESTAMP) patterns and hint the param as
            TIMESTAMP WITH TIME ZONE.
@@ -696,7 +720,11 @@ class OracleConnection(DatabaseConnection):
         oracledb = _import_oracledb()
         sizes: dict[str, Any] = {}
         for key, val in params.items():
-            if isinstance(val, str) and val and val[0] in ("{", "[") and f":{key}" in query:
+            is_json_text = isinstance(val, str) and bool(val) and val[0] in ("{", "[")
+            is_canonical_markdown_assignment = isinstance(val, str) and bool(
+                re.search(rf"\bcanonical_markdown\s*=\s*:{key}\b", query, re.IGNORECASE)
+            )
+            if (is_json_text or is_canonical_markdown_assignment) and f":{key}" in query:
                 sizes[key] = oracledb.DB_TYPE_CLOB
             # None params in COALESCE/GREATEST/LEAST with timestamp columns need
             # explicit timestamp type to avoid ORA-00932 (VARCHAR2 NULL vs
@@ -1133,6 +1161,11 @@ class OracleBackend(DatabaseBackend):
     def __init__(self) -> None:
         self._pool: Any = None
         self._oracledb: Any = None
+        # ``CURRENT_SCHEMA`` is session state and survives a pool release.
+        # Cache the authenticated login schema once discovered so a later
+        # public/default acquire can explicitly reset a connection that was
+        # previously used for a tenant.
+        self._session_user: str | None = None
 
     async def initialize(
         self,
@@ -1147,6 +1180,10 @@ class OracleBackend(DatabaseBackend):
     ) -> None:
         oracledb = _import_oracledb()
         self._oracledb = oracledb
+        # A backend may be reinitialized with a different DSN in tests or a
+        # controlled rotation; never carry the prior pool's login schema into
+        # the new credential set.
+        self._session_user = None
 
         # Parse URL-format DSN (oracle://user:pass@host:port/service)
         from urllib.parse import urlparse
@@ -1173,22 +1210,72 @@ class OracleBackend(DatabaseBackend):
             self._pool = None
             logger.info("Oracle pool closed")
 
-    async def _set_session_schema(self, conn: Any) -> None:
-        """Set the session schema on an Oracle connection.
+    async def _resolve_session_user(self, conn: Any) -> str:
+        """Return the authenticated Oracle user for safe default reset.
 
-        Uses ALTER SESSION SET CURRENT_SCHEMA so that all unqualified table
-        references resolve to the tenant's schema. This is Oracle's equivalent
-        of PostgreSQL's SET search_path — fq_table() returns bare table names
-        for Oracle, relying on this session-level setting for isolation.
+        A pooled connection can retain a prior tenant's ``CURRENT_SCHEMA``;
+        querying ``SESSION_USER`` is therefore intentional (``CURRENT_SCHEMA``
+        is not an acceptable fallback).  The value is the server-authenticated
+        login identity and is cached because all connections in this backend's
+        homogeneous pool use the same credentials.
         """
+
+        if self._session_user:
+            return self._session_user
+
+        # python-oracledb exposes the username on some connection versions.
+        # Prefer it when available, but retain the SQL fallback for EZConnect/
+        # TNS aliases and test doubles that do not expose the attribute.
+        candidate = getattr(conn, "username", None)
+        if candidate:
+            self._session_user = str(candidate)
+            return self._session_user
+
+        cursor = conn.cursor()
+        try:
+            await cursor.execute("SELECT SYS_CONTEXT('USERENV', 'SESSION_USER') FROM DUAL")
+            row = await cursor.fetchone()
+        finally:
+            close_result = cursor.close()
+            if hasattr(close_result, "__await__"):
+                await close_result
+
+        if isinstance(row, (tuple, list)):
+            candidate = row[0] if row else None
+        elif isinstance(row, dict):
+            candidate = next(iter(row.values()), None)
+        else:
+            candidate = row
+        if not candidate:
+            raise RuntimeError("Oracle SESSION_USER could not be resolved for schema isolation")
+        self._session_user = str(candidate)
+        return self._session_user
+
+    async def _set_session_schema(self, conn: Any) -> None:
+        """Set *every* acquired session's schema, including public/default.
+
+        ``ALTER SESSION SET CURRENT_SCHEMA`` persists when an Oracle pooled
+        connection is released.  Skipping the public/default case would let a
+        connection borrowed by tenant A remain pointed at tenant A when it is
+        next borrowed for the default schema.  Always writing the target makes
+        tenant A → default → tenant B reuse deterministic and fail closed.
+        """
+
         # Lazy import to avoid circular dependency (memory_engine → db → memory_engine).
         from ..memory_engine import get_current_schema
 
-        schema = get_current_schema()
-        if schema and schema != "public":
-            cursor = conn.cursor()
-            await cursor.execute(f'ALTER SESSION SET CURRENT_SCHEMA = "{schema}"')
-            await cursor.close()
+        requested_schema = get_current_schema()
+        if not requested_schema or requested_schema.casefold() == "public":
+            requested_schema = await self._resolve_session_user(conn)
+
+        quoted_schema = _quote_oracle_identifier(requested_schema)
+        cursor = conn.cursor()
+        try:
+            await cursor.execute(f"ALTER SESSION SET CURRENT_SCHEMA = {quoted_schema}")
+        finally:
+            close_result = cursor.close()
+            if hasattr(close_result, "__await__"):
+                await close_result
 
     @asynccontextmanager
     async def acquire(self) -> AsyncIterator[OracleConnection]:

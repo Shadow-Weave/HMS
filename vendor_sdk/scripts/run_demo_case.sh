@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
-CASE_PATH="${1:-$ROOT_DIR/examples/cases/shopping_actions.json}"
+CASE_PATH="${1:?usage: run_demo_case.sh /path/to/case.json}"
 BANK_ID="${HMS_BANK_ID:-vendor-demo}"
 
 PYTHONPATH="$ROOT_DIR/src${PYTHONPATH:+:$PYTHONPATH}" \

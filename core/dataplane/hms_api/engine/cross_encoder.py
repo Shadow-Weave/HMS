@@ -49,14 +49,14 @@ from ..config import (
     ENV_RERANKER_LOCAL_MODEL,
     ENV_RERANKER_LOCAL_TRUST_REMOTE_CODE,
     ENV_RERANKER_PROVIDER,
+    ENV_RERANKER_QWEN3_INSTRUCTION,
+    ENV_RERANKER_QWEN3_MODEL_PATH,
     ENV_RERANKER_SILICONFLOW_API_KEY,
     ENV_RERANKER_TEI_BATCH_SIZE,
     ENV_RERANKER_TEI_HTTP_TIMEOUT,
     ENV_RERANKER_TEI_MAX_CONCURRENT,
     ENV_RERANKER_TEI_URL,
     ENV_RERANKER_ZEROENTROPY_API_KEY,
-    ENV_RERANKER_QWEN3_MODEL_PATH,
-    ENV_RERANKER_QWEN3_INSTRUCTION,
 )
 
 logger = logging.getLogger(__name__)
@@ -118,7 +118,7 @@ class LocalSTCrossEncoder(CrossEncoderModel):
     Call initialize() during startup to load the model and avoid cold starts.
 
     Default model is cross-encoder/ms-marco-MiniLM-L-6-v2:
-    - Fast inference (~80ms for 100 pairs on CPU)
+    - Batched local inference
     - Small model (80MB)
     - Trained for passage re-ranking
 
@@ -155,8 +155,8 @@ class LocalSTCrossEncoder(CrossEncoderModel):
             fp16: Use FP16 (half precision) inference. Faster on MPS and CUDA,
                   may be slower on CPU. Default: False (opt-in via env var).
             bucket_batching: Sort pairs by token length before batching to reduce
-                            padding waste. 36-54% speedup, quality-identical.
-                            Default: False (opt-in via env var).
+                            padding waste while preserving pair order after
+                            scoring. Default: False (opt-in via env var).
             batch_size: Batch size for predict() calls. Optimal values vary by
                        hardware and model (MPS: 32, CUDA: 128+). Default: 32.
         """
@@ -255,8 +255,7 @@ class LocalSTCrossEncoder(CrossEncoderModel):
                 # Restore original logging level
                 transformers_logger.setLevel(original_level)
 
-        # FP16 inference: convert model weights to half precision.
-        # Empirically validated: 27-36% faster on MPS, quality-identical (20/20 overlap).
+        # FP16 inference: convert model weights to half precision on supported devices.
         if self.fp16 and device != "cpu":
             self._model.model.half()
             logger.info("Reranker: FP16 inference enabled")
@@ -275,7 +274,7 @@ class LocalSTCrossEncoder(CrossEncoderModel):
         """Synchronous prediction wrapper for thread pool execution.
 
         Supports two optimizations (controlled via .env):
-        - bucket_batching: sort pairs by token length to reduce padding waste (36-54% speedup)
+        - bucket_batching: sort pairs by token length to reduce padding waste
         - batch_size: explicit batch size for predict() calls (MPS optimal: 32)
         """
         import numpy as np
@@ -873,6 +872,7 @@ class Qwen3RerankerCrossEncoder(CrossEncoderModel):
             model_path = self.model_path
         else:
             from huggingface_hub import snapshot_download
+
             model_path = snapshot_download(repo_id="Qwen/Qwen3-Reranker-0.6B")
 
         self._tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
@@ -894,6 +894,7 @@ class Qwen3RerankerCrossEncoder(CrossEncoderModel):
     def _predict_sync(self, pairs: list[tuple[str, str]], max_batch_size: int = 32) -> list[float]:
         """Synchronous prediction with batch processing to avoid OOM."""
         import threading
+
         import torch
         import torch.nn.functional as F
 

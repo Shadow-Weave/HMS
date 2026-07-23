@@ -10,19 +10,19 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
+from .causal_strategies import CausalLinkStrategy, causal_registry
 from .strategies import (
     FusionStrategy,
     GraphRetrievalStrategy,
-    RetrievalStrategy,
     RerankingStrategy,
+    RetrievalStrategy,
     fusion_registry,
     graph_retrieval_registry,
-    retrieval_registry,
     reranking_registry,
+    retrieval_registry,
 )
 from .tags import TagGroup, TagsMatch
 from .types import GraphRetrievalTimings, MergedCandidate, RetrievalResult, ScoredResult
-from .causal_strategies import CausalLinkStrategy, causal_registry
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +89,9 @@ class SearchModuleManager:
 
             if strategy_name == "temporal":
                 params["session_expansion_weight"] = self._config.session_expansion_weight
-                logger.info(f"Temporal retrieval will use session expansion weight: {self._config.session_expansion_weight}")
+                logger.info(
+                    f"Temporal retrieval will use session expansion weight: {self._config.session_expansion_weight}"
+                )
 
             self._retrieval_strategy = retrieval_registry.create(strategy_name, **params)
             logger.info(f"Using retrieval strategy: {strategy_name}")
@@ -270,6 +272,7 @@ class ModularRetrievalPipeline:
         tag_groups: List[TagGroup] | None = None,
         created_after: datetime | None = None,
         created_before: datetime | None = None,
+        graph_config: Any | None = None,
     ) -> tuple[List[RetrievalResult], GraphRetrievalTimings | None]:
         """Retrieve using the configured graph strategy."""
         strategy = self._module_manager.get_graph_retrieval_strategy()
@@ -287,6 +290,7 @@ class ModularRetrievalPipeline:
             tag_groups=tag_groups,
             created_after=created_after,
             created_before=created_before,
+            graph_config=graph_config,
         )
 
     def fuse_results(

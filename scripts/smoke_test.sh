@@ -55,24 +55,17 @@ fi
 
 cat >"${tmpdir}/organize.json" <<'JSON'
 {
-  "question": "How many clothing items do I currently need to pick up or return from a store?",
-  "question_date": "2024-03-10T00:00:00Z",
+  "question": "What drink does the user prefer in the afternoon?",
+  "question_date": "2026-01-02T00:00:00Z",
   "recall_response": {
     "bank_id": "smoke",
     "results": [
       {
         "id": "m1",
-        "text": "The user needs to pick up a navy blue blazer from dry cleaning.",
+        "text": "The user prefers tea in the afternoon.",
         "type": "experience",
-        "document_id": "store-errands-s1",
-        "mentioned_at": "2024-03-01T10:00:00Z"
-      },
-      {
-        "id": "m2",
-        "text": "The user needs to return the small Zara boots and pick up the larger replacement pair.",
-        "type": "experience",
-        "document_id": "store-errands-s2",
-        "mentioned_at": "2024-03-04T15:30:00Z"
+        "document_id": "demo-session-1",
+        "mentioned_at": "2026-01-01T10:00:00Z"
       }
     ],
     "chunks": {}
@@ -102,18 +95,28 @@ if ! grep -q '"evidence_packet"' "${tmpdir}/response.json"; then
 fi
 
 if [[ "${HMS_SMOKE_RUN_PIPELINE:-0}" == "1" ]]; then
-  echo "4. Running optional retain + recall + ledger pipeline"
+  echo "4. Running optional retain + recall + result-formatting pipeline"
   python3 - <<PY >"${tmpdir}/pipeline.json"
 import json
-from pathlib import Path
 
-case = json.loads(Path("examples/cases/store_errands_multi_session.json").read_text(encoding="utf-8"))
 payload = {
     "bank_id": "${BANK_ID}",
-    "sessions": case["sessions"],
-    "question": case["question"],
-    "question_date": case.get("question_date"),
-    "bank_profile": case.get("bank_profile", {}),
+    "sessions": [
+        {
+            "session_id": "demo-session-1",
+            "timestamp": "2026-01-01T10:00:00Z",
+            "messages": [
+                {"role": "user", "content": "I prefer tea in the afternoon."},
+                {"role": "assistant", "content": "Noted."},
+            ],
+        }
+    ],
+    "question": "What drink does the user prefer in the afternoon?",
+    "question_date": "2026-01-02T00:00:00Z",
+    "bank_profile": {
+        "retain_mission": "Extract persistent user preferences and updates.",
+        "reflect_mission": "Answer from recalled memory evidence.",
+    },
     "create_bank": True,
     "reset_bank": True,
     "retain_async": False,

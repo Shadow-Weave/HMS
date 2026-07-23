@@ -218,8 +218,9 @@ class HMSVendorClientTest(unittest.TestCase):
             question_date="2024-03-10T00:00:00Z",
         )
 
-        self.assertGreaterEqual(len(packet.controls), 1)
-        self.assertIn("Structured Evidence Ledger", packet.answer_ready_context)
+        self.assertEqual(packet.controls, [])
+        self.assertEqual([row.text for row in packet.ledger_rows], [recall.results[0].text])
+        self.assertIn("Retrieved Memory Evidence", packet.answer_ready_context)
 
 
 if __name__ == "__main__":

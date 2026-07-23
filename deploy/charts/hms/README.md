@@ -102,6 +102,64 @@ controlPlane:
   secrets: {}
 ```
 
+### Multimodal video image
+
+The Helm chart deploys existing images; it cannot install the optional PyAV
+runtime package. The default HMS API image is not evidence that video decode is
+present. Build and publish an image from the repository with the explicit
+extra, then use the same verified, non-moving tag for the API and all dedicated
+workers:
+
+```bash
+docker build \
+  --target api-only \
+  --build-arg INCLUDE_LOCAL_MODELS=false \
+  --build-arg INCLUDE_MULTIMODAL_VIDEO=true \
+  -f deploy/containers/standalone/Dockerfile \
+  -t registry.example.com/hms-api:multimodal-video \
+  .
+docker push registry.example.com/hms-api:multimodal-video
+```
+
+Example values keep the live-quality marker false until a separately approved
+provider test passes:
+
+```yaml
+api:
+  image:
+    repository: registry.example.com/hms-api
+    tag: multimodal-video
+  env:
+    HMS_API_ENABLE_FILE_UPLOAD_API: "true"
+    HMS_API_MULTIMODAL_ENABLED: "true"
+    HMS_API_MULTIMODAL_IMAGE_ENABLED: "true"
+    HMS_API_MULTIMODAL_VIDEO_ENABLED: "true"
+    HMS_API_MULTIMODAL_LIVE_VERIFIED: "false"
+  secrets:
+    HMS_API_MULTIMODAL_API_KEY: "replace-with-secret"
+
+worker:
+  enabled: true
+  image:
+    repository: registry.example.com/hms-api
+    tag: multimodal-video
+```
+
+Plain `GET /version` intentionally keeps the legacy wire shape. Use
+`GET /version?include_multimodal=true` for the approved additive image, video,
+and live-verification capability flags. After rollout, verify the server-static
+settings and confirm that PyAV can construct an H.264 decoder in both the API
+and every worker pod. The API-local decoder check cannot inspect a separately
+deployed worker image:
+
+```bash
+kubectl exec -n hms "$WORKER_POD" -- /app/api/.venv/bin/python -c \
+  'import av; print(av.__version__, av.codec.CodecContext.create("h264", "r").codec.name)'
+```
+
+Full configuration, polling, data controls, and live-gate requirements are in the
+[multimodal operator guide](../../../docs/multimodal_memory.md).
+
 ### External Database
 
 To connect to an external PostgreSQL database:
@@ -160,6 +218,8 @@ The chart deploys:
 
 - **API**: The main HMS API server for memory operations
 - **Control Plane**: Web UI for managing agents and viewing memories
+- **Worker**: Optional dedicated background-operation workers
+- **PostgreSQL**: Optional bundled database, or connection settings for an external PostgreSQL service
 
 ## Development
 

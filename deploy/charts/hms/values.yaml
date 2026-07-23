@@ -24,6 +24,8 @@ api:
     repository: ghcr.io/hms-memory/hms-api
     pullPolicy: IfNotPresent
     # tag defaults to .Values.version if not specified
+    # Video ingestion requires an image built with
+    # --build-arg INCLUDE_MULTIMODAL_VIDEO=true; the chart cannot add PyAV.
 
   service:
     type: ClusterIP
@@ -119,6 +121,8 @@ worker:
     repository: ghcr.io/hms-memory/hms-api
     pullPolicy: IfNotPresent
     # tag: ""  # defaults to .Values.version, then Chart.appVersion if not specified
+    # When multimodal video is enabled, use the same verified, non-moving
+    # PyAV-enabled tag as the API. The API cannot inspect this worker image.
 
   service:
     # Service for metrics scraping (headless for StatefulSet)

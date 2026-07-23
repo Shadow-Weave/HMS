@@ -7,12 +7,11 @@ def main() -> None:
     sessions = [
         SessionRecord(
             session_id="demo-session-1",
-            timestamp="2024-03-01T10:00:00Z",
-            context="shopping reminders",
+            timestamp="2026-01-01T10:00:00Z",
+            context="beverage preference",
             messages=[
-                {"role": "user", "content": "I need to pick up my blazer from dry cleaning."},
+                {"role": "user", "content": "I prefer tea in the afternoon."},
                 {"role": "assistant", "content": "Recorded."},
-                {"role": "user", "content": "I also need to return the boots that are too small."},
             ],
         )
     ]
@@ -20,12 +19,11 @@ def main() -> None:
     result = client.pipeline(
         bank_id="vendor-smoke-test",
         sessions=sessions,
-        question="How many items do I need to pick up or return from a store?",
-        question_date="2024-03-10T00:00:00Z",
+        question="What drink does the user prefer in the afternoon?",
         create_bank=True,
         reset_bank=True,
         bank_profile={
-            "retain_mission": "Extract persistent user state, tasks, shopping actions, and updates.",
+            "retain_mission": "Extract persistent user preferences and updates.",
             "reflect_mission": "Answer with the current user state grounded in recalled memory.",
         },
     )

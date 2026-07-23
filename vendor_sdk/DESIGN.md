@@ -2,7 +2,7 @@
 
 ## Goal
 
-This SDK packages HMS for external model-provider testing.
+This SDK packages HMS for external model-provider integration.
 
 The external party should be able to answer three questions quickly:
 
@@ -23,8 +23,8 @@ It standardizes vendor inputs into two core objects:
 - `RecallBundle`: normalized retrieval output
 - `PipelineResult`: retain and recall results in one object
 
-This is more suitable for external testing than exposing internal benchmark
-classes or OpenAPI-generated models directly.
+This is more suitable for external integration than exposing the complete
+OpenAPI-generated model surface directly.
 
 ## Supported Workflows
 
@@ -121,16 +121,11 @@ Runs:
 The wait step matters. Without it, async retain can return before extraction,
 embedding, and storage are complete, causing recall to look worse than it is.
 
-## Why Not Reuse The Internal Benchmark Runner
+## Why Use A Dedicated Wrapper
 
-The benchmark runner is optimized for evaluation throughput and internal
-experimentation. It is not the right external contract because:
-
-- it assumes dataset-specific ingestion formats;
-- it exposes benchmark flags that are irrelevant to vendors;
-- it mixes evaluation concerns with memory-system concerns.
-
-This SDK gives vendors the memory interface directly.
+The wrapper accepts product-level session and recall objects, keeps deployment
+controls out of client payloads, and gives vendors the memory interface
+directly.
 
 ## Why Not Expose OpenAPI Models Directly
 
@@ -166,8 +161,8 @@ A vendor-ready package should include:
 - async operation polling
 - raw response fields for debugging
 
-This directory includes those pieces so providers can test the memory lifecycle
-without reading internal benchmark code.
+This directory includes those pieces so providers can exercise the memory
+lifecycle through a stable client surface.
 
 ## Integration Guidance
 
