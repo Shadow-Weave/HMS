@@ -1,0 +1,89 @@
+name: Retain Oracle integration
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/retain-oracle.yml"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "core/dataplane/pyproject.toml"
+      - "core/dataplane/hms_api/**"
+      - "core/dataplane/tests/conftest.py"
+      - "core/dataplane/tests/test_ingestion_oracle_contracts.py"
+      - "core/dataplane/tests/test_ingestion_oracle_live.py"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/retain-oracle.yml"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "core/dataplane/pyproject.toml"
+      - "core/dataplane/hms_api/**"
+      - "core/dataplane/tests/conftest.py"
+      - "core/dataplane/tests/test_ingestion_oracle_contracts.py"
+      - "core/dataplane/tests/test_ingestion_oracle_live.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: retain-oracle-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  oracle-live:
+    name: Oracle 23ai Retain smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      oracle:
+        # Immutable digest for gvenzl/oracle-free:23-slim-faststart.
+        image: gvenzl/oracle-free@sha256:d8913e4e4769b6e60197949bef30a4391713afe662b4b4e71a2665c881bdac8b
+        env:
+          ORACLE_PASSWORD: OracleTest1
+        ports:
+          - 1521:1521
+        options: >-
+          --health-cmd healthcheck.sh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 30
+    env:
+      CI: "true"
+      PYTHONHASHSEED: "0"
+      PYTHONPATH: ${{ github.workspace }}/core/dataplane
+      UV_NO_PROGRESS: "1"
+      ORACLE_TEST_DSN: oracle://SYSTEM:OracleTest1@127.0.0.1:1521/FREEPDB1
+      HMS_API_DATABASE_BACKEND: oracle
+      HMS_API_LLM_PROVIDER: none
+      HMS_API_LLM_MODEL: none
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.9.3"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install locked Oracle test dependencies
+        run: uv sync --locked --package hms-api-slim --extra test --extra oracle --group dev
+
+      - name: Run the live Oracle Retain smoke test
+        run: |
+          uv run --no-sync --package hms-api-slim pytest \
+            -o "addopts=" \
+            -p no:rerunfailures \
+            -m oracle \
+            -q \
+            core/dataplane/tests/test_ingestion_oracle_live.py
