@@ -90,6 +90,14 @@ _ANY_RE = re.compile(r"=\s*ANY\s*\(\s*:(\d+)\s*\)", re.IGNORECASE)
 _NOT_ALL_RE = re.compile(r"!=\s*ALL\s*\(\s*:(\d+)\s*\)", re.IGNORECASE)
 
 _JSON_ARROW_TEXT_RE = re.compile(r'("?\w+"?)\s*->>\s*\'(\w+)\'')  # handles both col and "col"
+_JSON_UUID_TEXT_EQ_RE = re.compile(
+    r"""\(\s*("?\w+"?)\s*->>\s*'(\w+)'\s*\)\s*::uuid\s*=\s*:(\d+)""",
+    re.IGNORECASE,
+)
+_JSON_NUMBER_TEXT_CAST_RE = re.compile(
+    r"""\(\s*("?\w+"?)\s*->>\s*'(\w+)'\s*\)\s*::(?:int|integer|bigint|numeric|float)\b""",
+    re.IGNORECASE,
+)
 _JSON_HAS_KEY_RE = re.compile(r"(\w+)\s*\?\s*'(\w+)'")
 _JSONB_CONTAINS_RE = re.compile(r"(\w+)\s*@>\s*:(\d+)")
 
@@ -355,6 +363,30 @@ def _rewrite_pg_to_oracle(query: str) -> RewriteResult:
         query,
         flags=re.IGNORECASE,
     )
+
+    # PostgreSQL can cast a JSON text scalar to UUID before comparing it with
+    # a UUID bind. Preserve that typed comparison on Oracle by converting the
+    # canonical UUID text stored in JSON to RAW(16). The normal UUID argument
+    # conversion can then remain authoritative for RAW-backed identifiers.
+    #
+    # This must run before generic cast stripping and JSON arrow rewriting:
+    #   (result_metadata->>'parent_operation_id')::uuid = :2
+    #   -> HEXTORAW(REPLACE(JSON_VALUE(...), '-', '')) = :2
+    def _rewrite_json_uuid_text_equality(match: re.Match) -> str:
+        column, key, bind_index = match.groups()
+        json_text = f"JSON_VALUE({column}, '$.{key}')"
+        return f"HEXTORAW(REPLACE({json_text}, '-', '')) = :{bind_index}"
+
+    query = _JSON_UUID_TEXT_EQ_RE.sub(_rewrite_json_uuid_text_equality, query)
+
+    # Preserve numeric ordering and comparisons for JSON text casts. Stripping
+    # the PostgreSQL cast would leave JSON_VALUE as VARCHAR2, so values such as
+    # sub-batch 10 would sort before sub-batch 2 on Oracle.
+    def _rewrite_json_number_text_cast(match: re.Match) -> str:
+        column, key = match.groups()
+        return f"TO_NUMBER(JSON_VALUE({column}, '$.{key}'))"
+
+    query = _JSON_NUMBER_TEXT_CAST_RE.sub(_rewrite_json_number_text_cast, query)
 
     # Strip ::type casts (including bare ::jsonb on literals in generic contexts)
     query = _PG_CAST_RE.sub("", query)

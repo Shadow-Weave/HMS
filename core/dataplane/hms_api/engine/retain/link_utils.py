@@ -5,10 +5,14 @@ Link creation utilities for temporal, semantic, and entity links.
 import logging
 import time
 from datetime import UTC, datetime, timedelta
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from ..memory_engine import fq_table
 from .types import EntityLink
+
+if TYPE_CHECKING:
+    from ..db.ops import DataAccessOps
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +61,7 @@ async def _bulk_insert_links(
     bank_id: str = "",
     chunk_size: int = 5000,
     skip_exists_check: bool = False,
-    ops=None,
+    ops: "DataAccessOps | None" = None,
 ) -> None:
     """Bulk-insert links using sorted INSERT FROM unnest().
 
@@ -77,6 +81,8 @@ async def _bulk_insert_links(
     """
     if not links:
         return
+    if ops is None:
+        raise ValueError("bulk link insertion requires backend database operations")
 
     # Sort by (from_unit_id, to_unit_id) to guarantee consistent lock ordering
     # across concurrent transactions — prevents deadlocks.
@@ -376,7 +382,7 @@ async def build_entity_links_from_resolved(
     unit_to_entity_ids: dict[str, list[str]],
     log_buffer: list[str] = None,
     skip_unit_entities_insert: bool = False,
-    ops=None,
+    ops: "DataAccessOps | None" = None,
 ) -> list["EntityLink"]:
     """
     Build entity links between units that share entities.
@@ -429,6 +435,8 @@ async def build_entity_links_from_resolved(
 
     entity_to_units = {}
     if all_entity_ids:
+        if ops is None:
+            raise ValueError("entity link construction requires backend database operations")
         query_start = time.time()
         import uuid
 
@@ -502,7 +510,7 @@ async def create_temporal_links_batch_per_fact(
     unit_ids: list[str],
     time_window_hours: int = 24,
     log_buffer: list[str] = None,
-    ops=None,
+    ops: "DataAccessOps | None" = None,
 ) -> int:
     """
     Create temporal links for multiple units, each with their own event_date.
@@ -522,6 +530,8 @@ async def create_temporal_links_batch_per_fact(
     """
     if not unit_ids:
         return 0
+    if ops is None:
+        raise ValueError("temporal link construction requires backend database operations")
 
     try:
         import time as time_mod
@@ -645,13 +655,15 @@ async def compute_semantic_links_ann(
     top_k: int = 50,
     threshold: float = 0.7,
     log_buffer: list[str] = None,
+    read_only: bool = False,
 ) -> list[tuple]:
     """
     Phase 1: ANN search for semantic neighbors among existing units.
 
-    Runs on a separate connection OUTSIDE the write transaction to avoid
-    holding locks during expensive HNSW index probes. Uses a temp table +
-    LATERAL join to batch all probes in a single query.
+    Runs before the core write transaction to avoid holding write locks during
+    expensive HNSW index probes. The default path uses a temporary table;
+    ``read_only=True`` supplies seeds through a typed-array CTE so PostgreSQL
+    can enforce a read-only planning transaction.
 
     Queries are split by fact_type so PostgreSQL uses the per-bank partial
     HNSW indexes (idx_mu_emb_worl_*, idx_mu_emb_expr_*). Without the
@@ -667,6 +679,8 @@ async def compute_semantic_links_ann(
         top_k: Max neighbors per unit
         threshold: Minimum cosine similarity
         log_buffer: Optional logging buffer
+        read_only: Use a DDL-free query suitable for an existing read-only
+            transaction. The caller owns that transaction.
 
     Returns:
         List of (from_id, to_id, "semantic", similarity, None) tuples
@@ -703,34 +717,31 @@ async def compute_semantic_links_ann(
     # manually drop the temp table or reset hnsw.ef_search — the transaction
     # end handles both.
     rows: list = []
-    async with conn.transaction():
-        # Transaction-local ef_search bounds ANN work during semantic link
-        # creation. SET LOCAL auto-reverts at commit, so the setting does not
-        # leak to later recall queries through the connection pool.
+    if read_only:
+        # Phase 1 runs inside a database-enforced READ ONLY transaction. A
+        # temporary table is still a CREATE and PostgreSQL
+        # rejects it there, so pass seeds through typed arrays instead. The
+        # expensive operation remains the same indexed LATERAL HNSW probe.
         await conn.execute("SET LOCAL hnsw.ef_search = 60")
-
-        t_setup = time_mod.time()
-        await conn.execute("CREATE TEMP TABLE _ann_seeds (unit_id text, emb_text text, fact_type text) ON COMMIT DROP")
-
-        records = [
-            (uid, emb if isinstance(emb, str) else str(emb), ft)
-            for uid, emb, ft in zip(unit_ids, embeddings, fact_types)
-        ]
-        await conn.copy_records_to_table("_ann_seeds", records=records, columns=["unit_id", "emb_text", "fact_type"])
-        logger.debug(f"[ANN] Temp table setup: {time_mod.time() - t_setup:.3f}s ({len(records)} seeds)")
-
-        # Run one ANN query per fact_type so each uses the right HNSW index.
         active_types = set(fact_types)
         for fact_type in active_types:
+            typed_seeds = [
+                (uid, emb if isinstance(emb, str) else str(emb))
+                for uid, emb, seed_type in zip(unit_ids, embeddings, fact_types)
+                if seed_type == fact_type
+            ]
+            seed_ids = [seed[0] for seed in typed_seeds]
+            seed_embeddings = [seed[1] for seed in typed_seeds]
             t_query = time_mod.time()
-            seed_count = sum(1 for ft in fact_types if ft == fact_type)
-            logger.debug(f"[ANN] Querying fact_type={fact_type}: {seed_count} seeds")
             ft_rows = await conn.fetch(
                 f"""
+                WITH seeds(unit_id, emb_text) AS (
+                    SELECT * FROM unnest($4::text[], $5::text[])
+                )
                 SELECT s.unit_id       AS from_id,
                        n.id::text      AS to_id,
                        n.similarity
-                FROM _ann_seeds s
+                FROM seeds s
                 CROSS JOIN LATERAL (
                     SELECT mu.id,
                            1 - (mu.embedding <=> s.emb_text::vector) AS similarity
@@ -741,14 +752,75 @@ async def compute_semantic_links_ann(
                     ORDER BY mu.embedding <=> s.emb_text::vector
                     LIMIT $3
                 ) n
-                WHERE s.fact_type = $2
                 """,
                 bank_id,
                 fact_type,
                 top_k,
+                seed_ids,
+                seed_embeddings,
             )
-            logger.debug(f"[ANN] fact_type={fact_type}: {len(ft_rows)} rows in {time_mod.time() - t_query:.3f}s")
+            logger.debug(
+                "[ANN] read-only fact_type=%s: %d rows in %.3fs",
+                fact_type,
+                len(ft_rows),
+                time_mod.time() - t_query,
+            )
             rows.extend(ft_rows)
+    else:
+        async with conn.transaction():
+            # Transaction-local ef_search. Default 400 is tuned for recall
+            # precision but at 164k units each HNSW probe takes 94ms.
+            # ef_search=60 gives 2.7ms per probe (35x faster) with sufficient
+            # accuracy for top-50 semantic link creation. SET LOCAL
+            # auto-reverts at commit, so pooled recall queries are unaffected.
+            await conn.execute("SET LOCAL hnsw.ef_search = 60")
+
+            t_setup = time_mod.time()
+            await conn.execute(
+                "CREATE TEMP TABLE _ann_seeds (unit_id text, emb_text text, fact_type text) ON COMMIT DROP"
+            )
+
+            records = [
+                (uid, emb if isinstance(emb, str) else str(emb), ft)
+                for uid, emb, ft in zip(unit_ids, embeddings, fact_types)
+            ]
+            await conn.copy_records_to_table(
+                "_ann_seeds",
+                records=records,
+                columns=["unit_id", "emb_text", "fact_type"],
+            )
+            logger.debug(f"[ANN] Temp table setup: {time_mod.time() - t_setup:.3f}s ({len(records)} seeds)")
+
+            # Run one ANN query per fact_type so each uses the right HNSW index.
+            active_types = set(fact_types)
+            for fact_type in active_types:
+                t_query = time_mod.time()
+                seed_count = sum(1 for ft in fact_types if ft == fact_type)
+                logger.debug(f"[ANN] Querying fact_type={fact_type}: {seed_count} seeds")
+                ft_rows = await conn.fetch(
+                    f"""
+                    SELECT s.unit_id       AS from_id,
+                           n.id::text      AS to_id,
+                           n.similarity
+                    FROM _ann_seeds s
+                    CROSS JOIN LATERAL (
+                        SELECT mu.id,
+                               1 - (mu.embedding <=> s.emb_text::vector) AS similarity
+                        FROM {fq_table("memory_units")} mu
+                        WHERE mu.bank_id = $1
+                          AND mu.fact_type = $2
+                          AND mu.embedding IS NOT NULL
+                        ORDER BY mu.embedding <=> s.emb_text::vector
+                        LIMIT $3
+                    ) n
+                    WHERE s.fact_type = $2
+                    """,
+                    bank_id,
+                    fact_type,
+                    top_k,
+                )
+                logger.debug(f"[ANN] fact_type={fact_type}: {len(ft_rows)} rows in {time_mod.time() - t_query:.3f}s")
+                rows.extend(ft_rows)
     # Transaction commits here. _ann_seeds is dropped (ON COMMIT DROP).
     # hnsw.ef_search reverts (SET LOCAL).
 

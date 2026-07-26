@@ -1,17 +1,19 @@
 """Tests for link_utils datetime handling, temporal link computation, and semantic link splitting."""
-import numpy as np
-import pytest
-from datetime import datetime, timezone, timedelta
+
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 
+import numpy as np
+import pytest
+
 from hms_api.engine.retain.link_utils import (
-    _normalize_datetime,
+    MAX_TEMPORAL_LINKS_PER_UNIT,
     _cap_links_per_unit,
-    compute_temporal_links,
-    compute_temporal_query_bounds,
+    _normalize_datetime,
     compute_semantic_links_ann,
     compute_semantic_links_within_batch,
-    MAX_TEMPORAL_LINKS_PER_UNIT,
+    compute_temporal_links,
+    compute_temporal_query_bounds,
 )
 
 
@@ -172,8 +174,8 @@ class TestComputeTemporalLinks:
         links = compute_temporal_links(units, candidates, time_window_hours=24)
 
         assert len(links) == 2
-        close_link = next(l for l in links if l[1] == "close")
-        far_link = next(l for l in links if l[1] == "far")
+        close_link = next(link for link in links if link[1] == "close")
+        far_link = next(link for link in links if link[1] == "far")
 
         assert close_link[3] > far_link[3]
 
@@ -206,8 +208,8 @@ class TestComputeTemporalLinks:
 
         # unit-1 should link to c1 only
         # unit-2 should link to c2 only
-        unit1_links = [l for l in links if l[0] == "unit-1"]
-        unit2_links = [l for l in links if l[0] == "unit-2"]
+        unit1_links = [link for link in links if link[0] == "unit-1"]
+        unit2_links = [link for link in links if link[0] == "unit-2"]
 
         assert len(unit1_links) == 1
         assert unit1_links[0][1] == "c1"
@@ -374,6 +376,7 @@ class TestComputeSemanticLinksWithinBatch:
         links = compute_semantic_links_within_batch(unit_ids, embs, top_k=3, threshold=0.5)
         # Each unit should have at most 3 outgoing links
         from collections import Counter
+
         from_counts = Counter(lnk[0] for lnk in links)
         for count in from_counts.values():
             assert count <= 3
@@ -527,8 +530,33 @@ class TestComputeSemanticLinksAnnPgBouncerSafety:
         ef_statements = [s for s in executed_sql if "hnsw.ef_search" in s]
         assert ef_statements, "ef_search must be tuned down for retain ANN"
         for stmt in ef_statements:
-            assert stmt.strip().startswith("SET LOCAL"), (
-                f"hnsw.ef_search must use SET LOCAL, got: {stmt}"
-            )
+            assert stmt.strip().startswith("SET LOCAL"), f"hnsw.ef_search must use SET LOCAL, got: {stmt}"
         # And there must not be a RESET — SET LOCAL handles it at commit.
         assert not any("RESET hnsw.ef_search" in s for s in executed_sql)
+
+    @pytest.mark.asyncio
+    async def test_read_only_mode_uses_array_cte_without_ddl(self, mock_conn):
+        """Retain planning must remain valid after ``SET TRANSACTION READ ONLY``."""
+        mock_conn.fetch.return_value = [{"from_id": "u1", "to_id": "existing-1", "similarity": 0.85}]
+        emb = [0.1] * 384
+
+        result = await compute_semantic_links_ann(
+            conn=mock_conn,
+            bank_id="bank-1",
+            unit_ids=["u1"],
+            embeddings=[emb],
+            fact_types=["world"],
+            threshold=0.7,
+            read_only=True,
+        )
+
+        assert result == [("u1", "existing-1", "semantic", 0.85, None)]
+        mock_conn.transaction.assert_not_called()
+        mock_conn.copy_records_to_table.assert_not_called()
+        mock_conn.execute.assert_awaited_once_with("SET LOCAL hnsw.ef_search = 60")
+
+        query = mock_conn.fetch.await_args.args[0]
+        assert "WITH seeds" in query
+        assert "unnest($4::text[], $5::text[])" in query
+        assert "CREATE" not in query
+        assert "_ann_seeds" not in query

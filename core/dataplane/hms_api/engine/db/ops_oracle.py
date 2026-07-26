@@ -197,8 +197,15 @@ class OracleOps(DataAccessOps):
                 orig_name,
             )
             if row:
-                # Wrap in a dict-like to include input_name for downstream compat
-                results.append(row)
+                results.append(
+                    ResultRow(
+                        {
+                            "id": row["id"],
+                            "name_lower": row["name_lower"],
+                            "input_name": orig_name,
+                        }
+                    )
+                )
         return results
 
     async def bulk_insert_unit_entities(

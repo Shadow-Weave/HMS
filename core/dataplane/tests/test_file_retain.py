@@ -547,7 +547,7 @@ async def test_async_file_retain_serializes_datetime_timestamp(memory_no_llm_ver
 async def test_file_retain_maps_timestamp_to_event_date(memory_no_llm_verify, sample_txt_content):
     """Regression (PR #1092): file retain must translate 'timestamp' -> 'event_date'.
 
-    The retain orchestrator only reads 'event_date' from each content dict.
+    The Retain pipeline only reads 'event_date' from each content dict.
     _handle_file_convert_retain previously forwarded 'timestamp' unchanged, so every
     file-retained memory silently defaulted to utcnow() and the 'unset' sentinel
     was a no-op. This test intercepts the inner batch_retain task the handler

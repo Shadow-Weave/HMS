@@ -17,7 +17,7 @@ import json
 import logging
 import re
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Protocol
 from urllib.parse import urlsplit, urlunsplit
 
 from .schema import fq_table
@@ -30,6 +30,12 @@ FINGERPRINT_SCHEMA_VERSION = 1
 # transformation must create a new bank identity.
 EMBEDDING_INPUT_SCHEMA_VERSION = "retain.fact_text+date_range+entities.v1"
 FINGERPRINT_POLICIES = frozenset({"strict", "warn", "off"})
+
+
+class _IdentifierLogSanitizer(Protocol):
+    """Minimal request-local identifier renderer used by security-sensitive callers."""
+
+    def identifier(self, value: Any) -> str: ...
 
 
 class EmbeddingFingerprintError(RuntimeError):
@@ -521,6 +527,7 @@ async def validate_bank_embedding_fingerprint(
     policy: str = "strict",
     for_write: bool = False,
     legacy_attestation: Any = None,
+    log_sanitizer: _IdentifierLogSanitizer | None = None,
 ) -> dict[str, Any]:
     """Validate a bank fingerprint, optionally initialising an empty bank.
 
@@ -532,6 +539,7 @@ async def validate_bank_embedding_fingerprint(
     """
 
     policy_value = _policy(policy)
+    log_bank_id = log_sanitizer.identifier(bank_id) if log_sanitizer is not None else bank_id
     current_fp = canonical_fingerprint(current)
     if current_fp is None or current_fp.get("legacy"):
         raise EmbeddingFingerprintSchemaError("Current embedding fingerprint is not a modern JSON object")
@@ -544,7 +552,7 @@ async def validate_bank_embedding_fingerprint(
         # does not exist; retain's get_or_create path normally makes this
         # impossible, but a clear error is safer inside a write transaction.
         if for_write:
-            raise EmbeddingFingerprintError(f"Cannot fingerprint unknown bank {bank_id!r}: bank row does not exist")
+            raise EmbeddingFingerprintError(f"Cannot fingerprint unknown bank {log_bank_id!r}: bank row does not exist")
         return current_fp
 
     stored_fp = canonical_fingerprint(stored_raw) if stored_raw is not None else None
@@ -554,12 +562,12 @@ async def validate_bank_embedding_fingerprint(
             current_fp,
             legacy_version=str(stored_fp.get("version") or ""),
         ):
-            logger.warning("Using explicitly attested legacy embedding fingerprint for bank %s", bank_id)
+            logger.warning("Using explicitly attested legacy embedding fingerprint for bank %s", log_bank_id)
             if for_write:
                 await _persist_fingerprint(conn, bank_id, current_fp)
             return current_fp
         message = (
-            f"Bank {bank_id!r} has a legacy embedding fingerprint ({stored_fp.get('version')!r}); "
+            f"Bank {log_bank_id!r} has a legacy embedding fingerprint ({stored_fp.get('version')!r}); "
             "projection metadata cannot establish vector compatibility. "
             "Re-index the bank or provide an explicit legacy attestation."
         )
@@ -576,12 +584,12 @@ async def validate_bank_embedding_fingerprint(
             # A read against an empty bank need not mutate it.
             return current_fp
         if _attestation_matches(legacy_attestation, current_fp):
-            logger.warning("Using explicit embedding attestation for legacy bank %s", bank_id)
+            logger.warning("Using explicit embedding attestation for legacy bank %s", log_bank_id)
             if for_write:
                 await _persist_fingerprint(conn, bank_id, current_fp)
             return current_fp
         message = (
-            f"Bank {bank_id!r} contains memory units but has no embedding fingerprint. "
+            f"Bank {log_bank_id!r} contains memory units but has no embedding fingerprint. "
             "Refusing to compare vectors without an explicit legacy attestation."
         )
         if policy_value == "warn":
@@ -600,7 +608,8 @@ async def validate_bank_embedding_fingerprint(
         return current_fp
 
     message = (
-        f"Embedding fingerprint mismatch for bank {bank_id!r}: stored={stored_fp.get('hash', 'unknown')[:16]} "
+        f"Embedding fingerprint mismatch for bank {log_bank_id!r}: "
+        f"stored={stored_fp.get('hash', 'unknown')[:16]} "
         f"current={current_fp.get('hash', 'unknown')[:16]}. "
         "Use the encoder that created the bank or explicitly re-index/attest it; "
         "semantic recall and writes must not silently mix vector spaces."
@@ -619,6 +628,7 @@ async def ensure_bank_embedding_fingerprint(
     policy: str = "strict",
     for_write: bool = False,
     legacy_attestation: Any = None,
+    log_sanitizer: _IdentifierLogSanitizer | None = None,
 ) -> dict[str, Any]:
     """Convenience wrapper that fingerprints an encoder object and validates it."""
 
@@ -630,6 +640,7 @@ async def ensure_bank_embedding_fingerprint(
         policy=policy,
         for_write=for_write,
         legacy_attestation=legacy_attestation,
+        log_sanitizer=log_sanitizer,
     )
 
 

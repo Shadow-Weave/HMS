@@ -6,6 +6,7 @@ Handles entity extraction, resolution, and link creation for stored facts.
 
 import logging
 
+from ..entity_resolution_contracts import EntityResolutionReadPlan
 from . import link_utils
 from .types import EntityLink, ProcessedFact
 
@@ -97,6 +98,59 @@ async def resolve_entities(
         fact_dates,
         entities_per_fact,
         log_buffer,
+        entity_labels=entity_labels,
+    )
+
+
+async def plan_entities(
+    entity_resolver,
+    conn,
+    bank_id: str,
+    fact_keys: list[str],
+    facts: list[ProcessedFact],
+    log_buffer: list[str] | None = None,
+    user_entities_per_content: dict[int, list[dict]] | None = None,
+    entity_labels: list | None = None,
+) -> EntityResolutionReadPlan:
+    """Build an entity plan without performing a Phase-1 write."""
+
+    if not fact_keys or not facts:
+        return EntityResolutionReadPlan(bank_id=bank_id, occurrences=())
+    if len(fact_keys) != len(facts):
+        raise ValueError(f"Mismatch between fact_keys ({len(fact_keys)}) and facts ({len(facts)})")
+
+    fact_texts, fact_dates, entities_per_fact = _prepare_facts_for_entity_processing(
+        facts,
+        user_entities_per_content,
+    )
+    flattened, _all_entities, entity_to_unit = link_utils._prepare_entities_for_resolution(
+        fact_keys,
+        fact_texts,
+        fact_dates,
+        entities_per_fact,
+        log_buffer,
+    )
+    if not flattened:
+        return EntityResolutionReadPlan(bank_id=bank_id, occurrences=())
+
+    occurrence_keys_by_unit: dict[str, list[str]] = {}
+    for entity, (fact_key, local_index, _fact_date) in zip(flattened, entity_to_unit, strict=True):
+        occurrence_key = f"{fact_key}:entity:{local_index}"
+        entity["occurrence_key"] = occurrence_key
+        entity["unit_key"] = fact_key
+        entity["local_index"] = local_index
+        occurrence_keys_by_unit.setdefault(fact_key, []).append(occurrence_key)
+    for entity in flattened:
+        entity["nearby_occurrence_keys"] = [
+            key for key in occurrence_keys_by_unit[entity["unit_key"]] if key != entity["occurrence_key"]
+        ]
+
+    return await entity_resolver.plan_entities_batch(
+        bank_id=bank_id,
+        entities_data=flattened,
+        context="",
+        unit_event_date=None,
+        conn=conn,
         entity_labels=entity_labels,
     )
 

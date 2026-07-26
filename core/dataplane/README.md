@@ -193,4 +193,5 @@ Full documentation: [https://docs.hms.local](https://docs.hms.local)
 
 ## License
 
-Apache 2.0
+MIT. See the package [LICENSE](LICENSE) and
+[third-party notices](THIRD_PARTY_NOTICES.md).

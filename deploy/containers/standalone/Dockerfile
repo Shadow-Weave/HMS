@@ -49,6 +49,8 @@ RUN apt-get update && apt-get install -y \
 # Copy dependency files and README (required by pyproject.toml)
 COPY core/dataplane/pyproject.toml ./api/
 COPY core/dataplane/README.md ./api/
+COPY core/dataplane/LICENSE ./api/
+COPY core/dataplane/THIRD_PARTY_NOTICES.md ./api/
 
 WORKDIR /app/api
 

@@ -7,7 +7,7 @@ efficient batch operations.
 import json
 from datetime import UTC, datetime
 from typing import Any
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from .base import DatabaseConnection
 from .ops import DataAccessOps, TagListingParts
@@ -74,23 +74,30 @@ class PostgreSQLOps(DataAccessOps):
 
         config = get_config()
         table = self._get_mu_table()
+        # Generate IDs in caller/input order and insert those exact values.
+        # PostgreSQL does not guarantee row order for INSERT ... RETURNING;
+        # treating its result order as the fact order can attach entity/causal
+        # bindings to the wrong unit.  Client-owned IDs make the mapping an
+        # explicit contract and match the existing Oracle implementation.
+        unit_uuids = [uuid4() for _ in fact_texts]
+        unit_ids = [str(unit_id) for unit_id in unit_uuids]
 
         if config.text_search_extension == "vchord":
             query = f"""
                 WITH input_data AS (
                     SELECT * FROM unnest(
-                        $2::text[], $3::vector[], $4::timestamptz[], $5::timestamptz[], $6::timestamptz[], $7::timestamptz[],
-                        $8::text[], $9::text[], $10::jsonb[], $11::text[], $12::text[], $13::jsonb[], $14::jsonb[], $15::text[],
-                        $16::jsonb[]
-                    ) AS t(text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
+                        $2::uuid[], $3::text[], $4::vector[], $5::timestamptz[], $6::timestamptz[], $7::timestamptz[],
+                        $8::timestamptz[], $9::text[], $10::text[], $11::jsonb[], $12::text[], $13::text[], $14::jsonb[],
+                        $15::jsonb[], $16::text[], $17::jsonb[]
+                    ) AS t(id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                            context, fact_type, metadata, chunk_id, document_id, tags_json,
                            observation_scopes_json, text_signals, projection)
                 )
-                INSERT INTO {table} (bank_id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
+                INSERT INTO {table} (id, bank_id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                                      context, fact_type, metadata, chunk_id, document_id, tags,
                                      observation_scopes, text_signals, projection, search_vector)
                 SELECT
-                    $1,
+                    id, $1,
                     text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                     context, fact_type, metadata, chunk_id, document_id,
                     COALESCE(
@@ -105,24 +112,23 @@ class PostgreSQLOps(DataAccessOps):
                         'llmlingua2'
                     )::bm25_catalog.bm25vector
                 FROM input_data
-                RETURNING id
             """
         else:
             query = f"""
                 WITH input_data AS (
                     SELECT * FROM unnest(
-                        $2::text[], $3::vector[], $4::timestamptz[], $5::timestamptz[], $6::timestamptz[], $7::timestamptz[],
-                        $8::text[], $9::text[], $10::jsonb[], $11::text[], $12::text[], $13::jsonb[], $14::jsonb[], $15::text[],
-                        $16::jsonb[]
-                    ) AS t(text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
+                        $2::uuid[], $3::text[], $4::vector[], $5::timestamptz[], $6::timestamptz[], $7::timestamptz[],
+                        $8::timestamptz[], $9::text[], $10::text[], $11::jsonb[], $12::text[], $13::text[], $14::jsonb[],
+                        $15::jsonb[], $16::text[], $17::jsonb[]
+                    ) AS t(id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                            context, fact_type, metadata, chunk_id, document_id, tags_json,
                            observation_scopes_json, text_signals, projection)
                 )
-                INSERT INTO {table} (bank_id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
+                INSERT INTO {table} (id, bank_id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                                      context, fact_type, metadata, chunk_id, document_id, tags,
                                      observation_scopes, text_signals, projection)
                 SELECT
-                    $1,
+                    id, $1,
                     text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                     context, fact_type, metadata, chunk_id, document_id,
                     COALESCE(
@@ -133,12 +139,12 @@ class PostgreSQLOps(DataAccessOps):
                     text_signals,
                     COALESCE(projection, '{{}}'::jsonb)
                 FROM input_data
-                RETURNING id
             """
 
-        results = await conn.fetch(
+        await conn.execute(
             query,
             bank_id,
+            unit_uuids,
             fact_texts,
             embeddings,
             event_dates,
@@ -155,7 +161,7 @@ class PostgreSQLOps(DataAccessOps):
             text_signals_list,
             projection_jsons,
         )
-        return [str(row["id"]) for row in results]
+        return unit_ids
 
     async def bulk_insert_links(
         self,

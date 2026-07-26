@@ -61,10 +61,156 @@ class _MultimodalCommandSuperseded(RuntimeError):
     """Internal control flow used to roll back an obsolete child retain."""
 
 
+class _RetainOperationCancelled(RuntimeError):
+    """Internal control flow for a tracked Retain cancelled between commits."""
+
+
 _MULTIMODAL_CACHE_PIPELINE_PREFIX = "__hms_pipeline__."
 
 _MULTIMODAL_UNCONSTRAINED_HINT = "unconstrained"
 _MULTIMODAL_FALLBACK_POLICY_VERSION = "typed-not-applicable-only-v1"
+
+
+def _is_retain_document_id(value: Any) -> bool:
+    """Match the ingestion planner's non-empty document-ID boundary."""
+
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _retain_group_payload_digest(
+    indexed_items: list[tuple[int, "RetainContentDict"]],
+) -> str:
+    """Hash one logical document without depending on token split settings."""
+
+    payload = [
+        {
+            "source_index": source_index,
+            "item": dict(item),
+        }
+        for source_index, item in indexed_items
+    ]
+    serialized = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        default=_json_default,
+    )
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def _derive_tracked_retain_document_id(
+    operation_id: str,
+    *,
+    indexed_items: list[tuple[int, "RetainContentDict"]],
+) -> str:
+    """Derive a retry-stable ID for one anonymous logical document.
+
+    The identity includes original source positions and the complete logical
+    payload, but not the mutable token threshold or shard ordinal. A retry
+    after a configuration change therefore addresses the same document rather
+    than aliasing a previously committed shard with different contents.
+    """
+
+    if not indexed_items:
+        raise ValueError("indexed_items must not be empty")
+    operation_namespace = uuid.UUID(operation_id)
+    identity = f"hms:retain:logical-document:source-stable-v1:{_retain_group_payload_digest(indexed_items)}"
+    return str(uuid.uuid5(operation_namespace, identity))
+
+
+def _prepare_retain_document_groups(
+    contents: list["RetainContentDict"],
+    *,
+    operation_id: str | None,
+) -> tuple[list["RetainContentDict"], list[list[tuple[int, "RetainContentDict"]]]]:
+    """Resolve logical document groups before token batching.
+
+    The grouping mirrors ``plan_documents`` over the complete request:
+    no explicit ID means one shared document; one explicit ID absorbs
+    anonymous siblings; multiple explicit IDs leave each anonymous item as an
+    independent generated document. Generated tracked IDs are payload-stable
+    across retries. Groups retain original source indices so outer batching can
+    restore result order even when repeated document IDs are interleaved.
+    """
+
+    prepared = cast(list[RetainContentDict], [dict(item) for item in contents])
+    explicit_document_ids: set[str] = set()
+    for source_index, item in enumerate(prepared):
+        document_id = item.get("document_id")
+        if document_id is not None and not isinstance(document_id, str):
+            raise TypeError(
+                f"contents[{source_index}].document_id must be a string or None, got {type(document_id).__name__}"
+            )
+        if _is_retain_document_id(document_id):
+            explicit_document_ids.add(document_id)
+
+    if not explicit_document_ids:
+        indexed = list(enumerate(prepared))
+        if operation_id is not None:
+            document_id = _derive_tracked_retain_document_id(
+                operation_id,
+                indexed_items=indexed,
+            )
+            for item in prepared:
+                item["document_id"] = document_id
+            indexed = list(enumerate(prepared))
+        return prepared, [indexed]
+
+    if len(explicit_document_ids) == 1:
+        document_id = next(iter(explicit_document_ids))
+        for item in prepared:
+            if not _is_retain_document_id(item.get("document_id")):
+                item["document_id"] = document_id
+        return prepared, [list(enumerate(prepared))]
+
+    for source_index, item in enumerate(prepared):
+        if _is_retain_document_id(item.get("document_id")):
+            continue
+        indexed_item = [(source_index, item)]
+        item["document_id"] = (
+            _derive_tracked_retain_document_id(
+                operation_id,
+                indexed_items=indexed_item,
+            )
+            if operation_id is not None
+            else str(uuid.uuid4())
+        )
+
+    groups_by_document: dict[str, list[tuple[int, RetainContentDict]]] = {}
+    for source_index, item in enumerate(prepared):
+        item_document_id = item.get("document_id")
+        if not _is_retain_document_id(item_document_id):
+            raise ValueError("Retain document grouping requires a non-empty document_id")
+        groups_by_document.setdefault(item_document_id, []).append((source_index, item))
+    return prepared, list(groups_by_document.values())
+
+
+def _split_retain_document_groups(
+    groups: list[list[tuple[int, "RetainContentDict"]]],
+    *,
+    tokens_per_batch: int,
+) -> list[list[tuple[int, "RetainContentDict"]]]:
+    """Pack complete logical documents into bounded token batches."""
+
+    if isinstance(tokens_per_batch, bool) or not isinstance(tokens_per_batch, int) or tokens_per_batch <= 0:
+        raise ValueError("retain_batch_tokens must be a positive integer")
+
+    sub_batches: list[list[tuple[int, RetainContentDict]]] = []
+    current_batch: list[tuple[int, RetainContentDict]] = []
+    current_batch_tokens = 0
+    for group in groups:
+        group_tokens = sum(count_tokens(item.get("content", "")) for _source_index, item in group)
+        if current_batch and current_batch_tokens + group_tokens > tokens_per_batch:
+            sub_batches.append(current_batch)
+            current_batch = list(group)
+            current_batch_tokens = group_tokens
+        else:
+            current_batch.extend(group)
+            current_batch_tokens += group_tokens
+    if current_batch:
+        sub_batches.append(current_batch)
+    return sub_batches
 
 
 def _derive_anonymous_multimodal_document_id(
@@ -984,7 +1130,7 @@ class MemoryEngine(MemoryEngineInterface):
         self._search_semaphore = asyncio.Semaphore(get_config().recall_max_concurrent)
 
         # Backpressure for retain DB writes: limit concurrent transactions to prevent contention
-        # on entity/link tables. Acquired in the orchestrator *after* LLM extraction completes,
+        # on entity/link tables. Acquired in the pipeline after LLM extraction completes,
         # so LLM calls run in full parallelism while only the DB-heavy phase is throttled.
         # Configurable via HMS_API_RETAIN_MAX_CONCURRENT (default: 4).
         self._put_semaphore = asyncio.Semaphore(get_config().retain_max_concurrent)
@@ -1148,6 +1294,7 @@ class MemoryEngine(MemoryEngineInterface):
             file_metadata=task_dict.get("_file_metadata"),
             after_publish=webhook_callback,
         )
+        from .ingestion import RetainOperationInactiveError
 
         try:
             await self.retain_batch_async(
@@ -1281,6 +1428,12 @@ class MemoryEngine(MemoryEngineInterface):
                                     terminal_command.bank_id,
                                 )
             return False
+        except RetainOperationInactiveError as exc:
+            record_multimodal_retain(success=False, reason="operation.cancelled", cancelled=True)
+            raise _RetainOperationCancelled("Tracked Retain was cancelled before its core write") from exc
+        except _RetainOperationCancelled:
+            record_multimodal_retain(success=False, reason="operation.cancelled", cancelled=True)
+            raise
         except asyncio.CancelledError:
             record_multimodal_retain(success=False, reason="operation.cancelled", cancelled=True)
             raise
@@ -1810,10 +1963,10 @@ class MemoryEngine(MemoryEngineInterface):
             )
 
         if ledgered_multimodal and not is_multimodal:
-            # A typed not-applicable outcome may legitimately select a legacy
+            # A typed not-applicable outcome may legitimately select another
             # parser from the explicit chain.  Release the unused multimodal
-            # command/descriptor state; the winning legacy output then follows
-            # the unchanged legacy retain path.
+            # command/descriptor state; the selected output then follows the
+            # standard retain path.
             backend = await self._get_backend()
             async with acquire_with_retry(backend) as conn:
                 ledger = MultimodalLedger.for_connection(conn, schema=get_current_schema())
@@ -2289,20 +2442,12 @@ class MemoryEngine(MemoryEngineInterface):
 
         # Check if operation was cancelled (only for tasks with operation_id)
         if operation_id:
-            try:
-                backend = await self._get_backend()
-                async with acquire_with_retry(backend) as conn:
-                    result = await conn.fetchrow(
-                        f"SELECT status FROM {fq_table('async_operations')} WHERE operation_id = $1",
-                        uuid.UUID(operation_id),
-                    )
-                    if not result or result["status"] == "cancelled":
-                        # Operation was cancelled, skip processing
-                        logger.info(f"Skipping cancelled operation: {operation_id}")
-                        return
-            except Exception as e:
-                logger.error(f"Failed to check operation status {operation_id}: {e}")
-                # Continue with processing if we can't check status
+            if not await self._check_op_alive(operation_id):
+                # Child liveness includes the parent batch state. This closes
+                # the claim/cancel race where a worker claims a child just
+                # before its parent is cancelled.
+                logger.info("Skipping cancelled or terminal operation")
+                return
 
         consolidation_result: dict | None = None
         bank_id = task_dict.get("bank_id")
@@ -2359,6 +2504,12 @@ class MemoryEngine(MemoryEngineInterface):
                 # would convert a legitimate defer into a 60-second RetryTaskAt
                 # and lose the "not a failure" semantics entirely.
                 raise
+            except _RetainOperationCancelled:
+                # The operation row already records cancellation (or was
+                # removed with its bank). Never retry, fail, or complete a task
+                # that stopped at the between-document cancellation fence.
+                audit_entry.response = {"status": "cancelled", "operation_id": operation_id}
+                return
             except Exception as e:
                 logger.error(f"Task execution failed: {task_type}, error: {e}")
                 import traceback
@@ -2412,8 +2563,8 @@ class MemoryEngine(MemoryEngineInterface):
                         raise RetryTaskAt(retry_at=datetime.now(UTC) + timedelta(seconds=60), message=str(e))
                     if task_type == "batch_retain" and task_dict.get("_multimodal_command") and operation_id:
                         # Route the terminal multimodal child failure through
-                        # the ledger-aware transaction.  Legacy tasks still
-                        # re-raise here and retain the poller's old failure
+                        # the ledger-aware transaction. Standard tasks still
+                        # re-raise here and retain the poller's existing failure
                         # path.
                         await self._mark_operation_failed(operation_id, str(e), error_traceback)
                         return
@@ -2606,19 +2757,43 @@ class MemoryEngine(MemoryEngineInterface):
             logger.error(f"Failed to delete async operation record {operation_id}: {e}")
 
     async def _check_op_alive(self, operation_id: str) -> bool:
-        """Return False if the operation was cancelled or no longer exists (e.g. bank deleted via CASCADE).
+        """Return whether an operation and its optional batch parent are active.
 
         Long-running operations should call this at natural checkpoints (e.g. after each
-        committed batch) to detect cancellation or bank deletion early and abort cleanly.
+        committed batch) to detect cancellation, terminal parent state, or bank deletion
+        early and abort cleanly.
         """
         try:
             backend = await self._get_backend()
             async with acquire_with_retry(backend) as conn:
                 row = await conn.fetchrow(
-                    f"SELECT status FROM {fq_table('async_operations')} WHERE operation_id = $1",
+                    f"""
+                    SELECT status, bank_id, result_metadata
+                    FROM {fq_table("async_operations")}
+                    WHERE operation_id = $1
+                    """,
                     uuid.UUID(operation_id),
                 )
-                return row is not None and row["status"] != "cancelled"
+                if row is None or row["status"] not in {"pending", "processing"}:
+                    return False
+
+                result_metadata = conn.parse_json(row["result_metadata"]) or {}
+                parent_operation_id = (
+                    result_metadata.get("parent_operation_id") if isinstance(result_metadata, dict) else None
+                )
+                if not parent_operation_id:
+                    return True
+
+                parent_row = await conn.fetchrow(
+                    f"""
+                    SELECT status
+                    FROM {fq_table("async_operations")}
+                    WHERE operation_id = $1 AND bank_id = $2
+                    """,
+                    uuid.UUID(parent_operation_id),
+                    row["bank_id"],
+                )
+                return parent_row is not None and parent_row["status"] in {"pending", "processing"}
         except Exception as e:
             logger.error(f"Failed to check operation liveness {operation_id}: {e}")
             return True  # Assume alive on DB error to avoid false-positive aborts
@@ -2762,8 +2937,8 @@ class MemoryEngine(MemoryEngineInterface):
         """Helper to mark an operation as failed in the database.
 
         Multimodal child retains use the same transaction to close their
-        durable document command and update the parent status metadata. Legacy
-        child and non-child operations retain the existing failure behavior.
+        durable document command and update the parent status metadata.
+        Non-multimodal operations retain the existing failure behavior.
         """
         try:
             backend = await self._get_backend()
@@ -2794,13 +2969,14 @@ class MemoryEngine(MemoryEngineInterface):
                         logger.info("Marked multimodal child operation as failed: %s", operation_id)
                         return
 
-                    # Mark legacy operations exactly as before.  The multimodal
-                    # branch above is the only path that inspects task payloads.
+                    # Mark standard operations exactly as before. The
+                    # multimodal branch is the only path that inspects payloads.
                     row = await conn.fetchrow(
                         f"""
                         UPDATE {fq_table("async_operations")}
                         SET status = 'failed', error_message = $2, updated_at = NOW()
-                        WHERE operation_id = $1 AND status <> 'cancelled'
+                        WHERE operation_id = $1
+                          AND status IN ('pending', 'processing')
                         RETURNING operation_id
                         """,
                         uuid.UUID(operation_id),
@@ -2811,8 +2987,8 @@ class MemoryEngine(MemoryEngineInterface):
                         return
                     logger.info(f"Marked async operation as failed: {operation_id}")
 
-                    # Check if this is a legacy child operation and update its
-                    # parent if all siblings are done, preserving old semantics.
+                    # Check whether this is a child operation and update its
+                    # parent once all siblings are terminal.
                     await self._maybe_update_parent_operation(operation_id, conn)
         except Exception as e:
             logger.error(f"Failed to mark operation as failed {operation_id}: {e}")
@@ -2833,14 +3009,13 @@ class MemoryEngine(MemoryEngineInterface):
                         UPDATE {fq_table("async_operations")}
                         SET status = 'completed', updated_at = NOW(), completed_at = NOW()
                         WHERE operation_id = $1
+                          AND status IN ('pending', 'processing')
                         RETURNING operation_id
                         """,
                         uuid.UUID(operation_id),
                     )
                     if row is None:
-                        logger.info(
-                            f"Operation {operation_id} no longer exists (bank deleted), skipping mark-completed"
-                        )
+                        logger.info(f"Operation {operation_id} is missing or terminal, skipping mark-completed")
                         return
                     logger.info(f"Marked async operation as completed: {operation_id}")
 
@@ -2876,6 +3051,7 @@ class MemoryEngine(MemoryEngineInterface):
                         UPDATE {fq_table("async_operations")}
                         SET status = 'completed', updated_at = NOW(), completed_at = NOW()
                         WHERE operation_id = $1
+                          AND status IN ('pending', 'processing')
                         RETURNING operation_id
                         """,
                         uuid.UUID(operation_id),
@@ -2946,7 +3122,7 @@ class MemoryEngine(MemoryEngineInterface):
             # Use FOR UPDATE to ensure only one child can update the parent at a time
             parent_row = await conn.fetchrow(
                 f"""
-                SELECT operation_id
+                SELECT operation_id, status
                 FROM {fq_table("async_operations")}
                 WHERE operation_id = $1 AND bank_id = $2
                 FOR UPDATE
@@ -2957,6 +3133,11 @@ class MemoryEngine(MemoryEngineInterface):
 
             if not parent_row:
                 # Parent doesn't exist (shouldn't happen)
+                return
+            if parent_row["status"] not in {"pending", "processing"}:
+                # Terminal parent state is authoritative. In particular, an
+                # accepted cancellation must never be overwritten by a late
+                # child completion or failure.
                 return
 
             # Get all sibling operations (including this one).
@@ -2971,19 +3152,22 @@ class MemoryEngine(MemoryEngineInterface):
                 SELECT status, error_message
                 FROM {fq_table("async_operations")}
                 WHERE bank_id = $1
-                AND result_metadata::jsonb @> $2::jsonb
+                AND (result_metadata->>'parent_operation_id')::uuid = $2
                 """,
                 bank_id,
-                json.dumps({"parent_operation_id": parent_operation_id}),
+                uuid.UUID(parent_operation_id),
             )
 
             if not siblings:
                 return
 
-            # Check if all siblings are done (completed or failed)
+            # Cancellation is terminal for aggregation. Otherwise a parent can
+            # remain pending forever when its last outstanding child is
+            # cancelled directly or through parent cancellation propagation.
             all_completed = all(sib["status"] == "completed" for sib in siblings)
             any_failed = any(sib["status"] == "failed" for sib in siblings)
-            all_done = all(sib["status"] in ("completed", "failed") for sib in siblings)
+            any_cancelled = any(sib["status"] == "cancelled" for sib in siblings)
+            all_done = all(sib["status"] in ("completed", "failed", "cancelled") for sib in siblings)
 
             if not all_done:
                 # Some siblings still pending/processing
@@ -3002,11 +3186,26 @@ class MemoryEngine(MemoryEngineInterface):
                     f"""
                     UPDATE {fq_table("async_operations")}
                     SET status = $2, error_message = $3, updated_at = NOW()
-                    WHERE operation_id = $1
+                    WHERE operation_id = $1 AND bank_id = $4
+                      AND status IN ('pending', 'processing')
                     """,
                     uuid.UUID(parent_operation_id),
                     new_status,
                     _summarise_child_error_messages(siblings),
+                    bank_id,
+                )
+            elif any_cancelled:
+                new_status = "cancelled"
+                await conn.execute(
+                    f"""
+                    UPDATE {fq_table("async_operations")}
+                    SET status = $2, updated_at = NOW()
+                    WHERE operation_id = $1 AND bank_id = $3
+                      AND status IN ('pending', 'processing')
+                    """,
+                    uuid.UUID(parent_operation_id),
+                    new_status,
+                    bank_id,
                 )
             elif all_completed:
                 new_status = "completed"
@@ -3014,10 +3213,12 @@ class MemoryEngine(MemoryEngineInterface):
                     f"""
                     UPDATE {fq_table("async_operations")}
                     SET status = $2, updated_at = NOW(), completed_at = NOW()
-                    WHERE operation_id = $1
+                    WHERE operation_id = $1 AND bank_id = $3
+                      AND status IN ('pending', 'processing')
                     """,
                     uuid.UUID(parent_operation_id),
                     new_status,
+                    bank_id,
                 )
 
             logger.info(f"Updated parent operation {parent_operation_id} to status '{new_status}' (all children done)")
@@ -3863,8 +4064,9 @@ class MemoryEngine(MemoryEngineInterface):
         This is MUCH more efficient than calling retain_async multiple times:
         - Extracts facts from all contents in parallel
         - Generates ALL embeddings in ONE batch
-        - Does ALL database operations in ONE transaction
-        - Automatically chunks large batches to prevent timeouts
+        - Commits each logical document through ownership-guarded transactions
+        - Packs complete logical documents into bounded outer batches; large
+          individual documents use the Retain pipeline's internal write windows
 
         Args:
             bank_id: Unique identifier for the bank
@@ -3877,7 +4079,6 @@ class MemoryEngine(MemoryEngineInterface):
                         Applies the same document_id to ALL content items that don't specify their own.
             fact_type_override: Override fact type for all facts ('world', 'experience')
             return_usage: If True, returns tuple of (unit_ids, TokenUsage). Default False for backward compatibility.
-
         Returns:
             If return_usage=False: List of lists of unit IDs (one list per content item)
             If return_usage=True: Tuple of (unit_ids, TokenUsage)
@@ -3930,34 +4131,27 @@ class MemoryEngine(MemoryEngineInterface):
             if result and result.contents is not None:
                 contents = result.contents
 
-        # Engine-owned copy: the orchestrator clears per-item "content" strings
-        # after building the document's combined text (memory pressure
-        # optimization, see retain/orchestrator.py). Without an internal copy
-        # those mutations leak back to the caller's dicts.
+        # Keep an engine-owned copy so validation, normalization, and future
+        # pipeline optimizations cannot mutate caller-owned dictionaries.
         contents = cast(list[RetainContentDict], [dict(c) for c in contents])
 
-        # Apply batch-level document_id to contents that don't have their own (backwards compatibility)
-        if document_id:
+        # Apply the deprecated batch-level ID only to anonymous items. The
+        # service receives the resulting per-item IDs so explicit item IDs keep
+        # their documented precedence.
+        if _is_retain_document_id(document_id):
             for item in contents:
-                if "document_id" not in item:
+                if not _is_retain_document_id(item.get("document_id")):
                     item["document_id"] = document_id
-
-        # Validate no duplicate document_ids in the batch
-        # Having duplicate document_ids causes race conditions in document upserts during parallel processing
-        doc_ids = [item.get("document_id") for item in contents if item.get("document_id")]
-        if len(doc_ids) != len(set(doc_ids)):
-            from collections import Counter
-
-            duplicates = [doc_id for doc_id, count in Counter(doc_ids).items() if count > 1]
-            raise ValueError(
-                f"Batch contains duplicate document_ids: {duplicates}. "
-                f"Each content item in a batch must have a unique document_id to avoid race conditions."
-            )
 
         # Validate update_mode=append requires document_id
         for item in contents:
-            if item.get("update_mode") == "append" and not item.get("document_id"):
+            if item.get("update_mode") == "append" and not _is_retain_document_id(item.get("document_id")):
                 raise ValueError("update_mode='append' requires a document_id")
+
+        contents, document_groups = _prepare_retain_document_groups(
+            contents,
+            operation_id=operation_id,
+        )
 
         # Auto-chunk large batches by token count to avoid timeouts and memory issues
         # Calculate total token count
@@ -3974,43 +4168,28 @@ class MemoryEngine(MemoryEngineInterface):
         tokens_per_batch = config.retain_batch_tokens
 
         if total_tokens > tokens_per_batch:
-            # Split into smaller batches based on token count
+            # Split between complete logical documents. A single document may
+            # exceed this outer threshold; the Retain service bounds its work
+            # using internal chunk write windows without changing ownership.
             logger.info(
                 f"Large batch detected ({total_tokens:,} tokens from {len(contents)} items). Splitting into sub-batches of ~{tokens_per_batch:,} tokens each..."
             )
 
-            sub_batches = []
-            current_batch = []
-            current_batch_tokens = 0
-
-            for item in contents:
-                item_tokens = count_tokens(item.get("content", ""))
-
-                # If adding this item would exceed the limit, start a new batch
-                # (unless current batch is empty - then we must include it even if it's large)
-                if current_batch and current_batch_tokens + item_tokens > tokens_per_batch:
-                    sub_batches.append(current_batch)
-                    current_batch = [item]
-                    current_batch_tokens = item_tokens
-                else:
-                    current_batch.append(item)
-                    current_batch_tokens += item_tokens
-
-            # Add the last batch
-            if current_batch:
-                sub_batches.append(current_batch)
+            sub_batches = _split_retain_document_groups(
+                document_groups,
+                tokens_per_batch=tokens_per_batch,
+            )
 
             logger.info(f"Split into {len(sub_batches)} sub-batches: {[len(b) for b in sub_batches]} items each")
 
             # Process each sub-batch
-            all_results = []
-            for i, sub_batch in enumerate(sub_batches, 1):
+            all_results: list[list[str] | None] = [None] * len(contents)
+            for i, indexed_sub_batch in enumerate(sub_batches, 1):
                 # Checkpoint: abort if the operation was deleted (bank was deleted) between sub-batches.
                 if operation_id and not await self._check_op_alive(operation_id):
                     if _retain_extraction_mode == "chunks":
                         logger.info(
-                            "[BATCH_RETAIN] multimodal operation %s cancelled; stopping after %s/%s sub-batches",
-                            operation_id,
+                            "[BATCH_RETAIN] multimodal operation cancelled; stopping after %s/%s sub-batches",
                             i - 1,
                             len(sub_batches),
                         )
@@ -4019,10 +4198,9 @@ class MemoryEngine(MemoryEngineInterface):
                             f"[BATCH_RETAIN] bank={bank_id} operation {operation_id} cancelled (bank deleted), "
                             f"stopping after {i - 1}/{len(sub_batches)} sub-batches"
                         )
-                    if return_usage:
-                        return all_results, total_usage
-                    return all_results
+                    raise _RetainOperationCancelled("Tracked Retain was cancelled between logical document batches")
 
+                sub_batch = [item for _source_index, item in indexed_sub_batch]
                 sub_batch_tokens = sum(count_tokens(item.get("content", "")) for item in sub_batch)
                 logger.info(
                     f"Processing sub-batch {i}/{len(sub_batches)}: {len(sub_batch)} items, {sub_batch_tokens:,} tokens"
@@ -4032,8 +4210,8 @@ class MemoryEngine(MemoryEngineInterface):
                     bank_id=bank_id,
                     contents=sub_batch,
                     request_context=request_context,
-                    document_id=document_id,
-                    is_first_batch=i == 1,  # Only upsert on first batch
+                    document_id=None,
+                    is_first_batch=True,
                     fact_type_override=fact_type_override,
                     document_tags=document_tags,
                     operation_id=operation_id,
@@ -4043,7 +4221,10 @@ class MemoryEngine(MemoryEngineInterface):
                     # webhook delivery row is committed atomically with the final retain data.
                     outbox_callback=outbox_callback if i == len(sub_batches) else None,
                 )
-                all_results.extend(sub_results)
+                if len(sub_results) != len(indexed_sub_batch):
+                    raise RuntimeError("Retain sub-batch result count does not match its submitted content count")
+                for (source_index, _item), item_result in zip(indexed_sub_batch, sub_results):
+                    all_results[source_index] = item_result
                 total_usage = total_usage + sub_usage
                 if total_processed_content_tokens is None or sub_processed is None:
                     total_processed_content_tokens = None
@@ -4054,14 +4235,16 @@ class MemoryEngine(MemoryEngineInterface):
             logger.info(
                 f"RETAIN_BATCH_ASYNC (chunked) COMPLETE: {len(all_results)} results from {len(contents)} contents in {total_time:.3f}s"
             )
-            result = all_results
+            if any(item is None for item in all_results):
+                raise RuntimeError("Retain token batching did not produce a result for every submitted content item")
+            result = cast(list[list[str]], all_results)
         else:
             # Small batch - use internal method directly
             result, total_usage, total_processed_content_tokens = await self._retain_batch_async_internal(
                 bank_id=bank_id,
                 contents=contents,
                 request_context=request_context,
-                document_id=document_id,
+                document_id=None,
                 is_first_batch=True,
                 fact_type_override=fact_type_override,
                 document_tags=document_tags,
@@ -4159,9 +4342,6 @@ class MemoryEngine(MemoryEngineInterface):
             See ``RetainResult.processed_content_tokens`` for the semantics of
             the third element.
         """
-        # Use the new modular orchestrator
-        from .retain import orchestrator
-
         backend = await self._get_backend()
 
         # Resolve bank-specific config for this operation
@@ -4200,25 +4380,37 @@ class MemoryEngine(MemoryEngineInterface):
 
         # Create parent span for retain operation
         with create_operation_span("retain", bank_id):
-            return await orchestrator.retain_batch(
+            from .ingestion import (
+                RetainExecutionContext,
+                RetainInvocation,
+                RetainPipelineService,
+            )
+
+            invocation = RetainInvocation(
+                bank_id=bank_id,
+                raw_contents=tuple(cast(RetainContentDict, dict(item)) for item in contents),
+                request_context=request_context,
+                batch_document_id=document_id,
+                is_first_batch=is_first_batch,
+                fact_type_override=fact_type_override,
+                document_tags=tuple(document_tags) if document_tags is not None else None,
+                operation_id=operation_id,
+                outbox_callback=outbox_callback,
+                strategy=strategy,
+                sanitize_log_identifiers=_retain_extraction_mode == "chunks",
+            )
+            execution = RetainExecutionContext(
                 pool=self._backend,
                 embeddings_model=self.embeddings,
                 llm_config=self._retain_llm_config.with_config(resolved_config),
                 entity_resolver=self.entity_resolver,
                 format_date_fn=self._format_readable_date,
-                bank_id=bank_id,
-                contents_dicts=contents,
-                document_id=document_id,
-                is_first_batch=is_first_batch,
-                fact_type_override=fact_type_override,
-                document_tags=document_tags,
-                config=resolved_config,
-                operation_id=operation_id,
+                resolved_config=resolved_config,
                 schema=_current_schema.get(),
-                outbox_callback=outbox_callback,
                 db_semaphore=self._put_semaphore,
-                sanitize_log_identifiers=_retain_extraction_mode == "chunks",
             )
+            outcome = await RetainPipelineService().retain(invocation, execution)
+            return outcome.as_tuple()
 
     def recall(
         self,
@@ -10629,18 +10821,18 @@ class MemoryEngine(MemoryEngineInterface):
                         SELECT operation_id, status, error_message, result_metadata
                         FROM {fq_table("async_operations")}
                         WHERE bank_id = $1
-                        AND result_metadata::jsonb @> $2::jsonb
+                        AND (result_metadata->>'parent_operation_id')::uuid = $2
                         ORDER BY (result_metadata->>'sub_batch_index')::int
                         """,
                         bank_id,
-                        json.dumps({"parent_operation_id": operation_id}),
+                        op_uuid,
                     )
 
                     # Build child operations list and check if parent status needs updating
                     child_statuses = []
                     all_done = True
                     any_failed = False
-                    all_completed = True
+                    any_cancelled = False
 
                     for child_row in child_rows:
                         raw_crm = child_row["result_metadata"]
@@ -10657,16 +10849,16 @@ class MemoryEngine(MemoryEngineInterface):
                             }
                         )
 
-                        if child_status not in ("completed", "failed"):
+                        if child_status not in ("completed", "failed", "cancelled"):
                             all_done = False
                         if child_status == "failed":
                             any_failed = True
-                        if child_status != "completed":
-                            all_completed = False
+                        if child_status == "cancelled":
+                            any_cancelled = True
 
                     # Self-healing: if parent status is out of sync with children, update it
-                    if all_done and api_status == "pending":
-                        correct_status = "failed" if any_failed else "completed"
+                    if child_rows and all_done and api_status in {"pending", "processing"}:
+                        correct_status = "failed" if any_failed else "cancelled" if any_cancelled else "completed"
                         logger.warning(
                             f"Parent operation {operation_id} status out of sync (DB: pending, should be: {correct_status}). Fixing."
                         )
@@ -10675,11 +10867,22 @@ class MemoryEngine(MemoryEngineInterface):
                             UPDATE {fq_table("async_operations")}
                             SET status = $2, updated_at = NOW(), completed_at = NOW()
                             WHERE operation_id = $1
+                              AND status IN ('pending', 'processing')
                             """,
                             op_uuid,
                             correct_status,
                         )
-                        api_status = correct_status
+                        refreshed_parent = await conn.fetchrow(
+                            f"""
+                            SELECT status
+                            FROM {fq_table("async_operations")}
+                            WHERE operation_id = $1 AND bank_id = $2
+                            """,
+                            op_uuid,
+                            bank_id,
+                        )
+                        if refreshed_parent is not None:
+                            api_status = refreshed_parent["status"]
 
                     return {
                         "operation_id": operation_id,
@@ -10742,11 +10945,47 @@ class MemoryEngine(MemoryEngineInterface):
 
         async with acquire_with_retry(backend) as conn:
             async with conn.transaction():
-                # Lock the operation so a worker claim cannot race the ledger
-                # transition and leave one side pending while the other is
-                # cancelled.
+                # Read the operation identity first. Batch parents lock their
+                # active children before locking the parent, matching the
+                # child->parent order used by completion aggregation and
+                # avoiding a cancellation/completion deadlock.
+                preflight = await conn.fetchrow(
+                    f"""SELECT bank_id, status, operation_type, result_metadata
+                        FROM {fq_table("async_operations")}
+                        WHERE operation_id = $1 AND bank_id = $2""",
+                    op_uuid,
+                    bank_id,
+                )
+                if not preflight:
+                    raise ValueError(f"Operation {operation_id} not found for bank {bank_id}")
+
+                raw_preflight_metadata = preflight["result_metadata"]
+                preflight_metadata = conn.parse_json(raw_preflight_metadata) or {}
+                is_batch_parent = (
+                    preflight["operation_type"] == "batch_retain"
+                    and isinstance(preflight_metadata, dict)
+                    and preflight_metadata.get("is_parent") is True
+                )
+                if is_batch_parent:
+                    await conn.fetch(
+                        f"""
+                        SELECT operation_id
+                        FROM {fq_table("async_operations")}
+                        WHERE bank_id = $1
+                          AND (result_metadata->>'parent_operation_id')::uuid = $2
+                          AND status IN ('pending', 'processing')
+                        ORDER BY operation_id
+                        FOR UPDATE
+                        """,
+                        bank_id,
+                        op_uuid,
+                    )
+
+                # Re-read under lock after any concurrent child completion.
+                # The status check below is therefore the cancellation CAS
+                # precondition, not a stale preflight observation.
                 result = await conn.fetchrow(
-                    f"""SELECT bank_id, status, operation_type, task_payload
+                    f"""SELECT bank_id, status, operation_type, task_payload, result_metadata
                         FROM {fq_table("async_operations")}
                         WHERE operation_id = $1 AND bank_id = $2
                         FOR UPDATE""",
@@ -10765,6 +11004,11 @@ class MemoryEngine(MemoryEngineInterface):
                         409,
                     )
 
+                raw_result_metadata = result["result_metadata"]
+                result_metadata = conn.parse_json(raw_result_metadata) or {}
+                parent_operation_id = (
+                    result_metadata.get("parent_operation_id") if isinstance(result_metadata, dict) else None
+                )
                 task_payload = conn.parse_json(result["task_payload"])
                 if (
                     result["operation_type"] == "file_convert_retain"
@@ -10798,6 +11042,23 @@ class MemoryEngine(MemoryEngineInterface):
                     elif command.status not in {"failed", "cancelled"}:
                         raise LedgerConflictError("multimodal document command cannot be cancelled")
 
+                if is_batch_parent:
+                    # Cancelling every still-active child in the same
+                    # transaction prevents new claims, retries, and late
+                    # completion writes from reviving the batch. Children that
+                    # already completed remain immutable.
+                    await conn.execute(
+                        f"""
+                        UPDATE {fq_table("async_operations")}
+                        SET status = 'cancelled', updated_at = NOW()
+                        WHERE bank_id = $1
+                          AND (result_metadata->>'parent_operation_id')::uuid = $2
+                          AND status IN ('pending', 'processing')
+                        """,
+                        bank_id,
+                        op_uuid,
+                    )
+
                 await conn.execute(
                     f"""UPDATE {fq_table("async_operations")}
                         SET status = 'cancelled', updated_at = NOW()
@@ -10805,6 +11066,11 @@ class MemoryEngine(MemoryEngineInterface):
                     op_uuid,
                     bank_id,
                 )
+                if parent_operation_id:
+                    # A directly cancelled child is a terminal sibling. Resolve
+                    # its parent now so the aggregate cannot wait forever when
+                    # this was the final outstanding child.
+                    await self._maybe_update_parent_operation(operation_id, conn)
 
             return {
                 "success": True,
@@ -10835,6 +11101,42 @@ class MemoryEngine(MemoryEngineInterface):
 
         async with acquire_with_retry(backend) as conn:
             async with conn.transaction():
+                preflight = await conn.fetchrow(
+                    f"""SELECT bank_id, status, operation_type, result_metadata
+                        FROM {fq_table("async_operations")}
+                        WHERE operation_id = $1 AND bank_id = $2""",
+                    op_uuid,
+                    bank_id,
+                )
+                if not preflight:
+                    raise ValueError(f"Operation {operation_id} not found for bank {bank_id}")
+
+                raw_preflight_metadata = preflight["result_metadata"]
+                preflight_metadata = conn.parse_json(raw_preflight_metadata) or {}
+                is_batch_parent = (
+                    preflight["operation_type"] == "batch_retain"
+                    and isinstance(preflight_metadata, dict)
+                    and preflight_metadata.get("is_parent") is True
+                )
+                locked_children = []
+                if is_batch_parent:
+                    # Keep the same child->parent lock order as cancellation
+                    # and aggregation. A retried parent must reactivate its
+                    # failed/cancelled executable children, not merely reopen
+                    # the payload-less aggregate row.
+                    locked_children = await conn.fetch(
+                        f"""
+                        SELECT operation_id, status
+                        FROM {fq_table("async_operations")}
+                        WHERE bank_id = $1
+                          AND (result_metadata->>'parent_operation_id')::uuid = $2
+                        ORDER BY operation_id
+                        FOR UPDATE
+                        """,
+                        bank_id,
+                        op_uuid,
+                    )
+
                 row = await conn.fetchrow(
                     f"""SELECT bank_id, status, operation_type, result_metadata
                         FROM {fq_table("async_operations")}
@@ -10849,6 +11151,9 @@ class MemoryEngine(MemoryEngineInterface):
 
                 raw_metadata = row["result_metadata"]
                 result_metadata = conn.parse_json(raw_metadata) or {}
+                parent_operation_id = (
+                    result_metadata.get("parent_operation_id") if isinstance(result_metadata, dict) else None
+                )
                 multimodal_metadata = result_metadata.get("multimodal") if isinstance(result_metadata, dict) else None
                 retry_completed_multimodal_parent = (
                     row["status"] == "completed"
@@ -10865,6 +11170,75 @@ class MemoryEngine(MemoryEngineInterface):
                         409,
                     )
 
+                if is_batch_parent:
+                    retryable_children = [
+                        child for child in locked_children if child["status"] in {"failed", "cancelled"}
+                    ]
+                    if not retryable_children:
+                        raise OperationValidationError(
+                            f"Operation {operation_id} has no failed or cancelled child operations to retry",
+                            409,
+                        )
+                    await conn.execute(
+                        f"""
+                        UPDATE {fq_table("async_operations")}
+                        SET status = 'pending',
+                            error_message = NULL,
+                            completed_at = NULL,
+                            next_retry_at = NULL,
+                            worker_id = NULL,
+                            claimed_at = NULL,
+                            retry_count = 0,
+                            updated_at = NOW()
+                        WHERE bank_id = $1
+                          AND (result_metadata->>'parent_operation_id')::uuid = $2
+                          AND status IN ('failed', 'cancelled')
+                        """,
+                        bank_id,
+                        op_uuid,
+                    )
+
+                if parent_operation_id:
+                    parent_row = await conn.fetchrow(
+                        f"""
+                        SELECT status
+                        FROM {fq_table("async_operations")}
+                        WHERE operation_id = $1 AND bank_id = $2
+                        FOR UPDATE
+                        """,
+                        uuid.UUID(parent_operation_id),
+                        bank_id,
+                    )
+                    if parent_row is None:
+                        raise OperationValidationError(
+                            f"Operation {operation_id} cannot be retried because its parent no longer exists",
+                            409,
+                        )
+                    if parent_row["status"] == "completed":
+                        raise OperationValidationError(
+                            f"Operation {operation_id} cannot be retried because its parent is completed",
+                            409,
+                        )
+                    if parent_row["status"] in {"failed", "cancelled"}:
+                        await conn.execute(
+                            f"""
+                            UPDATE {fq_table("async_operations")}
+                            SET status = 'pending',
+                                error_message = NULL,
+                                completed_at = NULL,
+                                updated_at = NOW()
+                            WHERE operation_id = $1 AND bank_id = $2
+                              AND status IN ('failed', 'cancelled')
+                            """,
+                            uuid.UUID(parent_operation_id),
+                            bank_id,
+                        )
+
+                retryable_statuses = (
+                    "('failed', 'cancelled', 'completed')"
+                    if retry_completed_multimodal_parent
+                    else "('failed', 'cancelled')"
+                )
                 await conn.execute(
                     f"""
                     UPDATE {fq_table("async_operations")}
@@ -10876,9 +11250,11 @@ class MemoryEngine(MemoryEngineInterface):
                         claimed_at = NULL,
                         retry_count = 0,
                         updated_at = NOW()
-                    WHERE operation_id = $1
+                    WHERE operation_id = $1 AND bank_id = $2
+                      AND status IN {retryable_statuses}
                     """,
                     op_uuid,
+                    bank_id,
                 )
 
             return {
@@ -11225,8 +11601,8 @@ class MemoryEngine(MemoryEngineInterface):
     ) -> dict[str, Any]:
         """Submit a batch retain operation to run asynchronously.
 
-        For large batches (exceeding retain_batch_chars threshold), automatically splits
-        into smaller sub-batches and creates a parent operation that tracks all children.
+        Large requests are split only between complete logical documents and
+        create a parent operation that tracks all child batches.
         """
         await self._authenticate_tenant(request_context)
 
@@ -11243,44 +11619,32 @@ class MemoryEngine(MemoryEngineInterface):
             if result and result.contents is not None:
                 contents = result.contents
 
-        # Validate no duplicate document_ids in the batch
-        # Having duplicate document_ids causes race conditions in document upserts during parallel processing
-        doc_ids = [item.get("document_id") for item in contents if item.get("document_id")]
-        if len(doc_ids) != len(set(doc_ids)):
-            from collections import Counter
+        for item in contents:
+            if item.get("update_mode") == "append" and not _is_retain_document_id(item.get("document_id")):
+                raise ValueError("update_mode='append' requires a document_id")
 
-            duplicates = [doc_id for doc_id, count in Counter(doc_ids).items() if count > 1]
-            raise ValueError(
-                f"Batch contains duplicate document_ids: {duplicates}. "
-                f"Each content item in a batch must have a unique document_id to avoid race conditions."
-            )
+        prepared_contents, document_groups = _prepare_retain_document_groups(
+            cast(list[RetainContentDict], [dict(item) for item in contents]),
+            operation_id=None,
+        )
+        contents = cast(list[dict[str, Any]], prepared_contents)
 
         # Calculate total token count and determine if we need to split
         total_tokens = sum(count_tokens(item.get("content", "")) for item in contents)
         config = get_config()
         tokens_per_batch = config.retain_batch_tokens
 
-        # Split into sub-batches based on token count
-        sub_batches = []
-        current_batch = []
-        current_batch_tokens = 0
-
-        for item in contents:
-            item_tokens = count_tokens(item.get("content", ""))
-
-            # If adding this item would exceed the limit, start a new batch
-            # (unless current batch is empty - then we must include it even if it's large)
-            if current_batch and current_batch_tokens + item_tokens > tokens_per_batch:
-                sub_batches.append(current_batch)
-                current_batch = [item]
-                current_batch_tokens = item_tokens
-            else:
-                current_batch.append(item)
-                current_batch_tokens += item_tokens
-
-        # Add the last batch
-        if current_batch:
-            sub_batches.append(current_batch)
+        # Split only between complete logical documents. The worker's Retain
+        # service handles oversized single documents using bounded write
+        # windows, so submission never changes document ownership semantics.
+        indexed_sub_batches = _split_retain_document_groups(
+            document_groups,
+            tokens_per_batch=tokens_per_batch,
+        )
+        sub_batches = [
+            [cast(dict[str, Any], item) for _source_index, item in indexed_sub_batch]
+            for indexed_sub_batch in indexed_sub_batches
+        ]
 
         # Log splitting info if we actually split
         if len(sub_batches) > 1:

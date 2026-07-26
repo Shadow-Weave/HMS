@@ -852,7 +852,7 @@ Oracle 多模态要进入 runtime-supported matrix，至少需要真实 Oracle 2
 | HTTP app 与 file endpoint | `core/dataplane/hms_api/api/http.py`：`create_app`、file retain、operation status、version capability |
 | HTTP/MCP 统一入口 | `core/dataplane/hms_api/api/__init__.py` |
 | 核心编排 | `core/dataplane/hms_api/engine/memory_engine.py`：`MemoryEngine` |
-| Retain | `engine/retain/orchestrator.py`、`fact_extraction.py`、`fact_storage.py`、`link_utils.py` |
+| Retain | `engine/ingestion/service.py`, `engine/ingestion/persistence/`, `engine/retain/fact_extraction.py`, `engine/retain/fact_storage.py`, `engine/retain/link_utils.py` |
 | Recall | `engine/search/retrieval.py`、`fusion.py`、`reranking.py`、`link_expansion_retrieval.py` |
 | Reflect | `engine/reflect/`、`MemoryEngine.reflect_async` |
 | Async/worker | `engine/task_backend.py`、`worker/poller.py`、`worker/main.py` |

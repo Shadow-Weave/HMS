@@ -4,10 +4,13 @@ Fact storage for retain pipeline.
 Handles insertion of facts into the database.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 import uuid
 from datetime import datetime
+from typing import Any, Protocol
 
 from ...config import get_config
 from ..memory_engine import fq_table
@@ -16,6 +19,12 @@ from .fact_extraction import _sanitize_text
 from .types import ProcessedFact
 
 logger = logging.getLogger(__name__)
+
+
+class _IdentifierLogSanitizer(Protocol):
+    """Minimal request-local identifier renderer used by trusted Retain callers."""
+
+    def identifier(self, value: Any) -> str: ...
 
 
 async def get_document_content(
@@ -169,8 +178,9 @@ async def ensure_bank_exists(conn, bank_id: str, ops=None) -> None:
 async def delete_stale_observations_for_memories(
     conn,
     bank_id: str,
-    fact_ids: "list[str | uuid.UUID]",
+    fact_ids: list[str | uuid.UUID],
     ops=None,
+    log_sanitizer: _IdentifierLogSanitizer | None = None,
 ) -> int:
     """Delete observations whose source memories are about to be removed.
 
@@ -258,9 +268,10 @@ async def delete_stale_observations_for_memories(
             remaining_source_ids,
         )
 
+    log_bank_id = log_sanitizer.identifier(bank_id) if log_sanitizer is not None else bank_id
     logger.info(
         f"[OBSERVATIONS] Deleted {len(obs_ids)} observations, reset {len(remaining_source_ids)} "
-        f"source memories for re-consolidation in bank {bank_id}"
+        f"source memories for re-consolidation in bank {log_bank_id}"
     )
     return len(obs_ids)
 
@@ -274,6 +285,7 @@ async def handle_document_tracking(
     retain_params: dict | None = None,
     document_tags: list[str] | None = None,
     ops=None,
+    log_sanitizer: _IdentifierLogSanitizer | None = None,
 ) -> None:
     """
     Handle document tracking in the database (full-replace mode).
@@ -333,10 +345,17 @@ async def handle_document_tracking(
         )
         existing_unit_ids = [row["id"] for row in existing_unit_rows]
         if existing_unit_ids:
-            invalidated = await delete_stale_observations_for_memories(conn, bank_id, existing_unit_ids, ops=ops)
+            invalidated = await delete_stale_observations_for_memories(
+                conn,
+                bank_id,
+                existing_unit_ids,
+                ops=ops,
+                log_sanitizer=log_sanitizer,
+            )
             if invalidated:
+                log_document_id = log_sanitizer.identifier(document_id) if log_sanitizer is not None else document_id
                 logger.info(
-                    f"[RETAIN] Document {document_id} re-ingested: invalidated "
+                    f"[RETAIN] Document {log_document_id} re-ingested: invalidated "
                     f"{invalidated} observation(s) derived from {len(existing_unit_ids)} outgoing memory_units"
                 )
         # Explicitly delete memory_units by document_id BEFORE deleting the

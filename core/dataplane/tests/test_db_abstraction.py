@@ -5,6 +5,8 @@ without requiring a live database connection.
 """
 
 import json
+import uuid
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -467,6 +469,83 @@ class TestConfig:
         from hms_api.config import DEFAULT_DATABASE_BACKEND
 
         assert DEFAULT_DATABASE_BACKEND == "postgresql"
+
+
+# ---------------------------------------------------------------------------
+# PostgreSQLOps fact identity tests (mock DatabaseConnection, no live DB)
+# ---------------------------------------------------------------------------
+
+
+class TestPostgreSQLOpsInsertFactsBatch:
+    """Fact IDs must be assigned before SQL, in exact input order."""
+
+    @staticmethod
+    def _make_batch(n: int = 3) -> dict:
+        return dict(
+            bank_id="bank-pg",
+            fact_texts=[f"fact-{index}" for index in range(n)],
+            embeddings=[None] * n,
+            event_dates=[None] * n,
+            occurred_starts=[None] * n,
+            occurred_ends=[None] * n,
+            mentioned_ats=[None] * n,
+            contexts=[f"context-{index}" for index in range(n)],
+            fact_types=["world"] * n,
+            metadata_jsons=["{}"] * n,
+            chunk_ids=[f"chunk-{index}" for index in range(n)],
+            document_ids=["doc-pg"] * n,
+            tags_list=["[]"] * n,
+            observation_scopes_list=[None] * n,
+            text_signals_list=[None] * n,
+            projection_jsons=["{}"] * n,
+        )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("text_search_extension", ["native", "vchord"])
+    async def test_client_generated_ids_are_inserted_and_returned_in_input_order(
+        self,
+        text_search_extension,
+    ):
+        from hms_api.engine.db.ops_postgresql import PostgreSQLOps
+
+        generated = [
+            uuid.UUID("00000000-0000-0000-0000-000000000003"),
+            uuid.UUID("00000000-0000-0000-0000-000000000001"),
+            uuid.UUID("00000000-0000-0000-0000-000000000002"),
+        ]
+        config = SimpleNamespace(
+            database_backend="postgresql",
+            database_schema="public",
+            text_search_extension=text_search_extension,
+        )
+        connection = AsyncMock(spec=DatabaseConnection)
+        batch = self._make_batch()
+
+        with (
+            patch("hms_api.engine.db.ops_postgresql.uuid4", side_effect=generated),
+            patch("hms_api.config.get_config", return_value=config),
+            patch("hms_api.engine.schema.get_config", return_value=config),
+            patch("hms_api.engine.memory_engine.get_config", return_value=config),
+        ):
+            result = await PostgreSQLOps().insert_facts_batch(
+                conn=connection,
+                text_search_extension=text_search_extension,
+                **batch,
+            )
+
+        connection.execute.assert_awaited_once()
+        connection.fetch.assert_not_awaited()
+        query, bank_id, inserted_ids, fact_texts, *remaining = connection.execute.await_args.args
+        assert bank_id == "bank-pg"
+        assert inserted_ids == generated
+        assert fact_texts == batch["fact_texts"]
+        assert remaining[-1] == batch["projection_jsons"]
+        assert result == [str(value) for value in generated]
+        assert "$2::uuid[]" in query
+        assert "AS t(id, text, embedding" in query
+        assert "INSERT INTO public.memory_units (id, bank_id" in query
+        assert "RETURNING id" not in query
+        assert ("bm25_catalog.bm25vector" in query) is (text_search_extension == "vchord")
 
 
 # ---------------------------------------------------------------------------

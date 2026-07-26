@@ -328,11 +328,11 @@ class TestDocumentUpsertObservationCleanup:
             )
 
         # Trigger the upsert path directly. ``handle_document_tracking`` is
-        # what the retain orchestrator calls on every document re-ingest.
+        # what the Retain pipeline calls on every document re-ingest.
         # Pass ops=memory._backend.ops so the inner observation-cleanup query
         # selects the PG (native array) read path instead of falling back to
         # the Oracle junction-table path (which would query a non-existent
-        # public.observation_sources relation under PG). The orchestrator
+        # public.observation_sources relation under PG). The pipeline
         # call sites in _streaming_retain_batch already do this via pool.ops.
         async with pool.acquire() as conn:
             async with conn.transaction():

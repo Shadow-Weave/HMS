@@ -8,18 +8,56 @@ Covers:
 - Retain checkpoint: stops between sub-batches if op was deleted
 """
 
+import hashlib
+import json
 import uuid
 from unittest.mock import AsyncMock, patch
 
 import pytest
 import pytest_asyncio
-
-from hms_api.engine.memory_engine import MemoryEngine
-
+from hms_api.engine.cross_encoder import RRFPassthroughCrossEncoder
+from hms_api.engine.embeddings import Embeddings
+from hms_api.engine.memory_engine import MemoryEngine, _RetainOperationCancelled
 
 pytestmark = pytest.mark.xdist_group("op_cancellation_tests")
 
 _BANK_PREFIX = "test-op-cancel"
+
+
+class _DeterministicEmbeddings(Embeddings):
+    """Provide stable vectors without loading a local model."""
+
+    model_name = "hms-operation-cancellation-test-hash-v1"
+
+    @property
+    def provider_name(self) -> str:
+        return "operation-cancellation-test"
+
+    @property
+    def dimension(self) -> int:
+        return 384
+
+    async def initialize(self) -> None:
+        return None
+
+    def encode(self, texts: list[str]) -> list[list[float]]:
+        vectors: list[list[float]] = []
+        for text in texts:
+            digest = hashlib.sha256(text.encode()).digest()
+            vectors.append([((digest[index % len(digest)] / 255.0) * 2.0) - 1.0 for index in range(self.dimension)])
+        return vectors
+
+
+@pytest.fixture(scope="session")
+def embeddings() -> Embeddings:
+    """Use deterministic embeddings that need no optional ML dependencies."""
+    return _DeterministicEmbeddings()
+
+
+@pytest.fixture(scope="session")
+def cross_encoder() -> RRFPassthroughCrossEncoder:
+    """Use the dependency-free reciprocal-rank fusion reranker."""
+    return RRFPassthroughCrossEncoder()
 
 
 @pytest_asyncio.fixture
@@ -49,15 +87,22 @@ async def _insert_bank(pool, bank_id: str):
     )
 
 
-async def _insert_op(pool, bank_id: str, op_id: uuid.UUID | None = None) -> uuid.UUID:
+async def _insert_op(
+    pool,
+    bank_id: str,
+    op_id: uuid.UUID | None = None,
+    *,
+    operation_type: str = "consolidation",
+) -> uuid.UUID:
     op_id = op_id or uuid.uuid4()
     await pool.execute(
         """
         INSERT INTO async_operations (operation_id, bank_id, operation_type, status)
-        VALUES ($1, $2, 'consolidation', 'processing')
+        VALUES ($1, $2, $3, 'processing')
         """,
         op_id,
         bank_id,
+        operation_type,
     )
     return op_id
 
@@ -173,6 +218,156 @@ class TestCheckOpAlive:
 
 
 # ---------------------------------------------------------------------------
+# Batch parent/child cancellation
+# ---------------------------------------------------------------------------
+
+
+class TestBatchCancellation:
+    @pytest.mark.asyncio
+    async def test_parent_cancellation_atomically_cancels_active_children(
+        self,
+        memory: MemoryEngine,
+        pool,
+        request_context,
+    ):
+        bank_id = f"{_BANK_PREFIX}-{uuid.uuid4().hex[:8]}"
+        await _insert_bank(pool, bank_id)
+        parent_id = uuid.uuid4()
+        pending_child_id = uuid.uuid4()
+        processing_child_id = uuid.uuid4()
+
+        await pool.execute(
+            """
+            INSERT INTO async_operations
+                (operation_id, bank_id, operation_type, status, result_metadata)
+            VALUES ($1, $2, 'batch_retain', 'pending', $3::jsonb)
+            """,
+            parent_id,
+            bank_id,
+            json.dumps({"is_parent": True, "num_sub_batches": 2, "items_count": 2}),
+        )
+        for child_id, status, index in (
+            (pending_child_id, "pending", 1),
+            (processing_child_id, "processing", 2),
+        ):
+            await pool.execute(
+                """
+                INSERT INTO async_operations
+                    (operation_id, bank_id, operation_type, status, result_metadata)
+                VALUES ($1, $2, 'retain', $3, $4::jsonb)
+                """,
+                child_id,
+                bank_id,
+                status,
+                json.dumps(
+                    {
+                        "parent_operation_id": str(parent_id),
+                        "sub_batch_index": index,
+                        "total_sub_batches": 2,
+                    }
+                ),
+            )
+
+        await memory.cancel_operation(
+            bank_id=bank_id,
+            operation_id=str(parent_id),
+            request_context=request_context,
+        )
+
+        rows = await pool.fetch(
+            """
+            SELECT operation_id, status
+            FROM async_operations
+            WHERE operation_id = ANY($1::uuid[])
+            """,
+            [parent_id, pending_child_id, processing_child_id],
+        )
+        assert {row["operation_id"]: row["status"] for row in rows} == {
+            parent_id: "cancelled",
+            pending_child_id: "cancelled",
+            processing_child_id: "cancelled",
+        }
+
+        # A late worker completion must lose the terminal-state CAS.
+        await memory._mark_operation_completed(str(processing_child_id))
+        assert (
+            await pool.fetchval(
+                "SELECT status FROM async_operations WHERE operation_id = $1",
+                processing_child_id,
+            )
+            == "cancelled"
+        )
+        assert (
+            await pool.fetchval(
+                "SELECT status FROM async_operations WHERE operation_id = $1",
+                parent_id,
+            )
+            == "cancelled"
+        )
+
+    @pytest.mark.asyncio
+    async def test_direct_child_cancellation_resolves_parent(self, memory: MemoryEngine, pool, request_context):
+        bank_id = f"{_BANK_PREFIX}-{uuid.uuid4().hex[:8]}"
+        await _insert_bank(pool, bank_id)
+        parent_id = uuid.uuid4()
+        completed_child_id = uuid.uuid4()
+        pending_child_id = uuid.uuid4()
+
+        await pool.execute(
+            """
+            INSERT INTO async_operations
+                (operation_id, bank_id, operation_type, status, result_metadata)
+            VALUES ($1, $2, 'batch_retain', 'pending', $3::jsonb)
+            """,
+            parent_id,
+            bank_id,
+            json.dumps({"is_parent": True, "num_sub_batches": 2, "items_count": 2}),
+        )
+        for child_id, status, index in (
+            (completed_child_id, "completed", 1),
+            (pending_child_id, "pending", 2),
+        ):
+            await pool.execute(
+                """
+                INSERT INTO async_operations
+                    (operation_id, bank_id, operation_type, status, result_metadata)
+                VALUES ($1, $2, 'retain', $3, $4::jsonb)
+                """,
+                child_id,
+                bank_id,
+                status,
+                json.dumps(
+                    {
+                        "parent_operation_id": str(parent_id),
+                        "sub_batch_index": index,
+                        "total_sub_batches": 2,
+                    }
+                ),
+            )
+
+        await memory.cancel_operation(
+            bank_id=bank_id,
+            operation_id=str(pending_child_id),
+            request_context=request_context,
+        )
+
+        assert (
+            await pool.fetchval(
+                "SELECT status FROM async_operations WHERE operation_id = $1",
+                pending_child_id,
+            )
+            == "cancelled"
+        )
+        assert (
+            await pool.fetchval(
+                "SELECT status FROM async_operations WHERE operation_id = $1",
+                parent_id,
+            )
+            == "cancelled"
+        )
+
+
+# ---------------------------------------------------------------------------
 # _mark_operation_completed / _mark_operation_failed graceful no-op
 # ---------------------------------------------------------------------------
 
@@ -185,14 +380,30 @@ class TestMarkOperationGracefulOnMissingRow:
         await memory._mark_operation_completed(missing_id)  # no exception
 
     @pytest.mark.asyncio
+    async def test_mark_completed_does_not_overwrite_cancelled(self, memory: MemoryEngine, pool):
+        bank_id = f"{_BANK_PREFIX}-{uuid.uuid4().hex[:8]}"
+        await _insert_bank(pool, bank_id)
+        operation_id = await _insert_op(pool, bank_id, operation_type="retain")
+        await pool.execute(
+            "UPDATE async_operations SET status = 'cancelled' WHERE operation_id = $1",
+            operation_id,
+        )
+
+        await memory._mark_operation_completed(str(operation_id))
+
+        status = await pool.fetchval(
+            "SELECT status FROM async_operations WHERE operation_id = $1",
+            operation_id,
+        )
+        assert status == "cancelled"
+
+    @pytest.mark.asyncio
     async def test_mark_failed_does_not_raise_when_row_missing(self, memory: MemoryEngine):
         missing_id = str(uuid.uuid4())
         await memory._mark_operation_failed(missing_id, "some error", "traceback here")  # no exception
 
     @pytest.mark.asyncio
-    async def test_mark_completed_and_fire_webhook_does_not_raise_when_row_missing(
-        self, memory: MemoryEngine
-    ):
+    async def test_mark_completed_and_fire_webhook_does_not_raise_when_row_missing(self, memory: MemoryEngine):
         missing_id = str(uuid.uuid4())
         await memory._mark_operation_completed_and_fire_webhook(
             operation_id=missing_id,
@@ -265,10 +476,8 @@ class TestConsolidationCheckpoint:
 
 class TestRetainCheckpoint:
     @pytest.mark.asyncio
-    async def test_retain_stops_between_sub_batches_when_cancelled(
-        self, memory: MemoryEngine, request_context
-    ):
-        """retain_batch_async returns partial results if _check_op_alive is False between sub-batches."""
+    async def test_retain_stops_between_sub_batches_when_cancelled(self, memory: MemoryEngine, request_context, pool):
+        """retain_batch_async raises instead of reporting partial success after cancellation."""
         from hms_api.config import _get_raw_config
 
         bank_id = f"{_BANK_PREFIX}-{uuid.uuid4().hex[:8]}"
@@ -281,7 +490,10 @@ class TestRetainCheckpoint:
         config.retain_batch_tokens = 1
 
         try:
-            op_id = str(uuid.uuid4())
+            # Retain persists its exact recovery checkpoint in the tracked
+            # operation's core transaction.  Keep this cancellation fixture
+            # faithful to the worker path by creating that operation first.
+            op_id = str(await _insert_op(pool, bank_id, operation_type="retain"))
             check_calls = 0
 
             async def _fake_check(operation_id: str) -> bool:
@@ -291,21 +503,22 @@ class TestRetainCheckpoint:
                 return check_calls <= 1
 
             contents = [
-                {"content": f"Memory item {i} about something interesting."} for i in range(4)
+                {
+                    "content": f"Memory item {i} about something interesting.",
+                    "document_id": f"document-{i}",
+                }
+                for i in range(4)
             ]
 
             with patch.object(memory, "_check_op_alive", side_effect=_fake_check):
-                result = await memory.retain_batch_async(
-                    bank_id=bank_id,
-                    contents=contents,
-                    request_context=request_context,
-                    operation_id=op_id,
-                )
+                with pytest.raises(_RetainOperationCancelled):
+                    await memory.retain_batch_async(
+                        bank_id=bank_id,
+                        contents=contents,
+                        request_context=request_context,
+                        operation_id=op_id,
+                    )
 
-            # Should have stopped early: fewer results than total items
-            assert len(result) < len(contents), (
-                f"Expected early stop but got {len(result)}/{len(contents)} results"
-            )
             assert check_calls >= 1
         finally:
             config.retain_batch_tokens = original_tokens

@@ -463,8 +463,8 @@ SHA-256. The raw digest and filename are not exposed in that ID. A byte-for-byte
 retry inside the same tenant and bank therefore converges on one logical
 document command, while the same bytes in another tenant or bank do not merge.
 Use distinct explicit IDs when the same media must intentionally appear as
-multiple logical documents. Legacy anonymous non-multimodal file retain keeps
-its historical random-ID behavior.
+multiple logical documents. Anonymous non-multimodal file retain keeps its
+existing random-ID behavior.
 
 The document-command identity also includes only upload hints that can change
 media validation: normalized declared MIME and the recognized final-extension

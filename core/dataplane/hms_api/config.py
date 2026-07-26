@@ -358,6 +358,7 @@ ENV_RETAIN_ENTITY_LOOKUP = "HMS_API_RETAIN_ENTITY_LOOKUP"
 ENV_RETAIN_BATCH_ENABLED = "HMS_API_RETAIN_BATCH_ENABLED"
 ENV_RETAIN_BATCH_POLL_INTERVAL_SECONDS = "HMS_API_RETAIN_BATCH_POLL_INTERVAL_SECONDS"
 ENV_RETAIN_CHUNK_BATCH_SIZE = "HMS_API_RETAIN_CHUNK_BATCH_SIZE"
+ENV_RETAIN_EMBEDDING_FAILURE_POLICY = "HMS_API_RETAIN_EMBEDDING_FAILURE_POLICY"
 
 # File storage configuration
 ENV_FILE_STORAGE_TYPE = "HMS_API_FILE_STORAGE_TYPE"
@@ -683,6 +684,8 @@ DEFAULT_RETAIN_BATCH_TOKENS = 10_000  # ~40KB of text  # Max chars per sub-batch
 DEFAULT_RETAIN_ENTITY_LOOKUP = "trigram"  # "full" or "trigram"
 DEFAULT_RETAIN_BATCH_ENABLED = False  # Use LLM Batch API for fact extraction (only when async=True)
 DEFAULT_RETAIN_BATCH_POLL_INTERVAL_SECONDS = 60  # Batch API polling interval in seconds
+DEFAULT_RETAIN_EMBEDDING_FAILURE_POLICY = "store_without_embedding"
+RETAIN_EMBEDDING_FAILURE_POLICIES = ("store_without_embedding", "raise")
 
 # File storage defaults
 DEFAULT_FILE_STORAGE_TYPE = "native"  # PostgreSQL BYTEA storage
@@ -941,6 +944,16 @@ def _validate_extraction_mode(mode: str) -> str:
         )
         return DEFAULT_RETAIN_EXTRACTION_MODE
     return mode_lower
+
+
+def _validate_retain_embedding_failure_policy(policy: str) -> str:
+    """Validate and normalize Retain's whole-batch embedding failure policy."""
+
+    normalized = policy.strip().lower()
+    if normalized not in RETAIN_EMBEDDING_FAILURE_POLICIES:
+        choices = ", ".join(RETAIN_EMBEDDING_FAILURE_POLICIES)
+        raise ValueError(f"{ENV_RETAIN_EMBEDDING_FAILURE_POLICY} must be one of: {choices}")
+    return normalized
 
 
 def _validate_recall_budget_function(function: str) -> str:
@@ -1331,6 +1344,7 @@ class HMSConfig:
     # Defaulted fields (source-compatible additions — existing direct constructor callers keep working).
     # Keep at the end of the dataclass; Python forbids non-default fields after default fields.
     embeddings_openai_batch_size: int = DEFAULT_EMBEDDINGS_OPENAI_BATCH_SIZE
+    retain_embedding_failure_policy: str = DEFAULT_RETAIN_EMBEDDING_FAILURE_POLICY
     embedding_fingerprint_policy: Literal["strict", "warn", "off"] = DEFAULT_EMBEDDING_FINGERPRINT_POLICY
     embedding_fingerprint_legacy_attestation: str | None = None
     vector_index_provider: str = DEFAULT_VECTOR_INDEX_PROVIDER
@@ -2140,6 +2154,12 @@ class HMSConfig:
                 os.getenv(ENV_RETAIN_BATCH_POLL_INTERVAL_SECONDS, str(DEFAULT_RETAIN_BATCH_POLL_INTERVAL_SECONDS))
             ),
             retain_chunk_batch_size=int(os.getenv(ENV_RETAIN_CHUNK_BATCH_SIZE, str(DEFAULT_RETAIN_CHUNK_BATCH_SIZE))),
+            retain_embedding_failure_policy=_validate_retain_embedding_failure_policy(
+                os.getenv(
+                    ENV_RETAIN_EMBEDDING_FAILURE_POLICY,
+                    DEFAULT_RETAIN_EMBEDDING_FAILURE_POLICY,
+                )
+            ),
             # File storage
             file_storage_type=os.getenv(ENV_FILE_STORAGE_TYPE, DEFAULT_FILE_STORAGE_TYPE),
             file_storage_s3_bucket=os.getenv(ENV_FILE_STORAGE_S3_BUCKET) or None,

@@ -8,6 +8,8 @@ version = "0.6.1"
 description = "HMS: Agent Memory That Works Like Human Memory"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 dependencies = [
     "asyncpg>=0.29.0",
     "python-dotenv>=1.0.0",

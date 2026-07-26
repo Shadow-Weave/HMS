@@ -54,10 +54,11 @@ def parse_entity_labels(raw: dict | list | None) -> EntityLabelsConfig | None:
 
     Accepts:
     - None → returns None
-    - list → list of attribute dicts (each may use legacy free_values/multi_value or new type field)
+    - list → list of attribute dicts (each may use deprecated
+      free_values/multi_value fields or the current type field)
     - dict → {attributes: [...]}
 
-    Legacy migration (backward-compat):
+    Deprecated-field normalization:
     - free_values=True          → type="text"
     - multi_value=True          → type="multi-values"
     - neither / free_values=False → type="value"
@@ -88,7 +89,7 @@ def parse_entity_labels(raw: dict | list | None) -> EntityLabelsConfig | None:
 
 
 def _migrate_label_group(raw: dict) -> dict:
-    """Migrate legacy free_values/multi_value fields to the new type field."""
+    """Normalize deprecated free_values/multi_value fields to ``type``."""
     if not isinstance(raw, dict) or "type" in raw:
         return raw
     patched = dict(raw)
@@ -98,7 +99,7 @@ def _migrate_label_group(raw: dict) -> dict:
         patched["type"] = "multi-values"
     else:
         patched["type"] = "value"
-    # Remove legacy keys so Pydantic doesn't error on unknown fields
+    # Remove deprecated keys so Pydantic does not reject unknown fields.
     patched.pop("free_values", None)
     patched.pop("multi_value", None)
     return patched

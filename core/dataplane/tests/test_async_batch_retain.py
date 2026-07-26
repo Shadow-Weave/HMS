@@ -1,11 +1,13 @@
 """Test async batch retain with smart batching and parent-child operations."""
 
 import asyncio
+import hashlib
 import json
 import uuid
 
 import pytest
-
+from hms_api.engine.cross_encoder import RRFPassthroughCrossEncoder
+from hms_api.engine.embeddings import Embeddings
 from hms_api.extensions import RequestContext
 
 # These tests submit async operations and rely on the engine-owned worker to
@@ -14,6 +16,42 @@ from hms_api.extensions import RequestContext
 # them to steal each other's pending rows. Share the "worker_tests" group so
 # they serialize on the same xdist process.
 pytestmark = pytest.mark.xdist_group("worker_tests")
+
+
+class _DeterministicEmbeddings(Embeddings):
+    """Provide stable vectors without loading a local model."""
+
+    model_name = "hms-async-batch-test-hash-v1"
+
+    @property
+    def provider_name(self) -> str:
+        return "async-batch-test"
+
+    @property
+    def dimension(self) -> int:
+        return 384
+
+    async def initialize(self) -> None:
+        return None
+
+    def encode(self, texts: list[str]) -> list[list[float]]:
+        vectors: list[list[float]] = []
+        for text in texts:
+            digest = hashlib.sha256(text.encode()).digest()
+            vectors.append([((digest[index % len(digest)] / 255.0) * 2.0) - 1.0 for index in range(self.dimension)])
+        return vectors
+
+
+@pytest.fixture(scope="session")
+def embeddings() -> Embeddings:
+    """Use deterministic embeddings that need no optional ML dependencies."""
+    return _DeterministicEmbeddings()
+
+
+@pytest.fixture(scope="session")
+def cross_encoder() -> RRFPassthroughCrossEncoder:
+    """Use the dependency-free reciprocal-rank fusion reranker."""
+    return RRFPassthroughCrossEncoder()
 
 
 async def _ensure_bank(pool, bank_id: str) -> None:
@@ -26,40 +64,47 @@ async def _ensure_bank(pool, bank_id: str) -> None:
 
 
 @pytest.mark.asyncio
-async def test_duplicate_document_ids_rejected_async(memory, request_context):
-    """Test that async retain rejects batches with duplicate document_ids."""
-    bank_id = "test_duplicate_async"
+async def test_repeated_document_ids_stay_in_one_async_document_group(memory, request_context):
+    """Repeated IDs remain one logical document and are never split across children."""
+    bank_id = f"test_repeated_async_{uuid.uuid4().hex[:8]}"
     contents = [
         {"content": "First item", "document_id": "doc1"},
         {"content": "Second item", "document_id": "doc2"},
-        {"content": "Third item", "document_id": "doc1"},  # Duplicate!
+        {"content": "Third item", "document_id": "doc1"},
     ]
 
-    # Should raise ValueError due to duplicate document_ids
-    with pytest.raises(ValueError, match="duplicate document_ids.*doc1"):
-        await memory.submit_async_retain(
-            bank_id=bank_id,
-            contents=contents,
-            request_context=request_context,
-        )
+    result = await memory.submit_async_retain(
+        bank_id=bank_id,
+        contents=contents,
+        request_context=request_context,
+    )
+    status = await memory.get_operation_status(
+        bank_id=bank_id,
+        operation_id=result["operation_id"],
+        request_context=request_context,
+    )
+
+    assert status["status"] == "completed"
+    assert status["result_metadata"]["num_sub_batches"] == 1
+    assert status["child_operations"][0]["items_count"] == 3
 
 
 @pytest.mark.asyncio
-async def test_duplicate_document_ids_rejected_sync(memory, request_context):
-    """Test that sync retain also rejects batches with duplicate document_ids."""
-    bank_id = "test_duplicate_sync"
+async def test_repeated_document_ids_are_supported_sync(memory, request_context):
+    """The public sync API maps every repeated-ID input back to its own result slot."""
+    bank_id = f"test_repeated_sync_{uuid.uuid4().hex[:8]}"
     contents = [
         {"content": "First item", "document_id": "doc1"},
-        {"content": "Second item", "document_id": "doc1"},  # Duplicate!
+        {"content": "Second item", "document_id": "doc1"},
     ]
 
-    # Should raise ValueError due to duplicate document_ids
-    with pytest.raises(ValueError, match="duplicate document_ids.*doc1"):
-        await memory.retain_batch_async(
-            bank_id=bank_id,
-            contents=contents,
-            request_context=request_context,
-        )
+    results = await memory.retain_batch_async(
+        bank_id=bank_id,
+        contents=contents,
+        request_context=request_context,
+    )
+
+    assert len(results) == 2
 
 
 @pytest.mark.asyncio
