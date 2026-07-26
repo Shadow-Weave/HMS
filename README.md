@@ -178,6 +178,27 @@ export HMS_API_MILVUS_URI=./hms_milvus.db  # Milvus Lite
 
 After enabling Milvus for an existing database, rebuild its projection with `hms-admin rebuild-vector-index --yes`. Milvus Lite is intended for a single HMS process; use Milvus Server or Zilliz Cloud for multi-worker deployments. See [the dataplane README](core/dataplane/README.md#optional-milvus-semantic-index) for all settings and consistency guidance.
 
+## LongMemEval Reproduction
+
+The code-only LongMemEval adapter runs the complete
+`Retain -> Recall -> Answer -> Judge` workflow:
+
+```bash
+cp lab/evaluation/benchmarks/longmemeval/longmemeval.env.example .env.longmemeval
+chmod 600 .env.longmemeval
+# Fill in the database and model credentials, then:
+HMS_ENV_FILE=.env.longmemeval \
+HMS_MAX_INSTANCES=1 \
+HMS_RESULTS_FILENAME=longmemeval-smoke.json \
+bash .aaaSCRIPT/run_benchmark.sh
+```
+
+The runner downloads and verifies a pinned dataset revision. Datasets,
+credentials, retained banks, logs, and generated results are not included in
+the repository. See the
+[LongMemEval reproduction guide](lab/evaluation/benchmarks/longmemeval/README.md)
+for database setup, concurrency, resume behavior, and full-run validation.
+
 ## Security Notes
 
 - Keep `.env`, private keys, tokens, and populated credentials out of Git.
@@ -187,4 +208,6 @@ After enabling Milvus for an existing database, rebuild its projection with `hms
 
 ## License
 
-See [LICENSE](LICENSE).
+See the repository [MIT License](LICENSE), any component-specific package
+metadata, and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for notices
+covering included third-party code.
