@@ -39,8 +39,9 @@ jobs:
     timeout-minutes: 30
     services:
       oracle:
-        # Immutable digest for gvenzl/oracle-free:23-slim-faststart.
-        image: gvenzl/oracle-free@sha256:d8913e4e4769b6e60197949bef30a4391713afe662b4b4e71a2665c881bdac8b
+        # Immutable digest for gvenzl/oracle-free:23-faststart. The regular
+        # flavor is required because the slim flavor removes Oracle Text.
+        image: gvenzl/oracle-free@sha256:2dcb93d4b50c78a127c0fc40da4c6aafd1d719ff2e545dbb92304b3f40ce407c
         env:
           ORACLE_PASSWORD: OracleTest1
         ports:
