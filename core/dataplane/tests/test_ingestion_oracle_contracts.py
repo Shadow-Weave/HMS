@@ -47,6 +47,28 @@ from hms_api.engine.ingestion.persistence.postgres import (
 from hms_api.engine.retain import chunk_storage
 
 
+def test_projection_migration_executes_literal_json_as_raw_oracle_sql(monkeypatch) -> None:
+    """Literal JSON colons must not be parsed as SQLAlchemy bind parameters."""
+
+    from hms_api.alembic.versions import p4q5r6s7t8u9_add_memory_unit_projection as migration
+
+    alembic_statements: list[str] = []
+    driver_statements: list[str] = []
+    bind = SimpleNamespace(exec_driver_sql=driver_statements.append)
+
+    monkeypatch.setattr(migration, "_get_schema_prefix", lambda: '"TENANT".')
+    monkeypatch.setattr(migration.op, "execute", alembic_statements.append)
+    monkeypatch.setattr(migration.op, "get_bind", lambda: bind)
+
+    migration._oracle_upgrade()
+
+    assert len(alembic_statements) == 1
+    assert 'ALTER TABLE "TENANT".memory_units ADD' in alembic_statements[0]
+    assert len(driver_statements) == 1
+    assert 'UPDATE "TENANT".memory_units mu' in driver_statements[0]
+    assert '"embedding":{"v":1,"ok":' in driver_statements[0]
+
+
 class _Transaction:
     def __init__(self, events: list[str]) -> None:
         self._events = events

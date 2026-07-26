@@ -8,7 +8,6 @@ Create Date: 2026-07-15
 from collections.abc import Sequence
 
 from alembic import context, op
-
 from hms_api.alembic._dialect import run_for_dialect
 
 revision: str = "p4q5r6s7t8u9"
@@ -78,7 +77,10 @@ def _oracle_upgrade() -> None:
             END IF;
     END;
     """)
-    op.execute(f"""
+    # Bypass SQLAlchemy's text parser for this literal JSON. Otherwise tokens
+    # such as ``:1`` and ``:true`` inside the payload are treated as bind
+    # parameters before the statement reaches Oracle.
+    op.get_bind().exec_driver_sql(f"""
         UPDATE {schema}memory_units mu
         SET projection =
             '{{"embedding":{{"v":1,"ok":' ||
