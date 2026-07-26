@@ -67,6 +67,8 @@ def test_projection_migration_executes_literal_json_as_raw_oracle_sql(monkeypatc
     assert len(driver_statements) == 1
     assert 'UPDATE "TENANT".memory_units mu' in driver_statements[0]
     assert '"embedding":{"v":1,"ok":' in driver_statements[0]
+    assert "DBMS_LOB.COMPARE(projection, TO_CLOB('{}')) = 0" in driver_statements[0]
+    assert "WHERE projection = '{}'" not in driver_statements[0]
 
 
 class _Transaction:

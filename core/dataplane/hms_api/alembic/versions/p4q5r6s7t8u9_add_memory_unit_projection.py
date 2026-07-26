@@ -8,6 +8,7 @@ Create Date: 2026-07-15
 from collections.abc import Sequence
 
 from alembic import context, op
+
 from hms_api.alembic._dialect import run_for_dialect
 
 revision: str = "p4q5r6s7t8u9"
@@ -96,7 +97,7 @@ def _oracle_upgrade() -> None:
                 ELSE 'false'
             END ||
             '}},"extraction":{{"v":"legacy"}}}}'
-        WHERE projection = '{{}}'
+        WHERE DBMS_LOB.COMPARE(projection, TO_CLOB('{{}}')) = 0
     """)
 
 
