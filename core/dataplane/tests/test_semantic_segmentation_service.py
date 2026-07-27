@@ -11,7 +11,6 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-
 from hms_api.engine.ingestion import service as service_module
 from hms_api.engine.ingestion.chunking import build_chunk_plans
 from hms_api.engine.ingestion.contracts import RetainExecutionContext, RetainInvocation

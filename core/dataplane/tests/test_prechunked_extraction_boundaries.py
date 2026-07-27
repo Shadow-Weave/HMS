@@ -7,7 +7,6 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-
 from hms_api.engine.ingestion.chunking import compute_content_hash
 from hms_api.engine.ingestion.domain import ChunkPlan
 from hms_api.engine.ingestion.extraction import (
