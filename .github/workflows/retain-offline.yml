@@ -70,7 +70,10 @@ jobs:
             core/dataplane/tests/test_ingestion_oracle_live.py \
             core/dataplane/tests/test_ingestion_pipeline_contracts.py \
             core/dataplane/tests/test_ingestion_postgresql_live.py \
-            core/dataplane/tests/test_op_cancellation.py
+            core/dataplane/tests/test_op_cancellation.py \
+            core/dataplane/tests/test_prechunked_extraction_boundaries.py \
+            core/dataplane/tests/test_semantic_segmentation.py \
+            core/dataplane/tests/test_semantic_segmentation_service.py
           uv run --no-sync --package hms-api-slim ruff format --check \
             --config core/dataplane/pyproject.toml \
             core/dataplane/hms_api/config.py \
@@ -95,7 +98,10 @@ jobs:
             core/dataplane/tests/test_ingestion_oracle_live.py \
             core/dataplane/tests/test_ingestion_pipeline_contracts.py \
             core/dataplane/tests/test_ingestion_postgresql_live.py \
-            core/dataplane/tests/test_op_cancellation.py
+            core/dataplane/tests/test_op_cancellation.py \
+            core/dataplane/tests/test_prechunked_extraction_boundaries.py \
+            core/dataplane/tests/test_semantic_segmentation.py \
+            core/dataplane/tests/test_semantic_segmentation_service.py
 
       - name: Check LongMemEval source style
         run: |
@@ -167,7 +173,10 @@ jobs:
             core/dataplane/tests/test_fact_extraction_retry.py \
             core/dataplane/tests/test_link_utils.py \
             core/dataplane/tests/test_multimodal_engine_bridge.py \
-            core/dataplane/tests/test_multimodal_security.py
+            core/dataplane/tests/test_multimodal_security.py \
+            core/dataplane/tests/test_prechunked_extraction_boundaries.py \
+            core/dataplane/tests/test_semantic_segmentation.py \
+            core/dataplane/tests/test_semantic_segmentation_service.py
 
       - name: Run LongMemEval offline tests
         run: |

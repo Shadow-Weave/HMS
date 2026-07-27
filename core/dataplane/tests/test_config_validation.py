@@ -24,6 +24,10 @@ def setup_test_env():
         "HMS_API_DATABASE_URL",
         "HMS_API_MIGRATION_DATABASE_URL",
         "HMS_API_RETAIN_EMBEDDING_FAILURE_POLICY",
+        "HMS_API_RETAIN_SEMANTIC_CHUNKING_ENABLED",
+        "HMS_API_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY",
+        "HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS",
+        "HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES",
     ]
 
     # Save original values
@@ -137,14 +141,64 @@ def test_retain_embedding_failure_policy_rejects_unknown_value(monkeypatch):
         HMSConfig.from_env()
 
 
+def test_retain_semantic_chunking_defaults_to_semantic_with_fixed_fallback(monkeypatch):
+    from hms_api.config import HMSConfig
+
+    monkeypatch.delenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_ENABLED", raising=False)
+    monkeypatch.delenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY", raising=False)
+    monkeypatch.delenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS", raising=False)
+    monkeypatch.delenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES", raising=False)
+    monkeypatch.setenv("HMS_API_LLM_PROVIDER", "mock")
+
+    config = HMSConfig.from_env()
+
+    assert config.retain_semantic_chunking_enabled is True
+    assert config.retain_semantic_chunking_failure_policy == "fixed_fallback"
+    assert config.retain_semantic_chunking_max_completion_tokens == 1024
+    assert config.retain_semantic_chunking_max_retries == 1
+
+
+def test_retain_semantic_chunking_supports_explicit_opt_out(monkeypatch):
+    from hms_api.config import HMSConfig
+
+    monkeypatch.setenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_ENABLED", "false")
+    monkeypatch.setenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY", "raise")
+    monkeypatch.setenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS", "768")
+    monkeypatch.setenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES", "3")
+    monkeypatch.setenv("HMS_API_LLM_PROVIDER", "mock")
+
+    config = HMSConfig.from_env()
+
+    assert config.retain_semantic_chunking_enabled is False
+    assert config.retain_semantic_chunking_failure_policy == "raise"
+    assert config.retain_semantic_chunking_max_completion_tokens == 768
+    assert config.retain_semantic_chunking_max_retries == 3
+
+
+@pytest.mark.parametrize(
+    ("name", "value"),
+    (
+        ("HMS_API_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY", "ignore"),
+        ("HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS", "0"),
+        ("HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES", "-1"),
+    ),
+)
+def test_retain_semantic_chunking_rejects_invalid_configuration(monkeypatch, name, value):
+    from hms_api.config import HMSConfig
+
+    monkeypatch.setenv(name, value)
+    monkeypatch.setenv("HMS_API_LLM_PROVIDER", "mock")
+
+    with pytest.raises(ValueError, match=name):
+        HMSConfig.from_env()
+
+
 def test_log_config_masks_database_urls(caplog):
     """Config startup logs must not expose database credentials."""
     from hms_api.config import HMSConfig
 
     os.environ["HMS_API_DATABASE_URL"] = "postgresql://hms_user:plain-password@db:5432/hms_db"
-    os.environ["HMS_API_MIGRATION_DATABASE_URL"] = (
-        "postgresql://migration_user:migration-password@db-admin:5432/hms_db"
-    )
+    os.environ["HMS_API_MIGRATION_DATABASE_URL"] = "postgresql://migration_user:migration-password@db-admin:5432/hms_db"
     os.environ["HMS_API_RETAIN_MAX_COMPLETION_TOKENS"] = "64000"
     os.environ["HMS_API_RETAIN_CHUNK_SIZE"] = "3000"
     os.environ["HMS_API_LLM_PROVIDER"] = "mock"

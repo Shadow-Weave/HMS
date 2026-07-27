@@ -100,8 +100,8 @@ class OperationCheckpoint:
 
         An empty tuple is a known value: that document committed successfully
         but this operation produced no units.  ``None`` means the versioned
-        mapping was absent or did not contain the document, so callers must use
-        a conservative document-level fallback.
+        mapping was absent or did not contain the document, so callers must
+        fail closed unless they have another operation-local proof.
         """
 
         if not isinstance(document_id, str) or not document_id:

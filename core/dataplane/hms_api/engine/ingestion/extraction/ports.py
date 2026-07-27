@@ -36,6 +36,7 @@ class ExtractionRequest:
     items: tuple[ContentItem, ...]
     chunks: tuple[ChunkPlan, ...]
     policy: ExtractionPolicy
+    preserve_chunk_boundaries: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.items, tuple) or any(not isinstance(item, ContentItem) for item in self.items):
@@ -44,6 +45,8 @@ class ExtractionRequest:
             raise TypeError("chunks must be a tuple of ChunkPlan values")
         if not isinstance(self.policy, ExtractionPolicy):
             raise TypeError("policy must be an ExtractionPolicy")
+        if not isinstance(self.preserve_chunk_boundaries, bool):
+            raise TypeError("preserve_chunk_boundaries must be a bool")
 
 
 @dataclass(frozen=True, slots=True)

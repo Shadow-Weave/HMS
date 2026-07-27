@@ -61,6 +61,26 @@ The sample uses `gpt-5-mini` for all language-model roles and
 `text-embedding-3-small` for embeddings. These are examples, not a bundled
 score claim.
 
+### Retain chunking
+
+Retain uses semantic boundary planning by default for long JSON conversations.
+The planner asks the Retain model for topic boundaries and then materializes
+each chunk exclusively from the original complete exchanges. It does not
+ask the model to rewrite source values; materialization canonicalizes the JSON
+representation while preserving every original turn value. Short content and
+trusted pre-chunked input bypass semantic planning. Non-conversation content
+uses the deterministic structural chunker, while boundary-planning failures
+follow the configured failure policy (`fixed_fallback` by default).
+
+Provider Batch extraction does not yet bind its checkpoint to a semantic plan
+digest. Set `HMS_API_RETAIN_SEMANTIC_CHUNKING_ENABLED=false` when Batch
+extraction is enabled.
+
+The result `run_manifest` records the enabled flag, failure policy,
+boundary-call limits, fixed chunk size, and versioned semantic policy and
+prompt identifiers. Resume therefore rejects results produced with different
+Retain chunking semantics.
+
 ## Dataset pin
 
 The default run downloads this immutable artifact:

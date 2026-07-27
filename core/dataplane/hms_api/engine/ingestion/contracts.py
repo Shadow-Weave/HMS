@@ -33,6 +33,7 @@ class RetainInvocation:
     outbox_callback: OutboxCallback | None = None
     strategy: str | None = None
     sanitize_log_identifiers: bool = False
+    trusted_prechunked_input: bool = False
 
 
 @dataclass(frozen=True, slots=True)

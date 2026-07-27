@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
+from hms_api.engine.ingestion.segmentation import SemanticSegmentationPolicy
 
 from benchmarks.longmemeval import longmemeval_benchmark as benchmark
 
@@ -28,6 +29,7 @@ async def test_answer_provider_failure_propagates_to_the_runner():
 
 
 def _manifest() -> dict:
+    # Explicit opt-out artifact used to verify resume-policy compatibility.
     return {
         "artifact_schema_version": 2,
         "dataset": {
@@ -45,6 +47,15 @@ def _manifest() -> dict:
             "query_expansion_enabled": False,
             "query_rewriting_strategy": "noop",
             "session_expansion_weight": 0.3,
+            "retain_chunking": {
+                "chunk_size": 3000,
+                "semantic_enabled": False,
+                "failure_policy": "fixed_fallback",
+                "max_completion_tokens": 1024,
+                "max_retries": 1,
+                "policy_version": "semantic-boundary-v1",
+                "prompt_version": "semantic-boundary-prompt-v1",
+            },
         },
         "database": {
             "backend": "postgresql",
@@ -247,6 +258,41 @@ def test_markdown_report_handles_unverifiable_reused_retain_identity(tmp_path: P
     assert "- **Retain**: not executed; reused-bank creator identity is unverifiable" in markdown
 
 
+def test_run_manifest_records_complete_retain_chunking_policy(tmp_path: Path, monkeypatch):
+    dataset_path = tmp_path / "dataset.json"
+    dataset_path.write_text("[]", encoding="utf-8")
+    monkeypatch.setenv("HMS_API_RETAIN_CHUNK_SIZE", "4096")
+    monkeypatch.setenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_ENABLED", "true")
+    monkeypatch.setenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY", "raise")
+    monkeypatch.setenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS", "768")
+    monkeypatch.setenv("HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES", "3")
+    monkeypatch.setattr(benchmark, "_git_value", lambda *args: "abc123" if args == ("rev-parse", "HEAD") else "")
+    monkeypatch.setattr(benchmark, "_source_tree_fingerprint", lambda: None)
+
+    manifest = _built_manifest(dataset_path)
+
+    assert manifest["pipeline"]["retain_chunking"] == {
+        "chunk_size": 4096,
+        "semantic_enabled": True,
+        "failure_policy": "raise",
+        "max_completion_tokens": 768,
+        "max_retries": 3,
+        "policy_version": "semantic-boundary-v1",
+        "prompt_version": "semantic-boundary-prompt-v1",
+    }
+
+
+def test_run_manifest_semantic_versions_match_the_runtime_policy():
+    runtime_policy = SemanticSegmentationPolicy(
+        max_chars=3000,
+        provider="openai",
+        model="test-model",
+    )
+
+    assert benchmark.RETAIN_SEMANTIC_CHUNKING_POLICY_VERSION == runtime_policy.version
+    assert benchmark.RETAIN_SEMANTIC_CHUNKING_PROMPT_VERSION == runtime_policy.prompt_version
+
+
 def test_resume_compatibility_ignores_concurrency_but_rejects_model_changes(tmp_path: Path):
     output_path = tmp_path / "results.json"
     manifest = _manifest()
@@ -286,6 +332,47 @@ def test_resume_compatibility_ignores_concurrency_but_rejects_model_changes(tmp_
         benchmark.validate_artifact_compatibility(
             output_path,
             current_manifest=incompatible_source,
+            current_model_config=model_config,
+        )
+
+
+@pytest.mark.parametrize(
+    ("field_name", "changed_value"),
+    [
+        ("chunk_size", 4096),
+        ("semantic_enabled", True),
+        ("failure_policy", "raise"),
+        ("max_completion_tokens", 2048),
+        ("max_retries", 3),
+        ("policy_version", "semantic-boundary-v2"),
+        ("prompt_version", "semantic-boundary-prompt-v2"),
+    ],
+)
+def test_resume_rejects_retain_chunking_policy_changes(
+    tmp_path: Path,
+    field_name: str,
+    changed_value: object,
+):
+    output_path = tmp_path / "results.json"
+    manifest = _manifest()
+    model_config = _model_config()
+    output_path.write_text(
+        json.dumps(
+            {
+                "run_manifest": manifest,
+                "model_config": model_config,
+                "item_results": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    incompatible_manifest = copy.deepcopy(manifest)
+    incompatible_manifest["pipeline"]["retain_chunking"][field_name] = changed_value
+
+    with pytest.raises(ValueError, match="pipeline"):
+        benchmark.validate_artifact_compatibility(
+            output_path,
+            current_manifest=incompatible_manifest,
             current_model_config=model_config,
         )
 

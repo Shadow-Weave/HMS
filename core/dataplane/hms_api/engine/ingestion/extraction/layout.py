@@ -114,7 +114,12 @@ class PrechunkedExtractionLayout:
     def extraction_request(self, policy: ExtractionPolicy) -> ExtractionRequest:
         """Build the extractor request for this temporary layout."""
 
-        return ExtractionRequest(items=self.temporary_items, chunks=self.temporary_chunks, policy=policy)
+        return ExtractionRequest(
+            items=self.temporary_items,
+            chunks=self.temporary_chunks,
+            policy=policy,
+            preserve_chunk_boundaries=True,
+        )
 
     def remap_result(self, result: ExtractionResult) -> ExtractionResult:
         """Restore original source indices and every derived fact identity."""

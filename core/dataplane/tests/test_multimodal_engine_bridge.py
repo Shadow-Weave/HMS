@@ -712,6 +712,7 @@ async def test_trusted_chunks_override_is_applied_after_public_strategy(monkeypa
     assert captured["execution"].resolved_config.enable_observations is False
     assert captured["execution"].resolved_config.retain_chunk_size == 2_400
     assert captured["invocation"].sanitize_log_identifiers is True
+    assert captured["invocation"].trusted_prechunked_input is True
 
 
 @pytest.mark.asyncio
