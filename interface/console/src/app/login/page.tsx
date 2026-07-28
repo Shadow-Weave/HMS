@@ -57,9 +57,9 @@ function LoginForm() {
           <Image
             src="/logo.png"
             alt="HMS"
-            width={160}
-            height={160}
-            className="mx-auto"
+            width={265}
+            height={72}
+            className="mx-auto h-auto w-[265px] max-w-full"
             unoptimized
           />
           <CardDescription>Enter your access key to continue</CardDescription>

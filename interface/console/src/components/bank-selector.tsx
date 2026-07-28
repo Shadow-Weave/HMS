@@ -453,7 +453,7 @@ function BankSelectorInner() {
         <Image
           src="/logo.png"
           alt="HMS"
-          width={40}
+          width={147}
           height={40}
           className="h-10 w-auto"
           unoptimized
@@ -1300,7 +1300,7 @@ export function BankSelector() {
             <Image
               src="/logo.png"
               alt="HMS"
-              width={40}
+              width={147}
               height={40}
               className="h-10 w-auto"
               unoptimized
