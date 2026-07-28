@@ -78,9 +78,17 @@ multimodal-video = [
     # the vision provider; selected frames reuse the image input path.
     "av>=14.0.0",
 ]
+reranker = [
+    # Local cross-encoder reranker (LocalSTCrossEncoder)
+    "sentence-transformers>=5.4.0",
+    "transformers>=4.53.0",
+    "torch>=2.6.0",
+    "einops>=0.8.2",
+    "safetensors>=0.6.2",
+]
 local-ml = [
     # Local ML models for embeddings/reranking
-    "sentence-transformers>=3.3.0",
+    "sentence-transformers>=5.4.0",
     "transformers>=4.53.0", # Security fixes for ReDoS vulnerabilities
     "torch>=2.6.0", # CVE fix for remote code execution
     "einops>=0.8.2",

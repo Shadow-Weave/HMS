@@ -50,8 +50,15 @@ services:
       HMS_API_EMBEDDINGS_OPENAI_API_KEY: ${HMS_API_EMBEDDINGS_OPENAI_API_KEY:-openai_key_change_me}
       HMS_API_EMBEDDINGS_OPENAI_BASE_URL: ${HMS_API_EMBEDDINGS_OPENAI_BASE_URL:-}
       HMS_API_RERANKER_PROVIDER: ${HMS_API_RERANKER_PROVIDER:-rrf}
+      HMS_API_RERANKER_LOCAL_MODEL: ${HMS_API_RERANKER_LOCAL_MODEL:-cross-encoder/ms-marco-MiniLM-L-6-v2}
+      HMS_API_RERANKER_LOCAL_TRUST_REMOTE_CODE: ${HMS_API_RERANKER_LOCAL_TRUST_REMOTE_CODE:-false}
+      HMS_API_RERANKER_LOCAL_FP16: ${HMS_API_RERANKER_LOCAL_FP16:-false}
+      HMS_API_RERANKER_LOCAL_BATCH_SIZE: ${HMS_API_RERANKER_LOCAL_BATCH_SIZE:-32}
+      HMS_API_RERANKER_LOCAL_MAX_CONCURRENT: ${HMS_API_RERANKER_LOCAL_MAX_CONCURRENT:-4}
+      HF_ENDPOINT: ${HF_ENDPOINT:-https://huggingface.co}
     volumes:
       - ./logs:/app/logs
+      - huggingface_cache:/home/hms/.cache/huggingface
     ports:
       - "127.0.0.1:${HMS_LOCAL_API_PORT:-18080}:18080"
     depends_on:
@@ -62,7 +69,7 @@ services:
       interval: 15s
       timeout: 10s
       retries: 20
-      start_period: 90s
+      start_period: 120s
     networks:
       - hms-internal
 
@@ -124,3 +131,6 @@ services:
 networks:
   hms-internal:
     driver: bridge
+
+volumes:
+  huggingface_cache:

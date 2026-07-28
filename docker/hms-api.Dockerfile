@@ -11,12 +11,16 @@ RUN apt-get update \
 
 COPY core/dataplane /app/core/dataplane
 
+# Install CPU-only PyTorch from the official CPU wheel index, then the
+# reranker extra (which declares torch>=2.6.0; pip will see it is already
+# satisfied and skip reinstallation).
 RUN pip install --upgrade pip \
-    && pip install /app/core/dataplane
+    && pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.6.0" \
+    && pip install "/app/core/dataplane[reranker]"
 
 RUN useradd --create-home --shell /usr/sbin/nologin hms \
-    && mkdir -p /app/logs \
-    && chown -R hms:hms /app
+    && mkdir -p /app/logs /home/hms/.cache/huggingface \
+    && chown -R hms:hms /app /home/hms/.cache
 
 USER hms
 

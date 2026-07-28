@@ -75,14 +75,13 @@ nltk_data/
 *.swo
 .DS_Store
 Thumbs.db
-.env
 .sesskey
-*.log
-*.pyc
-__pycache__/
-.venv/
-venv/
-node_modules/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
+
+# Docker persistent volumes (local runtime data)
+volumes/
+
+# Evaluation datasets (downloaded, not part of source)
+longmemeval_data/
+
+# Local test scripts (not for upstream)
+scripts/test_lamar_longmemeval.py
