@@ -6,7 +6,7 @@ import logging
 import uuid
 from contextlib import asynccontextmanager
 from types import SimpleNamespace
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from hms_api.engine import embedding_fingerprint as fingerprint_module
@@ -24,13 +24,20 @@ from hms_api.engine.ingestion import (
     RetainPublicationAborted,
 )
 from hms_api.engine.ingestion import service as service_module
-from hms_api.engine.ingestion.domain import DocumentChangeKind
+from hms_api.engine.ingestion.domain import ChunkPlan, DocumentChangeKind
 from hms_api.engine.ingestion.persistence import writer as writer_module
 from hms_api.engine.ingestion.persistence.operation_fence import OperationActivityFence
 from hms_api.engine.ingestion.persistence.unit_of_work import (
+    AtomicRetainUnitOfWork,
+    AtomicWriteOwnershipLost,
+    AtomicWriteStep,
     CoreGraphWrite,
+    CoreWriteResult,
     FirstFullWriteWindow,
+    LaterFullWriteWindow,
     MetadataOnlyWriteRequest,
+    OwnershipDisposition,
+    PostCommitStatus,
     RetainUnitOfWork,
     WriteWindowRequest,
 )
@@ -1089,6 +1096,476 @@ async def test_inactive_operation_rolls_back_before_fingerprint_or_any_core_writ
     assert events == ["begin", "operation", "rollback"]
     fingerprint.assert_not_awaited()
     callback.assert_not_awaited()
+
+
+class _AtomicStateConnection(_Connection):
+    def __init__(self, events: list[str]) -> None:
+        super().__init__(events)
+        self.state = {"document": "old-version"}
+
+    def transaction(self):
+        connection = self
+
+        class _Transaction:
+            async def __aenter__(self):
+                connection.in_transaction = True
+                connection._events.append("begin")
+                self.snapshot = dict(connection.state)
+                return connection
+
+            async def __aexit__(self, exc_type, _exc, _traceback):
+                if exc_type is not None:
+                    connection.state = self.snapshot
+                    connection._events.append("rollback")
+                else:
+                    connection._events.append("commit")
+                connection.in_transaction = False
+                return False
+
+        return _Transaction()
+
+
+class _AtomicStateAdapter:
+    def __init__(
+        self,
+        events: list[str],
+        *,
+        name: str,
+        value: str,
+        core: CoreWriteResult,
+        failure: Exception | None = None,
+    ) -> None:
+        self._events = events
+        self._name = name
+        self._value = value
+        self._core = core
+        self._failure = failure
+
+    async def write_core(self, connection, _request) -> CoreWriteResult:
+        assert connection.in_transaction
+        self._events.append(f"write:{self._name}")
+        connection.state["document"] = self._value
+        if self._failure is not None:
+            raise self._failure
+        return self._core
+
+    async def flush_entity_stats(self) -> None:
+        self._events.append(f"flush:{self._name}")
+
+    async def write_display_entity_links(self, _request, _phase3_payload) -> None:
+        self._events.append(f"display:{self._name}")
+
+
+def _atomic_window_request(*, first: bool) -> WriteWindowRequest:
+    document_window = (
+        FirstFullWriteWindow(
+            combined_content="replacement",
+            continuation_content_hash="retain-inflight:test",
+        )
+        if first
+        else LaterFullWriteWindow(
+            expected_content_hash="retain-inflight:test",
+            completed_content_hash="replacement-hash",
+        )
+    )
+    return WriteWindowRequest(
+        bank_id="bank",
+        document_id="doc",
+        document_window=document_window,
+        contents=(RetainContent(content="replacement"),),
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "later_failure",
+    [
+        RetainOperationInactiveError("operation cancelled"),
+        RuntimeError("later window failed"),
+    ],
+    ids=["cancellation", "error"],
+)
+async def test_atomic_full_windows_restore_old_version_on_later_failure(later_failure) -> None:
+    events: list[str] = []
+    connection = _AtomicStateConnection(events)
+    first = _AtomicStateAdapter(
+        events,
+        name="first",
+        value="partial-replacement",
+        core=CoreWriteResult(ownership=OwnershipDisposition.OWNED),
+    )
+    later = _AtomicStateAdapter(
+        events,
+        name="later",
+        value="incomplete-replacement",
+        core=CoreWriteResult(ownership=OwnershipDisposition.OWNED),
+        failure=later_failure,
+    )
+    callback = AsyncMock()
+
+    @asynccontextmanager
+    async def connection_scope():
+        yield connection
+
+    unit_of_work = AtomicRetainUnitOfWork(connection_scope=connection_scope)
+    with pytest.raises(type(later_failure), match=str(later_failure)):
+        await unit_of_work.execute(
+            (
+                AtomicWriteStep(first, _atomic_window_request(first=True)),
+                AtomicWriteStep(later, _atomic_window_request(first=False)),
+            ),
+            commit_callback=callback,
+        )
+
+    assert connection.state == {"document": "old-version"}
+    assert events == ["begin", "write:first", "write:later", "rollback"]
+    callback.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_existing_two_window_full_service_rolls_back_when_later_fence_observes_cancellation(
+    monkeypatch,
+) -> None:
+    events: list[str] = []
+    connection = _AtomicStateConnection(events)
+    prepared_indices: list[tuple[int, ...]] = []
+    ownership_fresh_values: list[bool] = []
+    checkpoint = AsyncMock()
+    outbox = AsyncMock()
+
+    class CancellingFence:
+        calls = 0
+
+        async def assert_active(self, _connection, *, bank_id) -> None:
+            assert bank_id == "bank"
+            self.calls += 1
+            events.append(f"fence:{self.calls}")
+            if self.calls == 2:
+                raise RetainOperationInactiveError("operation cancelled after first window")
+
+    fence = CancellingFence()
+
+    class ServiceWriter:
+        def __init__(self, *, operation_activity, **_kwargs) -> None:
+            self._operation_activity = operation_activity
+
+        async def write_core(self, write_connection, request) -> CoreWriteResult:
+            await self._operation_activity.assert_active(
+                write_connection,
+                bank_id=request.bank_id,
+            )
+            assert write_connection.in_transaction
+            events.append("write:first" if isinstance(request.document_window, FirstFullWriteWindow) else "write:later")
+            write_connection.state["document"] = (
+                "partial-replacement"
+                if isinstance(request.document_window, FirstFullWriteWindow)
+                else "complete-replacement"
+            )
+            return CoreWriteResult(ownership=OwnershipDisposition.OWNED)
+
+        async def flush_entity_stats(self) -> None:
+            raise AssertionError("post-commit work must not run after rollback")
+
+        async def write_display_entity_links(self, _request, _phase3_payload) -> None:
+            raise AssertionError("post-commit work must not run after rollback")
+
+    backend_adapters = SimpleNamespace(
+        document_ownership=lambda *, schema, fresh: ownership_fresh_values.append(fresh) or object(),
+        operation_activity_fence=lambda _operation_id, *, schema: fence,
+    )
+
+    @asynccontextmanager
+    async def connection_scope(_pool):
+        yield connection
+
+    pipeline = service_module.RetainPipelineService()
+
+    async def extract(
+        _invocation,
+        _execution,
+        _plan,
+        selected_chunks,
+        **_kwargs,
+    ):
+        prepared_indices.append(tuple(chunk.global_index for chunk in selected_chunks))
+        return (), TokenUsage()
+
+    async def build_request(
+        _invocation,
+        _execution,
+        _plan,
+        _selected_chunks,
+        _records,
+        *,
+        is_first,
+        **_kwargs,
+    ):
+        return _atomic_window_request(first=is_first)
+
+    monkeypatch.setattr(pipeline, "_extract_and_project_selected_chunks", extract)
+    monkeypatch.setattr(pipeline, "_build_full_window_request", build_request)
+    monkeypatch.setattr(
+        pipeline,
+        "_compose_checkpoint_callback",
+        lambda *_args, **_kwargs: checkpoint,
+    )
+    monkeypatch.setattr(service_module, "_backend_adapters", lambda _execution: backend_adapters)
+    monkeypatch.setattr(service_module, "PersistenceWriter", ServiceWriter)
+    monkeypatch.setattr(service_module, "acquire_with_retry", connection_scope)
+
+    chunks = (
+        ChunkPlan(
+            chunk_key="chunk-0",
+            source_index=0,
+            global_index=0,
+            local_index=0,
+            text="first",
+            content_hash="hash-0",
+        ),
+        ChunkPlan(
+            chunk_key="chunk-1",
+            source_index=0,
+            global_index=1,
+            local_index=1,
+            text="second",
+            content_hash="hash-1",
+        ),
+    )
+    plan = SimpleNamespace(
+        chunks=chunks,
+        combined_content="replacement",
+        existing=SimpleNamespace(content_hash="old-hash"),
+        intent=SimpleNamespace(
+            document_id="doc",
+            items=(SimpleNamespace(source_index=0),),
+        ),
+    )
+    invocation = RetainInvocation(
+        bank_id="bank",
+        raw_contents=(),
+        request_context=object(),
+        operation_id=str(uuid.uuid4()),
+    )
+    execution = RetainExecutionContext(
+        pool=SimpleNamespace(backend_type="postgresql"),
+        embeddings_model=_embedding_model(),
+        llm_config=object(),
+        entity_resolver=SimpleNamespace(discard_pending_stats=lambda: events.append("discard")),
+        format_date_fn=lambda *_args, **_kwargs: "",
+        resolved_config=_config(retain_chunk_batch_size=1),
+    )
+
+    with pytest.raises(
+        RetainOperationInactiveError,
+        match="cancelled after first window",
+    ):
+        await pipeline._execute_full_document_windows(
+            invocation,
+            execution,
+            plan,
+            agent_name="agent",
+            outbox_callback=outbox,
+        )
+
+    assert prepared_indices == [(0,), (1,)]
+    assert ownership_fresh_values == [False, False]
+    assert connection.state == {"document": "old-version"}
+    assert events == [
+        "discard",
+        "begin",
+        "fence:1",
+        "write:first",
+        "fence:2",
+        "rollback",
+        "discard",
+    ]
+    checkpoint.assert_not_awaited()
+    outbox.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_atomic_full_windows_restore_old_version_on_later_ownership_loss() -> None:
+    events: list[str] = []
+    connection = _AtomicStateConnection(events)
+    first = _AtomicStateAdapter(
+        events,
+        name="first",
+        value="partial-replacement",
+        core=CoreWriteResult(ownership=OwnershipDisposition.OWNED),
+    )
+    later = _AtomicStateAdapter(
+        events,
+        name="later",
+        value="incomplete-replacement",
+        core=CoreWriteResult(ownership=OwnershipDisposition.LOST),
+    )
+    validation = Mock()
+    callback = AsyncMock()
+
+    @asynccontextmanager
+    async def connection_scope():
+        yield connection
+
+    with pytest.raises(AtomicWriteOwnershipLost, match="window 1"):
+        await AtomicRetainUnitOfWork(connection_scope=connection_scope).execute(
+            (
+                AtomicWriteStep(first, _atomic_window_request(first=True)),
+                AtomicWriteStep(later, _atomic_window_request(first=False)),
+            ),
+            validation_callback=validation,
+            commit_callback=callback,
+        )
+
+    assert connection.state == {"document": "old-version"}
+    assert events == ["begin", "write:first", "write:later", "rollback"]
+    validation.assert_not_called()
+    callback.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_atomic_full_windows_restore_old_version_on_invalid_global_result_mapping() -> None:
+    events: list[str] = []
+    connection = _AtomicStateConnection(events)
+    first_core = CoreWriteResult(
+        ownership=OwnershipDisposition.OWNED,
+        unit_ids_by_content=(("duplicate-unit",),),
+        unit_ids_by_fact_key=(("fact-first", "duplicate-unit"),),
+    )
+    later_core = CoreWriteResult(
+        ownership=OwnershipDisposition.OWNED,
+        unit_ids_by_content=(("duplicate-unit",),),
+        unit_ids_by_fact_key=(("fact-later", "duplicate-unit"),),
+    )
+    first = _AtomicStateAdapter(
+        events,
+        name="first",
+        value="partial-replacement",
+        core=first_core,
+    )
+    later = _AtomicStateAdapter(
+        events,
+        name="later",
+        value="incomplete-replacement",
+        core=later_core,
+    )
+    callback = AsyncMock()
+
+    @asynccontextmanager
+    async def connection_scope():
+        yield connection
+
+    def validate(cores) -> None:
+        assert connection.in_transaction
+        events.append("validate")
+        service_module._validate_atomic_full_publication(
+            (0, 1),
+            (
+                (SimpleNamespace(fact_key="fact-first", source_index=0),),
+                (SimpleNamespace(fact_key="fact-later", source_index=1),),
+            ),
+            cores,
+        )
+
+    with pytest.raises(
+        service_module.RetainResultMappingError,
+        match="duplicate unit IDs across windows",
+    ):
+        await AtomicRetainUnitOfWork(connection_scope=connection_scope).execute(
+            (
+                AtomicWriteStep(first, _atomic_window_request(first=True)),
+                AtomicWriteStep(later, _atomic_window_request(first=False)),
+            ),
+            validation_callback=validate,
+            commit_callback=callback,
+        )
+
+    assert connection.state == {"document": "old-version"}
+    assert events == ["begin", "write:first", "write:later", "validate", "rollback"]
+    callback.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_atomic_full_windows_publish_together_and_finalize_once() -> None:
+    events: list[str] = []
+    connection = _AtomicStateConnection(events)
+    first_core = CoreWriteResult(
+        ownership=OwnershipDisposition.OWNED,
+        unit_ids_by_content=(("unit-first",),),
+        unit_ids_by_fact_key=(("fact-first", "unit-first"),),
+        phase3_payload="phase-first",
+        post_commit_required=True,
+    )
+    later_core = CoreWriteResult(
+        ownership=OwnershipDisposition.OWNED,
+        unit_ids_by_content=(("unit-later",),),
+        unit_ids_by_fact_key=(("fact-later", "unit-later"),),
+        phase3_payload="phase-later",
+        post_commit_required=True,
+    )
+    first = _AtomicStateAdapter(
+        events,
+        name="first",
+        value="partial-replacement",
+        core=first_core,
+    )
+    later = _AtomicStateAdapter(
+        events,
+        name="later",
+        value="complete-replacement",
+        core=later_core,
+    )
+
+    @asynccontextmanager
+    async def connection_scope():
+        yield connection
+
+    async def finalize(commit_connection, cores) -> None:
+        assert commit_connection is connection
+        assert commit_connection.in_transaction
+        assert commit_connection.state == {"document": "complete-replacement"}
+        assert cores == (first_core, later_core)
+        events.append("finalize")
+
+    def validate(cores) -> None:
+        assert connection.in_transaction
+        assert cores == (first_core, later_core)
+        publication = service_module._validate_atomic_full_publication(
+            (0,),
+            (
+                (SimpleNamespace(fact_key="fact-first", source_index=0),),
+                (SimpleNamespace(fact_key="fact-later", source_index=0),),
+            ),
+            cores,
+        )
+        assert publication.unit_ids_by_content == (("unit-first", "unit-later"),)
+        assert publication.committed_unit_ids == ("unit-first", "unit-later")
+        events.append("validate")
+
+    results = await AtomicRetainUnitOfWork(connection_scope=connection_scope).execute(
+        (
+            AtomicWriteStep(first, _atomic_window_request(first=True)),
+            AtomicWriteStep(later, _atomic_window_request(first=False)),
+        ),
+        validation_callback=validate,
+        commit_callback=finalize,
+    )
+
+    assert connection.state == {"document": "complete-replacement"}
+    assert [result.post_commit.status for result in results] == [
+        PostCommitStatus.COMPLETED,
+        PostCommitStatus.COMPLETED,
+    ]
+    assert events == [
+        "begin",
+        "write:first",
+        "write:later",
+        "validate",
+        "finalize",
+        "commit",
+        "flush:first",
+        "display:first",
+        "display:later",
+    ]
 
 
 @pytest.mark.asyncio

@@ -7,7 +7,7 @@ this unit-of-work wrapper owns the transaction and post-commit failure boundary.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Awaitable, Callable, Mapping, Sequence
 from contextlib import AbstractAsyncContextManager
 from dataclasses import dataclass, field
 from enum import StrEnum
@@ -562,6 +562,127 @@ class PersistenceAdapter(Protocol):
 
 
 ConnectionScope: TypeAlias = Callable[[], AbstractAsyncContextManager[Any]]
+AtomicCommitCallback: TypeAlias = Callable[[Any, tuple[CoreWriteResult, ...]], Awaitable[None]]
+AtomicValidationCallback: TypeAlias = Callable[[tuple[CoreWriteResult, ...]], None]
+
+
+@dataclass(frozen=True, slots=True)
+class AtomicWriteStep:
+    """One prepared core write and the adapter that owns its backend semantics."""
+
+    adapter: PersistenceAdapter
+    request: RetainWriteRequest
+
+
+class AtomicWriteOwnershipLost(RuntimeError):
+    """A prepared write lost ownership before the atomic batch could publish."""
+
+    def __init__(self, window_index: int) -> None:
+        self.window_index = window_index
+        super().__init__(f"Atomic Retain write lost ownership at window {window_index}")
+
+
+class AtomicRetainUnitOfWork:
+    """Publish prepared Retain windows in one transaction.
+
+    Core writes are applied in order on one connection. Any exception, inactive
+    operation fence, ownership loss, checkpoint failure, outbox failure, or
+    commit failure rolls every window back. Resolver statistics are flushed
+    once after commit, followed by independent best-effort display-link work
+    for each fact-bearing window.
+    """
+
+    def __init__(self, *, connection_scope: ConnectionScope) -> None:
+        if not callable(connection_scope):
+            raise TypeError("connection_scope must be callable")
+        self._connection_scope = connection_scope
+
+    async def execute(
+        self,
+        steps: Sequence[AtomicWriteStep],
+        *,
+        validation_callback: AtomicValidationCallback | None = None,
+        commit_callback: AtomicCommitCallback | None = None,
+    ) -> tuple[UnitOfWorkResult, ...]:
+        prepared = tuple(steps)
+        if not prepared:
+            raise ValueError("Atomic Retain execution requires at least one write step")
+        if any(not isinstance(step, AtomicWriteStep) for step in prepared):
+            raise TypeError("steps must contain only AtomicWriteStep values")
+        if validation_callback is not None and not callable(validation_callback):
+            raise TypeError("validation_callback must be callable or None")
+        if commit_callback is not None and not callable(commit_callback):
+            raise TypeError("commit_callback must be callable or None")
+
+        cores: list[CoreWriteResult] = []
+        async with self._connection_scope() as connection:
+            async with connection.transaction():
+                for window_index, step in enumerate(prepared):
+                    core = await step.adapter.write_core(connection, step.request)
+                    if core.ownership is OwnershipDisposition.LOST:
+                        raise AtomicWriteOwnershipLost(window_index)
+                    cores.append(core)
+                immutable_cores = tuple(cores)
+                if validation_callback is not None:
+                    validation_callback(immutable_cores)
+                if commit_callback is not None:
+                    await commit_callback(connection, immutable_cores)
+
+        return await self._post_commit(prepared, tuple(cores))
+
+    @staticmethod
+    async def _post_commit(
+        steps: tuple[AtomicWriteStep, ...],
+        cores: tuple[CoreWriteResult, ...],
+    ) -> tuple[UnitOfWorkResult, ...]:
+        fact_window_indices = tuple(index for index, core in enumerate(cores) if core.post_commit_required)
+        reports: list[PostCommitReport | None] = [
+            (
+                None
+                if core.post_commit_required
+                else PostCommitReport(
+                    status=PostCommitStatus.SKIPPED,
+                    skip_reason=PostCommitSkipReason.NO_FACTS,
+                )
+            )
+            for core in cores
+        ]
+
+        if fact_window_indices:
+            try:
+                await steps[fact_window_indices[0]].adapter.flush_entity_stats()
+            except Exception as exc:
+                failure = PostCommitFailure(stage=PostCommitStage.ENTITY_STATS, exception=exc)
+                for index in fact_window_indices:
+                    reports[index] = PostCommitReport(
+                        status=PostCommitStatus.FAILED,
+                        failure=failure,
+                    )
+            else:
+                for index in fact_window_indices:
+                    try:
+                        await steps[index].adapter.write_display_entity_links(
+                            steps[index].request,
+                            cores[index].phase3_payload,
+                        )
+                    except Exception as exc:
+                        reports[index] = PostCommitReport(
+                            status=PostCommitStatus.FAILED,
+                            failure=PostCommitFailure(
+                                stage=PostCommitStage.DISPLAY_ENTITY_LINKS,
+                                exception=exc,
+                            ),
+                        )
+                    else:
+                        reports[index] = PostCommitReport(status=PostCommitStatus.COMPLETED)
+
+        if any(report is None for report in reports):  # pragma: no cover - exhaustive classification invariant
+            raise AssertionError("Atomic Retain post-commit report is incomplete")
+        return tuple(
+            UnitOfWorkResult(core=core, post_commit=report)
+            for core, report in zip(cores, reports, strict=True)
+            if report is not None
+        )
 
 
 class RetainUnitOfWork:

@@ -905,7 +905,7 @@ class OracleConnection(DatabaseConnection):
         cursor.close()
         try:
             yield self
-        except Exception:
+        except BaseException:
             cursor = self._conn.cursor()
             await cursor.execute(f"ROLLBACK TO SAVEPOINT {sp_name}")
             cursor.close()
@@ -1319,7 +1319,7 @@ class OracleBackend(DatabaseBackend):
             # Auto-commit on clean exit (asyncpg uses autocommit by default;
             # oracledb does not, so we must commit explicitly)
             await conn.commit()
-        except Exception:
+        except BaseException:
             await conn.rollback()
             raise
         finally:
@@ -1333,7 +1333,7 @@ class OracleBackend(DatabaseBackend):
             await self._set_session_schema(conn)
             yield OracleConnection(conn)
             await conn.commit()
-        except Exception:
+        except BaseException:
             await conn.rollback()
             raise
         finally:

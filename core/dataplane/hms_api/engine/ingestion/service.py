@@ -60,8 +60,12 @@ from .normalization import normalize_contents
 from .persistence.backend import RetainBackendAdapters, retain_backend_adapters
 from .persistence.models import CommittedUnitBinding, ExistingDocument, OperationCheckpoint
 from .persistence.unit_of_work import (
+    AtomicRetainUnitOfWork,
+    AtomicWriteOwnershipLost,
+    AtomicWriteStep,
     ChunkWrite,
     CoreGraphWrite,
+    CoreWriteResult,
     DeltaWriteRequest,
     ExistingChunkWrite,
     FactWrite,
@@ -207,6 +211,73 @@ class _ProjectedChunkOutcome:
     usage: TokenUsage
     extraction_seconds: float
     embedding_seconds: float
+
+
+@dataclass(frozen=True, slots=True)
+class _AtomicFullPublication:
+    unit_ids_by_content: tuple[tuple[str, ...], ...]
+    committed_unit_ids: tuple[str, ...]
+
+
+def _validate_atomic_full_publication(
+    document_source_indices: Sequence[int | None],
+    prepared_records: Sequence[Sequence[MemoryRecord]],
+    cores: Sequence[CoreWriteResult],
+) -> _AtomicFullPublication:
+    """Validate every persisted FULL result before checkpointing or commit."""
+
+    record_windows = tuple(tuple(records) for records in prepared_records)
+    core_results = tuple(cores)
+    if len(core_results) != len(record_windows):
+        raise RetainResultMappingError(
+            "Atomic FULL publication returned a different number of write results than prepared windows"
+        )
+
+    window_results: list[tuple[Sequence[MemoryRecord], Sequence[tuple[str, str]]]] = []
+    seen_bucket_unit_ids: set[str] = set()
+    for window_index, (records, core) in enumerate(zip(record_windows, core_results, strict=True)):
+        bindings = tuple(core.unit_ids_by_fact_key)
+        bucket_unit_ids = tuple(unit_id for bucket in core.unit_ids_by_content for unit_id in bucket)
+        binding_unit_ids = tuple(unit_id for _fact_key, unit_id in bindings)
+        if any(not isinstance(unit_id, str) or not unit_id for unit_id in binding_unit_ids):
+            raise RetainResultMappingError(
+                f"Atomic FULL window {window_index} returned an invalid fact-key binding unit ID"
+            )
+        if any(not isinstance(unit_id, str) or not unit_id for unit_id in bucket_unit_ids):
+            raise RetainResultMappingError(
+                f"Atomic FULL window {window_index} returned an invalid content-bucket unit ID"
+            )
+        if len(bucket_unit_ids) != len(set(bucket_unit_ids)):
+            raise RetainResultMappingError(
+                f"Atomic FULL window {window_index} returned duplicate content-bucket unit IDs"
+            )
+        duplicate_across_windows = seen_bucket_unit_ids.intersection(bucket_unit_ids)
+        if duplicate_across_windows:
+            raise RetainResultMappingError("Atomic FULL publication returned duplicate unit IDs across windows")
+        seen_bucket_unit_ids.update(bucket_unit_ids)
+        if len(bucket_unit_ids) != len(binding_unit_ids) or set(bucket_unit_ids) != set(binding_unit_ids):
+            raise RetainResultMappingError(
+                f"Atomic FULL window {window_index} returned inconsistent content and fact-key unit IDs"
+            )
+        window_results.append((records, bindings))
+
+    sources = tuple(document_source_indices)
+    try:
+        public_buckets = merge_window_unit_ids(sources, tuple(window_results))
+    except (TypeError, ValueError) as exc:
+        raise RetainResultMappingError("Atomic FULL publication returned an invalid fact-key mapping") from exc
+
+    committed_unit_ids: list[str] = []
+    for records, bindings in window_results:
+        units_by_key = dict(bindings)
+        committed_unit_ids.extend(units_by_key[record.fact_key] for record in records)
+
+    public_iterator = iter(public_buckets)
+    unit_ids_by_content = tuple(() if source_index is None else next(public_iterator) for source_index in sources)
+    return _AtomicFullPublication(
+        unit_ids_by_content=unit_ids_by_content,
+        committed_unit_ids=tuple(committed_unit_ids),
+    )
 
 
 def _projection_pipeline_concurrency(config: Any) -> int:
@@ -812,7 +883,7 @@ class RetainPipelineService:
         agent_name: str,
         outbox_callback: Any,
     ) -> _DocumentOutcome:
-        """Execute ordered, memory-bounded FULL windows with one finalizer."""
+        """Prepare ordered FULL windows, then publish them atomically."""
 
         windows = plan_full_write_windows(
             plan.chunks,
@@ -820,52 +891,25 @@ class RetainPipelineService:
         )
         final_content_hash = compute_document_hash(plan.combined_content)
         inflight_content_hash = f"{_INFLIGHT_CONTENT_HASH_PREFIX}{uuid.uuid4()}" if len(windows) > 1 else None
-        window_results: list[tuple[Sequence[MemoryRecord], Sequence[tuple[str, str]]]] = []
-        committed_unit_ids: list[str] = []
+        prepared_steps: list[AtomicWriteStep] = []
+        prepared_records: list[tuple[MemoryRecord, ...]] = []
         total_usage = TokenUsage()
 
-        for window in windows:
-            records, extraction_usage = await self._extract_and_project_selected_chunks(
-                invocation,
-                execution,
-                plan,
-                window.chunks,
-                agent_name=agent_name,
-                fact_position_offset=(window.global_indices[0] if window.global_indices else 0),
-            )
-            total_usage = total_usage + extraction_usage
-            checkpoint_callback = None
-            if window.is_last:
-                checkpoint_callback = self._compose_checkpoint_callback(
+        # Phase 1 may keep task-local resolver statistics. Reset once before
+        # preparing the complete atomic publication, then let every window
+        # contribute to the same post-commit flush.
+        execution.entity_resolver.discard_pending_stats()
+        try:
+            for window in windows:
+                records, extraction_usage = await self._extract_and_project_selected_chunks(
                     invocation,
                     execution,
                     plan,
-                    expected_unit_ids_count=len(committed_unit_ids) + len(records),
-                    prior_unit_ids=tuple(committed_unit_ids),
+                    window.chunks,
+                    agent_name=agent_name,
+                    fact_position_offset=(window.global_indices[0] if window.global_indices else 0),
                 )
-
-            ownership = _backend_adapters(execution).document_ownership(
-                schema=execution.schema,
-                fresh=window.is_first and plan.existing is None,
-            )
-            unit_of_work = RetainUnitOfWork(
-                connection_scope=lambda: acquire_with_retry(execution.pool),
-                adapter=PersistenceWriter(
-                    pool=execution.pool,
-                    embeddings_model=execution.embeddings_model,
-                    entity_resolver=execution.entity_resolver,
-                    config=execution.resolved_config,
-                    ownership=ownership,
-                    operation_activity=_backend_adapters(execution).operation_activity_fence(
-                        invocation.operation_id,
-                        schema=execution.schema,
-                    ),
-                    schema=execution.schema,
-                    sanitize_log_identifiers=invocation.sanitize_log_identifiers,
-                ),
-            )
-
-            try:
+                total_usage = total_usage + extraction_usage
                 request = await self._build_full_window_request(
                     invocation,
                     execution,
@@ -876,53 +920,106 @@ class RetainPipelineService:
                     is_last=window.is_last,
                     inflight_content_hash=inflight_content_hash,
                     final_content_hash=final_content_hash,
-                    checkpoint_callback=checkpoint_callback,
-                    outbox_callback=(outbox_callback if window.is_last else None),
+                    reset_pending_stats=False,
                 )
-                async with _database_budget(execution.db_semaphore):
-                    result = await unit_of_work.execute(request)
-            except FreshDocumentOwnershipConflict as exc:
-                execution.entity_resolver.discard_pending_stats()
-                raise RetainOwnershipLostError(
-                    "Retain lost fresh-document ownership for "
-                    f"{_log_identifier(invocation, plan.intent.document_id)!r}; retry"
-                ) from exc
-            except BaseException:
-                execution.entity_resolver.discard_pending_stats()
-                raise
 
-            if result.core.ownership is OwnershipDisposition.LOST:
-                execution.entity_resolver.discard_pending_stats()
+                ownership = _backend_adapters(execution).document_ownership(
+                    schema=execution.schema,
+                    fresh=window.is_first and plan.existing is None,
+                )
+                prepared_steps.append(
+                    AtomicWriteStep(
+                        adapter=PersistenceWriter(
+                            pool=execution.pool,
+                            embeddings_model=execution.embeddings_model,
+                            entity_resolver=execution.entity_resolver,
+                            config=execution.resolved_config,
+                            ownership=ownership,
+                            operation_activity=_backend_adapters(execution).operation_activity_fence(
+                                invocation.operation_id,
+                                schema=execution.schema,
+                            ),
+                            schema=execution.schema,
+                            sanitize_log_identifiers=invocation.sanitize_log_identifiers,
+                        ),
+                        request=request,
+                    )
+                )
+                prepared_records.append(tuple(records))
+
+            checkpoint_callback = self._compose_checkpoint_callback(
+                invocation,
+                execution,
+                plan,
+                expected_unit_ids_count=sum(len(records) for records in prepared_records),
+            )
+            validated_publication: _AtomicFullPublication | None = None
+
+            def validate_publication(cores: tuple[CoreWriteResult, ...]) -> None:
+                nonlocal validated_publication
+                validated_publication = _validate_atomic_full_publication(
+                    tuple(item.source_index for item in plan.intent.items),
+                    prepared_records,
+                    cores,
+                )
+
+            async def finalize_publication(
+                connection: Any,
+                _cores: tuple[CoreWriteResult, ...],
+            ) -> None:
+                if validated_publication is None:  # pragma: no cover - UoW callback order invariant
+                    raise AssertionError("Atomic FULL publication was not validated")
+                if checkpoint_callback is not None:
+                    await checkpoint_callback(
+                        connection,
+                        (validated_publication.committed_unit_ids,),
+                    )
+                if outbox_callback is not None:
+                    await outbox_callback(connection)
+
+            atomic_unit_of_work = AtomicRetainUnitOfWork(
+                connection_scope=lambda: acquire_with_retry(execution.pool),
+            )
+            async with _database_budget(execution.db_semaphore):
+                results = await atomic_unit_of_work.execute(
+                    prepared_steps,
+                    validation_callback=validate_publication,
+                    commit_callback=finalize_publication,
+                )
+        except FreshDocumentOwnershipConflict as exc:
+            execution.entity_resolver.discard_pending_stats()
+            raise RetainOwnershipLostError(
+                "Retain lost fresh-document ownership for "
+                f"{_log_identifier(invocation, plan.intent.document_id)!r}; retry"
+            ) from exc
+        except AtomicWriteOwnershipLost as exc:
+            execution.entity_resolver.discard_pending_stats()
+            raise RetainOwnershipLostError(
+                "Retain lost document ownership for "
+                f"{_log_identifier(invocation, plan.intent.document_id)!r} "
+                f"at FULL window {exc.window_index}; retry"
+            ) from exc
+        except BaseException:
+            execution.entity_resolver.discard_pending_stats()
+            raise
+
+        if validated_publication is None:  # pragma: no cover - UoW callback order invariant
+            raise AssertionError("Atomic FULL publication committed without validation")
+        for window, result in zip(windows, results, strict=True):
+            if result.core.ownership is OwnershipDisposition.LOST:  # pragma: no cover - atomic UoW raises
                 raise RetainOwnershipLostError(
                     "Retain lost document ownership for "
                     f"{_log_identifier(invocation, plan.intent.document_id)!r} "
                     f"at FULL window {window.window_index}; retry"
                 )
             self._log_post_commit_failure(invocation, plan, result)
-            bindings = result.core.unit_ids_by_fact_key
-            window_results.append((records, bindings))
-            units_by_key = dict(bindings)
-            if len(units_by_key) != len(bindings):
-                raise RetainResultMappingError("FULL window returned duplicate fact-key bindings")
-            try:
-                committed_unit_ids.extend(units_by_key[record.fact_key] for record in records)
-            except KeyError as exc:
-                raise RetainResultMappingError("FULL window returned an incomplete fact-key binding") from exc
 
-        public_buckets = merge_window_unit_ids(
-            tuple(item.source_index for item in plan.intent.items),
-            tuple(window_results),
-        )
-        public_iterator = iter(public_buckets)
-        unit_ids_by_content = tuple(
-            () if item.source_index is None else next(public_iterator) for item in plan.intent.items
-        )
-        if committed_unit_ids:
+        if validated_publication.committed_unit_ids:
             final_ann_completed = await self._run_full_semantic_ann_best_effort(
                 invocation,
                 execution,
                 plan,
-                committed_unit_ids,
+                validated_publication.committed_unit_ids,
             )
             if final_ann_completed:
                 await self._record_final_ann_completed_best_effort(
@@ -931,7 +1028,7 @@ class RetainPipelineService:
                     plan.intent.document_id,
                 )
         return _DocumentOutcome(
-            unit_ids_by_content=unit_ids_by_content,
+            unit_ids_by_content=validated_publication.unit_ids_by_content,
             usage=total_usage,
             processed_tokens=None,
         )
@@ -1383,6 +1480,7 @@ class RetainPipelineService:
         final_content_hash: str,
         checkpoint_callback: Any = None,
         outbox_callback: Any = None,
+        reset_pending_stats: bool = True,
     ) -> WriteWindowRequest:
         retain_params, document_tags = retain_document_metadata(plan.intent.items)
         payload = await self._build_fact_payload(
@@ -1391,6 +1489,7 @@ class RetainPipelineService:
             plan,
             selected_chunks,
             records,
+            reset_pending_stats=reset_pending_stats,
         )
         if is_first:
             document_window = FirstFullWriteWindow(
@@ -1502,6 +1601,8 @@ class RetainPipelineService:
         plan: _DocumentExecutionPlan,
         selected_chunks: Sequence[ChunkPlan],
         records: Sequence[MemoryRecord],
+        *,
+        reset_pending_stats: bool = True,
     ) -> _FactPayload:
         storage_contents = tuple(content_to_storage(item) for item in plan.intent.items)
         positions = content_positions(plan.intent.items)
@@ -1534,7 +1635,8 @@ class RetainPipelineService:
 
         phase1 = None
         if processed_facts:
-            execution.entity_resolver.discard_pending_stats()
+            if reset_pending_stats:
+                execution.entity_resolver.discard_pending_stats()
             phase1_kwargs = {
                 "skip_semantic_ann": (
                     plan.change.kind is DocumentChangeKind.FULL
