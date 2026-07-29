@@ -34,6 +34,8 @@ from hms_api.config import DEFAULT_LLM_MODEL, PROVIDER_DEFAULT_MODELS, get_confi
 
 # Configure logging from environment variable
 get_config().configure_logging()
+from hms_api.engine.ingestion.adapters.storage_records import compute_document_hash, retain_document_metadata
+from hms_api.engine.ingestion.normalization import normalize_content_item
 from hms_api.engine.memory_engine import Budget
 from hms_api.engine.schema import fq_table
 from hms_api.models import RequestContext
@@ -152,12 +154,20 @@ class IngestionIntegrityError(RuntimeError):
     def __init__(self, report: Dict[str, Any]):
         self.report = report
         item_id = report.get("item_id", "unknown")
-        missing = report.get("missing_documents", [])
-        empty = report.get("documents_without_chunks", [])
-        super().__init__(
-            f"Durable ingestion audit failed for item {item_id!r}: "
-            f"missing_documents={missing}, documents_without_chunks={empty}"
+        failure_fields = (
+            "missing_documents",
+            "documents_without_chunks",
+            "unexpected_documents",
+            "inflight_documents",
+            "content_hash_mismatches",
+            "context_mismatches",
+            "event_date_mismatches",
+            "unverifiable_documents",
+            "invalid_retain_params",
+            "failed_banks",
         )
+        failures = {field: report.get(field) for field in failure_fields if report.get(field)}
+        super().__init__(f"Durable ingestion audit failed for item {item_id!r}: {failures}")
 
 
 def _write_json_atomic(payload: Dict[str, Any], output_path: Path) -> None:
@@ -261,13 +271,54 @@ def get_model_config() -> Dict[str, Dict[str, str]]:
     }
 
 
-def print_model_config():
-    """Print the model configuration to console."""
+def get_artifact_model_config(
+    *,
+    retain_executed: bool = True,
+    retain_execution: Optional[str] = None,
+) -> Dict[str, Dict[str, str]]:
+    """Return model identities that truthfully describe stages executed in this run.
+
+    A reused memory bank predates the current benchmark process. Its Retain
+    model identity cannot be reconstructed from durable document rows, so the
+    current Retain environment must not be presented as the bank creator.
+    """
+
+    execution = retain_execution or ("executed" if retain_executed else "not_executed")
+    if execution not in {"executed", "not_executed", "partial_or_skipped"}:
+        raise ValueError(f"Unsupported Retain execution mode: {execution}")
+
     config = get_model_config()
+    if execution == "not_executed":
+        config["retain"] = {
+            "execution": "not_executed",
+            "bank_creator_identity": "unverifiable",
+        }
+    elif execution == "partial_or_skipped":
+        config["retain"] = {
+            "execution": "partial_or_skipped",
+            "bank_creator_identity": "mixed_or_unverifiable",
+        }
+    return config
+
+
+def format_retain_model_config(config: Mapping[str, str]) -> str:
+    """Render an executed, reused, or mixed Retain identity without overclaiming."""
+
+    if "provider" in config and "model" in config:
+        return f"{config['provider']}/{config['model']}"
+    if config.get("execution") == "partial_or_skipped":
+        return "partially executed or skipped; bank creator identity is mixed or unverifiable"
+    return "not executed; reused-bank creator identity is unverifiable"
+
+
+def print_model_config(config: Optional[Mapping[str, Mapping[str, str]]] = None):
+    """Print the model configuration to console."""
+    config = config or get_model_config()
+    retain_config = config.get("retain", {})
 
     console.print("\n[bold cyan]Model Configuration:[/bold cyan]")
     console.print(f"  HMS:         {config['hms']['provider']}/{config['hms']['model']}")
-    console.print(f"  Retain:      {config['retain']['provider']}/{config['retain']['model']}")
+    console.print(f"  Retain:      {format_retain_model_config(retain_config)}")
     console.print(
         f"  Answer Generation: {config['answer_generation']['provider']}/{config['answer_generation']['model']}"
     )
@@ -1057,6 +1108,7 @@ class BenchmarkRunner:
                 query_rewriting_strategy_name=recall_query_rewriting_strategy,
                 query_rewriting_enabled=recall_query_rewriting_enabled,
                 session_expansion_weight=recall_session_expansion_weight,
+                enable_trace=True,
             )
             recall_time = time.time() - recall_start_time
 
@@ -1065,8 +1117,10 @@ class BenchmarkRunner:
             num_chunks = len(search_result.chunks) if search_result.chunks else 0
             num_entities = len(search_result.entities) if search_result.entities else 0
 
-            # Convert entire RecallResult to dictionary for answer generation
-            recall_result_dict = search_result.model_dump()
+            # Keep the detailed trace local to benchmark diagnostics. It can be
+            # large and contains retrieval internals that must not influence the
+            # answer generator.
+            recall_result_dict = search_result.model_dump(exclude={"trace"})
             if plan.evidence_appendix_mode == "cross_session":
                 recall_result_dict = add_cross_session_evidence_appendix(recall_result_dict)
             elif plan.evidence_appendix_mode == "cross_session_compact":
@@ -1412,42 +1466,85 @@ class BenchmarkRunner:
             "detailed_results": judged_results,
         }
 
-    async def _agent_has_data(self, agent_id: str) -> bool:
-        """
-        Check if an agent has any indexed memory units.
-
-        Args:
-            agent_id: Agent ID to check
-
-        Returns:
-            True if agent has at least one memory unit, False otherwise
-        """
-        try:
-            # A bank is reusable only when it has durable source chunks. A
-            # document may legitimately produce no extracted facts.
-            pool = await self.memory._get_pool()
-            async with pool.acquire() as conn:
-                result = await conn.fetchval(
-                    f"SELECT EXISTS(SELECT 1 FROM {fq_table('chunks')} WHERE bank_id = $1)",
-                    agent_id,
-                )
-                return bool(result)
-        except Exception as e:
-            console.print(f"  [red]Warning: Error checking agent data: {e}[/red]")
-            return False
-
-    async def _audit_durable_ingestion(self, item: Dict[str, Any], agent_id: str) -> Dict[str, Any]:
-        """Verify that every input document has at least one durable source chunk.
-
-        Fact extraction is lossy by design, so a document with zero facts is
-        reported but remains valid. Missing documents and zero-chunk documents
-        are integrity failures because recall cannot recover their source text.
-        """
+    def _expected_document_snapshots(
+        self,
+        item: Dict[str, Any],
+    ) -> Tuple[Dict[str, Dict[str, Optional[str]]], List[str]]:
+        """Build the same content and metadata identities used by Retain."""
 
         prepared = self.dataset.prepare_sessions_for_ingestion(item)
-        expected_document_ids = list(
-            dict.fromkeys(str(content["document_id"]) for content in prepared if content.get("document_id") is not None)
+        normalized = tuple(
+            normalize_content_item(content, source_index=source_index) for source_index, content in enumerate(prepared)
         )
+        explicit_ids = tuple(
+            dict.fromkeys(content.document_id for content in normalized if content.document_id is not None)
+        )
+        grouped: Dict[str, List[Any]] = {}
+        unverifiable: List[str] = []
+
+        if len(explicit_ids) == 1:
+            # Retain assigns missing-ID items to the sole explicit document.
+            grouped[explicit_ids[0]] = list(normalized)
+        elif len(explicit_ids) > 1:
+            for content in normalized:
+                if content.document_id is None:
+                    unverifiable.append(f"source_index:{content.source_index}")
+                    continue
+                grouped.setdefault(content.document_id, []).append(content)
+        elif normalized:
+            # Retain generates a random document ID when the whole batch omits
+            # IDs. Such a bank cannot be safely matched to a later dataset item.
+            unverifiable.extend(f"source_index:{content.source_index}" for content in normalized)
+
+        snapshots: Dict[str, Dict[str, Optional[str]]] = {}
+        for document_id, contents in grouped.items():
+            if any(content.update_mode.value == "append" for content in contents):
+                # The final content hash also depends on pre-existing text,
+                # which is not part of the submitted benchmark item.
+                unverifiable.append(document_id)
+                continue
+            retain_params, _ = retain_document_metadata(tuple(contents))
+            snapshots[document_id] = {
+                "content_hash": compute_document_hash("\n".join(content.content for content in contents)),
+                "context": retain_params.get("context"),
+                "event_date": retain_params.get("event_date"),
+            }
+        return snapshots, unverifiable
+
+    @staticmethod
+    def _retain_params_mapping(value: Any) -> Dict[str, Any]:
+        """Normalize PostgreSQL/Oracle JSON representations to a mapping."""
+
+        if value is None:
+            return {}
+        if isinstance(value, Mapping):
+            return dict(value)
+        if isinstance(value, bytes):
+            value = value.decode("utf-8")
+        if isinstance(value, str):
+            parsed = json.loads(value)
+            if isinstance(parsed, Mapping):
+                return dict(parsed)
+        raise ValueError(f"retain_params must be a JSON object, got {type(value).__name__}")
+
+    async def _audit_durable_ingestion(
+        self,
+        item: Dict[str, Any],
+        agent_id: str,
+        *,
+        reject_unexpected_documents: bool = True,
+        allowed_document_ids: Optional[Iterable[str]] = None,
+    ) -> Dict[str, Any]:
+        """Verify a bank is the exact durable Retain output expected for an item.
+
+        Zero extracted facts remain valid because source chunks are recallable.
+        Missing/empty documents, stale content or Retain metadata, unexpected
+        documents, and in-flight writes make an item-scoped bank unsafe to
+        reuse.
+        """
+
+        expected, unverifiable = self._expected_document_snapshots(item)
+        expected_document_ids = list(expected)
         report: Dict[str, Any] = {
             "item_id": self.dataset.get_item_id(item),
             "bank_id": agent_id,
@@ -1456,46 +1553,167 @@ class BenchmarkRunner:
             "missing_documents": [],
             "documents_without_chunks": [],
             "documents_without_facts": [],
+            "unexpected_documents": [],
+            "additional_documents": [],
+            "inflight_documents": [],
+            "content_hash_mismatches": [],
+            "context_mismatches": [],
+            "event_date_mismatches": [],
+            "unverifiable_documents": unverifiable,
+            "invalid_retain_params": [],
         }
-        if not expected_document_ids:
-            return report
 
         pool = await self.memory._get_pool()
         async with pool.acquire() as conn:
             rows = await conn.fetch(
                 f"""
                 SELECT d.id,
-                       COUNT(DISTINCT c.chunk_id) AS chunk_count,
-                       COUNT(DISTINCT m.id) AS fact_count
+                       d.content_hash,
+                       d.retain_params,
+                       (
+                           SELECT COUNT(*)
+                           FROM {fq_table("chunks")} AS c
+                           WHERE c.bank_id = d.bank_id AND c.document_id = d.id
+                       ) AS chunk_count,
+                       (
+                           SELECT COUNT(*)
+                           FROM {fq_table("memory_units")} AS m
+                           WHERE m.bank_id = d.bank_id AND m.document_id = d.id
+                       ) AS fact_count
                 FROM {fq_table("documents")} AS d
-                LEFT JOIN {fq_table("chunks")} AS c
-                  ON c.bank_id = d.bank_id AND c.document_id = d.id
-                LEFT JOIN {fq_table("memory_units")} AS m
-                  ON m.bank_id = d.bank_id AND m.document_id = d.id
-                WHERE d.bank_id = $1 AND d.id = ANY($2::text[])
-                GROUP BY d.id
+                WHERE d.bank_id = $1
                 """,
                 agent_id,
-                expected_document_ids,
             )
 
         by_id = {str(row["id"]): row for row in rows}
-        report["durable_documents"] = len(by_id)
-        report["missing_documents"] = [document_id for document_id in expected_document_ids if document_id not in by_id]
-        report["documents_without_chunks"] = [
-            document_id
-            for document_id in expected_document_ids
-            if document_id in by_id and int(by_id[document_id]["chunk_count"]) == 0
-        ]
-        report["documents_without_facts"] = [
-            document_id
-            for document_id in expected_document_ids
-            if document_id in by_id and int(by_id[document_id]["fact_count"]) == 0
-        ]
+        observed_ids = set(by_id)
+        expected_ids = set(expected_document_ids)
+        report["missing_documents"] = sorted(expected_ids - observed_ids)
+        allowed_ids = set(allowed_document_ids) if allowed_document_ids is not None else expected_ids
+        unexpected_documents = sorted(observed_ids - allowed_ids)
+        if reject_unexpected_documents or allowed_document_ids is not None:
+            report["unexpected_documents"] = unexpected_documents
+        else:
+            report["additional_documents"] = unexpected_documents
 
-        if report["missing_documents"] or report["documents_without_chunks"]:
+        for document_id, row in by_id.items():
+            content_hash = str(row["content_hash"] or "")
+            if content_hash.startswith("retain-inflight:"):
+                report["inflight_documents"].append(document_id)
+            if document_id not in expected:
+                continue
+
+            if int(row["chunk_count"] or 0) == 0:
+                report["documents_without_chunks"].append(document_id)
+            if int(row["fact_count"] or 0) == 0:
+                report["documents_without_facts"].append(document_id)
+
+            snapshot = expected[document_id]
+            if content_hash != snapshot["content_hash"]:
+                report["content_hash_mismatches"].append(
+                    {
+                        "document_id": document_id,
+                        "expected": snapshot["content_hash"],
+                        "actual": content_hash,
+                    }
+                )
+
+            try:
+                retain_params = self._retain_params_mapping(row["retain_params"])
+            except (TypeError, ValueError, json.JSONDecodeError):
+                report["invalid_retain_params"].append(document_id)
+                continue
+
+            if retain_params.get("context") != snapshot["context"]:
+                report["context_mismatches"].append(
+                    {
+                        "document_id": document_id,
+                        "expected": snapshot["context"],
+                        "actual": retain_params.get("context"),
+                    }
+                )
+            if retain_params.get("event_date") != snapshot["event_date"]:
+                report["event_date_mismatches"].append(
+                    {
+                        "document_id": document_id,
+                        "expected": snapshot["event_date"],
+                        "actual": retain_params.get("event_date"),
+                    }
+                )
+
+        invalid_document_ids = {
+            *report["missing_documents"],
+            *report["documents_without_chunks"],
+            *report["inflight_documents"],
+            *report["invalid_retain_params"],
+        }
+        for mismatch_field in ("content_hash_mismatches", "context_mismatches", "event_date_mismatches"):
+            invalid_document_ids.update(mismatch["document_id"] for mismatch in report[mismatch_field])
+        report["durable_documents"] = sum(
+            1 for document_id in expected_document_ids if document_id not in invalid_document_ids
+        )
+
+        failure_fields = (
+            "missing_documents",
+            "documents_without_chunks",
+            "unexpected_documents",
+            "inflight_documents",
+            "content_hash_mismatches",
+            "context_mismatches",
+            "event_date_mismatches",
+            "unverifiable_documents",
+            "invalid_retain_params",
+        )
+        if any(report[field] for field in failure_fields):
             raise IngestionIntegrityError(report)
         return report
+
+    async def _preflight_reusable_items(
+        self,
+        items: Iterable[Dict[str, Any]],
+        agent_id: str,
+        *,
+        clear_agent_per_item: bool,
+        require_all: bool,
+    ) -> set[str]:
+        """Return item IDs with an exact reusable bank, before any QA starts."""
+
+        reusable_item_ids: set[str] = set()
+        failures: List[IngestionIntegrityError] = []
+        item_list = list(items)
+        shared_allowed_document_ids: Optional[set[str]] = None
+        if not clear_agent_per_item:
+            shared_allowed_document_ids = set()
+            for item in item_list:
+                snapshots, _ = self._expected_document_snapshots(item)
+                shared_allowed_document_ids.update(snapshots)
+        for item in item_list:
+            item_id = self.dataset.get_item_id(item)
+            item_agent_id = f"{agent_id}_{item_id}" if clear_agent_per_item else agent_id
+            try:
+                await self._audit_durable_ingestion(
+                    item,
+                    item_agent_id,
+                    reject_unexpected_documents=True,
+                    allowed_document_ids=shared_allowed_document_ids,
+                )
+            except IngestionIntegrityError as exc:
+                failures.append(exc)
+            else:
+                reusable_item_ids.add(item_id)
+
+        if failures and require_all:
+            failed_banks = [str(exc.report.get("bank_id", "unknown")) for exc in failures]
+            raise IngestionIntegrityError(
+                {
+                    "item_id": "reuse-preflight",
+                    "bank_id": agent_id,
+                    "failed_banks": failed_banks,
+                    "bank_reports": [exc.report for exc in failures],
+                }
+            )
+        return reusable_item_ids
 
     async def process_single_item(
         self,
@@ -1514,6 +1732,7 @@ class BenchmarkRunner:
         ingest_only: bool = False,
         skip_if_already_ingested: bool = False,
         force_reingest: bool = False,
+        bank_is_item_scoped: bool = True,
     ) -> Dict:
         """
         Process a single item (ingest + evaluate).
@@ -1537,8 +1756,16 @@ class BenchmarkRunner:
             # Check if already ingested (for smart resume)
             already_ingested = False
             if skip_if_already_ingested and not force_reingest:
-                already_ingested = await self._agent_has_data(agent_id)
-                if already_ingested:
+                try:
+                    await self._audit_durable_ingestion(
+                        item,
+                        agent_id,
+                        reject_unexpected_documents=bank_is_item_scoped,
+                    )
+                except IngestionIntegrityError:
+                    already_ingested = False
+                else:
+                    already_ingested = True
                     console.print(f"  [{step}] [yellow]⊘[/yellow] Skipping - already ingested")
 
             if not already_ingested or force_reingest:
@@ -1563,7 +1790,11 @@ class BenchmarkRunner:
 
         step += 1
         console.print(f"  [{step}] Auditing durable ingestion...")
-        ingestion_audit = await self._audit_durable_ingestion(item, agent_id)
+        ingestion_audit = await self._audit_durable_ingestion(
+            item,
+            agent_id,
+            reject_unexpected_documents=bank_is_item_scoped,
+        )
         console.print(
             "      [green]✓[/green] "
             f"{ingestion_audit['durable_documents']}/{ingestion_audit['expected_documents']} "
@@ -1641,6 +1872,7 @@ class BenchmarkRunner:
         force_reingest: bool = False,  # If True, always re-ingest even if data already exists
         rerun_invalid_existing: bool = False,  # Resume mode: rerun invalid existing item results
         run_manifest: Optional[Dict[str, Any]] = None,  # Stable metadata included in every checkpoint
+        model_config: Optional[Mapping[str, Mapping[str, str]]] = None,  # Executed-stage model identities
     ) -> Dict[str, Any]:
         """
         Run the full benchmark evaluation.
@@ -1676,10 +1908,12 @@ class BenchmarkRunner:
                 raise ValueError(f"{name} must be a positive integer, got {value}")
 
         self._run_manifest = run_manifest
+        selected_model_config = model_config or get_model_config()
+        self._model_config = {role: dict(settings) for role, settings in selected_model_config.items()}
         self._diagnostic_cache_dir = output_path.parent / "retrieval_cache" if output_path is not None else None
 
         # Print model configuration
-        print_model_config()
+        print_model_config(self._model_config)
 
         # Load dataset
         console.print(f"\n[1] Loading dataset from {dataset_path}...")
@@ -1895,7 +2129,7 @@ class BenchmarkRunner:
             "total_valid": total_valid,
             "valid_only_accuracy": valid_only_accuracy,
             "num_items": len(all_results),
-            "model_config": get_model_config(),
+            "model_config": getattr(self, "_model_config", None) or get_model_config(),
             "item_results": all_results,
         }
 
@@ -1936,26 +2170,24 @@ class BenchmarkRunner:
         # Pre-load durable banks for reuse and ingest-only fill modes.
         ingested_item_ids = set()
         if skip_ingestion or ingest_only:
-            console.print("[cyan]Checking which items are already ingested...[/cyan]")
-            for item in items:
-                item_id = self.dataset.get_item_id(item)
-                item_agent_id = f"{agent_id}_{item_id}" if clear_agent_per_item else agent_id
-                if await self._agent_has_data(item_agent_id):
-                    ingested_item_ids.add(item_id)
+            console.print("[cyan]Auditing retained banks against selected dataset items...[/cyan]")
+            ingested_item_ids = await self._preflight_reusable_items(
+                items,
+                agent_id,
+                clear_agent_per_item=clear_agent_per_item,
+                require_all=skip_ingestion,
+            )
             if ingested_item_ids:
-                console.print(f"[cyan]Found {len(ingested_item_ids)} items already ingested[/cyan]")
+                console.print(f"[cyan]Found {len(ingested_item_ids)} exact reusable item banks[/cyan]")
             else:
-                console.print("[cyan]No items found with existing ingest data[/cyan]")
-            if skip_ingestion:
+                console.print("[cyan]No exact reusable item banks found[/cyan]")
+            if ingest_only and not skip_ingestion and not clear_agent_per_item:
                 requested_item_ids = {self.dataset.get_item_id(item) for item in items}
-                missing_item_ids = sorted(requested_item_ids - ingested_item_ids)
-                if missing_item_ids:
-                    preview = ", ".join(missing_item_ids[:10])
-                    suffix = " ..." if len(missing_item_ids) > 10 else ""
-                    raise RuntimeError(
-                        "Retrieval-only mode requires durable retained chunks for every selected item; "
-                        f"missing {len(missing_item_ids)} bank(s): {preview}{suffix}"
-                    )
+                if ingested_item_ids != requested_item_ids:
+                    # Repairing any item in a shared bank may clear or replace
+                    # state needed by otherwise reusable items. Rebuild the
+                    # selected union together instead of skipping a stale mix.
+                    ingested_item_ids.clear()
 
         for i, item in enumerate(items, 1):
             item_id = self.dataset.get_item_id(item)
@@ -1970,19 +2202,14 @@ class BenchmarkRunner:
                 # Only clear on first item for shared agent_id
                 clear_this_agent = i == 1
 
-            # Skip items without existing ingest data (only applies when using --skip-ingestion)
-            # When not using --skip-ingestion, we should ingest the items
-            if skip_ingestion and item_id not in ingested_item_ids and not ingest_only:
-                raise RuntimeError(f"Retrieval-only bank disappeared before evaluation: {item_agent_id}")
-
             # For ingest_only mode, skip already ingested items
-            if ingest_only and not skip_ingestion and item_id in ingested_item_ids:
+            if ingest_only and not skip_ingestion and not force_reingest and item_id in ingested_item_ids:
                 console.print(f"\n[bold blue]Item {i}/{len(items)}[/bold blue] (ID: {item_id})")
                 console.print("  [yellow]⊘[/yellow] Skipping - already ingested")
                 continue
 
             # Then check fill status (results file)
-            if filln:
+            if filln and not force_reingest:
                 skip_item_ids = resume_complete_item_ids if rerun_invalid_existing else existing_item_ids
                 if item_id in skip_item_ids:
                     console.print(f"\n[bold blue]Item {i}/{len(items)}[/bold blue] (ID: {item_id})")
@@ -2005,6 +2232,7 @@ class BenchmarkRunner:
                 ingest_only,
                 skip_if_already_ingested=False,
                 force_reingest=force_reingest,
+                bank_is_item_scoped=clear_agent_per_item,
             )
 
             # Replace existing result or append new one
@@ -2061,26 +2289,17 @@ class BenchmarkRunner:
         # ingest-only run.
         ingested_item_ids = set()
         if skip_ingestion or ingest_only:
-            console.print("[cyan]Checking which items are already ingested...[/cyan]")
-            for item in items:
-                item_id = self.dataset.get_item_id(item)
-                item_agent_id = f"{agent_id}_{item_id}"
-                if await self._agent_has_data(item_agent_id):
-                    ingested_item_ids.add(item_id)
+            console.print("[cyan]Auditing retained banks against selected dataset items...[/cyan]")
+            ingested_item_ids = await self._preflight_reusable_items(
+                items,
+                agent_id,
+                clear_agent_per_item=True,
+                require_all=skip_ingestion,
+            )
             if ingested_item_ids:
-                console.print(f"[cyan]Found {len(ingested_item_ids)} items already ingested[/cyan]")
+                console.print(f"[cyan]Found {len(ingested_item_ids)} exact reusable item banks[/cyan]")
             else:
-                console.print("[cyan]No items found with existing ingest data[/cyan]")
-            if skip_ingestion:
-                requested_item_ids = {self.dataset.get_item_id(item) for item in items}
-                missing_item_ids = sorted(requested_item_ids - ingested_item_ids)
-                if missing_item_ids:
-                    preview = ", ".join(missing_item_ids[:10])
-                    suffix = " ..." if len(missing_item_ids) > 10 else ""
-                    raise RuntimeError(
-                        "Retrieval-only mode requires durable retained chunks for every selected item; "
-                        f"missing {len(missing_item_ids)} bank(s): {preview}{suffix}"
-                    )
+                console.print("[cyan]No exact reusable item banks found[/cyan]")
 
         # Create semaphore for item-level parallelism
         item_semaphore = asyncio.Semaphore(max_concurrent_items)
@@ -2091,19 +2310,14 @@ class BenchmarkRunner:
                 item_id = self.dataset.get_item_id(item)
                 item_agent_id = f"{agent_id}_{item_id}"
 
-                # Only reuse mode requires data to exist before this item runs.
-                # A fresh parallel run must proceed to ingestion.
-                if skip_ingestion and item_id not in ingested_item_ids and not ingest_only:
-                    raise RuntimeError(f"Retrieval-only bank disappeared before evaluation: {item_agent_id}")
-
                 # For ingest_only mode, skip already ingested items
-                if ingest_only and not skip_ingestion and item_id in ingested_item_ids:
+                if ingest_only and not skip_ingestion and not force_reingest and item_id in ingested_item_ids:
                     console.print(f"\n[bold blue]Item {i}/{len(items)}[/bold blue] (ID: {item_id})")
                     console.print("  [yellow]⊘[/yellow] Skipping - already ingested")
                     return None
 
                 # Then check fill status (results file)
-                if filln:
+                if filln and not force_reingest:
                     skip_item_ids = resume_complete_item_ids if rerun_invalid_existing else existing_item_ids
                     if item_id in skip_item_ids:
                         console.print(f"\n[bold blue]Item {i}/{len(items)}[/bold blue] (ID: {item_id})")
@@ -2127,6 +2341,7 @@ class BenchmarkRunner:
                     ingest_only=ingest_only,
                     skip_if_already_ingested=False,
                     force_reingest=force_reingest,
+                    bank_is_item_scoped=True,
                 )
                 return result
 
@@ -2254,6 +2469,14 @@ class BenchmarkRunner:
         else:
             console.print("\n[3] Skipping ingestion (using existing data)")
 
+        console.print("    [cyan]Auditing retained documents against all selected items...[/cyan]")
+        await self._preflight_reusable_items(
+            items,
+            agent_id,
+            clear_agent_per_item=False,
+            require_all=True,
+        )
+
         # Phase 2: Evaluation
         console.print("\n[5] Phase 2: Evaluating all questions...")
 
@@ -2310,6 +2533,7 @@ class BenchmarkRunner:
             "total_valid": total_valid,
             "valid_only_accuracy": valid_only_accuracy,
             "num_items": len(all_results),
+            "model_config": getattr(self, "_model_config", None) or get_model_config(),
             "item_results": all_results,
         }
 
@@ -2323,7 +2547,8 @@ class BenchmarkRunner:
             console.print("[bold cyan]Model Configuration:[/bold cyan]")
             console.print(f"  HMS:         {config['hms']['provider']}/{config['hms']['model']}")
             if "retain" in config:
-                console.print(f"  Retain:      {config['retain']['provider']}/{config['retain']['model']}")
+                retain_config = config["retain"]
+                console.print(f"  Retain:      {format_retain_model_config(retain_config)}")
             console.print(
                 f"  Answer Generation: {config['answer_generation']['provider']}/{config['answer_generation']['model']}"
             )
@@ -2450,7 +2675,7 @@ class BenchmarkRunner:
             "total_valid": total_valid,
             "valid_only_accuracy": valid_only_accuracy,
             "num_items": len(ordered_results),
-            "model_config": get_model_config(),
+            "model_config": getattr(self, "_model_config", None) or get_model_config(),
             "item_results": ordered_results,
         }
         run_manifest = getattr(self, "_run_manifest", None)

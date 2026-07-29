@@ -169,10 +169,26 @@ HMS_RETRIEVAL_ONLY=1 \
 bash .aaaSCRIPT/run_benchmark.sh
 ```
 
-The runner requires durable chunks for every selected bank before retrieval-only
-evaluation; missing banks fail the run instead of silently reducing the sample.
-The strict embedding fingerprint policy rejects memories built in another
-vector space.
+Before any question is evaluated, the runner matches every selected bank to the
+current dataset item. It verifies the complete document-ID set, normalized
+content hashes, retained `context` and `event_date`, durable chunks, and that no
+Retain write is still in flight. Missing, stale, empty, or unexpected documents
+fail retrieval-only mode instead of silently reusing the wrong state. Documents
+with zero extracted facts remain valid when their source chunks are durable.
+The strict embedding fingerprint policy separately rejects memories built in
+another vector space.
+
+Durable rows do not record enough information to reconstruct the Retain
+pipeline, model, or source revision that originally created an older bank.
+Retrieval-only artifacts therefore omit `retain` from
+`run_manifest.pipeline.stages`, mark the reused-bank Retain provenance as
+`unverifiable`, and do not present the current Retain model configuration as the
+bank creator. The recorded Git/source identity applies only to stages executed
+by the current benchmark process. Fresh runs record `current_run` Retain
+provenance. Because a non-forced ingest-only run can skip exact existing banks
+and ingest only the missing or stale subset, its global Retain provenance is
+marked `mixed_or_reused_bank` and unverifiable. Use `--force-reingest` when the
+artifact must attest that every selected bank was created by the current run.
 
 ## Reproduction profiles
 

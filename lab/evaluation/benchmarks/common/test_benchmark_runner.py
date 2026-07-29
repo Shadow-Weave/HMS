@@ -1,20 +1,26 @@
 import asyncio
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
 import pytest
+from hms_api.engine.ingestion.adapters.storage_records import compute_document_hash
 
 from benchmarks.common.benchmark_runner import (
     BenchmarkRunner,
+    IngestionIntegrityError,
     LLMAnswerEvaluator,
     _embedding_runtime_config,
     _endpoint_fingerprint,
     _reranker_runtime_config,
     _write_json_atomic,
+    get_artifact_model_config,
     get_model_config,
 )
+
+_EVENT_DATE = datetime(2024, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
 
 
 class _Dataset:
@@ -22,10 +28,68 @@ class _Dataset:
         return item["id"]
 
     def prepare_sessions_for_ingestion(self, item):
-        return [{"content": item["id"], "document_id": f"document-{item['id']}"}]
+        return [
+            {
+                "content": item["id"],
+                "context": f"context-{item['id']}",
+                "event_date": _EVENT_DATE,
+                "document_id": f"document-{item['id']}",
+            }
+        ]
 
     def get_qa_pairs(self, item):
         return [{"question": item["id"], "answer": "answer", "category": "test"}]
+
+
+class _Acquire:
+    def __init__(self, connection):
+        self.connection = connection
+
+    async def __aenter__(self):
+        return self.connection
+
+    async def __aexit__(self, exc_type, exc, traceback):
+        return False
+
+
+class _Pool:
+    def __init__(self, rows):
+        self.connection = SimpleNamespace(fetch=AsyncMock(return_value=rows))
+
+    def acquire(self):
+        return _Acquire(self.connection)
+
+
+def _runner_with_document_rows(rows):
+    runner = object.__new__(BenchmarkRunner)
+    runner.dataset = _Dataset()
+    pool = _Pool(rows)
+    runner.memory = SimpleNamespace(_get_pool=AsyncMock(return_value=pool))
+    return runner
+
+
+def _document_row(
+    item_id: str,
+    *,
+    content_hash: str | None = None,
+    retain_params=None,
+    chunks: int = 1,
+    facts: int = 0,
+):
+    return {
+        "id": f"document-{item_id}",
+        "content_hash": content_hash if content_hash is not None else compute_document_hash(item_id),
+        "retain_params": (
+            retain_params
+            if retain_params is not None
+            else {
+                "context": f"context-{item_id}",
+                "event_date": _EVENT_DATE.isoformat(),
+            }
+        ),
+        "chunk_count": chunks,
+        "fact_count": facts,
+    }
 
 
 def test_embedding_runtime_config_uses_provider_specific_identity(monkeypatch):
@@ -73,12 +137,87 @@ def test_model_config_uses_retain_provider_default_when_only_provider_is_overrid
     assert config["retain"]["model"] == "gpt-4o-mini"
 
 
+def test_reused_bank_model_config_does_not_claim_current_retain_identity(monkeypatch):
+    monkeypatch.setenv("HMS_API_RETAIN_LLM_PROVIDER", "openai")
+    monkeypatch.setenv("HMS_API_RETAIN_LLM_MODEL", "current-but-not-bank-creator")
+
+    config = get_artifact_model_config(retain_executed=False)
+
+    assert config["retain"] == {
+        "execution": "not_executed",
+        "bank_creator_identity": "unverifiable",
+    }
+
+
+def test_mixed_ingest_only_model_config_does_not_claim_one_global_retain_identity():
+    config = get_artifact_model_config(retain_execution="partial_or_skipped")
+
+    assert config["retain"] == {
+        "execution": "partial_or_skipped",
+        "bank_creator_identity": "mixed_or_unverifiable",
+    }
+
+
+@pytest.mark.asyncio
+async def test_ingestion_audit_accepts_exact_document_with_zero_facts():
+    runner = _runner_with_document_rows([_document_row("a", facts=0)])
+
+    report = await runner._audit_durable_ingestion({"id": "a"}, "longmemeval_a")
+
+    assert report["durable_documents"] == 1
+    assert report["documents_without_facts"] == ["document-a"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("row", "failure_field"),
+    [
+        (_document_row("a", content_hash="stale"), "content_hash_mismatches"),
+        (
+            _document_row(
+                "a",
+                retain_params={"context": "stale-context", "event_date": _EVENT_DATE.isoformat()},
+            ),
+            "context_mismatches",
+        ),
+        (
+            _document_row(
+                "a",
+                retain_params={"context": "context-a", "event_date": "2020-01-01T00:00:00+00:00"},
+            ),
+            "event_date_mismatches",
+        ),
+        (_document_row("a", chunks=0), "documents_without_chunks"),
+    ],
+)
+async def test_ingestion_audit_rejects_stale_or_unqueryable_document(row, failure_field):
+    runner = _runner_with_document_rows([row])
+
+    with pytest.raises(IngestionIntegrityError) as exc_info:
+        await runner._audit_durable_ingestion({"id": "a"}, "longmemeval_a")
+
+    assert exc_info.value.report[failure_field]
+
+
+@pytest.mark.asyncio
+async def test_ingestion_audit_rejects_unexpected_and_inflight_documents():
+    inflight = _document_row("a", content_hash="retain-inflight:operation")
+    unexpected = _document_row("other")
+    runner = _runner_with_document_rows([inflight, unexpected])
+
+    with pytest.raises(IngestionIntegrityError) as exc_info:
+        await runner._audit_durable_ingestion({"id": "a"}, "longmemeval_a")
+
+    assert exc_info.value.report["inflight_documents"] == ["document-a"]
+    assert exc_info.value.report["unexpected_documents"] == ["document-other"]
+
+
 @pytest.mark.asyncio
 async def test_fresh_parallel_run_processes_items_before_any_bank_exists():
     runner = object.__new__(BenchmarkRunner)
     runner.dataset = _Dataset()
     runner.template_path = None
-    runner._agent_has_data = AsyncMock(return_value=False)
+    runner._preflight_reusable_items = AsyncMock()
 
     async def process_item(item, *args, **kwargs):
         return {
@@ -105,7 +244,7 @@ async def test_fresh_parallel_run_processes_items_before_any_bank_exists():
 
     assert {result["item_id"] for result in results} == {"a", "b"}
     assert runner.process_single_item.await_count == 2
-    runner._agent_has_data.assert_not_awaited()
+    runner._preflight_reusable_items.assert_not_awaited()
 
 
 @pytest.mark.asyncio
@@ -115,7 +254,6 @@ async def test_fresh_item_reingests_even_when_a_bank_already_exists():
     runner.template_path = None
     runner.memory = Mock()
     runner.memory.delete_bank = AsyncMock()
-    runner._agent_has_data = AsyncMock(return_value=True)
     runner.ingest_conversation = AsyncMock(return_value=1)
     runner._audit_durable_ingestion = AsyncMock(
         return_value={
@@ -143,7 +281,6 @@ async def test_fresh_item_reingests_even_when_a_bank_already_exists():
         skip_if_already_ingested=False,
     )
 
-    runner._agent_has_data.assert_not_awaited()
     runner.memory.delete_bank.assert_awaited_once()
     runner.ingest_conversation.assert_awaited_once()
 
@@ -274,7 +411,6 @@ async def test_resume_skips_valid_items_and_reruns_invalid_items(tmp_path: Path)
     )
     runner = object.__new__(BenchmarkRunner)
     runner.dataset = _Dataset()
-    runner._agent_has_data = AsyncMock(return_value=False)
 
     async def process_item(item, *args, **kwargs):
         return {
@@ -324,10 +460,21 @@ async def test_resume_skips_valid_items_and_reruns_invalid_items(tmp_path: Path)
 async def test_retrieval_only_fails_when_any_selected_bank_is_missing():
     runner = object.__new__(BenchmarkRunner)
     runner.dataset = _Dataset()
-    runner._agent_has_data = AsyncMock(side_effect=[True, False])
+    runner._audit_durable_ingestion = AsyncMock(
+        side_effect=[
+            {"durable_documents": 1},
+            IngestionIntegrityError(
+                {
+                    "item_id": "b",
+                    "bank_id": "longmemeval_b",
+                    "missing_documents": ["document-b"],
+                }
+            ),
+        ]
+    )
     runner.process_single_item = AsyncMock()
 
-    with pytest.raises(RuntimeError, match="missing 1 bank"):
+    with pytest.raises(IngestionIntegrityError, match="reuse-preflight"):
         await runner._process_items_parallel(
             items=[{"id": "a"}, {"id": "b"}],
             agent_id="longmemeval",
@@ -341,7 +488,281 @@ async def test_retrieval_only_fails_when_any_selected_bank_is_missing():
             max_concurrent_items=2,
         )
 
+    assert runner._audit_durable_ingestion.await_count == 2
     runner.process_single_item.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_sequential_retrieval_only_preflights_every_bank_before_qa():
+    runner = object.__new__(BenchmarkRunner)
+    runner.dataset = _Dataset()
+    runner._audit_durable_ingestion = AsyncMock(
+        side_effect=[
+            {"durable_documents": 1},
+            IngestionIntegrityError(
+                {
+                    "item_id": "b",
+                    "bank_id": "longmemeval_b",
+                    "content_hash_mismatches": [{"document_id": "document-b"}],
+                }
+            ),
+        ]
+    )
+    runner.process_single_item = AsyncMock()
+
+    with pytest.raises(IngestionIntegrityError, match="reuse-preflight"):
+        await runner._process_items_sequential(
+            items=[{"id": "a"}, {"id": "b"}],
+            agent_id="longmemeval",
+            thinking_budget=10,
+            max_tokens=100,
+            skip_ingestion=True,
+            max_questions_per_item=None,
+            question_semaphore=asyncio.Semaphore(1),
+            eval_semaphore=asyncio.Semaphore(1),
+            clear_agent_per_item=True,
+            filln=False,
+        )
+
+    assert runner._audit_durable_ingestion.await_count == 2
+    runner.process_single_item.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_ingest_only_reingests_nonmatching_bank_and_skips_exact_bank():
+    runner = object.__new__(BenchmarkRunner)
+    runner.dataset = _Dataset()
+    runner._preflight_reusable_items = AsyncMock(return_value={"a"})
+    runner.process_single_item = AsyncMock(
+        return_value={
+            "item_id": "b",
+            "metrics": {"correct": 0, "total": 0, "invalid": 0},
+            "num_sessions": 1,
+        }
+    )
+
+    results = await runner._process_items_sequential(
+        items=[{"id": "a"}, {"id": "b"}],
+        agent_id="longmemeval",
+        thinking_budget=10,
+        max_tokens=100,
+        skip_ingestion=False,
+        max_questions_per_item=None,
+        question_semaphore=asyncio.Semaphore(1),
+        eval_semaphore=asyncio.Semaphore(1),
+        clear_agent_per_item=True,
+        filln=False,
+        ingest_only=True,
+    )
+
+    assert [result["item_id"] for result in results] == ["b"]
+    assert runner.process_single_item.await_count == 1
+    assert runner.process_single_item.await_args.args[0] == {"id": "b"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("ingest_only", [False, True])
+async def test_force_reingest_overrides_fill_skip_sequentially(tmp_path: Path, ingest_only: bool):
+    output_path = tmp_path / "results.json"
+    output_path.write_text(
+        json.dumps(
+            {
+                "item_results": [
+                    {
+                        "item_id": "a",
+                        "metrics": {"correct": 0, "total": 0, "invalid": 0},
+                        "num_sessions": 0,
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    runner = object.__new__(BenchmarkRunner)
+    runner.dataset = _Dataset()
+    runner._preflight_reusable_items = AsyncMock(return_value={"a"})
+    runner._save_incremental_results = Mock()
+    runner.process_single_item = AsyncMock(
+        return_value={
+            "item_id": "a",
+            "metrics": {"correct": 0, "total": 0, "invalid": 0},
+            "num_sessions": 1,
+        }
+    )
+
+    results = await runner._process_items_sequential(
+        items=[{"id": "a"}],
+        agent_id="longmemeval",
+        thinking_budget=10,
+        max_tokens=100,
+        skip_ingestion=False,
+        max_questions_per_item=None,
+        question_semaphore=asyncio.Semaphore(1),
+        eval_semaphore=asyncio.Semaphore(1),
+        clear_agent_per_item=True,
+        filln=True,
+        output_path=output_path,
+        merge_with_existing=True,
+        ingest_only=ingest_only,
+        force_reingest=True,
+    )
+
+    assert [result["item_id"] for result in results] == ["a"]
+    assert runner.process_single_item.await_args.kwargs["force_reingest"] is True
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("ingest_only", [False, True])
+async def test_force_reingest_overrides_fill_skip_in_parallel(tmp_path: Path, ingest_only: bool):
+    output_path = tmp_path / "results.json"
+    output_path.write_text(
+        json.dumps(
+            {
+                "item_results": [
+                    {
+                        "item_id": "a",
+                        "metrics": {"correct": 0, "total": 0, "invalid": 0},
+                        "num_sessions": 0,
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    runner = object.__new__(BenchmarkRunner)
+    runner.dataset = _Dataset()
+    runner._preflight_reusable_items = AsyncMock(return_value={"a"})
+    runner._save_incremental_results = Mock()
+    runner.process_single_item = AsyncMock(
+        return_value={
+            "item_id": "a",
+            "metrics": {"correct": 0, "total": 0, "invalid": 0},
+            "num_sessions": 1,
+        }
+    )
+
+    results = await runner._process_items_parallel(
+        items=[{"id": "a"}],
+        agent_id="longmemeval",
+        thinking_budget=10,
+        max_tokens=100,
+        skip_ingestion=False,
+        max_questions_per_item=None,
+        question_semaphore=asyncio.Semaphore(1),
+        eval_semaphore=asyncio.Semaphore(1),
+        filln=True,
+        max_concurrent_items=1,
+        output_path=output_path,
+        merge_with_existing=True,
+        ingest_only=ingest_only,
+        force_reingest=True,
+    )
+
+    assert [result["item_id"] for result in results] == ["a"]
+    assert runner.process_single_item.await_args.kwargs["force_reingest"] is True
+
+
+@pytest.mark.asyncio
+async def test_two_phase_shared_bank_rejects_documents_outside_selected_union_before_qa():
+    runner = _runner_with_document_rows(
+        [
+            _document_row("a"),
+            _document_row("b"),
+            _document_row("stale"),
+        ]
+    )
+    runner.evaluate_qa_task = AsyncMock()
+
+    with pytest.raises(IngestionIntegrityError) as exc_info:
+        await runner._run_two_phase(
+            items=[{"id": "a"}, {"id": "b"}],
+            agent_id="shared",
+            thinking_budget=10,
+            max_tokens=100,
+            skip_ingestion=True,
+            max_questions_per_item=None,
+            max_concurrent_questions=1,
+            eval_semaphore_size=1,
+        )
+
+    assert "document-stale" in str(exc_info.value.report["bank_reports"])
+    runner.evaluate_qa_task.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_recall_trace_populates_diagnostics_but_is_not_sent_to_answer_generator():
+    fact = SimpleNamespace(
+        id="fact-1",
+        document_id="document-a",
+        context="context-a",
+        occurred_start=_EVENT_DATE.isoformat(),
+        fact_type="world",
+        metadata={"proof_count": 2},
+        model_dump=lambda: {
+            "id": "fact-1",
+            "document_id": "document-a",
+            "text": "remembered fact",
+        },
+    )
+    trace = {
+        "rrf_merged": [
+            {
+                "node_id": "fact-1",
+                "text": "remembered fact",
+                "rrf_score": 0.5,
+                "final_rrf_rank": 1,
+            }
+        ],
+        "reranked": [
+            {
+                "node_id": "fact-1",
+                "text": "remembered fact",
+                "rerank_score": 0.9,
+                "rerank_rank": 1,
+                "rrf_rank": 1,
+                "score_components": {"combined_score": 0.8},
+            }
+        ],
+    }
+
+    class _RecallResult:
+        results = [fact]
+        chunks = None
+        entities = None
+
+        def __init__(self):
+            self.trace = trace
+
+        def model_dump(self, *, exclude=None):
+            payload = {"results": [fact.model_dump()], "trace": trace}
+            for field in exclude or set():
+                payload.pop(field, None)
+            return payload
+
+    generator = Mock()
+    generator.needs_external_search.return_value = True
+    generator.generate_answer = AsyncMock(return_value=("answer", "reasoning", None))
+    runner = object.__new__(BenchmarkRunner)
+    runner.answer_generator = generator
+    runner.retrieval_planner = None
+    runner.query_rewriting_enabled = False
+    runner.query_rewriting_strategy_name = "noop"
+    runner.session_expansion_weight = 0.3
+    runner.memory = SimpleNamespace(
+        recall_async=AsyncMock(return_value=_RecallResult()),
+        _cross_encoder=SimpleNamespace(model_name="reranker", provider_name="test"),
+    )
+
+    _, _, _, _, retrieval_details = await runner.answer_question(
+        "longmemeval_a",
+        "What happened?",
+    )
+
+    assert runner.memory.recall_async.await_args.kwargs["enable_trace"] is True
+    generator_payload = generator.generate_answer.await_args.args[1]
+    assert "trace" not in generator_payload
+    assert retrieval_details["coarse_search_results"].total_candidates == 1
+    assert len(retrieval_details["reranked_results"].reranked_candidates) == 1
 
 
 def test_atomic_json_write_replaces_the_complete_artifact(tmp_path: Path):
@@ -356,7 +777,8 @@ def test_atomic_json_write_replaces_the_complete_artifact(tmp_path: Path):
 
 def test_incremental_checkpoint_preserves_run_manifest(tmp_path: Path):
     runner = object.__new__(BenchmarkRunner)
-    runner._run_manifest = {"artifact_schema_version": 1, "dataset": {"sha256": "abc"}}
+    runner._run_manifest = {"artifact_schema_version": 2, "dataset": {"sha256": "abc"}}
+    runner._model_config = get_artifact_model_config(retain_executed=False)
     output_path = tmp_path / "result.json"
 
     runner._save_incremental_results(
@@ -372,3 +794,4 @@ def test_incremental_checkpoint_preserves_run_manifest(tmp_path: Path):
 
     saved = json.loads(output_path.read_text(encoding="utf-8"))
     assert saved["run_manifest"] == runner._run_manifest
+    assert saved["model_config"]["retain"]["bank_creator_identity"] == "unverifiable"

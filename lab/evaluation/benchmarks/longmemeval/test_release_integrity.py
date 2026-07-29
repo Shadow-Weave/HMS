@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
@@ -28,7 +29,7 @@ async def test_answer_provider_failure_propagates_to_the_runner():
 
 def _manifest() -> dict:
     return {
-        "artifact_schema_version": 1,
+        "artifact_schema_version": 2,
         "dataset": {
             "path": "datasets/dataset.json",
             "sha256": "dataset-sha",
@@ -36,6 +37,7 @@ def _manifest() -> dict:
             "expected_full_items": 500,
         },
         "pipeline": {
+            "stages": ["retain", "recall", "answer", "judge"],
             "planner": "ledger",
             "context_format": "structured_source",
             "thinking_budget": 500,
@@ -49,8 +51,15 @@ def _manifest() -> dict:
             "schema": "public",
             "vector_extension": "pgvector",
         },
+        "ingestion_provenance": {
+            "mode": "current_run",
+            "status": "current_run",
+            "retain_execution": "executed",
+            "content_identity": "verified_after_ingestion",
+        },
         "concurrency": {"items": 1, "questions": 1, "judge": 1},
         "runtime": {
+            "identity_scope": "executed_stages",
             "git_commit": "abc123",
             "git_dirty": False,
             "source_tree_fingerprint": None,
@@ -79,7 +88,13 @@ def _model_config() -> dict:
     }
 
 
-def _built_manifest(dataset_path: Path) -> dict:
+def _built_manifest(
+    dataset_path: Path,
+    *,
+    skip_ingestion: bool = False,
+    ingest_only: bool = False,
+    force_reingest: bool = False,
+) -> dict:
     return benchmark.build_run_manifest(
         dataset_path=dataset_path,
         context_format="structured_source",
@@ -99,9 +114,9 @@ def _built_manifest(dataset_path: Path) -> dict:
         query_expansion_enabled=False,
         query_rewriting_strategy="noop",
         session_expansion_weight=0.3,
-        skip_ingestion=False,
-        ingest_only=False,
-        force_reingest=False,
+        skip_ingestion=skip_ingestion,
+        ingest_only=ingest_only,
+        force_reingest=force_reingest,
     )
 
 
@@ -126,6 +141,110 @@ def test_run_manifest_never_serializes_an_absolute_dataset_path(tmp_path: Path, 
     assert external_manifest["dataset"]["path"] == "external:custom-dataset.json"
     assert not Path(repository_manifest["dataset"]["path"]).is_absolute()
     assert not Path(external_manifest["dataset"]["path"]).is_absolute()
+
+
+def test_run_manifest_distinguishes_fresh_and_reused_retain_provenance(tmp_path: Path, monkeypatch):
+    dataset_path = tmp_path / "dataset.json"
+    dataset_path.write_text("dataset", encoding="utf-8")
+    monkeypatch.setattr(benchmark, "_git_value", lambda *args: "abc123" if args == ("rev-parse", "HEAD") else "")
+    monkeypatch.setattr(benchmark, "_source_tree_fingerprint", lambda: None)
+
+    fresh = _built_manifest(dataset_path)
+    reused = _built_manifest(dataset_path, skip_ingestion=True)
+
+    assert fresh["artifact_schema_version"] == 2
+    assert fresh["pipeline"]["stages"] == ["retain", "recall", "answer", "judge"]
+    assert fresh["ingestion_provenance"]["mode"] == "current_run"
+    assert reused["pipeline"]["stages"] == ["recall", "answer", "judge"]
+    assert reused["ingestion_provenance"] == {
+        "mode": "reused_bank",
+        "status": "unverifiable",
+        "retain_execution": "not_executed",
+        "content_identity": "verified_at_runtime",
+        "unverifiable_fields": ["retain_pipeline", "retain_model", "retain_code"],
+    }
+    assert reused["runtime"]["identity_scope"] == "executed_stages"
+
+
+def test_ingest_only_manifest_marks_possible_reuse_as_mixed(tmp_path: Path, monkeypatch):
+    dataset_path = tmp_path / "dataset.json"
+    dataset_path.write_text("dataset", encoding="utf-8")
+    monkeypatch.setattr(benchmark, "_git_value", lambda *args: "")
+    monkeypatch.setattr(benchmark, "_source_tree_fingerprint", lambda: None)
+
+    manifest = _built_manifest(dataset_path, ingest_only=True)
+
+    assert manifest["pipeline"]["stages"] == ["retain"]
+    assert manifest["ingestion_provenance"] == {
+        "mode": "mixed_or_reused_bank",
+        "status": "unverifiable",
+        "retain_execution": "partial_or_skipped",
+        "content_identity": "verified_at_runtime",
+        "unverifiable_fields": [
+            "reused_retain_pipeline",
+            "reused_retain_model",
+            "reused_retain_code",
+        ],
+    }
+
+
+def test_force_reingest_ingest_only_manifest_is_current_run(tmp_path: Path, monkeypatch):
+    dataset_path = tmp_path / "dataset.json"
+    dataset_path.write_text("dataset", encoding="utf-8")
+    monkeypatch.setattr(benchmark, "_git_value", lambda *args: "")
+    monkeypatch.setattr(benchmark, "_source_tree_fingerprint", lambda: None)
+
+    manifest = _built_manifest(dataset_path, ingest_only=True, force_reingest=True)
+
+    assert manifest["pipeline"]["stages"] == ["retain"]
+    assert manifest["ingestion_provenance"]["mode"] == "current_run"
+
+
+@pytest.mark.asyncio
+async def test_only_ingested_filter_uses_exact_shared_preflight():
+    items = [{"question_id": "a"}, {"question_id": "b"}]
+    dataset = SimpleNamespace(get_item_id=lambda item: item["question_id"])
+    runner = SimpleNamespace(
+        _preflight_reusable_items=AsyncMock(return_value={"b"}),
+    )
+
+    filtered = await benchmark._filter_items_with_reusable_banks(
+        items,
+        dataset=dataset,
+        runner=runner,
+    )
+
+    assert filtered == [{"question_id": "b"}]
+    runner._preflight_reusable_items.assert_awaited_once_with(
+        items,
+        "longmemeval",
+        clear_agent_per_item=True,
+        require_all=False,
+    )
+
+
+def test_markdown_report_handles_unverifiable_reused_retain_identity(tmp_path: Path):
+    model_config = _model_config()
+    model_config["retain"] = {
+        "execution": "not_executed",
+        "bank_creator_identity": "unverifiable",
+    }
+    output_path = tmp_path / "results.json"
+
+    benchmark.generate_markdown_table(
+        {
+            "model_config": model_config,
+            "item_results": [],
+            "overall_accuracy": 0.0,
+            "total_correct": 0,
+            "total_questions": 0,
+            "total_invalid": 0,
+        },
+        output_path,
+    )
+
+    markdown = output_path.with_suffix(".md").read_text(encoding="utf-8")
+    assert "- **Retain**: not executed; reused-bank creator identity is unverifiable" in markdown
 
 
 def test_resume_compatibility_ignores_concurrency_but_rejects_model_changes(tmp_path: Path):

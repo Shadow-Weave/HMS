@@ -29,7 +29,8 @@ from benchmarks.common.benchmark_runner import (
     LLMAnswerEvaluator,
     LLMAnswerGenerator,
     RecallPlan,
-    get_model_config,
+    format_retain_model_config,
+    get_artifact_model_config,
 )
 from benchmarks.longmemeval.evidence_bundles import (
     RenderedEvidence,
@@ -172,8 +173,34 @@ def build_run_manifest(
     git_commit = _git_value("rev-parse", "HEAD")
     git_status = _git_value("status", "--porcelain")
     planner = "self_evolution" if oracle_planner_v220 else "ledger" if oracle_planner_v26 else "standard"
+    if skip_ingestion:
+        executed_stages = [] if ingest_only else ["recall", "answer", "judge"]
+        ingestion_provenance = {
+            "mode": "reused_bank",
+            "status": "unverifiable",
+            "retain_execution": "not_executed",
+            "content_identity": "verified_at_runtime",
+            "unverifiable_fields": ["retain_pipeline", "retain_model", "retain_code"],
+        }
+    elif ingest_only and not force_reingest:
+        executed_stages = ["retain"]
+        ingestion_provenance = {
+            "mode": "mixed_or_reused_bank",
+            "status": "unverifiable",
+            "retain_execution": "partial_or_skipped",
+            "content_identity": "verified_at_runtime",
+            "unverifiable_fields": ["reused_retain_pipeline", "reused_retain_model", "reused_retain_code"],
+        }
+    else:
+        executed_stages = ["retain"] if ingest_only else ["retain", "recall", "answer", "judge"]
+        ingestion_provenance = {
+            "mode": "current_run",
+            "status": "current_run",
+            "retain_execution": "executed",
+            "content_identity": "verified_after_ingestion",
+        }
     return {
-        "artifact_schema_version": 1,
+        "artifact_schema_version": 2,
         "dataset": {
             "path": _manifest_dataset_reference(dataset_path),
             "sha256": dataset_sha256,
@@ -181,7 +208,7 @@ def build_run_manifest(
             "expected_full_items": LONGMEMEVAL_EXPECTED_ITEMS if canonical else None,
         },
         "pipeline": {
-            "stages": ["retain", "recall", "answer", "judge"],
+            "stages": executed_stages,
             "planner": planner,
             "context_format": context_format,
             "thinking_budget": thinking_budget,
@@ -208,12 +235,14 @@ def build_run_manifest(
             "ingest_only": ingest_only,
             "force_reingest": force_reingest,
         },
+        "ingestion_provenance": ingestion_provenance,
         "database": {
             "backend": os.getenv("HMS_API_DATABASE_BACKEND", "postgresql"),
             "schema": os.getenv("HMS_API_DATABASE_SCHEMA", "public"),
             "vector_extension": os.getenv("HMS_API_VECTOR_EXTENSION", "pgvector"),
         },
         "runtime": {
+            "identity_scope": "executed_stages",
             "git_commit": git_commit,
             "git_dirty": bool(git_status) if git_status is not None else None,
             "source_tree_fingerprint": _source_tree_fingerprint(),
@@ -242,6 +271,7 @@ def _artifact_compatibility_contract(
         "artifact_schema_version": manifest.get("artifact_schema_version"),
         "dataset": dataset_identity,
         "pipeline": manifest.get("pipeline"),
+        "ingestion_provenance": manifest.get("ingestion_provenance"),
         "database": manifest.get("database"),
         "git_commit": runtime.get("git_commit") if isinstance(runtime, Mapping) else None,
         "source_tree_fingerprint": (runtime.get("source_tree_fingerprint") if isinstance(runtime, Mapping) else None),
@@ -301,6 +331,24 @@ def validate_output_target(
             f"Refusing to overwrite existing result artifact {output_path}. "
             "Choose a new HMS_RESULTS_FILENAME or use --resume for a compatible interrupted run."
         )
+
+
+async def _filter_items_with_reusable_banks(
+    items: Sequence[Dict[str, Any]],
+    *,
+    dataset: BenchmarkDataset,
+    runner: BenchmarkRunner,
+    agent_id: str = "longmemeval",
+) -> List[Dict[str, Any]]:
+    """Filter ``--only-ingested`` items through the shared exact-bank preflight."""
+
+    reusable_item_ids = await runner._preflight_reusable_items(
+        items,
+        agent_id,
+        clear_agent_per_item=True,
+        require_all=False,
+    )
+    return [item for item in items if dataset.get_item_id(item) in reusable_item_ids]
 
 
 ORACLE_PLANNER_V1_WEIGHTS = {
@@ -2011,7 +2059,13 @@ async def run_benchmark(
         ingest_only=ingest_only,
         force_reingest=force_reingest,
     )
-    current_model_config = get_model_config()
+    if skip_ingestion or only_ingested:
+        retain_execution = "not_executed"
+    elif ingest_only and not force_reingest:
+        retain_execution = "partial_or_skipped"
+    else:
+        retain_execution = "executed"
+    current_model_config = get_artifact_model_config(retain_execution=retain_execution)
     validate_output_target(
         output_path,
         merge_with_existing=merge_with_existing,
@@ -2061,29 +2115,21 @@ async def run_benchmark(
 
         items_to_check = filtered_items if filtered_items is not None else original_dataset_items
 
-        # Check which items have existing banks
-        ingested_items = []
-        pool = await memory._get_pool()
-
-        for item in items_to_check:
-            item_id = dataset.get_item_id(item)
-            agent_id = f"longmemeval_{item_id}"
-
-            # A retained bank is reusable when its source chunks are durable;
-            # fact extraction may legitimately produce zero facts.
-            async with pool.acquire() as conn:
-                has_chunks = await conn.fetchval(
-                    f"SELECT EXISTS(SELECT 1 FROM {fq_table('chunks')} WHERE bank_id = $1)",
-                    agent_id,
-                )
-                if has_chunks:
-                    ingested_items.append(item)
-
-        filtered_items = ingested_items
-        console.print(f"[green]Found {len(filtered_items)} items with existing memory banks[/green]")
+        audit_runner = BenchmarkRunner(
+            dataset=dataset,
+            answer_generator=answer_generator,
+            answer_evaluator=answer_evaluator,
+            memory=memory,
+        )
+        filtered_items = await _filter_items_with_reusable_banks(
+            items_to_check,
+            dataset=dataset,
+            runner=audit_runner,
+        )
+        console.print(f"[green]Found {len(filtered_items)} exact reusable memory banks[/green]")
 
         if not filtered_items:
-            raise RuntimeError("No items with durable retained source chunks were found")
+            raise RuntimeError("No exact dataset-matching reusable memory banks were found")
 
     # Determine query rewriting strategy
     if query_expansion_enabled:
@@ -2187,6 +2233,7 @@ async def run_benchmark(
         force_reingest=force_reingest,  # Force re-ingest even if data already exists
         rerun_invalid_existing=resume,
         run_manifest=current_manifest,
+        model_config=current_model_config,
     )
     results["run_manifest"] = current_manifest
     runner.save_results(results, output_path)
@@ -2195,7 +2242,10 @@ async def run_benchmark(
         console.print("\n[green]✓[/green] Ingest-only mode completed. Data is ready for evaluation.")
         console.print("  To run evaluation later with a different model:")
         console.print("  1. Update .env with your preferred model")
-        console.print("  2. Run: HMS_BENCHMARK=longmemeval bash .aaaSCRIPT/run_benchmark.sh --only-ingested --fill")
+        console.print(
+            "  2. Choose a new HMS_RESULTS_FILENAME and run: "
+            "HMS_BENCHMARK=longmemeval bash .aaaSCRIPT/run_benchmark.sh --only-ingested"
+        )
         return results
 
     full_run_requested = (
@@ -2378,7 +2428,7 @@ def generate_markdown_table(results: dict, json_output_path: Path):
         lines.append("")
         lines.append(f"- **HMS**: {config['hms']['provider']}/{config['hms']['model']}")
         if "retain" in config:
-            lines.append(f"- **Retain**: {config['retain']['provider']}/{config['retain']['model']}")
+            lines.append(f"- **Retain**: {format_retain_model_config(config['retain'])}")
         lines.append(
             f"- **Answer Generation**: {config['answer_generation']['provider']}/{config['answer_generation']['model']}"
         )
