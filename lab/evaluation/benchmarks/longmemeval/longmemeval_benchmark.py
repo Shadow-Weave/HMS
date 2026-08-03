@@ -160,10 +160,10 @@ def _manifest_dataset_reference(dataset_path: Path) -> str:
         return f"external:{resolved_path.name}"
 
 
-def _retain_chunking_manifest() -> Dict[str, Any]:
-    """Return the non-secret Retain chunking policy used by this process."""
+def _retain_chunking_manifest(*, retain_execution: str) -> Dict[str, Any]:
+    """Return truthful chunking provenance for the Retain work in this run."""
 
-    return {
+    current_run_policy = {
         "chunk_size": int(os.getenv(ENV_RETAIN_CHUNK_SIZE, str(DEFAULT_RETAIN_CHUNK_SIZE))),
         "semantic_enabled": (
             os.getenv(
@@ -191,6 +191,20 @@ def _retain_chunking_manifest() -> Dict[str, Any]:
         "policy_version": RETAIN_SEMANTIC_CHUNKING_POLICY_VERSION,
         "prompt_version": RETAIN_SEMANTIC_CHUNKING_PROMPT_VERSION,
     }
+    if retain_execution == "executed":
+        return current_run_policy
+    if retain_execution == "not_executed":
+        return {
+            "execution": "not_executed",
+            "bank_creator_policy": "unverifiable",
+        }
+    if retain_execution == "partial_or_skipped":
+        return {
+            "execution": "partial_or_skipped",
+            "bank_creator_policy": "unverifiable",
+            "current_run_policy": current_run_policy,
+        }
+    raise ValueError(f"Unsupported Retain execution mode: {retain_execution}")
 
 
 def build_run_manifest(
@@ -267,7 +281,7 @@ def build_run_manifest(
             "query_expansion_enabled": query_expansion_enabled,
             "query_rewriting_strategy": query_rewriting_strategy if query_expansion_enabled else "noop",
             "session_expansion_weight": session_expansion_weight,
-            "retain_chunking": _retain_chunking_manifest(),
+            "retain_chunking": _retain_chunking_manifest(retain_execution=ingestion_provenance["retain_execution"]),
         },
         "concurrency": {
             "items": max_concurrent_items,

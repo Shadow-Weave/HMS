@@ -76,10 +76,12 @@ Provider Batch extraction does not yet bind its checkpoint to a semantic plan
 digest. Set `HMS_API_RETAIN_SEMANTIC_CHUNKING_ENABLED=false` when Batch
 extraction is enabled.
 
-The result `run_manifest` records the enabled flag, failure policy,
-boundary-call limits, fixed chunk size, and versioned semantic policy and
-prompt identifiers. Resume therefore rejects results produced with different
-Retain chunking semantics.
+For banks created entirely by the current run, the result `run_manifest`
+records the enabled flag, failure policy, boundary-call limits, fixed chunk
+size, and versioned semantic policy and prompt identifiers. Resume therefore
+rejects results produced with different Retain chunking semantics. Reused banks
+instead mark their creator policy as unverifiable; mixed ingest-only runs keep
+the current-run policy separately without attributing it to reused banks.
 
 ## Dataset pin
 
@@ -202,13 +204,15 @@ Durable rows do not record enough information to reconstruct the Retain
 pipeline, model, or source revision that originally created an older bank.
 Retrieval-only artifacts therefore omit `retain` from
 `run_manifest.pipeline.stages`, mark the reused-bank Retain provenance as
-`unverifiable`, and do not present the current Retain model configuration as the
-bank creator. The recorded Git/source identity applies only to stages executed
-by the current benchmark process. Fresh runs record `current_run` Retain
-provenance. Because a non-forced ingest-only run can skip exact existing banks
-and ingest only the missing or stale subset, its global Retain provenance is
-marked `mixed_or_reused_bank` and unverifiable. Use `--force-reingest` when the
-artifact must attest that every selected bank was created by the current run.
+`unverifiable`, and do not present the current Retain model configuration or
+chunking policy as the bank creator. The recorded Git/source identity applies
+only to stages executed by the current benchmark process. Fresh runs record
+`current_run` Retain provenance. Because a non-forced ingest-only run can skip
+exact existing banks and ingest only the missing or stale subset, its global
+Retain provenance is marked `mixed_or_reused_bank` and unverifiable; the
+current-run chunking policy applies only to newly ingested banks. Use
+`--force-reingest` when the artifact must attest that every selected bank was
+created by the current run.
 
 ## Reproduction profiles
 

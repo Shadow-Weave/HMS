@@ -167,6 +167,10 @@ def test_run_manifest_distinguishes_fresh_and_reused_retain_provenance(tmp_path:
     assert fresh["pipeline"]["stages"] == ["retain", "recall", "answer", "judge"]
     assert fresh["ingestion_provenance"]["mode"] == "current_run"
     assert reused["pipeline"]["stages"] == ["recall", "answer", "judge"]
+    assert reused["pipeline"]["retain_chunking"] == {
+        "execution": "not_executed",
+        "bank_creator_policy": "unverifiable",
+    }
     assert reused["ingestion_provenance"] == {
         "mode": "reused_bank",
         "status": "unverifiable",
@@ -186,6 +190,10 @@ def test_ingest_only_manifest_marks_possible_reuse_as_mixed(tmp_path: Path, monk
     manifest = _built_manifest(dataset_path, ingest_only=True)
 
     assert manifest["pipeline"]["stages"] == ["retain"]
+    chunking = manifest["pipeline"]["retain_chunking"]
+    assert chunking["execution"] == "partial_or_skipped"
+    assert chunking["bank_creator_policy"] == "unverifiable"
+    assert chunking["current_run_policy"]["policy_version"] == "semantic-boundary-v1"
     assert manifest["ingestion_provenance"] == {
         "mode": "mixed_or_reused_bank",
         "status": "unverifiable",
@@ -209,6 +217,8 @@ def test_force_reingest_ingest_only_manifest_is_current_run(tmp_path: Path, monk
 
     assert manifest["pipeline"]["stages"] == ["retain"]
     assert manifest["ingestion_provenance"]["mode"] == "current_run"
+    assert manifest["pipeline"]["retain_chunking"]["policy_version"] == "semantic-boundary-v1"
+    assert "bank_creator_policy" not in manifest["pipeline"]["retain_chunking"]
 
 
 @pytest.mark.asyncio
