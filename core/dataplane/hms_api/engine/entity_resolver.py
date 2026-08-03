@@ -12,11 +12,21 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from difflib import SequenceMatcher
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
 
 from .db_utils import acquire_with_retry
+from .entity_resolution_contracts import (
+    EntityOccurrenceBinding,
+    EntityResolutionReadPlan,
+    ExistingEntityBinding,
+    FinalizedEntityResolution,
+    UnresolvedEntityDescriptor,
+)
 from .memory_engine import fq_table
 from .retain.entity_labels import build_labels_lookup as _build_labels_lookup_from_config
+
+if TYPE_CHECKING:
+    from .db.ops import DataAccessOps
 
 logger = logging.getLogger(__name__)
 
@@ -47,17 +57,18 @@ class _EntityStatAgg:
 
 
 # Sentinel distinguishing "key not in dict" from "key present with value None".
-# Needed when merging event_date across duplicate unit rows: legacy two-tuple
+# Needed when merging event_date across duplicate unit rows: two-tuple
 # callers surface `None`, which must not clobber a real datetime from another
 # caller for the same unit.
 _SENTINEL_MISSING: Final = object()
+_ORACLE_IN_CHUNK_SIZE: Final = 900
 
 
 def _later_date(a: datetime | None, b: datetime | None) -> datetime | None:
     """Return whichever of ``a`` / ``b`` is later (None loses to any datetime).
 
-    Used to fold duplicate co-occurrence pairs across a retain batch: legacy
-    two-tuple callers surface ``None``, which must not clobber a real
+    Used to fold duplicate co-occurrence pairs across a retain batch: two-tuple
+    callers surface ``None``, which must not clobber a real
     datetime that arrived for the same pair from an aware caller.
     """
     if a is None:
@@ -103,7 +114,7 @@ class EntityResolver:
         self.entity_lookup = entity_lookup
         self._pg_trgm_checked = False
         # Backend-specific operations — accessed via pool.ops (Django pattern).
-        self._ops = pool.ops if pool is not None else None
+        self._ops: DataAccessOps | None = pool.ops if pool is not None else None
         # Keyed by asyncio task id so concurrent retain batches never mix their
         # pending updates.  flush_pending_stats() pops only the calling task's items.
         self._pending_stats: dict[int, list[_EntityStat]] = {}
@@ -113,6 +124,13 @@ class EntityResolver:
         """Return a unique key for the current asyncio task (or 0 for non-task context)."""
         task = asyncio.current_task()
         return id(task) if task is not None else 0
+
+    def _require_ops(self) -> "DataAccessOps":
+        """Return backend operations for methods that require a database pool."""
+
+        if self._ops is None:
+            raise RuntimeError("entity resolution database operations require a configured pool")
+        return self._ops
 
     def discard_pending_stats(self) -> None:
         """
@@ -238,6 +256,85 @@ class EntityResolver:
                 conn, bank_id, entities_data, context, unit_event_date, taxonomy_lookup
             )
 
+    async def plan_entities_batch(
+        self,
+        bank_id: str,
+        entities_data: list[dict],
+        context: str,
+        unit_event_date,
+        conn=None,
+        entity_labels: list | None = None,
+    ) -> EntityResolutionReadPlan:
+        """Score entity candidates without creating rows or queuing statistics.
+
+        Retain calls this method on its Phase-1 connection. Missing canonical
+        rows remain immutable descriptors until ``finalize_entity_read_plan`` is
+        invoked on the core unit-of-work connection.
+        """
+
+        if not entities_data:
+            return EntityResolutionReadPlan(bank_id=bank_id, occurrences=())
+        taxonomy_lookup = self._build_labels_lookup(entity_labels)
+        if conn is None:
+            async with acquire_with_retry(self.pool) as conn:
+                return await self._plan_entities_batch_impl(
+                    conn, bank_id, entities_data, context, unit_event_date, taxonomy_lookup
+                )
+        return await self._plan_entities_batch_impl(
+            conn, bank_id, entities_data, context, unit_event_date, taxonomy_lookup
+        )
+
+    async def _plan_entities_batch_impl(
+        self,
+        conn,
+        bank_id: str,
+        entities_data: list[dict],
+        context: str,
+        unit_event_date,
+        taxonomy_lookup: set[str] | None = None,
+    ) -> EntityResolutionReadPlan:
+        del context, taxonomy_lookup  # Reserved for future provider-neutral strategies.
+        if self.entity_lookup == "trigram":
+            backend_strategy = self._require_ops().get_entity_resolution_strategy()
+            if backend_strategy == "oracle_fuzzy":
+                return await self._resolve_entities_batch_oracle_fuzzy(
+                    conn,
+                    bank_id,
+                    entities_data,
+                    unit_event_date,
+                    read_plan=True,
+                )
+            if not self._pg_trgm_checked:
+                self._pg_trgm_checked = True
+                has_trgm = await conn.fetchval("SELECT EXISTS(SELECT 1 FROM pg_extension WHERE extname = 'pg_trgm')")
+                if not has_trgm:
+                    logger.warning(
+                        "pg_trgm extension is not available — falling back to 'full' "
+                        "entity lookup strategy. Install pg_trgm for faster entity resolution."
+                    )
+                    self.entity_lookup = "full"
+                    return await self._resolve_entities_batch_full(
+                        conn,
+                        bank_id,
+                        entities_data,
+                        unit_event_date,
+                        read_plan=True,
+                    )
+            return await self._resolve_entities_batch_trigram(
+                conn,
+                bank_id,
+                entities_data,
+                unit_event_date,
+                read_plan=True,
+            )
+        return await self._resolve_entities_batch_full(
+            conn,
+            bank_id,
+            entities_data,
+            unit_event_date,
+            read_plan=True,
+        )
+
     async def _resolve_entities_batch_impl(
         self,
         conn,
@@ -250,7 +347,7 @@ class EntityResolver:
         if self.entity_lookup == "trigram":
             # Route to backend-specific fuzzy strategy.
             # Non-PG backends (Oracle) use UTL_MATCH instead of pg_trgm.
-            backend_strategy = self._ops.get_entity_resolution_strategy()
+            backend_strategy = self._require_ops().get_entity_resolution_strategy()
             if backend_strategy == "oracle_fuzzy":
                 return await self._resolve_entities_batch_oracle_fuzzy(conn, bank_id, entities_data, unit_event_date)
             # Auto-detect pg_trgm availability on first call and fall back to
@@ -271,8 +368,14 @@ class EntityResolver:
         return await self._resolve_entities_batch_full(conn, bank_id, entities_data, unit_event_date)
 
     async def _resolve_entities_batch_full(
-        self, conn, bank_id: str, entities_data: list[dict], unit_event_date
-    ) -> list[str]:
+        self,
+        conn,
+        bank_id: str,
+        entities_data: list[dict],
+        unit_event_date,
+        *,
+        read_plan: bool = False,
+    ) -> list[str] | EntityResolutionReadPlan:
         """Original strategy: load all bank entities then match in Python."""
         # Query ALL candidates for this bank
         all_entities = await conn.fetch(
@@ -337,13 +440,23 @@ class EntityResolver:
                     matching.append((ent_id, canonical_name, metadata, last_seen, mention_count))
             all_candidates[entity_text] = matching
 
+        if read_plan:
+            return self._build_entity_read_plan(
+                bank_id, entities_data, unit_event_date, all_candidates, cooccurrence_map
+            )
         return await self._resolve_from_candidates(
             conn, bank_id, entities_data, unit_event_date, all_candidates, cooccurrence_map
         )
 
     async def _resolve_entities_batch_trigram(
-        self, conn, bank_id: str, entities_data: list[dict], unit_event_date
-    ) -> list[str]:
+        self,
+        conn,
+        bank_id: str,
+        entities_data: list[dict],
+        unit_event_date,
+        *,
+        read_plan: bool = False,
+    ) -> list[str] | EntityResolutionReadPlan:
         """
         Trigram strategy: fetch only similar candidates per entity name using pg_trgm.
 
@@ -417,13 +530,23 @@ class EntityResolver:
                 if eid1 in id_to_name:
                     cooccurrence_map[eid2].add(id_to_name[eid1])
 
+        if read_plan:
+            return self._build_entity_read_plan(
+                bank_id, entities_data, unit_event_date, all_candidates, cooccurrence_map
+            )
         return await self._resolve_from_candidates(
             conn, bank_id, entities_data, unit_event_date, all_candidates, cooccurrence_map
         )
 
     async def _resolve_entities_batch_oracle_fuzzy(
-        self, conn: Any, bank_id: str, entities_data: list[dict], unit_event_date: datetime | None
-    ) -> list[str]:
+        self,
+        conn: Any,
+        bank_id: str,
+        entities_data: list[dict],
+        unit_event_date: datetime | None,
+        *,
+        read_plan: bool = False,
+    ) -> list[str] | EntityResolutionReadPlan:
         """
         Oracle strategy: fetch similar candidates using UTL_MATCH.JARO_WINKLER_SIMILARITY.
 
@@ -463,7 +586,13 @@ class EntityResolver:
                 e,
             )
             self.entity_lookup = "full"
-            return await self._resolve_entities_batch_full(conn, bank_id, entities_data, unit_event_date)
+            return await self._resolve_entities_batch_full(
+                conn,
+                bank_id,
+                entities_data,
+                unit_event_date,
+                read_plan=read_plan,
+            )
 
         # Group candidates by query_text (same structure as trigram strategy)
         all_candidates: dict[str, list] = {t: [] for t in entity_texts}
@@ -505,8 +634,197 @@ class EntityResolver:
                 if eid1 in id_to_name:
                     cooccurrence_map[eid2].add(id_to_name[eid1])
 
+        if read_plan:
+            return self._build_entity_read_plan(
+                bank_id, entities_data, unit_event_date, all_candidates, cooccurrence_map
+            )
         return await self._resolve_from_candidates(
             conn, bank_id, entities_data, unit_event_date, all_candidates, cooccurrence_map
+        )
+
+    @staticmethod
+    def _build_entity_read_plan(
+        bank_id: str,
+        entities_data: list[dict],
+        unit_event_date,
+        all_candidates: dict[str, list],
+        cooccurrence_map: dict[str, set[str]],
+    ) -> EntityResolutionReadPlan:
+        """Apply established candidate scoring while deferring every database write."""
+
+        occurrences: list[EntityOccurrenceBinding] = []
+        existing: list[ExistingEntityBinding] = []
+        unresolved: list[UnresolvedEntityDescriptor] = []
+
+        for idx, entity_data in enumerate(entities_data):
+            entity_text = entity_data["text"]
+            occurrence_key = entity_data.get("occurrence_key")
+            unit_key = entity_data.get("unit_key")
+            local_index = entity_data.get("local_index")
+            if not isinstance(occurrence_key, str) or not occurrence_key:
+                raise ValueError(f"entities_data[{idx}] requires a stable occurrence_key")
+            if not isinstance(unit_key, str) or not unit_key:
+                raise ValueError(f"entities_data[{idx}] requires a stable unit_key")
+            if isinstance(local_index, bool) or not isinstance(local_index, int) or local_index < 0:
+                raise ValueError(f"entities_data[{idx}] requires a non-negative local_index")
+
+            event_date = entity_data.get("event_date", unit_event_date)
+            occurrences.append(
+                EntityOccurrenceBinding(
+                    occurrence_key=occurrence_key,
+                    unit_key=unit_key,
+                    local_index=local_index,
+                    event_date=event_date,
+                )
+            )
+            nearby_entities = entity_data.get("nearby_entities", [])
+            nearby_entity_set = {
+                item["text"].lower() for item in nearby_entities if item.get("text") and item["text"] != entity_text
+            }
+            best_candidate = None
+            best_score = 0.0
+            for candidate_id, canonical_name, _metadata, last_seen, _mention_count in all_candidates.get(
+                entity_text, []
+            ):
+                score = SequenceMatcher(None, entity_text.lower(), canonical_name.lower()).ratio() * 0.5
+                if nearby_entity_set:
+                    overlap = len(nearby_entity_set & cooccurrence_map.get(candidate_id, set()))
+                    score += (overlap / len(nearby_entity_set)) * 0.3
+                if last_seen and event_date:
+                    event_date_utc = event_date if event_date.tzinfo else event_date.replace(tzinfo=UTC)
+                    last_seen_utc = last_seen if last_seen.tzinfo else last_seen.replace(tzinfo=UTC)
+                    days_diff = abs((event_date_utc - last_seen_utc).total_seconds() / 86400)
+                    if days_diff < 7:
+                        score += max(0, 1.0 - (days_diff / 7)) * 0.2
+                if score > best_score:
+                    best_score = score
+                    best_candidate = candidate_id
+
+            if best_score > 0.6:
+                existing.append(ExistingEntityBinding(occurrence_key, best_candidate))
+                continue
+
+            unresolved.append(
+                UnresolvedEntityDescriptor(
+                    occurrence_key=occurrence_key,
+                    canonical_name=entity_text,
+                    entity_type=entity_data.get("type") or "CONCEPT",
+                    event_date=event_date,
+                    nearby_occurrence_keys=tuple(entity_data.get("nearby_occurrence_keys") or ()),
+                    validated_labels=tuple(entity_data.get("validated_labels") or ()),
+                )
+            )
+
+        return EntityResolutionReadPlan(
+            bank_id=bank_id,
+            occurrences=tuple(occurrences),
+            existing_bindings=tuple(existing),
+            unresolved_descriptors=tuple(unresolved),
+        )
+
+    async def finalize_entity_read_plan(
+        self,
+        conn: Any,
+        bank_id: str,
+        plan: EntityResolutionReadPlan,
+        *,
+        entities_table: str | None = None,
+    ) -> FinalizedEntityResolution:
+        """Create unresolved entities on the core transaction connection.
+
+        Only indexed exact-name reads occur here. Candidate scans and scoring
+        have already completed in Phase 1.
+        """
+
+        if plan.bank_id != bank_id:
+            raise ValueError("entity read plan bank does not match the core write bank")
+        table = entities_table or fq_table("entities")
+        resolved_by_occurrence = {binding.occurrence_key: binding.entity_id for binding in plan.existing_bindings}
+
+        existing_ids = tuple(dict.fromkeys(binding.entity_id for binding in plan.existing_bindings))
+        if existing_ids:
+            backend_type = getattr(conn, "backend_type", "postgresql")
+            batch_size = (
+                _ORACLE_IN_CHUNK_SIZE
+                if isinstance(backend_type, str) and backend_type.lower() == "oracle"
+                else len(existing_ids)
+            )
+            found_ids: set[str] = set()
+            for start in range(0, len(existing_ids), batch_size):
+                rows = await conn.fetch(
+                    f"SELECT id FROM {table} WHERE bank_id = $1 AND id = ANY($2::uuid[])",
+                    bank_id,
+                    list(existing_ids[start : start + batch_size]),
+                )
+                found_ids.update(str(row["id"]) for row in rows)
+            missing_ids = [entity_id for entity_id in existing_ids if str(entity_id) not in found_ids]
+            if missing_ids:
+                raise ValueError(f"entity read plan contains missing or cross-bank IDs: {missing_ids!r}")
+
+        descriptors = plan.unresolved_descriptors
+        pending_date_by_occurrence = {
+            occurrence.occurrence_key: occurrence.event_date for occurrence in plan.occurrences
+        }
+        if descriptors:
+            ops = self._require_ops()
+            # Preserve established grouping semantics: Python lower() defines
+            # in-batch groups, the first occurrence supplies spelling/first_seen,
+            # and groups are inserted in lower-key order. PostgreSQL LOWER remains
+            # authoritative for conflicts between Python-distinct Unicode spellings.
+            groups: dict[str, list[UnresolvedEntityDescriptor]] = {}
+            for descriptor in descriptors:
+                groups.setdefault(descriptor.canonical_name.lower(), []).append(descriptor)
+            sorted_groups = sorted(groups.items())
+            names = [group[0].canonical_name for _name_lower, group in sorted_groups]
+            dates = [group[0].event_date for _name_lower, group in sorted_groups]
+            await ops.bulk_insert_entities(conn, table, bank_id, names, dates)
+            rows = await ops.fetch_missing_entity_ids(conn, table, bank_id, names)
+            id_by_input_name: dict[str, Any] = {}
+            for row in rows:
+                input_name = row.get("input_name") if hasattr(row, "get") else row["input_name"]
+                if input_name is not None:
+                    id_by_input_name[input_name] = row["id"]
+
+            missing_names = [name for name in names if name not in id_by_input_name]
+            if missing_names:
+                raise ValueError(
+                    "transactional entity finalization could not resolve canonical names "
+                    f"{missing_names!r} in bank {bank_id!r}"
+                )
+            for _name_lower, group in sorted_groups:
+                representative = group[0]
+                entity_id = id_by_input_name[representative.canonical_name]
+                for descriptor in group:
+                    resolved_by_occurrence[descriptor.occurrence_key] = entity_id
+                    pending_date_by_occurrence[descriptor.occurrence_key] = representative.event_date
+
+        occurrence_keys = tuple(item.occurrence_key for item in plan.occurrences)
+        if set(resolved_by_occurrence) != set(occurrence_keys):
+            raise ValueError("transactional entity finalization returned an incomplete occurrence mapping")
+        resolved_ids = tuple(resolved_by_occurrence[key] for key in occurrence_keys)
+        if any(entity_id is None or str(entity_id) == "" for entity_id in resolved_ids):
+            raise ValueError("transactional entity finalization returned an empty entity ID")
+
+        unit_to_ids: dict[str, list[Any]] = {}
+        entity_to_unit: list[tuple[str, int, datetime | None]] = []
+        pending: list[_EntityStat] = []
+        for occurrence, entity_id in zip(plan.occurrences, resolved_ids, strict=True):
+            entity_to_unit.append((occurrence.unit_key, occurrence.local_index, occurrence.event_date))
+            unit_to_ids.setdefault(occurrence.unit_key, []).append(entity_id)
+            pending.append(
+                _EntityStat(
+                    entity_id=entity_id,
+                    event_date=pending_date_by_occurrence[occurrence.occurrence_key],
+                )
+            )
+
+        # Queue stats only after every occurrence has a verified in-bank ID. The
+        # service discards this task-local buffer on core rollback/ownership loss.
+        self._pending_stats.setdefault(self._task_key(), []).extend(pending)
+        return FinalizedEntityResolution(
+            resolved_entity_ids=resolved_ids,
+            entity_to_unit=tuple(entity_to_unit),
+            unit_to_entity_ids=tuple((unit_key, tuple(ids)) for unit_key, ids in unit_to_ids.items()),
         )
 
     async def _resolve_from_candidates(
@@ -587,13 +905,15 @@ class EntityResolver:
 
         # Existing entities: IDs already known from the candidate SELECT above.
         # No in-transaction UPDATE — mention_count/last_seen are stats deferred to
-        # flush_pending_stats() which the orchestrator calls after the transaction.
+        # flush_pending_stats(), which the Retain service calls after the transaction.
         pending: list[_EntityStat] = list(entities_to_update)
 
         # New entities: INSERT with DO NOTHING to avoid row locks on concurrent races.
         # ON CONFLICT DO NOTHING returns nothing for rows that conflicted; we handle
         # that rare case with a fallback SELECT.
         if entities_to_create:
+            ops = self._require_ops()
+
             # Group by lowercase name — deduplicate within the batch.
             @dataclass
             class _NameGroup:
@@ -618,7 +938,7 @@ class EntityResolver:
             # truth for mention counting (one stat per original mention in the batch).
             entities_table = fq_table("entities")
 
-            id_by_name = await self._ops.bulk_insert_entities(
+            id_by_name = await ops.bulk_insert_entities(
                 conn,
                 entities_table,
                 bank_id,
@@ -638,7 +958,7 @@ class EntityResolver:
             # a NOT NULL constraint violation on unit_entities.entity_id.
             missing_original = [g.name for name_lower, g in sorted_groups if name_lower not in id_by_name]
             if missing_original:
-                existing_rows = await self._ops.fetch_missing_entity_ids(
+                existing_rows = await ops.fetch_missing_entity_ids(
                     conn,
                     entities_table,
                     bank_id,
@@ -662,7 +982,7 @@ class EntityResolver:
                         entity_ids[original_idx] = entity_id
                         pending.append(_EntityStat(entity_id=entity_id, event_date=g.event_date))
 
-        # Accumulate into the resolver's pending list; the orchestrator flushes
+        # Accumulate into the resolver's pending list; the Retain service flushes
         # these with await entity_resolver.flush_pending_stats() after the txn.
         key = self._task_key()
         self._pending_stats.setdefault(key, []).extend(pending)
@@ -846,6 +1166,7 @@ class EntityResolver:
             entity_id: Entity ID
         """
         async with acquire_with_retry(self.pool) as conn:
+            ops = self._require_ops()
             # Insert unit-entity link
             await conn.execute(
                 f"""
@@ -856,7 +1177,7 @@ class EntityResolver:
                 unit_id,
                 entity_id,
             )
-            await self._ops.refresh_entity_fact_counts(
+            await ops.refresh_entity_fact_counts(
                 conn,
                 fq_table("entities"),
                 fq_table("unit_entities"),
@@ -925,17 +1246,21 @@ class EntityResolver:
                 observed in that unit advances to the event time instead of
                 ``now()``, which matters for backfilled corpora where ingest
                 time is a single spike unrelated to the underlying timeline.
-                Legacy two-tuples remain accepted.
+                Backward-compatible two-tuples remain accepted.
             conn: Optional connection to use (if None, acquires from pool)
         """
         if not unit_entity_pairs:
             return
 
         # Normalize to 3-tuples internally so downstream code doesn't branch.
-        normalized: list[tuple[str, str, datetime | None]] = [
-            (t[0], t[1], t[2] if len(t) >= 3 else None)  # type: ignore[misc]
-            for t in unit_entity_pairs
-        ]
+        normalized: list[tuple[str, str, datetime | None]] = []
+        for pair in unit_entity_pairs:
+            if len(pair) == 2:
+                unit_id, entity_id = pair
+                event_date = None
+            else:
+                unit_id, entity_id, event_date = pair
+            normalized.append((unit_id, entity_id, event_date))
 
         if conn is None:
             async with acquire_with_retry(self.pool) as conn:
@@ -944,19 +1269,20 @@ class EntityResolver:
             return await self._link_units_to_entities_batch_impl(conn, normalized)
 
     async def _link_units_to_entities_batch_impl(self, conn, unit_entity_pairs: list[tuple[str, str, datetime | None]]):
+        ops = self._require_ops()
         # Sorted bulk insert to prevent deadlocks from inconsistent lock ordering
         # across concurrent transactions on the unit_entities unique index.
         sorted_pairs = sorted(unit_entity_pairs, key=lambda t: (t[0], t[1]))
         unit_ids = [p[0] for p in sorted_pairs]
         entity_ids = [p[1] for p in sorted_pairs]
 
-        await self._ops.bulk_insert_unit_entities(
+        await ops.bulk_insert_unit_entities(
             conn,
             fq_table("unit_entities"),
             unit_ids,
             entity_ids,
         )
-        await self._ops.refresh_entity_fact_counts(
+        await ops.refresh_entity_fact_counts(
             conn,
             fq_table("entities"),
             fq_table("unit_entities"),
@@ -966,8 +1292,8 @@ class EntityResolver:
         # Build maps keyed by unit_id:
         #   unit_to_entities: entity set per unit (for the co-occurrence cross-product)
         #   unit_event_date:  event time per unit (propagated onto every pair from that unit)
-        # When a unit shows up more than once with conflicting event_dates (legacy
-        # callers passing None interleaved with aware callers), prefer the first
+        # When a unit shows up more than once with conflicting event_dates
+        # (two-tuple callers interleaved with aware callers), prefer the first
         # non-None value so we don't accidentally erase an explicit timestamp.
         unit_to_entities: dict[str, set[str]] = {}
         unit_event_date: dict[str, datetime | None] = {}

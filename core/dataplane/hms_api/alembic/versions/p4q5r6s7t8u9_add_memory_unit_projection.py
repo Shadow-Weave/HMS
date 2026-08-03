@@ -78,7 +78,10 @@ def _oracle_upgrade() -> None:
             END IF;
     END;
     """)
-    op.execute(f"""
+    # Bypass SQLAlchemy's text parser for this literal JSON. Otherwise tokens
+    # such as ``:1`` and ``:true`` inside the payload are treated as bind
+    # parameters before the statement reaches Oracle.
+    op.get_bind().exec_driver_sql(f"""
         UPDATE {schema}memory_units mu
         SET projection =
             '{{"embedding":{{"v":1,"ok":' ||
@@ -94,7 +97,7 @@ def _oracle_upgrade() -> None:
                 ELSE 'false'
             END ||
             '}},"extraction":{{"v":"legacy"}}}}'
-        WHERE projection = '{{}}'
+        WHERE DBMS_LOB.COMPARE(projection, TO_CLOB('{{}}')) = 0
     """)
 
 

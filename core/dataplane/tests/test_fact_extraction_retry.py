@@ -7,6 +7,7 @@ only set in the BadRequestError handler, not when the LLM returned non-dict JSON
 """
 
 from datetime import datetime, timezone
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -40,6 +41,36 @@ def _make_llm_config(mock_response):
     token_usage.__add__ = lambda self, other: self
     llm.call = AsyncMock(return_value=(mock_response, token_usage))
     return llm
+
+
+@pytest.mark.asyncio
+async def test_chunk_failure_summary_preserves_original_exception(monkeypatch):
+    from hms_api.engine.retain import fact_extraction
+
+    provider_error = TimeoutError("gateway connect timed out")
+
+    monkeypatch.setattr(fact_extraction, "chunk_text", lambda *_args, **_kwargs: ["failed chunk", "ok chunk"])
+
+    async def extract_chunk(*, chunk_index, **_kwargs):
+        if chunk_index == 0:
+            raise provider_error
+        return [], MagicMock()
+
+    monkeypatch.setattr(fact_extraction, "_extract_facts_with_auto_split", extract_chunk)
+
+    with pytest.raises(
+        RuntimeError,
+        match=r"chunk 0: TimeoutError: gateway connect timed out",
+    ) as raised:
+        await fact_extraction.extract_facts_from_text(
+            text="document",
+            event_date=None,
+            llm_config=object(),
+            agent_name="test-agent",
+            config=SimpleNamespace(retain_chunk_size=1000),
+        )
+
+    assert raised.value.__cause__ is provider_error
 
 
 @pytest.mark.asyncio

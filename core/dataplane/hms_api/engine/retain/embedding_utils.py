@@ -23,7 +23,7 @@ def generate_embedding(embeddings_backend, text: str) -> list[float]:
         embeddings = embeddings_backend.encode([text])
         return embeddings[0]
     except Exception as e:
-        raise Exception(f"Failed to generate embedding: {str(e)}")
+        raise RuntimeError(f"Failed to generate embedding ({type(e).__name__}): {e}") from e
 
 
 async def generate_embeddings_batch(embeddings_backend, texts: list[str]) -> list[list[float]]:
@@ -48,7 +48,7 @@ async def generate_embeddings_batch(embeddings_backend, texts: list[str]) -> lis
             texts,
         )
     except Exception as e:
-        raise Exception(f"Failed to generate batch embeddings: {str(e)}")
+        raise RuntimeError(f"Failed to generate batch embeddings ({type(e).__name__}): {e}") from e
 
     # Guarantee 1:1 alignment with input texts. A silent length mismatch here
     # propagates downstream as zip() drops items, eventually surfacing as an

@@ -7,12 +7,13 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 from uuid import UUID
 
-import pytest
-
 import hms_api.engine.memory_engine as memory_engine_module
+import pytest
+from hms_api.engine.ingestion import RetainOutcome, RetainPipelineService
+from hms_api.engine.ingestion.normalization import normalize_contents
 from hms_api.engine.memory_engine import MemoryEngine
 from hms_api.engine.parsers import ConvertResult
-from hms_api.engine.retain.orchestrator import _build_contents
+from hms_api.engine.response_models import TokenUsage
 from hms_api.worker.exceptions import DeferOperation
 
 
@@ -601,7 +602,10 @@ async def test_rich_parser_output_is_whitelisted_into_existing_child_retain(
     assert child_payload["document_tags"] == ["engineering"]
     assert content["metadata"]["customer_key"] == "kept"
     assert content["metadata"]["media_kind"] == "image"
-    merged_content = _build_contents(child_payload["contents"], child_payload["document_tags"])[0]
+    merged_content = normalize_contents(
+        child_payload["contents"],
+        document_tags=child_payload["document_tags"],
+    )[0]
     assert set(merged_content.tags) == {"project-a", "engineering"}
     assert content["entities"] == [{"text": "Python", "type": "CONCEPT"}]
     assert content["event_date"] is None
@@ -651,7 +655,6 @@ async def test_explicit_public_strategy_cannot_override_canonical_chunks(monkeyp
 @pytest.mark.asyncio
 async def test_trusted_chunks_override_is_applied_after_public_strategy(monkeypatch) -> None:
     import hms_api.config_resolver
-    from hms_api.engine.retain import orchestrator
 
     engine = object.__new__(MemoryEngine)
     resolved = SimpleNamespace(
@@ -687,12 +690,13 @@ async def test_trusted_chunks_override_is_applied_after_public_strategy(monkeypa
 
     captured = {}
 
-    async def retain_batch(**kwargs):
-        captured.update(kwargs)
-        return [[]], SimpleNamespace(), 0
+    async def retain_pipeline(_service, invocation, execution):
+        captured["invocation"] = invocation
+        captured["execution"] = execution
+        return RetainOutcome([[]], TokenUsage(), 0)
 
     monkeypatch.setattr(hms_api.config_resolver, "apply_strategy", apply_strategy)
-    monkeypatch.setattr(orchestrator, "retain_batch", retain_batch)
+    monkeypatch.setattr(RetainPipelineService, "retain", retain_pipeline)
     monkeypatch.setattr(memory_engine_module, "create_operation_span", lambda *args, **kwargs: nullcontext())
 
     await MemoryEngine._retain_batch_async_internal(
@@ -704,9 +708,10 @@ async def test_trusted_chunks_override_is_applied_after_public_strategy(monkeypa
         _retain_extraction_mode="chunks",
     )
 
-    assert captured["config"].retain_extraction_mode == "chunks"
-    assert captured["config"].enable_observations is False
-    assert captured["config"].retain_chunk_size == 2_400
+    assert captured["execution"].resolved_config.retain_extraction_mode == "chunks"
+    assert captured["execution"].resolved_config.enable_observations is False
+    assert captured["execution"].resolved_config.retain_chunk_size == 2_400
+    assert captured["invocation"].sanitize_log_identifiers is True
 
 
 @pytest.mark.asyncio
@@ -843,7 +848,7 @@ async def test_late_completed_multimodal_child_failure_does_not_downgrade(monkey
 
 
 @pytest.mark.asyncio
-async def test_legacy_child_failure_keeps_existing_parent_propagation(monkeypatch) -> None:
+async def test_standard_child_failure_keeps_parent_propagation(monkeypatch) -> None:
     operation_id = "00000000-0000-0000-0000-000000000022"
     connection = _Connection(
         [
@@ -869,8 +874,8 @@ async def test_legacy_child_failure_keeps_existing_parent_propagation(monkeypatc
         return SimpleNamespace()
 
     engine._get_backend = get_backend
-    await MemoryEngine._mark_operation_failed(engine, operation_id, "legacy failure", "legacy traceback")
+    await MemoryEngine._mark_operation_failed(engine, operation_id, "retain failure", "retain traceback")
 
-    legacy_update = next(item for item in connection.executions if "status <> 'cancelled'" in item[0])
-    assert legacy_update[1][0] == UUID(operation_id)
+    status_update = next(item for item in connection.executions if "status IN ('pending', 'processing')" in item[0])
+    assert status_update[1][0] == UUID(operation_id)
     engine._maybe_update_parent_operation.assert_awaited_once_with(operation_id, connection)

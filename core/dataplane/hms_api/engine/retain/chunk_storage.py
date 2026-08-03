@@ -13,6 +13,8 @@ from .types import ChunkMetadata
 
 logger = logging.getLogger(__name__)
 
+_ORACLE_IN_CHUNK_SIZE = 900
+
 
 def compute_chunk_hash(chunk_text: str) -> str:
     """Compute SHA256 hash of chunk text for delta comparison."""
@@ -63,10 +65,15 @@ async def delete_chunks_by_ids(conn, chunk_ids: list[str]) -> None:
     """
     if not chunk_ids:
         return
-    await conn.execute(
-        f"DELETE FROM {fq_table('chunks')} WHERE chunk_id = ANY($1::text[])",
-        chunk_ids,
+    backend_type = getattr(conn, "backend_type", "postgresql")
+    batch_size = (
+        _ORACLE_IN_CHUNK_SIZE if isinstance(backend_type, str) and backend_type.lower() == "oracle" else len(chunk_ids)
     )
+    for start in range(0, len(chunk_ids), batch_size):
+        await conn.execute(
+            f"DELETE FROM {fq_table('chunks')} WHERE chunk_id = ANY($1::text[])",
+            chunk_ids[start : start + batch_size],
+        )
 
 
 async def store_chunks_batch(

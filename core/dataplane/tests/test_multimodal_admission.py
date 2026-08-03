@@ -412,7 +412,7 @@ async def test_parser_chain_order_forms_a_distinct_document_command(monkeypatch)
 
 
 @pytest.mark.asyncio
-async def test_legacy_anonymous_file_retain_keeps_random_uuid_identity(monkeypatch) -> None:
+async def test_non_multimodal_anonymous_file_retain_uses_random_uuid_identity(monkeypatch) -> None:
     storage = _CapturingStorage()
     engine = object.__new__(MemoryEngine)
     engine._backend = SimpleNamespace()

@@ -1,0 +1,236 @@
+name: Retain offline quality gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: retain-offline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-quality:
+    name: Python 3.11 offline checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      PYTHONHASHSEED: "0"
+      PYTHONPATH: ${{ github.workspace }}/lab/evaluation
+      UV_NO_PROGRESS: "1"
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.9.3"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install locked test dependencies
+        run: uv sync --locked --package hms-api-slim --extra test --group dev
+
+      - name: Check Retain source style
+        run: |
+          uv run --no-sync --package hms-api-slim ruff check \
+            --config core/dataplane/pyproject.toml \
+            core/dataplane/hms_api/config.py \
+            core/dataplane/hms_api/engine/db/ops_postgresql.py \
+            core/dataplane/hms_api/engine/db/ops_oracle.py \
+            core/dataplane/hms_api/engine/embedding_fingerprint.py \
+            core/dataplane/hms_api/engine/entity_resolution_contracts.py \
+            core/dataplane/hms_api/engine/entity_resolver.py \
+            core/dataplane/hms_api/engine/ingestion \
+            core/dataplane/hms_api/engine/memory_engine.py \
+            core/dataplane/hms_api/engine/retain/chunk_storage.py \
+            core/dataplane/hms_api/engine/retain/embedding_utils.py \
+            core/dataplane/hms_api/engine/retain/entity_labels.py \
+            core/dataplane/hms_api/engine/retain/entity_processing.py \
+            core/dataplane/hms_api/engine/retain/fact_extraction.py \
+            core/dataplane/hms_api/engine/retain/fact_storage.py \
+            core/dataplane/hms_api/engine/retain/link_utils.py \
+            core/dataplane/hms_api/engine/retain/types.py \
+            core/dataplane/hms_api/worker/poller.py \
+            core/dataplane/tests/test_async_batch_retain.py \
+            core/dataplane/tests/test_ingestion_oracle_contracts.py \
+            core/dataplane/tests/test_ingestion_oracle_live.py \
+            core/dataplane/tests/test_ingestion_pipeline_contracts.py \
+            core/dataplane/tests/test_ingestion_postgresql_live.py \
+            core/dataplane/tests/test_op_cancellation.py
+          uv run --no-sync --package hms-api-slim ruff format --check \
+            --config core/dataplane/pyproject.toml \
+            core/dataplane/hms_api/config.py \
+            core/dataplane/hms_api/engine/db/ops_postgresql.py \
+            core/dataplane/hms_api/engine/db/ops_oracle.py \
+            core/dataplane/hms_api/engine/embedding_fingerprint.py \
+            core/dataplane/hms_api/engine/entity_resolution_contracts.py \
+            core/dataplane/hms_api/engine/entity_resolver.py \
+            core/dataplane/hms_api/engine/ingestion \
+            core/dataplane/hms_api/engine/memory_engine.py \
+            core/dataplane/hms_api/engine/retain/chunk_storage.py \
+            core/dataplane/hms_api/engine/retain/embedding_utils.py \
+            core/dataplane/hms_api/engine/retain/entity_labels.py \
+            core/dataplane/hms_api/engine/retain/entity_processing.py \
+            core/dataplane/hms_api/engine/retain/fact_extraction.py \
+            core/dataplane/hms_api/engine/retain/fact_storage.py \
+            core/dataplane/hms_api/engine/retain/link_utils.py \
+            core/dataplane/hms_api/engine/retain/types.py \
+            core/dataplane/hms_api/worker/poller.py \
+            core/dataplane/tests/test_async_batch_retain.py \
+            core/dataplane/tests/test_ingestion_oracle_contracts.py \
+            core/dataplane/tests/test_ingestion_oracle_live.py \
+            core/dataplane/tests/test_ingestion_pipeline_contracts.py \
+            core/dataplane/tests/test_ingestion_postgresql_live.py \
+            core/dataplane/tests/test_op_cancellation.py
+
+      - name: Check LongMemEval source style
+        run: |
+          uv run --no-sync --package hms-api-slim ruff check \
+            --config lab/evaluation/pyproject.toml \
+            lab/evaluation/benchmarks
+          uv run --no-sync --package hms-api-slim ruff format --check \
+            --config lab/evaluation/pyproject.toml \
+            lab/evaluation/benchmarks
+
+      - name: Compile and import the changed packages
+        run: |
+          uv run --no-sync --package hms-api-slim python -m compileall -q \
+            core/dataplane/hms_api/engine/ingestion \
+            lab/evaluation/benchmarks
+          uv run --no-sync --package hms-api-slim python -c \
+            "from hms_api.engine.ingestion import RetainPipelineService; from benchmarks.longmemeval import evidence_bundles, source_backfill"
+
+      - name: Validate the benchmark launcher
+        run: bash -n .aaaSCRIPT/run_benchmark.sh
+
+      - name: Verify distributable license notices
+        run: |
+          uv build --package hms-api-slim --out-dir "$RUNNER_TEMP/hms-dist"
+          uv run --no-sync --package hms-api-slim python - "$RUNNER_TEMP/hms-dist" <<'PY'
+          import sys
+          import tarfile
+          import zipfile
+          from pathlib import Path
+
+          dist_dir = Path(sys.argv[1])
+          required = {"LICENSE", "THIRD_PARTY_NOTICES.md"}
+          artifacts = sorted(
+              path
+              for path in dist_dir.iterdir()
+              if path.suffix == ".whl" or path.name.endswith(".tar.gz")
+          )
+          if len(artifacts) != 2:
+              raise SystemExit(f"expected one wheel and one sdist, found: {artifacts}")
+          for artifact in artifacts:
+              if artifact.suffix == ".whl":
+                  with zipfile.ZipFile(artifact) as archive:
+                      names = archive.namelist()
+              elif artifact.name.endswith(".tar.gz"):
+                  with tarfile.open(artifact, "r:gz") as archive:
+                      names = archive.getnames()
+              else:
+                  raise SystemExit(f"unexpected distribution artifact: {artifact}")
+              basenames = {Path(name).name for name in names}
+              missing = required - basenames
+              if missing:
+                  raise SystemExit(f"{artifact.name} is missing notices: {sorted(missing)}")
+          PY
+          grep -Fq "COPY core/dataplane/LICENSE ./api/" deploy/containers/standalone/Dockerfile
+          grep -Fq "COPY core/dataplane/THIRD_PARTY_NOTICES.md ./api/" deploy/containers/standalone/Dockerfile
+
+      - name: Run Retain offline contract tests
+        run: |
+          uv run --no-sync --package hms-api-slim pytest \
+            -o "addopts=" \
+            -p no:rerunfailures \
+            -q \
+            core/dataplane/tests/test_ingestion_pipeline_contracts.py \
+            core/dataplane/tests/test_ingestion_oracle_contracts.py \
+            core/dataplane/tests/test_ingestion_oracle_live.py \
+            core/dataplane/tests/test_embedding_fingerprint.py \
+            core/dataplane/tests/test_config_validation.py \
+            core/dataplane/tests/test_db_abstraction.py \
+            core/dataplane/tests/test_fact_extraction_retry.py \
+            core/dataplane/tests/test_link_utils.py \
+            core/dataplane/tests/test_multimodal_engine_bridge.py \
+            core/dataplane/tests/test_multimodal_security.py
+
+      - name: Run LongMemEval offline tests
+        run: |
+          uv run --no-sync --package hms-api-slim pytest \
+            -o "addopts=" \
+            -p no:rerunfailures \
+            -q \
+            lab/evaluation/benchmarks/common/test_benchmark_runner.py \
+            lab/evaluation/benchmarks/longmemeval
+
+  postgresql-live:
+    name: PostgreSQL 16 Retain smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        # Immutable multi-platform digest for pgvector/pgvector:pg16.
+        image: pgvector/pgvector@sha256:1d533553fefe4f12e5d80c7b80622ba0c382abb5758856f52983d8789179f0fb
+        env:
+          POSTGRES_USER: hms
+          POSTGRES_PASSWORD: hms_test_password
+          POSTGRES_DB: hms
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hms -d hms"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      CI: "true"
+      PYTHONHASHSEED: "0"
+      UV_NO_PROGRESS: "1"
+      HMS_API_DATABASE_BACKEND: postgresql
+      HMS_API_DATABASE_URL: postgresql://hms:hms_test_password@127.0.0.1:5432/hms
+      HMS_API_LLM_PROVIDER: none
+      HMS_API_LLM_MODEL: none
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.9.3"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install locked PostgreSQL test dependencies
+        run: uv sync --locked --package hms-api-slim --extra test --group dev
+
+      - name: Run the live PostgreSQL Retain smoke test
+        run: |
+          uv run --no-sync --package hms-api-slim pytest \
+            -o "addopts=" \
+            -p no:rerunfailures \
+            -q \
+            core/dataplane/tests/test_ingestion_postgresql_live.py \
+            core/dataplane/tests/test_async_batch_retain.py \
+            core/dataplane/tests/test_op_cancellation.py

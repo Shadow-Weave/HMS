@@ -10,6 +10,8 @@ from datetime import datetime
 from typing import Literal, TypedDict
 from uuid import UUID
 
+from ..entity_resolution_contracts import EntityResolutionReadPlan
+
 
 class RetainContentDict(TypedDict, total=False):
     """Type definition for content items in retain_batch_async.
@@ -277,6 +279,14 @@ class Phase1Result:
     """
 
     entities: EntityResolutionResult
+    semantic_ann_links: list[tuple]
+
+
+@dataclass
+class EntityReadPlanPhase1Result:
+    """Phase-1 output with unresolved entity creation deferred to the UoW."""
+
+    entity_read_plan: EntityResolutionReadPlan
     semantic_ann_links: list[tuple]
 
 

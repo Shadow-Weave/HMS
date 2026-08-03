@@ -9,7 +9,7 @@ import asyncio
 import json
 import logging
 import re
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Literal, cast
 
 from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
@@ -25,6 +25,17 @@ from .entity_labels import (
     is_label_entity,
     parse_entity_labels,
 )
+
+
+def parse_datetime_flexible(value: object) -> datetime:
+    """Parse a datetime object or ISO string into a timezone-aware value."""
+
+    if isinstance(value, datetime):
+        return value.replace(tzinfo=UTC) if value.tzinfo is None else value
+    if isinstance(value, str):
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return parsed.replace(tzinfo=UTC) if parsed.tzinfo is None else parsed
+    raise TypeError(f"Expected datetime or string, got {type(value).__name__}")
 
 
 def _extract_map_entities(
@@ -113,6 +124,44 @@ def _sanitize_text(text: str | None) -> str | None:
     return sanitize_llm_output(text)
 
 
+def _sanitize_model_response_strings(response: object, *, scope: str) -> object:
+    """Recursively sanitize string values at the model-response boundary.
+
+    Dictionary keys are intentionally left untouched.  Retain consumes several
+    nested response fields (including entities and structured labels), so doing
+    this once before field parsing keeps every downstream projection consistent.
+    """
+    changed_values = 0
+    removed_characters = 0
+
+    def sanitize_value(value: object) -> object:
+        nonlocal changed_values, removed_characters
+
+        if isinstance(value, str):
+            sanitized = cast(str, sanitize_llm_output(value))
+            if sanitized != value:
+                changed_values += 1
+                removed_characters += len(value) - len(sanitized)
+            return sanitized
+        if isinstance(value, dict):
+            return {key: sanitize_value(item) for key, item in value.items()}
+        if isinstance(value, list):
+            return [sanitize_value(item) for item in value]
+        if isinstance(value, tuple):
+            return tuple(sanitize_value(item) for item in value)
+        return value
+
+    sanitized_response = sanitize_value(response)
+    if changed_values:
+        logging.getLogger(__name__).warning(
+            "Sanitized model-response string values: scope=%s changed_values=%d removed_characters=%d",
+            scope,
+            changed_values,
+            removed_characters,
+        )
+    return sanitized_response
+
+
 class Entity(BaseModel):
     """An entity extracted from text."""
 
@@ -154,6 +203,67 @@ class CausalRelation(BaseModel):
     relation_type: Literal["caused_by"] = Field(
         description="How this fact relates to the target: 'caused_by' = this fact was caused by the target"
     )
+
+
+def _remap_causal_relations(
+    raw_relations: object,
+    *,
+    source_raw_index: int,
+    raw_to_retained_index: dict[int, int],
+) -> list[CausalRelation]:
+    """Validate relations and translate raw response indices to retained positions.
+
+    LLM responses can contain malformed facts that are skipped by the lenient
+    parser.  A relation is safe to retain only when its target is an earlier raw
+    fact *and* that fact was successfully validated and retained.  Never infer a
+    target from the compacted list position: doing so can silently connect the
+    relation to a different fact.
+    """
+    if not isinstance(raw_relations, list):
+        return []
+
+    relation_logger = logging.getLogger(__name__)
+    validated_relations: list[CausalRelation] = []
+    for relation in raw_relations:
+        if not isinstance(relation, dict):
+            continue
+
+        target_raw_index = relation.get("target_index")
+        relation_type = relation.get("relation_type")
+        if (
+            not isinstance(target_raw_index, int)
+            or isinstance(target_raw_index, bool)
+            or target_raw_index < 0
+            or target_raw_index >= source_raw_index
+            or relation_type is None
+        ):
+            relation_logger.debug(
+                "Invalid target_index %r for raw fact %s; skipping causal relation",
+                target_raw_index,
+                source_raw_index,
+            )
+            continue
+
+        target_retained_index = raw_to_retained_index.get(target_raw_index)
+        if target_retained_index is None:
+            relation_logger.debug(
+                "Causal target raw fact %s was not retained for raw fact %s; skipping relation",
+                target_raw_index,
+                source_raw_index,
+            )
+            continue
+
+        try:
+            validated_relations.append(
+                CausalRelation(
+                    target_fact_index=target_retained_index,
+                    relation_type=relation_type,
+                )
+            )
+        except Exception as exc:
+            relation_logger.debug("Invalid causal relation %r: %s", relation, exc)
+
+    return validated_relations
 
 
 class FactCausalRelation(BaseModel):
@@ -647,7 +757,7 @@ VERBATIM_FACT_EXTRACTION_PROMPT = _BASE_FACT_EXTRACTION_PROMPT.format(
 )
 
 
-# Verbose extraction prompt - detailed, comprehensive facts (legacy mode)
+# Verbose extraction prompt for detailed, comprehensive facts.
 VERBOSE_FACT_EXTRACTION_PROMPT = """Extract facts from text into structured format with FIVE required dimensions - BE EXTREMELY DETAILED.
 
 LANGUAGE: MANDATORY — Detect the language of the input text and produce ALL output in that EXACT same language. You are STRICTLY FORBIDDEN from translating or switching to any other language. Every single word of your output must be in the same language as the input. Do NOT output in a different language under any circumstance.
@@ -978,7 +1088,10 @@ def _build_extraction_prompt_and_schema(config) -> tuple[str, type]:
                 ),
                 **dynamic_fields,
             )
-            DynamicResponse = create_model("LabelsResponse", facts=(list[DynamicFact], ...))  # type: ignore[valid-type]
+            DynamicResponse = create_model(
+                "LabelsResponse",
+                facts=(list[DynamicFact], ...),  # type: ignore[valid-type]  # ty: ignore[invalid-type-form]
+            )
             response_schema = DynamicResponse
 
     return prompt, response_schema
@@ -994,8 +1107,6 @@ def _build_user_message(
     agent_name: str | None = None,
 ) -> str:
     """Build user message for fact extraction."""
-    from .orchestrator import parse_datetime_flexible
-
     sanitized_chunk = _sanitize_text(chunk)
     sanitized_context = _sanitize_text(context) if context else "none"
 
@@ -1061,7 +1172,7 @@ async def _extract_facts_from_chunk(
     config,
     agent_name: str = None,
     metadata: dict[str, str] | None = None,
-) -> tuple[list[dict[str, str]], TokenUsage]:
+) -> tuple[list[Fact], TokenUsage]:
     """
     Extract facts from a single chunk (internal helper for parallel processing).
 
@@ -1116,9 +1227,14 @@ async def _extract_facts_from_chunk(
                 return_usage=True,
             )
             usage = usage + call_usage  # Aggregate usage across retries
+            extraction_response_json = _sanitize_model_response_strings(
+                extraction_response_json,
+                scope="retain_extract_facts_sync",
+            )
 
             # Lenient parsing of facts from raw JSON
             chunk_facts = []
+            raw_to_retained_index: dict[int, int] = {}
             has_malformed_facts = False
 
             # Handle malformed LLM responses
@@ -1237,9 +1353,14 @@ async def _extract_facts_from_chunk(
                     # Validate and normalize each entity
                     for ent in entities:
                         if isinstance(ent, str):
+                            if not ent.strip():
+                                continue
                             # Normalize string to Entity object
                             validated_entities.append(Entity(text=ent))
                         elif isinstance(ent, dict) and "text" in ent:
+                            entity_text = ent.get("text")
+                            if isinstance(entity_text, str) and not entity_text.strip():
+                                continue
                             try:
                                 validated_entities.append(Entity.model_validate(ent))
                             except Exception as e:
@@ -1302,35 +1423,11 @@ async def _extract_facts_from_chunk(
 
                 # Add per-fact causal relations (only if enabled in config)
                 if extract_causal_links:
-                    validated_relations = []
-                    causal_relations_raw = get_value("causal_relations")
-                    if causal_relations_raw:
-                        for rel in causal_relations_raw:
-                            if not isinstance(rel, dict):
-                                continue
-                            # New schema uses target_index
-                            target_idx = rel.get("target_index")
-                            relation_type = rel.get("relation_type")
-
-                            if target_idx is None or relation_type is None:
-                                continue
-
-                            # Validate: target_index must be < current fact index
-                            if target_idx < 0 or target_idx >= i:
-                                logger.debug(
-                                    f"Invalid target_index {target_idx} for fact {i} (must be 0 to {i - 1}). Skipping."
-                                )
-                                continue
-
-                            try:
-                                validated_relations.append(
-                                    CausalRelation(
-                                        target_fact_index=target_idx,
-                                        relation_type=relation_type,
-                                    )
-                                )
-                            except Exception as e:
-                                logger.debug(f"Invalid causal relation {rel}: {e}")
+                    validated_relations = _remap_causal_relations(
+                        get_value("causal_relations"),
+                        source_raw_index=i,
+                        raw_to_retained_index=raw_to_retained_index,
+                    )
 
                     if validated_relations:
                         fact_data["causal_relations"] = validated_relations
@@ -1342,6 +1439,7 @@ async def _extract_facts_from_chunk(
                 # Build Fact model instance
                 try:
                     fact = Fact(fact=combined_text, fact_type=fact_type, **fact_data)
+                    raw_to_retained_index[i] = len(chunk_facts)
                     chunk_facts.append(fact)
                 except Exception as e:
                     logger.error(f"Failed to create Fact model for fact {i}: {e}")
@@ -1403,7 +1501,7 @@ async def _extract_facts_with_auto_split(
     config,
     agent_name: str = None,
     metadata: dict[str, str] | None = None,
-) -> tuple[list[dict[str, str]], TokenUsage]:
+) -> tuple[list[Fact], TokenUsage]:
     """
     Extract facts from a chunk with automatic splitting if output exceeds token limits.
 
@@ -1506,6 +1604,10 @@ async def _extract_facts_with_auto_split(
         all_facts = []
         total_usage = TokenUsage()
         for sub_facts, sub_usage in sub_results:
+            subchunk_fact_start_idx = len(all_facts)
+            for fact in sub_facts:
+                for relation in fact.causal_relations or []:
+                    relation.target_fact_index += subchunk_fact_start_idx
             all_facts.extend(sub_facts)
             total_usage = total_usage + sub_usage
 
@@ -1587,7 +1689,7 @@ async def extract_facts_from_text(
     total_usage = TokenUsage()
     failed_chunks = []
     for i, (chunk, result) in enumerate(zip(chunks, chunk_results)):
-        if isinstance(result, Exception):
+        if isinstance(result, BaseException):
             failed_chunks.append((i, result))
             continue
         chunk_facts, chunk_usage = result
@@ -1599,11 +1701,19 @@ async def extract_facts_from_text(
         # Fail the entire retain — partial extraction is not acceptable.
         # All successfully extracted facts are discarded because the transaction
         # hasn't committed yet. The worker poller will retry the entire task.
-        failed_summary = ", ".join(f"chunk {idx}: {type(err).__name__}" for idx, err in failed_chunks[:5])
+        def summarize_failure(idx: int, err: BaseException) -> str:
+            detail = " ".join(str(err).split())
+            if len(detail) > 300:
+                detail = f"{detail[:300]}...TRUNCATED"
+            suffix = f": {detail}" if detail else ""
+            return f"chunk {idx}: {type(err).__name__}{suffix}"
+
+        failed_summary = ", ".join(summarize_failure(idx, err) for idx, err in failed_chunks[:5])
+        first_error = failed_chunks[0][1]
         raise RuntimeError(
             f"Fact extraction failed: {len(failed_chunks)}/{len(chunks)} chunks failed. "
             f"First failures: {failed_summary}"
-        )
+        ) from first_error
 
     return all_facts, chunk_metadata, total_usage
 
@@ -1850,10 +1960,15 @@ async def extract_facts_from_contents_batch_api(
                 )
             )
             continue
+        extraction_response_json = _sanitize_model_response_strings(
+            extraction_response_json,
+            scope=f"retain_extract_facts_batch:{custom_id}",
+        )
 
         # Parse facts (reuse existing logic from _extract_facts_from_chunk)
         raw_facts = extraction_response_json.get("facts", [])
         chunk_facts = []
+        raw_to_retained_index: dict[int, int] = {}
 
         for i, llm_fact in enumerate(raw_facts):
             if not isinstance(llm_fact, dict):
@@ -1923,8 +2038,13 @@ async def extract_facts_from_contents_batch_api(
             if entities:
                 for ent in entities:
                     if isinstance(ent, str):
+                        if not ent.strip():
+                            continue
                         validated_entities.append(Entity(text=ent))
                     elif isinstance(ent, dict) and "text" in ent:
+                        entity_text = ent.get("text")
+                        if isinstance(entity_text, str) and not entity_text.strip():
+                            continue
                         try:
                             validated_entities.append(Entity.model_validate(ent))
                         except Exception:
@@ -1984,26 +2104,11 @@ async def extract_facts_from_contents_batch_api(
 
             # Causal relations
             if extract_causal_links:
-                validated_relations = []
-                causal_relations_raw = get_value("causal_relations")
-                if causal_relations_raw:
-                    for rel in causal_relations_raw:
-                        if not isinstance(rel, dict):
-                            continue
-                        target_idx = rel.get("target_index")
-                        relation_type = rel.get("relation_type")
-
-                        if target_idx is None or relation_type is None:
-                            continue
-                        if target_idx < 0 or target_idx >= i:
-                            continue
-
-                        try:
-                            validated_relations.append(
-                                CausalRelation(target_fact_index=target_idx, relation_type=relation_type)
-                            )
-                        except Exception:
-                            pass
+                validated_relations = _remap_causal_relations(
+                    get_value("causal_relations"),
+                    source_raw_index=i,
+                    raw_to_retained_index=raw_to_retained_index,
+                )
 
                 if validated_relations:
                     fact_data["causal_relations"] = validated_relations
@@ -2014,6 +2119,7 @@ async def extract_facts_from_contents_batch_api(
 
             try:
                 fact = Fact(fact=combined_text, fact_type=fact_type, **fact_data)
+                raw_to_retained_index[i] = len(chunk_facts)
                 chunk_facts.append(fact)
             except Exception as e:
                 logger.error(f"Failed to create Fact model for fact {i}: {e}")
@@ -2054,6 +2160,7 @@ async def extract_facts_from_contents_batch_api(
 
     for chunk_meta, chunk_facts in facts_by_chunk:
         content = contents[chunk_meta.content_index]
+        chunk_fact_start_idx = global_fact_idx
 
         for fact_from_llm in chunk_facts:
             extracted_fact = ExtractedFactType(
@@ -2062,7 +2169,10 @@ async def extract_facts_from_contents_batch_api(
                 entities=[e.text for e in (fact_from_llm.entities or [])],
                 occurred_start=_parse_datetime(fact_from_llm.occurred_start) if fact_from_llm.occurred_start else None,
                 occurred_end=_parse_datetime(fact_from_llm.occurred_end) if fact_from_llm.occurred_end else None,
-                causal_relations=_convert_causal_relations(fact_from_llm.causal_relations or [], global_fact_idx),
+                causal_relations=_convert_causal_relations(
+                    fact_from_llm.causal_relations or [],
+                    chunk_fact_start_idx,
+                ),
                 content_index=chunk_meta.content_index,
                 chunk_index=chunk_meta.chunk_index,
                 context=content.context,
@@ -2194,8 +2304,10 @@ async def extract_facts_from_contents(
         )
         fact_extraction_tasks.append(task)
 
-    # Step 2: Wait for all fact extractions to complete.
-    # Use return_exceptions=True so one content item failure doesn't discard the rest.
+    # Step 2: Wait for all fact extractions to complete.  Collect every result so
+    # sibling tasks are allowed to finish, then fail the whole extraction below
+    # if any content failed.  A failed content has no trustworthy chunk metadata
+    # and therefore must never be represented as a successful zero-fact result.
     all_fact_results = await asyncio.gather(*fact_extraction_tasks, return_exceptions=True)
 
     # Step 3: Flatten and convert to typed objects
@@ -2206,14 +2318,17 @@ async def extract_facts_from_contents(
     global_chunk_idx = 0
     global_fact_idx = 0
 
-    # Filter out failed content items
+    # A genuine zero-fact extraction still returns one ``(chunk, 0)`` entry for
+    # every input chunk.  Historically this aggregation boundary replaced a
+    # per-content exception with ``([], [], TokenUsage())``; downstream code
+    # could not distinguish that silent data loss from a valid zero-fact
+    # document.  Propagate the original exception, in deterministic input
+    # order, before projecting any partial result.
     valid_results = []
-    for content, result in zip(contents, all_fact_results):
-        if isinstance(result, Exception):
-            logger.warning(f"Content extraction failed (skipping): {type(result).__name__}: {result}")
-            valid_results.append((content, ([], [], TokenUsage())))
-        else:
-            valid_results.append((content, result))
+    for content, result in zip(contents, all_fact_results, strict=True):
+        if isinstance(result, BaseException):
+            raise result
+        valid_results.append((content, result))
 
     for content_index, (content, (facts_from_llm, chunks_from_llm, content_usage)) in enumerate(valid_results):
         total_usage = total_usage + content_usage
@@ -2234,6 +2349,7 @@ async def extract_facts_from_contents(
         fact_idx_in_content = 0
         for chunk_idx_in_content, (chunk_text, chunk_fact_count) in enumerate(chunks_from_llm):
             chunk_global_idx = chunk_start_idx + chunk_idx_in_content
+            chunk_fact_start_idx = global_fact_idx
 
             for _ in range(chunk_fact_count):
                 if fact_idx_in_content < len(facts_from_llm):
@@ -2253,7 +2369,8 @@ async def extract_facts_from_contents(
                         if fact_from_llm.occurred_end
                         else None,
                         causal_relations=_convert_causal_relations(
-                            fact_from_llm.causal_relations or [], global_fact_idx
+                            fact_from_llm.causal_relations or [],
+                            chunk_fact_start_idx,
                         ),
                         content_index=content_index,
                         chunk_index=chunk_global_idx,
@@ -2319,17 +2436,17 @@ def _parse_datetime(date_str: str):
         return None
 
 
-def _convert_causal_relations(relations_from_llm, fact_start_idx: int) -> list[CausalRelationType]:
+def _convert_causal_relations(relations_from_llm, chunk_fact_start_idx: int) -> list[CausalRelationType]:
     """
     Convert causal relations from LLM format to ExtractedFact format.
 
-    Adjusts target_fact_index from content-relative to global indices.
+    Adjusts target_fact_index from chunk-relative to global indices.
     """
     causal_relations = []
     for rel in relations_from_llm:
         causal_relation = CausalRelationType(
             relation_type=rel.relation_type,
-            target_fact_index=fact_start_idx + rel.target_fact_index,
+            target_fact_index=chunk_fact_start_idx + rel.target_fact_index,
         )
         causal_relations.append(causal_relation)
     return causal_relations
@@ -2347,8 +2464,6 @@ def _add_temporal_offsets(facts: list[ExtractedFactType], contents: list[RetainC
 
     Modifies facts in place.
     """
-    from .orchestrator import parse_datetime_flexible
-
     for i, fact in enumerate(facts):
         # Use absolute position across all facts to ensure uniqueness across different contents
         offset = timedelta(seconds=i * SECONDS_PER_FACT)

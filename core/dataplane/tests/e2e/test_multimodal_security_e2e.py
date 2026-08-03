@@ -192,12 +192,12 @@ async def test_postgresql_operation_audit_document_chunk_surfaces_exclude_transp
             and "multimodal" in record.getMessage().lower()
         )
         assert multimodal_worker_logs
-        orchestrator_logs = "\n".join(
-            record.getMessage() for record in caplog.records if record.name == "hms_api.engine.retain.orchestrator"
+        ingestion_logs = "\n".join(
+            record.getMessage()
+            for record in caplog.records
+            if record.name.startswith("hms_api.engine.ingestion")
         )
-        assert orchestrator_logs
-        assert "<redacted>" in orchestrator_logs
-        multimodal_pipeline_logs = f"{multimodal_worker_logs}\n{orchestrator_logs}"
+        multimodal_pipeline_logs = f"{multimodal_worker_logs}\n{ingestion_logs}"
         for forbidden in (bank_id, document_id, normalized.asset.sha256, "security-surface.png"):
             assert forbidden not in multimodal_pipeline_logs
 

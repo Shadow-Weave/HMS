@@ -1,0 +1,61 @@
+"""Application boundary for the Retain ingestion pipeline."""
+
+from .contracts import (
+    RetainExecutionContext,
+    RetainInvocation,
+    RetainOperationInactiveError,
+    RetainOutcome,
+    RetainPipeline,
+)
+from .domain import (
+    ChunkPlan,
+    ChunkPolicy,
+    ContentItem,
+    ContentOrigin,
+    DocumentChangeKind,
+    DocumentChangePlan,
+    DocumentIntent,
+    EventDateState,
+    EventDateValue,
+    ExistingChunkFingerprint,
+    UpdateMode,
+)
+from .service import (
+    RetainCheckpointRecoveryError,
+    RetainDatabaseUnsupportedError,
+    RetainError,
+    RetainExtractionModeUnsupportedError,
+    RetainOwnershipLostError,
+    RetainPipelineService,
+    RetainPublicationAborted,
+    RetainResultMappingError,
+    RetainUnsupportedError,
+)
+
+__all__ = [
+    "ChunkPlan",
+    "ChunkPolicy",
+    "ContentItem",
+    "ContentOrigin",
+    "DocumentChangeKind",
+    "DocumentChangePlan",
+    "DocumentIntent",
+    "EventDateState",
+    "EventDateValue",
+    "ExistingChunkFingerprint",
+    "RetainCheckpointRecoveryError",
+    "RetainDatabaseUnsupportedError",
+    "RetainError",
+    "RetainExecutionContext",
+    "RetainExtractionModeUnsupportedError",
+    "RetainInvocation",
+    "RetainOperationInactiveError",
+    "RetainOutcome",
+    "RetainOwnershipLostError",
+    "RetainPipeline",
+    "RetainPipelineService",
+    "RetainPublicationAborted",
+    "RetainResultMappingError",
+    "RetainUnsupportedError",
+    "UpdateMode",
+]

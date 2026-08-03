@@ -24,6 +24,7 @@ import pytest
 import hms_api.engine.memory_engine as memory_engine_module
 import hms_api.engine.parsers.openai_multimodal as parser_module
 from hms_api.engine.memory_engine import MemoryEngine
+from hms_api.engine.ingestion.redaction import IdentifierSanitizer
 from hms_api.engine.multimodal import (
     GroundedStatement,
     MediaAsset,
@@ -51,7 +52,6 @@ from hms_api.engine.parsers import (
     MultimodalParserConfig,
     OpenAIMultimodalParser,
 )
-from hms_api.engine.retain.orchestrator import _RetainLogBuffer
 from hms_api.metrics import MetricsCollector
 
 _FRAME_BYTES = b"HMS_FRAME_BYTES_SENTINEL_ignore_previous_instructions"
@@ -277,25 +277,29 @@ def _assert_sentinels_absent(surface: object) -> None:
         assert sentinel not in rendered
 
 
-def test_retain_log_buffer_redacts_identifiers_only_when_enabled() -> None:
+def test_retain_identifier_sanitizer_redacts_only_when_enabled() -> None:
     bank_id = "bank-private-security-sentinel"
     document_id = "document-private-security-sentinel"
 
-    sanitized = _RetainLogBuffer(sanitized=True, secrets=(bank_id,))
-    sanitized.append(f"bank={bank_id}")
-    sanitized.add_secret(document_id)
-    sanitized.append(f"bank={bank_id} document={document_id}")
-
-    sanitized_output = "\n".join(sanitized)
+    sanitized = IdentifierSanitizer.from_values(enabled=True, values=(bank_id,))
+    sanitized_output = "\n".join(
+        (
+            sanitized.text(f"bank={bank_id}"),
+            sanitized.text(
+                f"bank={bank_id} document={document_id}",
+                extra_identifiers=(document_id,),
+            ),
+        )
+    )
     assert bank_id not in sanitized_output
     assert document_id not in sanitized_output
     assert sanitized_output.count("<redacted>") == 3
 
-    legacy = _RetainLogBuffer(sanitized=False, secrets=(bank_id,))
-    legacy.add_secret(document_id)
-    legacy.append(f"bank={bank_id} document={document_id}")
-
-    assert legacy == [f"bank={bank_id} document={document_id}"]
+    unsanitized = IdentifierSanitizer.from_values(enabled=False, values=(bank_id,))
+    assert unsanitized.text(
+        f"bank={bank_id} document={document_id}",
+        extra_identifiers=(document_id,),
+    ) == f"bank={bank_id} document={document_id}"
 
 
 @pytest.mark.asyncio

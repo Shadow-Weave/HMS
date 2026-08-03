@@ -4,11 +4,13 @@ Unit tests that verify the abstraction interfaces work correctly
 without requiring a live database connection.
 """
 
+import asyncio
 import json
+import uuid
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from hms_api.engine.db import DatabaseBackend, DatabaseConnection, create_database_backend
 from hms_api.engine.db.postgresql import PostgreSQLBackend
 from hms_api.engine.db.result import DictResultRow as ResultRow
@@ -470,6 +472,83 @@ class TestConfig:
 
 
 # ---------------------------------------------------------------------------
+# PostgreSQLOps fact identity tests (mock DatabaseConnection, no live DB)
+# ---------------------------------------------------------------------------
+
+
+class TestPostgreSQLOpsInsertFactsBatch:
+    """Fact IDs must be assigned before SQL, in exact input order."""
+
+    @staticmethod
+    def _make_batch(n: int = 3) -> dict:
+        return dict(
+            bank_id="bank-pg",
+            fact_texts=[f"fact-{index}" for index in range(n)],
+            embeddings=[None] * n,
+            event_dates=[None] * n,
+            occurred_starts=[None] * n,
+            occurred_ends=[None] * n,
+            mentioned_ats=[None] * n,
+            contexts=[f"context-{index}" for index in range(n)],
+            fact_types=["world"] * n,
+            metadata_jsons=["{}"] * n,
+            chunk_ids=[f"chunk-{index}" for index in range(n)],
+            document_ids=["doc-pg"] * n,
+            tags_list=["[]"] * n,
+            observation_scopes_list=[None] * n,
+            text_signals_list=[None] * n,
+            projection_jsons=["{}"] * n,
+        )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("text_search_extension", ["native", "vchord"])
+    async def test_client_generated_ids_are_inserted_and_returned_in_input_order(
+        self,
+        text_search_extension,
+    ):
+        from hms_api.engine.db.ops_postgresql import PostgreSQLOps
+
+        generated = [
+            uuid.UUID("00000000-0000-0000-0000-000000000003"),
+            uuid.UUID("00000000-0000-0000-0000-000000000001"),
+            uuid.UUID("00000000-0000-0000-0000-000000000002"),
+        ]
+        config = SimpleNamespace(
+            database_backend="postgresql",
+            database_schema="public",
+            text_search_extension=text_search_extension,
+        )
+        connection = AsyncMock(spec=DatabaseConnection)
+        batch = self._make_batch()
+
+        with (
+            patch("hms_api.engine.db.ops_postgresql.uuid4", side_effect=generated),
+            patch("hms_api.config.get_config", return_value=config),
+            patch("hms_api.engine.schema.get_config", return_value=config),
+            patch("hms_api.engine.memory_engine.get_config", return_value=config),
+        ):
+            result = await PostgreSQLOps().insert_facts_batch(
+                conn=connection,
+                text_search_extension=text_search_extension,
+                **batch,
+            )
+
+        connection.execute.assert_awaited_once()
+        connection.fetch.assert_not_awaited()
+        query, bank_id, inserted_ids, fact_texts, *remaining = connection.execute.await_args.args
+        assert bank_id == "bank-pg"
+        assert inserted_ids == generated
+        assert fact_texts == batch["fact_texts"]
+        assert remaining[-1] == batch["projection_jsons"]
+        assert result == [str(value) for value in generated]
+        assert "$2::uuid[]" in query
+        assert "AS t(id, text, embedding" in query
+        assert "INSERT INTO public.memory_units (id, bank_id" in query
+        assert "RETURNING id" not in query
+        assert ("bm25_catalog.bm25vector" in query) is (text_search_extension == "vchord")
+
+
+# ---------------------------------------------------------------------------
 # OracleOps unit tests (mock DatabaseConnection, no live DB)
 # ---------------------------------------------------------------------------
 
@@ -763,3 +842,60 @@ class TestOraclePooledSchemaIsolation:
             'ALTER SESSION SET CURRENT_SCHEMA = "tenant""; DROP TABLE banks; --"',
         ]
         assert backend._session_user == "APP_OWNER"
+
+
+class TestOracleCancellationRollback:
+    """Cancellation is a transaction failure and must never publish writes."""
+
+    @pytest.mark.asyncio
+    async def test_connection_savepoint_rolls_back_on_cancellation(self):
+        from hms_api.engine.db.oracle import OracleConnection
+
+        queries: list[str] = []
+
+        class Cursor:
+            async def execute(self, query):
+                queries.append(query)
+
+            def close(self):
+                return None
+
+        raw_connection = SimpleNamespace(cursor=Cursor)
+        with pytest.raises(asyncio.CancelledError):
+            async with OracleConnection(raw_connection).transaction():
+                raise asyncio.CancelledError
+
+        savepoint = queries[0].removeprefix("SAVEPOINT ")
+        assert queries == [
+            f"SAVEPOINT {savepoint}",
+            f"ROLLBACK TO SAVEPOINT {savepoint}",
+        ]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("scope_name", ["acquire", "transaction"])
+    async def test_backend_scope_rolls_back_on_cancellation(self, monkeypatch, scope_name):
+        from hms_api.engine.db.oracle import OracleBackend
+
+        physical_connection = SimpleNamespace(
+            commit=AsyncMock(),
+            rollback=AsyncMock(),
+        )
+        pool = SimpleNamespace(
+            acquire=AsyncMock(return_value=physical_connection),
+            release=AsyncMock(),
+        )
+        backend = OracleBackend()
+        backend._pool = pool
+
+        async def skip_schema(_self, connection):
+            assert connection is physical_connection
+
+        monkeypatch.setattr(OracleBackend, "_set_session_schema", skip_schema)
+
+        with pytest.raises(asyncio.CancelledError):
+            async with getattr(backend, scope_name)():
+                raise asyncio.CancelledError
+
+        physical_connection.commit.assert_not_awaited()
+        physical_connection.rollback.assert_awaited_once_with()
+        pool.release.assert_awaited_once_with(physical_connection)

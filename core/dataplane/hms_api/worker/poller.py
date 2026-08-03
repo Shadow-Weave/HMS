@@ -463,6 +463,7 @@ class WorkerPoller:
                 UPDATE {table}
                 SET status = 'completed', completed_at = now(), updated_at = now()
                 WHERE operation_id = $1
+                  AND status IN ('pending', 'processing')
                 """,
                 operation_id,
             )
@@ -480,6 +481,7 @@ class WorkerPoller:
                     UPDATE {table}
                     SET status = 'failed', error_message = $2, completed_at = now(), updated_at = now()
                     WHERE operation_id = $1
+                      AND status IN ('pending', 'processing')
                     """,
                     operation_id,
                     error_message,
@@ -519,11 +521,13 @@ class WorkerPoller:
 
             # Lock parent to prevent concurrent sibling updates
             parent_row = await conn.fetchrow(
-                f"SELECT operation_id FROM {table} WHERE operation_id = $1 AND bank_id = $2 FOR UPDATE",
+                f"SELECT operation_id, status FROM {table} WHERE operation_id = $1 AND bank_id = $2 FOR UPDATE",
                 uuid.UUID(parent_operation_id),
                 bank_id,
             )
             if not parent_row:
+                return
+            if parent_row["status"] not in {"pending", "processing"}:
                 return
 
             # Check whether all siblings are done. Pull error_message too so a
@@ -535,38 +539,54 @@ class WorkerPoller:
                 f"""
                 SELECT status, error_message FROM {table}
                 WHERE bank_id = $1
-                  AND result_metadata::jsonb @> $2::jsonb
+                  AND (result_metadata->>'parent_operation_id')::uuid = $2
                 """,
                 bank_id,
-                json.dumps({"parent_operation_id": parent_operation_id}),
+                uuid.UUID(parent_operation_id),
             )
-            if not siblings or not all(s["status"] in ("completed", "failed") for s in siblings):
+            if not siblings or not all(s["status"] in ("completed", "failed", "cancelled") for s in siblings):
                 return
 
             any_failed = any(s["status"] == "failed" for s in siblings)
+            any_cancelled = any(s["status"] == "cancelled" for s in siblings)
             if any_failed:
                 await conn.execute(
                     f"""
                     UPDATE {table}
                     SET status = 'failed', error_message = $2, updated_at = now()
-                    WHERE operation_id = $1
+                    WHERE operation_id = $1 AND bank_id = $3
+                      AND status IN ('pending', 'processing')
                     """,
                     uuid.UUID(parent_operation_id),
                     _summarise_child_error_messages(siblings),
+                    bank_id,
                 )
+                new_status = "failed"
+            elif any_cancelled:
+                await conn.execute(
+                    f"""
+                    UPDATE {table}
+                    SET status = 'cancelled', updated_at = now()
+                    WHERE operation_id = $1 AND bank_id = $2
+                      AND status IN ('pending', 'processing')
+                    """,
+                    uuid.UUID(parent_operation_id),
+                    bank_id,
+                )
+                new_status = "cancelled"
             else:
                 await conn.execute(
                     f"""
                     UPDATE {table}
                     SET status = 'completed', updated_at = now(), completed_at = now()
-                    WHERE operation_id = $1
+                    WHERE operation_id = $1 AND bank_id = $2
+                      AND status IN ('pending', 'processing')
                     """,
                     uuid.UUID(parent_operation_id),
+                    bank_id,
                 )
-            logger.info(
-                f"Poller updated parent operation {parent_operation_id} to "
-                f"{'failed' if any_failed else 'completed'} (all siblings done)"
-            )
+                new_status = "completed"
+            logger.info(f"Poller updated parent operation {parent_operation_id} to {new_status} (all siblings done)")
         except Exception as e:
             # Log but don't re-raise — the child has already been marked failed,
             # which is the critical state change. A stuck parent will be caught on
@@ -583,7 +603,7 @@ class WorkerPoller:
                 UPDATE {table}
                 SET status = 'pending', next_retry_at = $2, worker_id = NULL, claimed_at = NULL,
                     retry_count = retry_count + 1, error_message = $3, updated_at = now()
-                WHERE operation_id = $1
+                WHERE operation_id = $1 AND status = 'processing'
                 """,
                 operation_id,
                 retry_at,
@@ -604,7 +624,7 @@ class WorkerPoller:
                 UPDATE {table}
                 SET status = 'pending', next_retry_at = $2, worker_id = NULL, claimed_at = NULL,
                     updated_at = now()
-                WHERE operation_id = $1
+                WHERE operation_id = $1 AND status = 'processing'
                 """,
                 operation_id,
                 exec_date,

@@ -23,6 +23,7 @@ def setup_test_env():
         "HMS_API_LLM_MODEL",
         "HMS_API_DATABASE_URL",
         "HMS_API_MIGRATION_DATABASE_URL",
+        "HMS_API_RETAIN_EMBEDDING_FAILURE_POLICY",
     ]
 
     # Save original values
@@ -100,6 +101,40 @@ def test_valid_retain_config_succeeds():
     config = HMSConfig.from_env()
     assert config.retain_max_completion_tokens == 64000
     assert config.retain_chunk_size == 3000
+
+
+def test_retain_embedding_failure_policy_defaults_to_nonfatal_storage(monkeypatch):
+    """Embedding outages remain non-fatal unless fail-closed is explicitly enabled."""
+
+    from hms_api.config import HMSConfig
+
+    monkeypatch.delenv("HMS_API_RETAIN_EMBEDDING_FAILURE_POLICY", raising=False)
+    monkeypatch.setenv("HMS_API_LLM_PROVIDER", "mock")
+
+    config = HMSConfig.from_env()
+
+    assert config.retain_embedding_failure_policy == "store_without_embedding"
+
+
+def test_retain_embedding_failure_policy_accepts_raise(monkeypatch):
+    from hms_api.config import HMSConfig
+
+    monkeypatch.setenv("HMS_API_RETAIN_EMBEDDING_FAILURE_POLICY", "RAISE")
+    monkeypatch.setenv("HMS_API_LLM_PROVIDER", "mock")
+
+    config = HMSConfig.from_env()
+
+    assert config.retain_embedding_failure_policy == "raise"
+
+
+def test_retain_embedding_failure_policy_rejects_unknown_value(monkeypatch):
+    from hms_api.config import HMSConfig
+
+    monkeypatch.setenv("HMS_API_RETAIN_EMBEDDING_FAILURE_POLICY", "ignore")
+    monkeypatch.setenv("HMS_API_LLM_PROVIDER", "mock")
+
+    with pytest.raises(ValueError, match="HMS_API_RETAIN_EMBEDDING_FAILURE_POLICY"):
+        HMSConfig.from_env()
 
 
 def test_log_config_masks_database_urls(caplog):
