@@ -1940,6 +1940,14 @@ multimodal-video = [
 oracle = [
     { name = "oracledb" },
 ]
+reranker = [
+    { name = "einops" },
+    { name = "safetensors" },
+    { name = "sentence-transformers" },
+    { name = "torch", version = "2.12.1", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform == 'darwin'" },
+    { name = "torch", version = "2.12.1+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin'" },
+    { name = "transformers" },
+]
 test = [
     { name = "filelock" },
     { name = "pytest" },
@@ -1977,6 +1985,7 @@ requires-dist = [
     { name = "cryptography", specifier = ">=46.0.6,<47" },
     { name = "dateparser", specifier = ">=1.2.2" },
     { name = "einops", marker = "extra == 'local-ml'", specifier = ">=0.8.2" },
+    { name = "einops", marker = "extra == 'reranker'", specifier = ">=0.8.2" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.120.3" },
     { name = "fastmcp", specifier = ">=3.2.0" },
     { name = "filelock", specifier = ">=3.20.1" },
@@ -2026,13 +2035,17 @@ requires-dist = [
     { name = "python-multipart", specifier = ">=0.0.22" },
     { name = "rich", specifier = ">=13.0.0" },
     { name = "safetensors", marker = "extra == 'local-ml'", specifier = ">=0.6.2" },
-    { name = "sentence-transformers", marker = "extra == 'local-ml'", specifier = ">=3.3.0" },
+    { name = "safetensors", marker = "extra == 'reranker'", specifier = ">=0.6.2" },
+    { name = "sentence-transformers", marker = "extra == 'local-ml'", specifier = ">=5.4.0" },
+    { name = "sentence-transformers", marker = "extra == 'reranker'", specifier = ">=5.4.0" },
     { name = "sqlalchemy", specifier = ">=2.0.44" },
     { name = "testcontainers", marker = "extra == 'test'", specifier = ">=4.0.0" },
     { name = "tiktoken", specifier = ">=0.12.0" },
     { name = "torch", marker = "extra == 'local-ml'", specifier = ">=2.6.0", index = "https://download.pytorch.org/whl/cpu" },
+    { name = "torch", marker = "extra == 'reranker'", specifier = ">=2.6.0", index = "https://download.pytorch.org/whl/cpu" },
     { name = "tornado", specifier = ">=6.5.5" },
     { name = "transformers", marker = "extra == 'local-ml'", specifier = ">=4.53.0" },
+    { name = "transformers", marker = "extra == 'reranker'", specifier = ">=4.53.0" },
     { name = "typer", specifier = ">=0.9.0" },
     { name = "urllib3", specifier = ">=2.6.3" },
     { name = "uvicorn", specifier = ">=0.38.0" },
@@ -2040,7 +2053,7 @@ requires-dist = [
     { name = "winloop", marker = "sys_platform == 'win32'", specifier = ">=0.1.0" },
     { name = "wsproto", specifier = ">=1.0.0" },
 ]
-provides-extras = ["multimodal-video", "local-ml", "local-llm", "embedded-db", "oracle", "milvus", "all", "test"]
+provides-extras = ["multimodal-video", "reranker", "local-ml", "local-llm", "embedded-db", "oracle", "milvus", "all", "test"]
 
 [package.metadata.requires-dev]
 dev = [
