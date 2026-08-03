@@ -9,11 +9,16 @@ from dataclasses import replace
 from datetime import UTC, datetime
 from types import SimpleNamespace
 from typing import Any
+from unittest.mock import AsyncMock
 
 import pytest
 from hms_api.engine.ingestion import service as service_module
 from hms_api.engine.ingestion.chunking import build_chunk_plans
-from hms_api.engine.ingestion.contracts import RetainExecutionContext, RetainInvocation
+from hms_api.engine.ingestion.contracts import (
+    RetainExecutionContext,
+    RetainInvocation,
+    RetainOperationInactiveError,
+)
 from hms_api.engine.ingestion.document_planner import plan_documents, prepend_existing_document
 from hms_api.engine.ingestion.domain import (
     ChunkPolicy,
@@ -25,6 +30,12 @@ from hms_api.engine.ingestion.persistence.models import (
     CommittedUnitBinding,
     ExistingDocument,
     OperationCheckpoint,
+)
+from hms_api.engine.ingestion.persistence.unit_of_work import (
+    CoreWriteResult,
+    FirstFullWriteWindow,
+    LaterFullWriteWindow,
+    OwnershipDisposition,
 )
 from hms_api.engine.ingestion.segmentation import BoundaryResponse
 from hms_api.engine.response_models import TokenUsage
@@ -614,6 +625,215 @@ async def test_changed_semantic_boundaries_force_a_conservative_full_plan(
     assert first_manifest["end_exchange_indices"] == [0, 2]
     assert changed_manifest["end_exchange_indices"] == [1, 2]
     assert changed_plan.segmentation_metadata["plan_digest"] != first_plan.segmentation_metadata["plan_digest"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("later_failure", "expected_write_count"),
+    (
+        (
+            RetainOperationInactiveError("operation cancelled after first semantic window"),
+            1,
+        ),
+        (RuntimeError("second semantic window failed"), 2),
+    ),
+    ids=("cancellation", "write-failure"),
+)
+async def test_semantic_multiwindow_full_rollback_keeps_old_document_unpublished(
+    monkeypatch: pytest.MonkeyPatch,
+    later_failure: Exception,
+    expected_write_count: int,
+) -> None:
+    original_text = _conversation()
+    _install_planning_backend(monkeypatch)
+    original_plan = await _preflight(
+        invocation=_invocation(original_text),
+        execution=_execution(_BoundaryLLM([0, 2])),
+        text=original_text,
+        request_started_at=datetime(2026, 1, 2, tzinfo=UTC),
+    )
+    existing, durable_chunks = _persisted_document(
+        original_plan,
+        updated_at=datetime(2026, 1, 1, tzinfo=UTC),
+    )
+
+    changed_text = _conversation(changed=True)
+    _install_planning_backend(
+        monkeypatch,
+        existing=existing,
+        chunks=durable_chunks,
+    )
+    planning_execution = _execution(_BoundaryLLM([0, 1, 2]))
+    planning_execution.resolved_config.retain_chunk_batch_size = 1
+    changed_plan = await _preflight(
+        invocation=_invocation(changed_text),
+        execution=planning_execution,
+        text=changed_text,
+        request_started_at=datetime(2026, 1, 3, tzinfo=UTC),
+    )
+
+    assert changed_plan.change.kind is DocumentChangeKind.FULL
+    assert len(changed_plan.chunks) == 3
+    assert changed_plan.segmentation_metadata != original_plan.segmentation_metadata
+
+    events: list[str] = []
+    execution = replace(
+        planning_execution,
+        entity_resolver=SimpleNamespace(
+            discard_pending_stats=lambda: events.append("discard"),
+        ),
+    )
+    metadata_key = service_module._SEMANTIC_PLAN_METADATA_KEY
+    old_state = {
+        "document": existing.original_text,
+        "content_hash": existing.content_hash,
+        "retain_params": dict(existing.retain_params),
+        "unit_ids": ("old-unit",),
+    }
+
+    class TransactionalConnection:
+        def __init__(self) -> None:
+            self.in_transaction = False
+            self.state = dict(old_state)
+
+        def transaction(self):
+            connection = self
+
+            class Transaction:
+                async def __aenter__(self):
+                    connection.in_transaction = True
+                    self.snapshot = dict(connection.state)
+                    events.append("begin")
+                    return connection
+
+                async def __aexit__(self, exc_type, _exc, _traceback):
+                    if exc_type is None:
+                        events.append("commit")
+                    else:
+                        connection.state = self.snapshot
+                        events.append("rollback")
+                    connection.in_transaction = False
+                    return False
+
+            return Transaction()
+
+    cancellation = isinstance(later_failure, RetainOperationInactiveError)
+
+    class LaterWindowFence:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        async def assert_active(self, _connection: Any, *, bank_id: str) -> None:
+            assert bank_id == "bank"
+            self.calls += 1
+            events.append(f"fence:{self.calls}")
+            if cancellation and self.calls == 2:
+                raise later_failure
+
+    fence = LaterWindowFence()
+    scenario: dict[str, Any] = {"write_count": 0}
+
+    class ServiceWriter:
+        def __init__(self, *, operation_activity: Any, **_kwargs: Any) -> None:
+            self.operation_activity = operation_activity
+
+        async def write_core(self, connection: Any, request: Any) -> CoreWriteResult:
+            await self.operation_activity.assert_active(
+                connection,
+                bank_id=request.bank_id,
+            )
+            assert connection.in_transaction
+            scenario["write_count"] += 1
+            window = request.document_window
+            if isinstance(window, FirstFullWriteWindow):
+                assert window.expected_existing_content_hash == existing.content_hash
+                candidate_params = dict(window.retain_params or {})
+                scenario["candidate_semantic_metadata"] = candidate_params[metadata_key]
+                connection.state = {
+                    "document": window.combined_content,
+                    "content_hash": window.continuation_content_hash,
+                    "retain_params": candidate_params,
+                    "unit_ids": (),
+                }
+                events.append("write:first")
+            else:
+                assert isinstance(window, LaterFullWriteWindow)
+                connection.state["content_hash"] = window.completed_content_hash or window.expected_content_hash
+                events.append("write:later")
+                if scenario["write_count"] == 2:
+                    raise later_failure
+            return CoreWriteResult(ownership=OwnershipDisposition.OWNED)
+
+        async def flush_entity_stats(self) -> None:
+            raise AssertionError("post-commit work must not run after rollback")
+
+        async def write_display_entity_links(
+            self,
+            _request: Any,
+            _phase3_payload: Any,
+        ) -> None:
+            raise AssertionError("post-commit work must not run after rollback")
+
+    connection = TransactionalConnection()
+    ownership_fresh_values: list[bool] = []
+    checkpoint_store = SimpleNamespace(record_core_committed=AsyncMock())
+    backend_adapters = SimpleNamespace(
+        document_ownership=lambda *, schema, fresh: ownership_fresh_values.append(fresh) or object(),
+        operation_activity_fence=lambda _operation_id, *, schema: fence,
+        checkpoint_store=lambda _connection, *, schema: checkpoint_store,
+    )
+
+    @asynccontextmanager
+    async def connection_scope(_pool: Any):
+        yield connection
+
+    pipeline = service_module.RetainPipelineService()
+    prepared_indices: list[tuple[int, ...]] = []
+
+    async def extract(
+        _invocation: Any,
+        _execution: Any,
+        _plan: Any,
+        selected_chunks: Any,
+        **_kwargs: Any,
+    ) -> tuple[tuple[Any, ...], TokenUsage]:
+        prepared_indices.append(tuple(chunk.global_index for chunk in selected_chunks))
+        return (), TokenUsage()
+
+    outbox = AsyncMock()
+    final_ann = AsyncMock()
+    monkeypatch.setattr(pipeline, "_extract_and_project_selected_chunks", extract)
+    monkeypatch.setattr(pipeline, "_run_full_semantic_ann_best_effort", final_ann)
+    monkeypatch.setattr(service_module, "_backend_adapters", lambda _execution: backend_adapters)
+    monkeypatch.setattr(service_module, "PersistenceWriter", ServiceWriter)
+    monkeypatch.setattr(service_module, "acquire_with_retry", connection_scope)
+
+    invocation = replace(
+        _invocation(changed_text),
+        operation_id="00000000-0000-0000-0000-000000000001",
+    )
+    with pytest.raises(type(later_failure), match=str(later_failure)):
+        await pipeline._execute_full_document_windows(
+            invocation,
+            execution,
+            changed_plan,
+            agent_name="agent",
+            outbox_callback=outbox,
+        )
+
+    assert prepared_indices == [(0,), (1,), (2,)]
+    assert ownership_fresh_values == [False, False, False]
+    assert fence.calls == 2
+    assert scenario["write_count"] == expected_write_count
+    assert scenario["candidate_semantic_metadata"] == changed_plan.segmentation_metadata
+    assert old_state["retain_params"][metadata_key] == original_plan.segmentation_metadata
+    assert connection.state == old_state
+    assert connection.state["retain_params"][metadata_key] != changed_plan.segmentation_metadata
+    assert "commit" not in events
+    assert "rollback" in events
+    checkpoint_store.record_core_committed.assert_not_awaited()
+    outbox.assert_not_awaited()
+    final_ann.assert_not_awaited()
 
 
 @pytest.mark.asyncio
