@@ -10,16 +10,19 @@ or metadata-only.  Stale plans perform no write at all.
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import json
 import logging
 import sys
 import time
 import uuid
-from collections.abc import Iterator, Sequence
+from collections.abc import Coroutine, Iterator, Sequence
 from contextlib import asynccontextmanager
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, TypeVar
 
+from ...config import DEFAULT_RETAIN_SEMANTIC_CHUNKING_ENABLED
 from ..db_utils import acquire_with_retry
 from ..embedding_fingerprint import EmbeddingFingerprintError, ensure_bank_embedding_fingerprint
 from ..response_models import TokenUsage
@@ -36,7 +39,7 @@ from .adapters.storage_records import (
     retain_document_metadata,
 )
 from .change_detection import detect_document_change
-from .chunking import build_chunk_plans
+from .chunking import build_chunk_plans, compute_content_hash
 from .contracts import RetainExecutionContext, RetainInvocation, RetainOutcome
 from .document_planner import plan_documents, prepend_existing_document
 from .domain import (
@@ -87,11 +90,24 @@ from .runtime import (
     pre_resolve_entities,
     run_final_semantic_ann,
 )
+from .segmentation import (
+    EffectiveSegmentationStrategy,
+    SegmentationFailurePolicy,
+    SegmentationManifest,
+    SegmentationReuseError,
+    SemanticSegmentationPolicy,
+    SemanticSegmenter,
+    build_chunk_plans_from_segmentation,
+    parse_conversation,
+)
 
 logger = logging.getLogger(__name__)
 
 _INFLIGHT_CONTENT_HASH_PREFIX = "retain-inflight:"
 _DEFAULT_PROJECTION_PIPELINE_CONCURRENCY = 4
+_SEMANTIC_PLAN_METADATA_KEY = "_hms_ingestion"
+_SEMANTIC_DOCUMENT_PLAN_SCHEMA = "retain-semantic-document-plan-v1"
+_PlanningResult = TypeVar("_PlanningResult")
 
 
 class RetainError(RuntimeError):
@@ -182,6 +198,8 @@ class _DocumentExecutionPlan:
     recovered_unit_bindings: tuple[CommittedUnitBinding, ...] | None = None
     recovered_chunk_sources: tuple[tuple[int, int | None], ...] | None = None
     final_ann_pending: bool = False
+    segmentation_metadata: dict[str, Any] | None = None
+    segmentation_usage: TokenUsage = field(default_factory=TokenUsage)
 
     @property
     def recovered_unit_ids(self) -> tuple[str, ...] | None:
@@ -280,6 +298,23 @@ def _validate_atomic_full_publication(
     )
 
 
+@dataclass(frozen=True, slots=True)
+class _DocumentPreflightSnapshot:
+    submitted_intent: DocumentIntent
+    existing: ExistingDocument | None
+    existing_chunks: tuple[ExistingChunkFingerprint, ...]
+    recovered_unit_bindings: tuple[CommittedUnitBinding, ...] | None = None
+    expected_unit_ids: tuple[str, ...] | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class _SemanticDocumentPlan:
+    chunks: tuple[ChunkPlan, ...]
+    metadata: dict[str, Any]
+    usage: TokenUsage
+    layout_signature: tuple[Any, ...]
+
+
 def _projection_pipeline_concurrency(config: Any) -> int:
     """Resolve a finite positive producer width without trusting bool-as-int."""
 
@@ -346,6 +381,396 @@ def _require_supported_route(execution: RetainExecutionContext) -> None:
         ExtractionMode(mode)
     except (TypeError, ValueError) as exc:
         raise RetainExtractionModeUnsupportedError(f"Retain does not support retain_extraction_mode={mode!r}.") from exc
+
+
+def _semantic_planning_active(
+    invocation: RetainInvocation,
+    execution: RetainExecutionContext,
+) -> bool:
+    """Return whether this invocation may call the semantic boundary model."""
+
+    if (
+        getattr(
+            execution.resolved_config,
+            "retain_semantic_chunking_enabled",
+            DEFAULT_RETAIN_SEMANTIC_CHUNKING_ENABLED,
+        )
+        is not True
+    ):
+        return False
+    if invocation.trusted_prechunked_input:
+        return False
+    if getattr(execution.resolved_config, "retain_extraction_mode", None) == ExtractionMode.CHUNKS.value:
+        return False
+    return getattr(execution.llm_config, "provider", None) != "none"
+
+
+def _semantic_policy(
+    execution: RetainExecutionContext,
+    chunk_policy: ChunkPolicy,
+) -> SemanticSegmentationPolicy:
+    config = execution.resolved_config
+    return SemanticSegmentationPolicy(
+        max_chars=chunk_policy.max_chars,
+        provider=str(getattr(execution.llm_config, "provider", "unknown")),
+        model=str(getattr(execution.llm_config, "model", "unknown")),
+        failure_policy=SegmentationFailurePolicy(
+            getattr(
+                config,
+                "retain_semantic_chunking_failure_policy",
+                SegmentationFailurePolicy.FIXED_FALLBACK.value,
+            )
+        ),
+        max_completion_tokens=getattr(
+            config,
+            "retain_semantic_chunking_max_completion_tokens",
+            1024,
+        ),
+        max_retries=getattr(
+            config,
+            "retain_semantic_chunking_max_retries",
+            1,
+        ),
+    )
+
+
+def _semantic_manifest_layout(manifest: SegmentationManifest) -> tuple[Any, ...]:
+    """Return only boundary fields whose drift requires a conservative FULL."""
+
+    return (
+        manifest.effective_strategy.value,
+        manifest.end_exchange_indices,
+        tuple(
+            (
+                chunk.semantic_segment_index,
+                chunk.start_exchange,
+                chunk.end_exchange,
+                chunk.oversized_atomic,
+            )
+            for chunk in manifest.chunks
+        ),
+    )
+
+
+def _semantic_document_metadata(
+    *,
+    policy: SemanticSegmentationPolicy,
+    items: Sequence[Any],
+    manifests: Sequence[SegmentationManifest],
+) -> tuple[dict[str, Any], tuple[Any, ...]]:
+    if len(items) != len(manifests):
+        raise ValueError("semantic plan items and manifests must have the same length")
+    item_payloads = [
+        {
+            "position": position,
+            "source_index": item.source_index,
+            "manifest": manifest.as_dict(),
+        }
+        for position, (item, manifest) in enumerate(zip(items, manifests, strict=True))
+    ]
+    digest_payload = {
+        "schema_version": _SEMANTIC_DOCUMENT_PLAN_SCHEMA,
+        "policy_fingerprint": policy.fingerprint,
+        "items": item_payloads,
+    }
+    encoded = json.dumps(
+        digest_payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    metadata = {
+        **digest_payload,
+        "plan_digest": hashlib.sha256(encoded).hexdigest(),
+    }
+    layout = tuple(_semantic_manifest_layout(manifest) for manifest in manifests)
+    return metadata, layout
+
+
+def _existing_semantic_metadata(existing: ExistingDocument | None) -> dict[str, Any] | None:
+    if existing is None or not isinstance(existing.retain_params, dict):
+        return None
+    value = existing.retain_params.get(_SEMANTIC_PLAN_METADATA_KEY)
+    return value if isinstance(value, dict) else None
+
+
+def _stored_manifest_payloads(
+    metadata: dict[str, Any] | None,
+    *,
+    policy_fingerprint: str,
+) -> tuple[dict[str, Any], ...] | None:
+    """Validate the document envelope and return ordered text-free manifests."""
+
+    if not isinstance(metadata, dict):
+        return None
+    if metadata.get("schema_version") != _SEMANTIC_DOCUMENT_PLAN_SCHEMA:
+        return None
+    if metadata.get("policy_fingerprint") != policy_fingerprint:
+        return None
+    items = metadata.get("items")
+    if not isinstance(items, list):
+        return None
+    manifests: list[dict[str, Any]] = []
+    for position, item in enumerate(items):
+        if not isinstance(item, dict) or item.get("position") != position:
+            return None
+        manifest = item.get("manifest")
+        if not isinstance(manifest, dict):
+            return None
+        manifests.append(manifest)
+    digest_payload = {
+        "schema_version": metadata.get("schema_version"),
+        "policy_fingerprint": metadata.get("policy_fingerprint"),
+        "items": items,
+    }
+    encoded = json.dumps(
+        digest_payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    if metadata.get("plan_digest") != hashlib.sha256(encoded).hexdigest():
+        return None
+    return tuple(manifests)
+
+
+def _stored_semantic_layout(
+    metadata: dict[str, Any] | None,
+    *,
+    policy_fingerprint: str,
+) -> tuple[Any, ...] | None:
+    payloads = _stored_manifest_payloads(
+        metadata,
+        policy_fingerprint=policy_fingerprint,
+    )
+    if payloads is None:
+        return None
+    try:
+        manifests = tuple(SegmentationManifest.from_dict(payload) for payload in payloads)
+    except (TypeError, ValueError):
+        return None
+    return tuple(_semantic_manifest_layout(manifest) for manifest in manifests)
+
+
+def _stored_recovery_manifest_items(
+    metadata: dict[str, Any],
+    *,
+    document_id: str,
+) -> tuple[tuple[int | None, SegmentationManifest], ...]:
+    """Load a durable semantic plan without applying the current policy.
+
+    A committed recovery must reproduce the layout that wrote the durable
+    chunks. Policy drift is therefore expected here: the stored envelope and
+    each manifest are validated against their own persisted fingerprint.
+    """
+
+    policy_fingerprint = metadata.get("policy_fingerprint")
+    if not isinstance(policy_fingerprint, str):
+        raise RetainCheckpointRecoveryError(
+            f"Committed document {document_id!r} has an invalid semantic plan policy fingerprint"
+        )
+    payloads = _stored_manifest_payloads(
+        metadata,
+        policy_fingerprint=policy_fingerprint,
+    )
+    raw_items = metadata.get("items")
+    if payloads is None or not isinstance(raw_items, list):
+        raise RetainCheckpointRecoveryError(f"Committed document {document_id!r} has an invalid semantic plan envelope")
+
+    items: list[tuple[int | None, SegmentationManifest]] = []
+    for position, (raw_item, payload) in enumerate(zip(raw_items, payloads, strict=True)):
+        if not isinstance(raw_item, dict) or set(raw_item) != {"position", "source_index", "manifest"}:
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {document_id!r} has invalid semantic plan item {position}"
+            )
+        source_index = raw_item.get("source_index")
+        if source_index is not None and (
+            isinstance(source_index, bool) or not isinstance(source_index, int) or source_index < 0
+        ):
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {document_id!r} has invalid semantic source index at item {position}"
+            )
+        try:
+            manifest = SegmentationManifest.from_dict(payload)
+        except (TypeError, ValueError) as exc:
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {document_id!r} has an invalid semantic plan manifest"
+            ) from exc
+        if manifest.policy_fingerprint != policy_fingerprint:
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {document_id!r} has inconsistent semantic plan fingerprints"
+            )
+        items.append((source_index, manifest))
+    return tuple(items)
+
+
+def _manifest_input_hash(
+    text: str,
+    manifest: SegmentationManifest,
+    *,
+    document_id: str,
+) -> str:
+    """Recompute the source identity encoded by one durable manifest."""
+
+    if manifest.effective_strategy in {
+        EffectiveSegmentationStrategy.PASSTHROUGH,
+        EffectiveSegmentationStrategy.FIXED_BYPASS,
+    }:
+        return compute_content_hash(text)
+
+    conversation = parse_conversation(text)
+    if conversation is None:
+        if manifest.effective_strategy is EffectiveSegmentationStrategy.SEMANTIC:
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {document_id!r} has a semantic plan for non-conversation input"
+            )
+        return compute_content_hash(text)
+    if manifest.effective_strategy is EffectiveSegmentationStrategy.SEMANTIC and not conversation.exchanges:
+        raise RetainCheckpointRecoveryError(
+            f"Committed document {document_id!r} has a semantic plan for an empty conversation"
+        )
+    return conversation.input_hash
+
+
+def _validated_recovery_chunk_sources(
+    durable_chunks: Sequence[ExistingChunkFingerprint],
+    expected_chunks: Sequence[tuple[str, int | None]],
+    *,
+    document_id: str,
+) -> tuple[tuple[int, int | None], ...]:
+    """Verify a complete durable layout before exposing source ownership."""
+
+    indices = tuple(chunk.chunk_index for chunk in durable_chunks)
+    if indices != tuple(range(len(durable_chunks))):
+        raise RetainCheckpointRecoveryError(
+            f"Committed document {document_id!r} has non-contiguous chunk indices {indices!r}"
+        )
+    if len(durable_chunks) != len(expected_chunks):
+        raise RetainCheckpointRecoveryError(
+            f"Committed document {document_id!r} chunk count does not match its recovery layout"
+        )
+
+    sources: list[tuple[int, int | None]] = []
+    for durable, (expected_hash, source_index) in zip(durable_chunks, expected_chunks, strict=True):
+        if durable.content_hash != expected_hash:
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {document_id!r} does not match its recovery layout "
+                f"at durable chunk index {durable.chunk_index}"
+            )
+        sources.append((durable.chunk_index, source_index))
+    return tuple(sources)
+
+
+def _semantic_recovery_chunk_sources(
+    metadata: dict[str, Any],
+    intent: DocumentIntent,
+    durable_chunks: Sequence[ExistingChunkFingerprint],
+) -> tuple[tuple[int, int | None], ...]:
+    """Map durable semantic chunks to the retry payload without an LLM call."""
+
+    stored_items = _stored_recovery_manifest_items(
+        metadata,
+        document_id=intent.document_id,
+    )
+    if intent.update_mode is UpdateMode.APPEND:
+        if len(stored_items) < len(intent.items):
+            raise RetainCheckpointRecoveryError(
+                f"Committed append document {intent.document_id!r} has fewer semantic items than the retry payload"
+            )
+        prefix_count = len(stored_items) - len(intent.items)
+        if any(source_index is not None for source_index, _manifest in stored_items[:prefix_count]):
+            raise RetainCheckpointRecoveryError(
+                f"Committed append document {intent.document_id!r} has an ambiguous semantic prefix"
+            )
+    else:
+        if len(stored_items) != len(intent.items):
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {intent.document_id!r} semantic item count does not match the retry payload"
+            )
+        prefix_count = 0
+
+    for position, (item, (stored_source_index, manifest)) in enumerate(
+        zip(intent.items, stored_items[prefix_count:], strict=True)
+    ):
+        if stored_source_index != item.source_index:
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {intent.document_id!r} semantic source mapping changed at item {position}"
+            )
+        if (
+            _manifest_input_hash(
+                item.content,
+                manifest,
+                document_id=intent.document_id,
+            )
+            != manifest.input_hash
+        ):
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {intent.document_id!r} retry input does not match its semantic plan "
+                f"at item {position}"
+            )
+
+    expected_chunks: list[tuple[str, int | None]] = []
+    for position, (stored_source_index, manifest) in enumerate(stored_items):
+        source_index = None if position < prefix_count else stored_source_index
+        expected_chunks.extend((chunk.content_hash, source_index) for chunk in manifest.chunks)
+    return _validated_recovery_chunk_sources(
+        durable_chunks,
+        expected_chunks,
+        document_id=intent.document_id,
+    )
+
+
+def _committed_recovery_chunk_sources(
+    existing: ExistingDocument,
+    intent: DocumentIntent,
+    durable_chunks: Sequence[ExistingChunkFingerprint],
+    chunk_policy: ChunkPolicy,
+) -> tuple[tuple[int, int | None], ...]:
+    """Recover one committed source map without semantic replanning."""
+
+    retain_params = existing.retain_params
+    if isinstance(retain_params, dict) and _SEMANTIC_PLAN_METADATA_KEY in retain_params:
+        metadata = retain_params[_SEMANTIC_PLAN_METADATA_KEY]
+        if not isinstance(metadata, dict):
+            raise RetainCheckpointRecoveryError(
+                f"Committed document {intent.document_id!r} has invalid semantic plan metadata"
+            )
+        return _semantic_recovery_chunk_sources(
+            metadata,
+            intent,
+            durable_chunks,
+        )
+
+    try:
+        submitted_chunks = build_chunk_plans(
+            intent.document_id,
+            intent.items,
+            chunk_policy,
+        )
+    except Exception as exc:
+        raise RetainCheckpointRecoveryError(
+            f"Committed document {intent.document_id!r} fixed recovery planning failed"
+        ) from exc
+    if intent.update_mode is UpdateMode.APPEND:
+        return _append_recovery_chunk_sources(
+            durable_chunks,
+            submitted_chunks,
+            document_id=intent.document_id,
+        )
+    return _validated_recovery_chunk_sources(
+        durable_chunks,
+        tuple((chunk.content_hash, chunk.source_index) for chunk in submitted_chunks),
+        document_id=intent.document_id,
+    )
+
+
+def _retain_metadata_with_semantic_plan(
+    plan: _DocumentExecutionPlan,
+) -> tuple[dict[str, Any], tuple[str, ...]]:
+    retain_params, document_tags = retain_document_metadata(plan.intent.items)
+    if plan.segmentation_metadata is not None:
+        retain_params[_SEMANTIC_PLAN_METADATA_KEY] = plan.segmentation_metadata
+    return retain_params, document_tags
 
 
 def _recovered_id_factory(recovered_ids: Sequence[str], explicit_ids: set[str]) -> Iterator[str]:
@@ -438,6 +863,54 @@ async def _database_budget(semaphore: Any):
         yield
 
 
+async def _gather_planning_tasks(
+    coroutines: Sequence[Coroutine[Any, Any, _PlanningResult]],
+) -> tuple[_PlanningResult, ...]:
+    """Cancel and await sibling planning work after the first task failure."""
+
+    tasks = tuple(asyncio.create_task(coroutine) for coroutine in coroutines)
+    if not tasks:
+        return ()
+
+    task_positions = {task: position for position, task in enumerate(tasks)}
+    pending = set(tasks)
+    try:
+        while pending:
+            completed, pending = await asyncio.wait(
+                pending,
+                return_when=asyncio.FIRST_COMPLETED,
+            )
+            failures: list[tuple[int, BaseException]] = []
+            for task in completed:
+                if task.cancelled():
+                    failures.append(
+                        (
+                            task_positions[task],
+                            asyncio.CancelledError("semantic planning task was cancelled"),
+                        )
+                    )
+                    continue
+                error = task.exception()
+                if error is not None:
+                    failures.append((task_positions[task], error))
+            if not failures:
+                continue
+
+            for task in pending:
+                task.cancel()
+            await asyncio.gather(*pending, return_exceptions=True)
+            failures.sort(key=lambda item: item[0])
+            raise failures[0][1]
+
+        return tuple(task.result() for task in tasks)
+    except BaseException:
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        raise
+
+
 def _backend_adapters(execution: RetainExecutionContext) -> RetainBackendAdapters:
     """Select the persistence contracts for the request's configured backend."""
 
@@ -502,6 +975,17 @@ class RetainPipelineService:
             conversation_mode=True,
             overlap=0,
         )
+        if _semantic_planning_active(invocation, execution) and getattr(
+            execution.resolved_config,
+            "retain_batch_enabled",
+            False,
+        ):
+            all_documents_core_committed = all(checkpoint.is_core_committed(intent.document_id) for intent in intents)
+            if not all_documents_core_committed:
+                raise RetainUnsupportedError(
+                    "Semantic Retain chunking does not support provider Batch extraction because "
+                    "the existing Batch checkpoint does not bind results to a semantic plan digest."
+                )
 
         # This is the all-document read barrier. No bank auto-create,
         # checkpoint update, semantic write, or outbox call occurs before it.
@@ -561,6 +1045,7 @@ class RetainPipelineService:
         last_commit_position = commit_positions[-1] if commit_positions else None
 
         for position, plan in enumerate(plans):
+            total_usage = total_usage + getattr(plan, "segmentation_usage", TokenUsage())
             if plan.recovered_unit_ids is not None:
                 document_outcome = await self._resume_committed_document(
                     invocation,
@@ -647,6 +1132,65 @@ class RetainPipelineService:
                 exc_info=True,
             )
 
+    @staticmethod
+    async def _build_semantic_document_plan(
+        execution: RetainExecutionContext,
+        intent: DocumentIntent,
+        chunk_policy: ChunkPolicy,
+        *,
+        stored_metadata: dict[str, Any] | None,
+        planning_semaphore: asyncio.Semaphore,
+        reuse_trailing_items: bool = False,
+    ) -> _SemanticDocumentPlan:
+        """Plan and materialize one document after the database snapshot closes."""
+
+        semantic_policy = _semantic_policy(execution, chunk_policy)
+        segmenter = SemanticSegmenter(
+            llm_config=execution.llm_config,
+            policy=semantic_policy,
+        )
+        stored_manifests = _stored_manifest_payloads(
+            stored_metadata,
+            policy_fingerprint=semantic_policy.fingerprint,
+        )
+        if stored_manifests is not None:
+            if reuse_trailing_items and len(stored_manifests) >= len(intent.items):
+                stored_manifests = stored_manifests[-len(intent.items) :] if intent.items else ()
+            elif len(stored_manifests) != len(intent.items):
+                stored_manifests = None
+
+        async def plan_item(position: int):
+            item = intent.items[position]
+            if stored_manifests is not None:
+                try:
+                    return segmenter.reuse(item.content, stored_manifests[position])
+                except SegmentationReuseError:
+                    pass
+            async with planning_semaphore:
+                return await segmenter.plan_document(item.content)
+
+        results = await _gather_planning_tasks(tuple(plan_item(position) for position in range(len(intent.items))))
+        chunks = build_chunk_plans_from_segmentation(
+            intent.document_id,
+            intent.items,
+            results,
+        )
+        manifests = tuple(result.manifest for result in results)
+        metadata, layout_signature = _semantic_document_metadata(
+            policy=semantic_policy,
+            items=intent.items,
+            manifests=manifests,
+        )
+        usage = TokenUsage()
+        for result in results:
+            usage = usage + result.usage
+        return _SemanticDocumentPlan(
+            chunks=chunks,
+            metadata=metadata,
+            usage=usage,
+            layout_signature=layout_signature,
+        )
+
     async def _preflight_documents(
         self,
         invocation: RetainInvocation,
@@ -657,8 +1201,11 @@ class RetainPipelineService:
         checkpoint: OperationCheckpoint,
         request_started_at: datetime,
     ) -> tuple[_DocumentExecutionPlan, ...]:
-        plans: list[_DocumentExecutionPlan] = []
         adapters = _backend_adapters(execution)
+        snapshots: list[_DocumentPreflightSnapshot] = []
+
+        # Read every database dependency first, then release the connection
+        # before any semantic boundary provider call begins.
         async with acquire_with_retry(execution.pool) as connection, adapters.planning_snapshot(connection):
             repository = adapters.planning_repository(connection, schema=execution.schema)
             for submitted_intent in intents:
@@ -666,6 +1213,13 @@ class RetainPipelineService:
                     invocation.bank_id,
                     submitted_intent.document_id,
                 )
+                existing_chunks = (
+                    await repository.load_chunks(invocation.bank_id, submitted_intent.document_id)
+                    if existing is not None
+                    else ()
+                )
+                recovered_unit_bindings = None
+                expected_unit_ids = None
                 if checkpoint.is_core_committed(submitted_intent.document_id):
                     if existing is None:
                         raise RetainCheckpointRecoveryError(
@@ -673,36 +1227,14 @@ class RetainPipelineService:
                             f"{submitted_intent.document_id!r} committed, but no document row exists"
                         )
                     expected_unit_ids = checkpoint.unit_ids_for_document(submitted_intent.document_id)
-                    intent = submitted_intent
-                    recovered_chunk_sources = None
-                    if submitted_intent.update_mode is UpdateMode.APPEND and expected_unit_ids is not None:
-                        chunks = build_chunk_plans(
-                            submitted_intent.document_id,
-                            submitted_intent.items,
-                            policy,
-                        )
-                        durable_chunks = await repository.load_chunks(
-                            invocation.bank_id,
-                            submitted_intent.document_id,
-                        )
-                        recovered_chunk_sources = _append_recovery_chunk_sources(
-                            durable_chunks,
-                            chunks,
-                            document_id=submitted_intent.document_id,
-                        )
-                    else:
-                        if submitted_intent.update_mode is UpdateMode.APPEND and existing.original_text:
-                            intent = prepend_existing_document(
-                                submitted_intent,
-                                existing.original_text,
-                            )
-                        chunks = build_chunk_plans(
-                            intent.document_id,
-                            intent.items,
-                            policy,
+                    if expected_unit_ids is None:
+                        raise RetainCheckpointRecoveryError(
+                            "Operation checkpoint says document "
+                            f"{submitted_intent.document_id!r} committed, but does not contain "
+                            "operation-local unit IDs"
                         )
                     try:
-                        unit_bindings = await repository.load_document_unit_bindings(
+                        recovered_unit_bindings = await repository.load_document_unit_bindings(
                             invocation.bank_id,
                             submitted_intent.document_id,
                             expected_unit_ids=expected_unit_ids,
@@ -712,68 +1244,169 @@ class RetainPipelineService:
                             "Operation checkpoint unit IDs cannot be reconciled for document "
                             f"{submitted_intent.document_id!r}"
                         ) from exc
-                    combined_content = "\n".join(item.content for item in intent.items)
-                    fallback_checkpoint = (
-                        checkpoint.unscoped_facts_committed and not checkpoint.core_committed_document_ids
-                    )
-                    plans.append(
-                        _DocumentExecutionPlan(
-                            intent=intent,
-                            chunks=chunks,
-                            combined_content=combined_content,
-                            existing=existing,
-                            existing_chunks=(),
-                            change=DocumentChangePlan(
-                                kind=DocumentChangeKind.METADATA_ONLY,
-                                reason="operation core commit recovered",
-                            ),
-                            recovered_unit_bindings=unit_bindings,
-                            recovered_chunk_sources=recovered_chunk_sources,
-                            final_ann_pending=(
-                                submitted_intent.document_id in checkpoint.final_ann_pending_document_ids
-                                or fallback_checkpoint
-                            ),
-                        )
-                    )
-                    continue
-                intent = submitted_intent
-                if (
-                    submitted_intent.update_mode is UpdateMode.APPEND
-                    and existing is not None
-                    and existing.original_text
-                ):
-                    intent = prepend_existing_document(submitted_intent, existing.original_text)
-
-                combined_content = "\n".join(item.content for item in intent.items)
-                chunks = build_chunk_plans(intent.document_id, intent.items, policy)
-                existing_chunks = (
-                    await repository.load_chunks(invocation.bank_id, intent.document_id) if existing is not None else ()
-                )
-                change = detect_document_change(
-                    chunks,
-                    existing_chunks,
-                    document_exists=existing is not None,
-                    existing_document_content_hash=existing.content_hash if existing is not None else None,
-                    new_document_content_hash=compute_document_hash(combined_content),
-                    updated_at=existing.updated_at if existing is not None else None,
-                    request_started_at=request_started_at,
-                    policy_compatible=not (
-                        existing is not None
-                        and isinstance(existing.content_hash, str)
-                        and existing.content_hash.startswith(_INFLIGHT_CONTENT_HASH_PREFIX)
-                    ),
-                )
-                plans.append(
-                    _DocumentExecutionPlan(
-                        intent=intent,
-                        chunks=chunks,
-                        combined_content=combined_content,
+                snapshots.append(
+                    _DocumentPreflightSnapshot(
+                        submitted_intent=submitted_intent,
                         existing=existing,
                         existing_chunks=existing_chunks,
-                        change=change,
+                        recovered_unit_bindings=recovered_unit_bindings,
+                        expected_unit_ids=expected_unit_ids,
                     )
                 )
-        return tuple(plans)
+
+        semantic_active = _semantic_planning_active(invocation, execution)
+        planning_semaphore = asyncio.Semaphore(_projection_pipeline_concurrency(execution.resolved_config))
+
+        async def materialize(snapshot: _DocumentPreflightSnapshot) -> _DocumentExecutionPlan:
+            submitted_intent = snapshot.submitted_intent
+            existing = snapshot.existing
+            committed = snapshot.recovered_unit_bindings is not None
+            intent = submitted_intent
+            append_suffix_recovery = committed and submitted_intent.update_mode is UpdateMode.APPEND
+            if (
+                not append_suffix_recovery
+                and submitted_intent.update_mode is UpdateMode.APPEND
+                and existing is not None
+                and existing.original_text
+            ):
+                intent = prepend_existing_document(submitted_intent, existing.original_text)
+
+            stored_metadata = _existing_semantic_metadata(existing)
+            combined_content = "\n".join(item.content for item in intent.items)
+            if committed:
+                if existing is None:  # pragma: no cover - snapshot invariant
+                    raise RetainCheckpointRecoveryError(
+                        f"Committed document {submitted_intent.document_id!r} disappeared after planning"
+                    )
+                if intent.update_mode is not UpdateMode.APPEND and combined_content != existing.original_text:
+                    raise RetainCheckpointRecoveryError(
+                        f"Committed document {submitted_intent.document_id!r} retry input "
+                        "does not match its durable document"
+                    )
+                bindings = snapshot.recovered_unit_bindings
+                single_replacement = len(intent.items) == 1 and intent.update_mode is not UpdateMode.APPEND
+                has_semantic_metadata = (
+                    isinstance(existing.retain_params, dict) and _SEMANTIC_PLAN_METADATA_KEY in existing.retain_params
+                )
+                all_bindings_chunkless = bool(bindings) and all(binding.chunk_index is None for binding in bindings)
+                mapping_required = intent.update_mode is UpdateMode.APPEND or (
+                    bool(bindings)
+                    and not (single_replacement and (not has_semantic_metadata or all_bindings_chunkless))
+                )
+                recovered_chunk_sources = (
+                    _committed_recovery_chunk_sources(
+                        existing,
+                        intent,
+                        snapshot.existing_chunks,
+                        policy,
+                    )
+                    if mapping_required
+                    else ()
+                )
+                fallback_checkpoint = checkpoint.unscoped_facts_committed and not checkpoint.core_committed_document_ids
+                return _DocumentExecutionPlan(
+                    intent=intent,
+                    chunks=(),
+                    combined_content=combined_content,
+                    existing=existing,
+                    existing_chunks=(),
+                    change=DocumentChangePlan(
+                        kind=DocumentChangeKind.METADATA_ONLY,
+                        reason="operation core commit recovered",
+                    ),
+                    recovered_unit_bindings=snapshot.recovered_unit_bindings,
+                    recovered_chunk_sources=recovered_chunk_sources,
+                    final_ann_pending=(
+                        submitted_intent.document_id in checkpoint.final_ann_pending_document_ids or fallback_checkpoint
+                    ),
+                    segmentation_metadata=stored_metadata,
+                    segmentation_usage=TokenUsage(),
+                )
+
+            semantic_plan = None
+            if semantic_active:
+                semantic_plan = await self._build_semantic_document_plan(
+                    execution,
+                    intent,
+                    policy,
+                    stored_metadata=stored_metadata,
+                    planning_semaphore=planning_semaphore,
+                    reuse_trailing_items=append_suffix_recovery,
+                )
+                chunks = semantic_plan.chunks
+            else:
+                chunks = build_chunk_plans(intent.document_id, intent.items, policy)
+
+            policy_compatible = not (
+                existing is not None
+                and isinstance(existing.content_hash, str)
+                and existing.content_hash.startswith(_INFLIGHT_CONTENT_HASH_PREFIX)
+            )
+            if semantic_plan is not None:
+                semantic_policy = _semantic_policy(execution, policy)
+                stored_layout = _stored_semantic_layout(
+                    stored_metadata,
+                    policy_fingerprint=semantic_policy.fingerprint,
+                )
+                policy_compatible = (
+                    policy_compatible
+                    and stored_layout is not None
+                    and stored_layout == semantic_plan.layout_signature
+                    and submitted_intent.update_mode is not UpdateMode.APPEND
+                )
+            elif stored_metadata is not None:
+                # Switching from semantic chunks back to the deterministic
+                # fixed-chunk policy is a policy migration, never a partial Delta.
+                policy_compatible = False
+
+            change = detect_document_change(
+                chunks,
+                snapshot.existing_chunks,
+                document_exists=existing is not None,
+                existing_document_content_hash=existing.content_hash if existing is not None else None,
+                new_document_content_hash=compute_document_hash(combined_content),
+                updated_at=existing.updated_at if existing is not None else None,
+                request_started_at=request_started_at,
+                policy_compatible=policy_compatible,
+            )
+            return _DocumentExecutionPlan(
+                intent=intent,
+                chunks=chunks,
+                combined_content=combined_content,
+                existing=existing,
+                existing_chunks=snapshot.existing_chunks,
+                change=change,
+                segmentation_metadata=(semantic_plan.metadata if semantic_plan is not None else None),
+                segmentation_usage=(semantic_plan.usage if semantic_plan is not None else TokenUsage()),
+            )
+
+        plans = await _gather_planning_tasks(tuple(materialize(snapshot) for snapshot in snapshots))
+        if semantic_active:
+            strategies: dict[str, int] = {}
+            semantic_items = 0
+            input_tokens = 0
+            output_tokens = 0
+            for plan in plans:
+                metadata = plan.segmentation_metadata or {}
+                for item in metadata.get("items", []):
+                    manifest = item.get("manifest", {}) if isinstance(item, dict) else {}
+                    strategy = manifest.get("effective_strategy")
+                    if isinstance(strategy, str):
+                        strategies[strategy] = strategies.get(strategy, 0) + 1
+                        if strategy == EffectiveSegmentationStrategy.SEMANTIC.value:
+                            semantic_items += 1
+                input_tokens += plan.segmentation_usage.input_tokens
+                output_tokens += plan.segmentation_usage.output_tokens
+            logger.info(
+                "Retain semantic planning: documents=%d strategies=%s semantic_items=%d "
+                "input_tokens=%d output_tokens=%d",
+                len(plans),
+                json.dumps(strategies, sort_keys=True, separators=(",", ":")),
+                semantic_items,
+                input_tokens,
+                output_tokens,
+            )
+        return plans
 
     async def _execute_document(
         self,
@@ -1095,9 +1728,8 @@ class RetainPipelineService:
         """Restore committed unit IDs to their original public content buckets.
 
         Units with a durable chunk association can be mapped back to their
-        immutable input source. Rows without a chunk association cannot be
-        attributed exactly; return every such unit in the first document
-        bucket rather than silently dropping or guessing any unit.
+        immutable input source. Rows without a chunk association are safe only
+        for an exact, single-input replacement; ambiguous requests fail closed.
         """
 
         bindings = plan.recovered_unit_bindings
@@ -1109,8 +1741,13 @@ class RetainPipelineService:
             return tuple(() for _ in plan.intent.items)
 
         recovered_unit_ids = tuple(binding.unit_id for binding in bindings)
+        if len(plan.intent.items) == 1 and plan.intent.update_mode is not UpdateMode.APPEND:
+            return (recovered_unit_ids,)
         if any(binding.chunk_index is None for binding in bindings):
-            return (recovered_unit_ids,) + tuple(() for _ in plan.intent.items[1:])
+            raise RetainCheckpointRecoveryError(
+                f"Committed recovery for document {plan.intent.document_id!r} "
+                "contains units without an unambiguous chunk source"
+            )
 
         sources_by_chunk_index: dict[int, int | None] = {}
         if plan.recovered_chunk_sources is not None:
@@ -1482,7 +2119,7 @@ class RetainPipelineService:
         outbox_callback: Any = None,
         reset_pending_stats: bool = True,
     ) -> WriteWindowRequest:
-        retain_params, document_tags = retain_document_metadata(plan.intent.items)
+        retain_params, document_tags = _retain_metadata_with_semantic_plan(plan)
         payload = await self._build_fact_payload(
             invocation,
             execution,
@@ -1535,7 +2172,7 @@ class RetainPipelineService:
         checkpoint_callback: Any = None,
         outbox_callback: Any = None,
     ) -> RetainWriteRequest:
-        retain_params, document_tags = retain_document_metadata(plan.intent.items)
+        retain_params, document_tags = _retain_metadata_with_semantic_plan(plan)
         if plan.change.kind is DocumentChangeKind.METADATA_ONLY:
             if plan.existing is None or not plan.existing.content_hash:  # pragma: no cover - classifier invariant
                 raise RetainError("Metadata-only change requires an existing hash snapshot")

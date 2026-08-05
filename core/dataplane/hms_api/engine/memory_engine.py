@@ -4398,6 +4398,7 @@ class MemoryEngine(MemoryEngineInterface):
                 outbox_callback=outbox_callback,
                 strategy=strategy,
                 sanitize_log_identifiers=_retain_extraction_mode == "chunks",
+                trusted_prechunked_input=_retain_extraction_mode == "chunks",
             )
             execution = RetainExecutionContext(
                 pool=self._backend,

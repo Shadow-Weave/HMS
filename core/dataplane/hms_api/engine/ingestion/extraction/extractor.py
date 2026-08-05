@@ -234,6 +234,36 @@ class FactExtractorAdapter:
         setattr(fallback, "retain_batch_enabled", False)
         return fallback
 
+    @staticmethod
+    def _boundary_preserving_config(request: ExtractionRequest, config: Any) -> Any:
+        """Prevent the extraction primitive from re-splitting planned chunks.
+
+        A pre-chunked layout represents every planned chunk as one temporary
+        content item. The extraction primitive still applies
+        ``retain_chunk_size`` to each item, so a semantic segment containing a
+        complete oversized exchange could otherwise be divided between its
+        user and assistant turns. Raising the limit on a request-local shallow
+        copy preserves the planner boundary without mutating shared bank
+        configuration. Output-overflow recovery inside the primitive remains
+        available because it operates after this initial split.
+        """
+
+        if not request.preserve_chunk_boundaries or not request.items:
+            return config
+
+        required_chunk_size = max(len(item.content) for item in request.items)
+        configured_chunk_size = getattr(config, "retain_chunk_size", None)
+        if (
+            isinstance(configured_chunk_size, int)
+            and not isinstance(configured_chunk_size, bool)
+            and configured_chunk_size >= required_chunk_size
+        ):
+            return config
+
+        boundary_config = copy(config)
+        setattr(boundary_config, "retain_chunk_size", required_chunk_size)
+        return boundary_config
+
     async def _batch_primitive_if_supported(
         self,
         mode: ExtractionMode,
@@ -281,6 +311,7 @@ class FactExtractorAdapter:
         primitive_config = self._config
         if getattr(self._config, "retain_batch_enabled", False):
             primitive, primitive_config = await self._batch_primitive_if_supported(request.policy.mode)
+        primitive_config = self._boundary_preserving_config(request, primitive_config)
 
         storage_contents = [_storage_content(item) for item in request.items]
         primitive_result = await primitive(

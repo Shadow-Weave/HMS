@@ -359,6 +359,10 @@ ENV_RETAIN_BATCH_ENABLED = "HMS_API_RETAIN_BATCH_ENABLED"
 ENV_RETAIN_BATCH_POLL_INTERVAL_SECONDS = "HMS_API_RETAIN_BATCH_POLL_INTERVAL_SECONDS"
 ENV_RETAIN_CHUNK_BATCH_SIZE = "HMS_API_RETAIN_CHUNK_BATCH_SIZE"
 ENV_RETAIN_EMBEDDING_FAILURE_POLICY = "HMS_API_RETAIN_EMBEDDING_FAILURE_POLICY"
+ENV_RETAIN_SEMANTIC_CHUNKING_ENABLED = "HMS_API_RETAIN_SEMANTIC_CHUNKING_ENABLED"
+ENV_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY = "HMS_API_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY"
+ENV_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS = "HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS"
+ENV_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES = "HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES"
 
 # File storage configuration
 ENV_FILE_STORAGE_TYPE = "HMS_API_FILE_STORAGE_TYPE"
@@ -686,6 +690,11 @@ DEFAULT_RETAIN_BATCH_ENABLED = False  # Use LLM Batch API for fact extraction (o
 DEFAULT_RETAIN_BATCH_POLL_INTERVAL_SECONDS = 60  # Batch API polling interval in seconds
 DEFAULT_RETAIN_EMBEDDING_FAILURE_POLICY = "store_without_embedding"
 RETAIN_EMBEDDING_FAILURE_POLICIES = ("store_without_embedding", "raise")
+DEFAULT_RETAIN_SEMANTIC_CHUNKING_ENABLED = True
+DEFAULT_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY = "fixed_fallback"
+RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICIES = ("fixed_fallback", "raise")
+DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS = 1024
+DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES = 1
 
 # File storage defaults
 DEFAULT_FILE_STORAGE_TYPE = "native"  # PostgreSQL BYTEA storage
@@ -1345,6 +1354,10 @@ class HMSConfig:
     # Keep at the end of the dataclass; Python forbids non-default fields after default fields.
     embeddings_openai_batch_size: int = DEFAULT_EMBEDDINGS_OPENAI_BATCH_SIZE
     retain_embedding_failure_policy: str = DEFAULT_RETAIN_EMBEDDING_FAILURE_POLICY
+    retain_semantic_chunking_enabled: bool = DEFAULT_RETAIN_SEMANTIC_CHUNKING_ENABLED
+    retain_semantic_chunking_failure_policy: str = DEFAULT_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY
+    retain_semantic_chunking_max_completion_tokens: int = DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS
+    retain_semantic_chunking_max_retries: int = DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES
     embedding_fingerprint_policy: Literal["strict", "warn", "off"] = DEFAULT_EMBEDDING_FINGERPRINT_POLICY
     embedding_fingerprint_legacy_attestation: str | None = None
     vector_index_provider: str = DEFAULT_VECTOR_INDEX_PROVIDER
@@ -1762,6 +1775,16 @@ class HMSConfig:
                 f"\n     (current model: {self.retain_llm_model or self.llm_model}, "
                 f"provider: {self.retain_llm_provider or self.llm_provider})"
             )
+        if self.retain_semantic_chunking_failure_policy not in RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICIES:
+            choices = ", ".join(RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICIES)
+            raise ValueError(f"{ENV_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY} must be one of: {choices}")
+        if (
+            isinstance(self.retain_semantic_chunking_max_completion_tokens, bool)
+            or self.retain_semantic_chunking_max_completion_tokens <= 0
+        ):
+            raise ValueError(f"{ENV_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS} must be a positive integer")
+        if isinstance(self.retain_semantic_chunking_max_retries, bool) or self.retain_semantic_chunking_max_retries < 0:
+            raise ValueError(f"{ENV_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES} must be a non-negative integer")
 
         # Warn if local ML dependencies are missing when configured.
         # Don't hard-fail here — the actual ImportError fires at model init time
@@ -2158,6 +2181,27 @@ class HMSConfig:
                 os.getenv(
                     ENV_RETAIN_EMBEDDING_FAILURE_POLICY,
                     DEFAULT_RETAIN_EMBEDDING_FAILURE_POLICY,
+                )
+            ),
+            retain_semantic_chunking_enabled=os.getenv(
+                ENV_RETAIN_SEMANTIC_CHUNKING_ENABLED,
+                str(DEFAULT_RETAIN_SEMANTIC_CHUNKING_ENABLED),
+            ).lower()
+            == "true",
+            retain_semantic_chunking_failure_policy=os.getenv(
+                ENV_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY,
+                DEFAULT_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY,
+            ),
+            retain_semantic_chunking_max_completion_tokens=int(
+                os.getenv(
+                    ENV_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS,
+                    str(DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS),
+                )
+            ),
+            retain_semantic_chunking_max_retries=int(
+                os.getenv(
+                    ENV_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES,
+                    str(DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES),
                 )
             ),
             # File storage
