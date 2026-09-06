@@ -346,6 +346,11 @@ async def create_memory_engine() -> MemoryEngine:
         memory_llm_api_key=os.getenv("HMS_API_LLM_API_KEY"),
         memory_llm_model=os.getenv("HMS_API_LLM_MODEL", "openai/gpt-oss-120b"),
         memory_llm_base_url=os.getenv("HMS_API_LLM_BASE_URL") or None,  # Use None to get provider defaults
+        # A benchmark verifier connects with a dedicated PostgreSQL readonly
+        # role.  Migrations are deployment work and would be a write attempt
+        # against that role; the strict frozen runner does not construct this
+        # engine, but keep the generic factory fail-closed as well.
+        run_migrations=os.getenv("HMS_RSI_BENCHMARK_MODE", "0") != "1",
     )
     await memory.initialize()
     return memory

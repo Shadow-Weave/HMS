@@ -7,6 +7,11 @@
             "type": "command",
             "command": "python3 \"__SCRIPTS_DIR__/session_start.py\"",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python3 \"__SCRIPTS_DIR__/rsi_event.py\"",
+            "timeout": 5
           }
         ]
       }
@@ -18,6 +23,11 @@
             "type": "command",
             "command": "python3 \"__SCRIPTS_DIR__/recall.py\"",
             "timeout": 12
+          },
+          {
+            "type": "command",
+            "command": "python3 \"__SCRIPTS_DIR__/rsi_event.py\"",
+            "timeout": 5
           }
         ]
       }
@@ -29,6 +39,11 @@
             "type": "command",
             "command": "python3 \"__SCRIPTS_DIR__/retain.py\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "python3 \"__SCRIPTS_DIR__/rsi_event.py\"",
+            "timeout": 5
           }
         ]
       }

@@ -21,6 +21,7 @@
   "retainOverlapTurns": 2,
   "retainTags": ["{session_id}"],
   "retainMetadata": {},
+  "retainNamespace": "episode",
   "retainContext": "codex",
   "hmsApiToken": null,
   "apiPort": 9077,

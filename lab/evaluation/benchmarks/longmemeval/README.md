@@ -156,6 +156,60 @@ Provider failures count as incorrect in the primary accuracy. The artifact also
 records valid-only accuracy as a diagnostic. A full run exits with an error
 when it has missing questions or invalid judgments.
 
+## Run a frozen, physically read-only evaluation
+
+The regular command above is the H0 reproduction runner. It retains source
+sessions and therefore needs a writable benchmark database. For an RSI
+evaluation, first materialize one frozen memory snapshot per item in the
+development/evaluation builder, and write a map outside the benchmark database:
+
+```json
+{
+  "question-id": {
+    "bank_id": "longmemeval_question-id",
+    "snapshot_id": "harness-frozen-question-id"
+  }
+}
+```
+
+Then run the snapshot-only command with a dedicated readonly login:
+
+```bash
+PYTHONPATH=core/dataplane:core/rsi-harness:lab/evaluation \
+uv run --project lab/evaluation python -m benchmarks.longmemeval.frozen_longmemeval \
+  --database-url 'postgresql://hms_rsi_benchmark_readonly@eval-db/hms' \
+  --dataset-path .aaaDATA/longmemeval/longmemeval_s_cleaned.json \
+  --snapshot-map .aaaRESULT/longmemeval-snapshots.json \
+  --skill-snapshot-id harness-skill-h1 \
+  --evaluation-id longmemeval-h1-001 \
+  --dataset-revision 98d7416c24c778c2fee6e6f3006e7a073259d48f \
+  --max-items 1
+```
+
+This command never constructs `MemoryEngine`, never calls Retain, and never
+reads `memory_units`, `documents`, `chunks`, candidate staging, or verifier
+receipts. It only reads frozen snapshot tables through the PostgreSQL role
+created by [`deploy/rsi/benchmark_readonly_role.sql`](../../../../deploy/rsi/benchmark_readonly_role.sql).
+The reference answer remains inside this benchmark process for judging and is
+not returned to the evolution controller. The first run should use `--max-items
+1`; only after the artifact and permissions pass should the full 500-item run
+be attempted.
+
+Compare an H0 result artifact with the paired H1 frozen artifact after both
+runs use the same dataset revision:
+
+```bash
+PYTHONPATH=core/rsi-harness:lab/evaluation \
+python -m benchmarks.longmemeval.compare_results \
+  --baseline .aaaRESULT/longmemeval-h0.json \
+  --evolved .aaaRESULT/longmemeval-h1.json
+```
+
+The comparator consumes only per-question boolean correctness fields. It
+reports paired accuracy, delta, improvements, regressions, and unchanged
+questions; answer text, gold labels, reasoning, and retrieved text are not
+passed to the evolution controller.
+
 ## Resume an interrupted run
 
 Results are saved after each completed question with an atomic file replace.

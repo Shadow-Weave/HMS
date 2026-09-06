@@ -32,6 +32,8 @@ DEFAULTS = {
     "retainContext": "codex",
     "retainTags": [],
     "retainMetadata": {},
+    # Snapshot namespace: ordinary conversation memory is episode-scoped by default.
+    "retainNamespace": "episode",
     # Connection
     "hmsApiUrl": None,
     "hmsApiToken": None,
@@ -64,6 +66,7 @@ ENV_OVERRIDES = {
     "HMS_AUTO_RECALL": ("autoRecall", bool),
     "HMS_AUTO_RETAIN": ("autoRetain", bool),
     "HMS_RETAIN_MODE": ("retainMode", str),
+    "HMS_RETAIN_NAMESPACE": ("retainNamespace", str),
     "HMS_RECALL_BUDGET": ("recallBudget", str),
     "HMS_RECALL_MAX_TOKENS": ("recallMaxTokens", int),
     "HMS_RECALL_TIMEOUT": ("recallTimeout", int),

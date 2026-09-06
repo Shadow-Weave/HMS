@@ -162,3 +162,96 @@ class HMSClient:
         if retain_mission:
             updates["retain_mission"] = retain_mission
         return self._request("PATCH", path, {"updates": updates}, timeout=timeout)
+
+    def create_rsi_snapshot(self, bank_id: str, snapshot_id: str, *, parent_snapshot_id=None, manifest=None) -> dict:
+        path = f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/snapshots"
+        return self._request(
+            "POST",
+            path,
+            {
+                "snapshot_id": snapshot_id,
+                "parent_snapshot_id": parent_snapshot_id,
+                "manifest": manifest or {},
+            },
+            timeout=15,
+        )
+
+    def get_rsi_snapshot(self, bank_id: str, snapshot_id: str) -> dict:
+        path = (
+            f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/snapshots/"
+            f"{urllib.parse.quote(snapshot_id, safe='')}"
+        )
+        return self._request("GET", path, timeout=15)
+
+    def freeze_rsi_snapshot(self, bank_id: str, snapshot_id: str) -> dict:
+        path = (
+            f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/snapshots/"
+            f"{urllib.parse.quote(snapshot_id, safe='')}/freeze"
+        )
+        return self._request("POST", path, timeout=15)
+
+    def search_rsi_snapshot(self, bank_id: str, snapshot_id: str, namespace: str, query: str, limit: int = 20) -> dict:
+        path = (
+            f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/snapshots/"
+            f"{urllib.parse.quote(snapshot_id, safe='')}/search"
+        )
+        return self._request(
+            "POST",
+            path,
+            {"namespace": namespace, "query": query, "limit": max(1, min(int(limit), 100))},
+            timeout=15,
+        )
+
+    def fetch_rsi_snapshot_memory(self, bank_id: str, snapshot_id: str, memory_id: str) -> dict:
+        path = (
+            f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/snapshots/"
+            f"{urllib.parse.quote(snapshot_id, safe='')}/memories/{urllib.parse.quote(memory_id, safe='')}"
+        )
+        return self._request("GET", path, timeout=15)
+
+    def tag_rsi_memory_namespace(
+        self, bank_id: str, memory_ids: list[str], namespace: str, only_unclassified: bool = True
+    ) -> dict:
+        path = f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/memories/namespace"
+        return self._request(
+            "POST",
+            path,
+            {"memory_ids": memory_ids, "namespace": namespace, "only_unclassified": only_unclassified},
+            timeout=15,
+        )
+
+    def stage_rsi_candidate(self, bank_id: str, candidate: dict) -> dict:
+        path = f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/candidates"
+        return self._request("POST", path, candidate, timeout=15)
+
+    def promote_rsi_candidates(
+        self,
+        bank_id: str,
+        snapshot_id: str,
+        candidate_ids: list[str],
+        run_id: str,
+        candidate_digest: str,
+        receipt_token: str,
+    ) -> dict:
+        path = (
+            f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/snapshots/"
+            f"{urllib.parse.quote(snapshot_id, safe='')}/promote"
+        )
+        return self._request(
+            "POST",
+            path,
+            {
+                "candidate_ids": candidate_ids,
+                "run_id": run_id,
+                "candidate_digest": candidate_digest,
+                "verifier_receipt_token": receipt_token,
+            },
+            timeout=15,
+        )
+
+    def invalidate_rsi_candidate(self, bank_id: str, candidate_id: str, reason: str) -> dict:
+        path = (
+            f"/v1/default/banks/{urllib.parse.quote(bank_id, safe='')}/rsi/candidates/"
+            f"{urllib.parse.quote(candidate_id, safe='')}/invalidate"
+        )
+        return self._request("POST", path, {"reason": reason}, timeout=15)

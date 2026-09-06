@@ -151,6 +151,12 @@ def main():
     }
     for k, v in config.get("retainMetadata", {}).items():
         metadata[k] = _resolve_template(str(v))
+    namespace = str(config.get("retainNamespace", "episode")).strip().lower()
+    if namespace not in {"episode", "project", "general"}:
+        namespace = "episode"
+    # This is a reserved safety field; user metadata cannot silently widen a
+    # conversation's visibility into a frozen benchmark snapshot.
+    metadata["rsi_namespace"] = namespace
 
     debug_log(
         config, f"Retaining to bank '{bank_id}', doc '{document_id}', {message_count} messages, {len(transcript)} chars"

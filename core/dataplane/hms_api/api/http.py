@@ -86,6 +86,11 @@ from hms_api.engine.memory_engine import Budget, _current_schema, _get_tiktoken_
 from hms_api.engine.multimodal.security import contains_encoded_media_payload
 from hms_api.engine.providers.none_llm import LLMNotAvailableError
 from hms_api.engine.response_models import VALID_RECALL_FACT_TYPES, MemoryFact, TokenUsage
+from hms_api.engine.rsi_store import (
+    RSIConflictError,
+    RSINotFoundError,
+    RSINotSupportedError,
+)
 from hms_api.engine.search.tags import TagGroup, TagsMatch
 from hms_api.extensions import HttpExtension, OperationValidationError, load_extension
 from hms_api.metrics import create_metrics_collector, get_metrics_collector, initialize_metrics
@@ -1552,6 +1557,56 @@ class BankStatsResponse(BaseModel):
         description="Number of source memories (world/experience) whose consolidation permanently failed and can be retried via the consolidation recovery endpoint.",
     )
     total_observations: int = Field(default=0, description="Total number of observations")
+
+
+class RSISnapshotCreateRequest(BaseModel):
+    """Create a building RSI Harness snapshot, sealed on promotion."""
+
+    snapshot_id: str = Field(min_length=1, max_length=256)
+    parent_snapshot_id: str | None = Field(default=None, max_length=256)
+    manifest: dict[str, Any] = Field(default_factory=dict)
+
+
+class RSICandidateRequest(BaseModel):
+    """Stage a candidate before development verifier output exists."""
+
+    candidate_id: str = Field(min_length=1, max_length=256)
+    run_id: str = Field(min_length=1, max_length=256)
+    namespace: Literal["candidate", "project", "general"]
+    kind: str = Field(min_length=1, max_length=128)
+    trigger: str = Field(min_length=1, max_length=4000)
+    content: str = Field(min_length=1, max_length=12000)
+    preconditions: list[str] = Field(default_factory=list)
+    anti_patterns: list[str] = Field(default_factory=list)
+    evidence_refs: list[str] = Field(min_length=1)
+    source_commit: str | None = Field(default=None, max_length=256)
+    created_before_verifier: StrictBool
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class RSICandidatePromotionRequest(BaseModel):
+    """Promote candidates using an opaque development verifier receipt."""
+
+    candidate_ids: list[str] = Field(min_length=1)
+    run_id: str = Field(min_length=1, max_length=256)
+    candidate_digest: str = Field(min_length=64, max_length=64, pattern=r"^[0-9a-f]{64}$")
+    verifier_receipt_token: str = Field(min_length=1, max_length=512)
+
+
+class RSICandidateInvalidationRequest(BaseModel):
+    reason: str = Field(min_length=1, max_length=4000)
+
+
+class RSISnapshotSearchRequest(BaseModel):
+    namespace: Literal["project", "general"]
+    query: str = Field(min_length=1, max_length=2000)
+    limit: int = Field(default=20, ge=1, le=100)
+
+
+class RSINamespaceTagRequest(BaseModel):
+    memory_ids: list[str] = Field(min_length=1, max_length=1000)
+    namespace: Literal["project", "general"]
+    only_unclassified: bool = True
 
 
 class MemoryTimeseriesBucket(BaseModel):
@@ -3277,6 +3332,318 @@ def _register_routes(app: FastAPI):
 
         metrics_data = generate_latest()
         return Response(content=metrics_data, media_type=CONTENT_TYPE_LATEST)
+
+    # RSI Harness state is separate from ordinary memory units. Candidates are
+    # staged before verifier output; one successful promotion seals the
+    # building snapshot and makes it immutable.
+    @app.post(
+        "/v1/default/banks/{bank_id}/rsi/snapshots",
+        summary="Create a building RSI Harness snapshot",
+        operation_id="create_rsi_snapshot",
+        tags=["RSI"],
+    )
+    async def api_create_rsi_snapshot(
+        bank_id: str,
+        request: RSISnapshotCreateRequest,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import create_snapshot
+
+        try:
+            return await create_snapshot(
+                app.state.memory,
+                bank_id=bank_id,
+                snapshot_id=request.snapshot_id,
+                parent_snapshot_id=request.parent_snapshot_id,
+                manifest=request.manifest,
+                request_context=request_context,
+            )
+        except AuthenticationError:
+            raise
+        except (ValueError, RSIConflictError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.get(
+        "/v1/default/banks/{bank_id}/rsi/snapshots/{snapshot_id}",
+        summary="Get an RSI Harness snapshot",
+        operation_id="get_rsi_snapshot",
+        tags=["RSI"],
+    )
+    async def api_get_rsi_snapshot(
+        bank_id: str,
+        snapshot_id: str,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import get_snapshot
+
+        try:
+            return await get_snapshot(
+                app.state.memory,
+                bank_id=bank_id,
+                snapshot_id=snapshot_id,
+                request_context=request_context,
+            )
+        except AuthenticationError:
+            raise
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.post(
+        "/v1/default/banks/{bank_id}/rsi/snapshots/{snapshot_id}/freeze",
+        summary="Freeze a baseline RSI Harness snapshot",
+        operation_id="freeze_rsi_snapshot",
+        tags=["RSI"],
+    )
+    async def api_freeze_rsi_snapshot(
+        bank_id: str,
+        snapshot_id: str,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import freeze_snapshot
+
+        try:
+            return await freeze_snapshot(
+                app.state.memory,
+                bank_id=bank_id,
+                snapshot_id=snapshot_id,
+                request_context=request_context,
+            )
+        except AuthenticationError:
+            raise
+        except RSIConflictError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.post(
+        "/v1/default/banks/{bank_id}/rsi/snapshots/{snapshot_id}/search",
+        summary="Search a frozen RSI snapshot",
+        operation_id="search_rsi_snapshot",
+        tags=["RSI"],
+    )
+    async def api_search_rsi_snapshot(
+        bank_id: str,
+        snapshot_id: str,
+        request: RSISnapshotSearchRequest,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import search_snapshot
+
+        try:
+            return {
+                "items": await search_snapshot(
+                    app.state.memory,
+                    bank_id=bank_id,
+                    snapshot_id=snapshot_id,
+                    namespace=request.namespace,
+                    query=request.query,
+                    limit=request.limit,
+                    request_context=request_context,
+                )
+            }
+        except AuthenticationError:
+            raise
+        except (ValueError, RSIConflictError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.get(
+        "/v1/default/banks/{bank_id}/rsi/snapshots/{snapshot_id}/memories/{memory_id}",
+        summary="Fetch one memory from a frozen RSI snapshot",
+        operation_id="fetch_rsi_snapshot_memory",
+        tags=["RSI"],
+    )
+    async def api_fetch_rsi_snapshot_memory(
+        bank_id: str,
+        snapshot_id: str,
+        memory_id: str,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import fetch_snapshot_memory
+
+        try:
+            return await fetch_snapshot_memory(
+                app.state.memory,
+                bank_id=bank_id,
+                snapshot_id=snapshot_id,
+                memory_id=memory_id,
+                request_context=request_context,
+            )
+        except AuthenticationError:
+            raise
+        except RSIConflictError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.post(
+        "/v1/default/banks/{bank_id}/rsi/memories/namespace",
+        summary="Classify allowlisted memories for RSI snapshots",
+        operation_id="tag_rsi_memory_namespace",
+        tags=["RSI"],
+    )
+    async def api_tag_rsi_memory_namespace(
+        bank_id: str,
+        request: RSINamespaceTagRequest,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import tag_memory_namespaces
+
+        try:
+            return await tag_memory_namespaces(
+                app.state.memory,
+                bank_id=bank_id,
+                memory_ids=request.memory_ids,
+                namespace=request.namespace,
+                only_unclassified=request.only_unclassified,
+                request_context=request_context,
+            )
+        except AuthenticationError:
+            raise
+        except (ValueError, RSIConflictError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.post(
+        "/v1/default/banks/{bank_id}/rsi/candidates",
+        summary="Stage an RSI memory candidate",
+        operation_id="stage_rsi_candidate",
+        tags=["RSI"],
+    )
+    async def api_stage_rsi_candidate(
+        bank_id: str,
+        request: RSICandidateRequest,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import stage_candidate
+
+        try:
+            return await stage_candidate(
+                app.state.memory,
+                bank_id=bank_id,
+                candidate=request.model_dump(mode="json"),
+                request_context=request_context,
+            )
+        except AuthenticationError:
+            raise
+        except (ValueError, RSIConflictError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.get(
+        "/v1/default/banks/{bank_id}/rsi/candidates",
+        summary="List RSI memory candidates",
+        operation_id="list_rsi_candidates",
+        tags=["RSI"],
+    )
+    async def api_list_rsi_candidates(
+        bank_id: str,
+        status: str | None = Query(default=None),
+        run_id: str | None = Query(default=None),
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import list_candidates
+
+        try:
+            return {
+                "items": await list_candidates(
+                    app.state.memory,
+                    bank_id=bank_id,
+                    status=status,
+                    run_id=run_id,
+                    request_context=request_context,
+                )
+            }
+        except AuthenticationError:
+            raise
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.post(
+        "/v1/default/banks/{bank_id}/rsi/snapshots/{snapshot_id}/promote",
+        summary="Promote RSI candidates into a snapshot",
+        operation_id="promote_rsi_candidates",
+        tags=["RSI"],
+    )
+    async def api_promote_rsi_candidates(
+        bank_id: str,
+        snapshot_id: str,
+        request: RSICandidatePromotionRequest,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import promote_candidates
+
+        try:
+            return await promote_candidates(
+                app.state.memory,
+                bank_id=bank_id,
+                snapshot_id=snapshot_id,
+                candidate_ids=request.candidate_ids,
+                run_id=request.run_id,
+                candidate_digest=request.candidate_digest,
+                verifier_receipt_token=request.verifier_receipt_token,
+                request_context=request_context,
+            )
+        except AuthenticationError:
+            raise
+        except (ValueError, RSIConflictError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+
+    @app.post(
+        "/v1/default/banks/{bank_id}/rsi/candidates/{candidate_id}/invalidate",
+        summary="Invalidate an RSI memory candidate",
+        operation_id="invalidate_rsi_candidate",
+        tags=["RSI"],
+    )
+    async def api_invalidate_rsi_candidate(
+        bank_id: str,
+        candidate_id: str,
+        request: RSICandidateInvalidationRequest,
+        request_context: RequestContext = Depends(get_request_context),
+    ):
+        from hms_api.engine.rsi_store import invalidate_candidate
+
+        try:
+            return await invalidate_candidate(
+                app.state.memory,
+                bank_id=bank_id,
+                candidate_id=candidate_id,
+                reason=request.reason,
+                request_context=request_context,
+            )
+        except AuthenticationError:
+            raise
+        except (ValueError, RSIConflictError) as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RSINotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except RSINotSupportedError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
 
     @app.get(
         "/v1/default/banks/{bank_id}/graph",

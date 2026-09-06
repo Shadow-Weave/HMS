@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export PYTHONPATH="$ROOT_DIR/core/dataplane:$ROOT_DIR/core/rsi-harness:$ROOT_DIR/lab/evaluation${PYTHONPATH:+:$PYTHONPATH}"
 ENV_FILE_EXPLICIT=0
 if [ "${HMS_ENV_FILE+x}" = "x" ]; then
   ENV_FILE="$HMS_ENV_FILE"
@@ -170,7 +171,6 @@ if [ -n "$PYTHON_BIN" ]; then
     echo "HMS_PYTHON_BIN is not executable: $PYTHON_BIN" >&2
     exit 2
   fi
-  export PYTHONPATH="$ROOT_DIR/core/dataplane:$ROOT_DIR/lab/evaluation${PYTHONPATH:+:$PYTHONPATH}"
   CMD=("$PYTHON_BIN" -m benchmarks.longmemeval.longmemeval_benchmark "${LONGMEMEVAL_ARGS[@]}" "$@")
 else
   if ! command -v uv >/dev/null 2>&1; then
