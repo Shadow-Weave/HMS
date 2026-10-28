@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
 from ...config import get_config
 from ..llm_wrapper import LLMConfig, OutputTooLongError, sanitize_llm_output
 from ..response_models import TokenUsage
+from .affect import AffectAnnotation, AffectSignals, parse_affect
 from .entity_labels import (
     EntityLabelsConfig,
     MapField,
@@ -194,6 +195,7 @@ class Fact(BaseModel):
     # Optional structured data
     entities: list[Entity] | None = None
     causal_relations: list["CausalRelation"] | None = None
+    affect: AffectSignals | None = None
 
 
 class CausalRelation(BaseModel):
@@ -885,6 +887,23 @@ Example: "Lost job → couldn't pay rent → moved apartment"
 - Fact 2: Moved apartment, causal_relations: [{target_index: 1, relation_type: "caused_by"}]"""
 
 
+AFFECT_RECOGNITION_SECTION = """
+
+══════════════════════════════════════════════════════════════════════════
+AFFECT RECOGNITION
+══════════════════════════════════════════════════════════════════════════
+
+For every fact, classify the affect explicitly expressed by the person the fact is about:
+- sentiment: positive, negative, or neutral
+- emotion: joy, sadness, anger, fear, surprise, disgust, or neutral
+- intensity: 0.0 (none) to 1.0 (very strong)
+
+Use evidence in the source text, including multilingual and conversational wording. Do not infer a person's
+emotion merely because an event or topic is usually positive or negative. Do not attribute the assistant's
+empathetic tone to the user. When no affect is expressed, return neutral sentiment, neutral emotion, and 0.0
+intensity. Choose the primary emotion when several are expressed."""
+
+
 def _append_map_fields_prompt(fields: dict[str, "MapField"], lines: list[str], indent: int = 4) -> None:
     """Recursively append map field descriptions to the prompt lines."""
     pad = " " * indent
@@ -1058,41 +1077,55 @@ def _build_extraction_prompt_and_schema(config) -> tuple[str, type]:
         prompt = prompt + labels_section
 
     response_schema = base_response_class
+    dynamic_fields: dict = {}
+    required_dynamic_fields: list[str] = []
+
+    if getattr(config, "retain_affect_enabled", False) is True:
+        prompt = prompt + AFFECT_RECOGNITION_SECTION
+        dynamic_fields["affect"] = (
+            AffectAnnotation,
+            Field(description="Affect explicitly expressed in this fact"),
+        )
+        required_dynamic_fields.append("affect")
 
     if labels_cfg and labels_cfg.attributes:
         LabelsModel = build_labels_model(labels_cfg)
         if LabelsModel is not None:
-            dynamic_fields: dict = {
-                "labels": (
-                    LabelsModel,
-                    Field(
-                        description="Classification labels for this fact. Fill each applicable field; leave others null/empty."
-                    ),
-                )
-            }
+            dynamic_fields["labels"] = (
+                LabelsModel,
+                Field(
+                    description="Classification labels for this fact. Fill each applicable field; leave others null/empty."
+                ),
+            )
+            required_dynamic_fields.append("labels")
             if not free_form_entities:
                 dynamic_fields["entities"] = (
                     list[Entity] | None,
                     Field(default=None, description="Leave empty — labels-only mode"),
                 )
-            # Inherit parent's required fields and add 'labels' so it appears in the JSON schema
-            # required array (the base class json_schema_extra overrides required entirely)
-            base_extra = base_fact_class.model_config.get("json_schema_extra")
-            base_required = cast(dict, base_extra).get("required", []) if isinstance(base_extra, dict) else []
-            DynamicFact = create_model(
-                "LabelsFact",
-                __base__=base_fact_class,
-                __config__=ConfigDict(
-                    json_schema_mode="validation",
-                    json_schema_extra={"required": [*base_required, "labels"]},
-                ),
-                **dynamic_fields,
-            )
-            DynamicResponse = create_model(
-                "LabelsResponse",
-                facts=(list[DynamicFact], ...),  # type: ignore[valid-type]  # ty: ignore[invalid-type-form]
-            )
-            response_schema = DynamicResponse
+
+    if dynamic_fields:
+        has_labels = bool(labels_cfg and labels_cfg.attributes)
+        dynamic_fact_name = "LabelsFact" if has_labels else "AffectFact"
+        dynamic_response_name = "LabelsResponse" if has_labels else "AffectResponse"
+        # The base class schema explicitly owns its required array, so carry it
+        # forward and append every required enrichment field.
+        base_extra = base_fact_class.model_config.get("json_schema_extra")
+        base_required = cast(dict, base_extra).get("required", []) if isinstance(base_extra, dict) else []
+        DynamicFact = create_model(
+            dynamic_fact_name,
+            __base__=base_fact_class,
+            __config__=ConfigDict(
+                json_schema_mode="validation",
+                json_schema_extra={"required": [*base_required, *required_dynamic_fields]},
+            ),
+            **dynamic_fields,
+        )
+        DynamicResponse = create_model(
+            dynamic_response_name,
+            facts=(list[DynamicFact], ...),  # type: ignore[valid-type]  # ty: ignore[invalid-type-form]
+        )
+        response_schema = DynamicResponse
 
     return prompt, response_schema
 
@@ -1420,6 +1453,14 @@ async def _extract_facts_from_chunk(
 
                 if validated_entities:
                     fact_data["entities"] = validated_entities
+
+                if getattr(config, "retain_affect_enabled", False) is True:
+                    affect = parse_affect(
+                        get_value("affect"),
+                        version=getattr(config, "retain_affect_version", "affect-v1"),
+                    )
+                    if affect is not None:
+                        fact_data["affect"] = affect
 
                 # Add per-fact causal relations (only if enabled in config)
                 if extract_causal_links:
@@ -2102,6 +2143,14 @@ async def extract_facts_from_contents_batch_api(
             if validated_entities:
                 fact_data["entities"] = validated_entities
 
+            if getattr(config, "retain_affect_enabled", False) is True:
+                affect = parse_affect(
+                    get_value("affect"),
+                    version=getattr(config, "retain_affect_version", "affect-v1"),
+                )
+                if affect is not None:
+                    fact_data["affect"] = affect
+
             # Causal relations
             if extract_causal_links:
                 validated_relations = _remap_causal_relations(
@@ -2173,6 +2222,7 @@ async def extract_facts_from_contents_batch_api(
                     fact_from_llm.causal_relations or [],
                     chunk_fact_start_idx,
                 ),
+                affect=fact_from_llm.affect,
                 content_index=chunk_meta.content_index,
                 chunk_index=chunk_meta.chunk_index,
                 context=content.context,
@@ -2372,6 +2422,7 @@ async def extract_facts_from_contents(
                             fact_from_llm.causal_relations or [],
                             chunk_fact_start_idx,
                         ),
+                        affect=fact_from_llm.affect,
                         content_index=content_index,
                         chunk_index=chunk_global_idx,
                         context=content.context,

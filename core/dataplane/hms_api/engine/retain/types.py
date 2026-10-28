@@ -11,6 +11,7 @@ from typing import Literal, TypedDict
 from uuid import UUID
 
 from ..entity_resolution_contracts import EntityResolutionReadPlan
+from .affect import AffectSignals
 
 
 class RetainContentDict(TypedDict, total=False):
@@ -118,6 +119,7 @@ class ExtractedFact:
     occurred_end: datetime | None = None
     where: str | None = None  # WHERE the fact occurred or is about
     causal_relations: list[CausalRelation] = field(default_factory=list)
+    affect: AffectSignals | None = None
 
     # Context from the content item
     content_index: int = 0  # Which content this fact came from
@@ -161,6 +163,9 @@ class ProcessedFact:
 
     # Causal relations
     causal_relations: list[CausalRelation] = field(default_factory=list)
+
+    # Affect recognized during Retain extraction. Recall does not consume it.
+    affect: AffectSignals | None = None
 
     # Chunk reference
     chunk_id: str | None = None
@@ -235,6 +240,7 @@ class ProcessedFact:
             metadata=extracted_fact.metadata,
             entities=entities,
             causal_relations=extracted_fact.causal_relations,
+            affect=extracted_fact.affect,
             chunk_id=chunk_id,
             content_index=extracted_fact.content_index,
             tags=extracted_fact.tags,

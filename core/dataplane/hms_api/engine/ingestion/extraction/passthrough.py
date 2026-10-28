@@ -106,6 +106,7 @@ def extract_passthrough(
                 tags=item.tags,
                 observation_scopes=item.observation_scopes,
                 entity_mentions=(),
+                affect=None,
                 causal_relations=(),
             )
         )

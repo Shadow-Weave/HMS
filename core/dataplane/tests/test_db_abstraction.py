@@ -498,6 +498,7 @@ class TestPostgreSQLOpsInsertFactsBatch:
             observation_scopes_list=[None] * n,
             text_signals_list=[None] * n,
             projection_jsons=["{}"] * n,
+            affect_jsons=[None] * n,
         )
 
     @pytest.mark.asyncio
@@ -539,7 +540,8 @@ class TestPostgreSQLOpsInsertFactsBatch:
         assert bank_id == "bank-pg"
         assert inserted_ids == generated
         assert fact_texts == batch["fact_texts"]
-        assert remaining[-1] == batch["projection_jsons"]
+        assert remaining[-2] == batch["projection_jsons"]
+        assert remaining[-1] == batch["affect_jsons"]
         assert result == [str(value) for value in generated]
         assert "$2::uuid[]" in query
         assert "AS t(id, text, embedding" in query
@@ -592,6 +594,7 @@ class TestOracleOpsInsertFactsBatch:
             observation_scopes_list=[None] * n,
             text_signals_list=[None] * n,
             projection_jsons=["{}"] * n,
+            affect_jsons=[None] * n,
         )
 
     @pytest.mark.asyncio
@@ -653,6 +656,7 @@ class TestOracleOpsInsertFactsBatch:
             observation_scopes_list=["global"],
             text_signals_list=["positive"],
             projection_jsons=['{"embedding":{"ok":true}}'],
+            affect_jsons=['{"sentiment":"positive","emotion":"joy","intensity":0.8,"version":"affect-v1"}'],
         )
 
         query, rows_data = mock_conn.executemany.call_args.args
@@ -661,7 +665,7 @@ class TestOracleOpsInsertFactsBatch:
 
         # Verify column order matches: id, bank_id, text, embedding, event_date,
         # occurred_start, occurred_end, mentioned_at, context, fact_type, metadata,
-        # chunk_id, document_id, tags, observation_scopes, text_signals, projection
+        # chunk_id, document_id, tags, observation_scopes, text_signals, projection, affect
         assert row[0] == result[0], "row[0] should be the generated UUID"
         assert row[1] == "bank-42", "row[1] should be bank_id"
         assert row[2] == "The sky is blue", "row[2] should be text"
@@ -679,17 +683,20 @@ class TestOracleOpsInsertFactsBatch:
         assert row[14] == "global", "row[14] should be observation_scopes"
         assert row[15] == "positive", "row[15] should be text_signals"
         assert row[16] == '{"embedding":{"ok":true}}', "row[16] should be projection JSON string"
+        assert row[17] == (
+            '{"sentiment":"positive","emotion":"joy","intensity":0.8,"version":"affect-v1"}'
+        ), "row[17] should be affect JSON string"
 
     @pytest.mark.asyncio
     async def test_sql_column_count_matches_values(self, ops, mock_conn):
-        """The INSERT column list and VALUES placeholders must both have 17 entries."""
+        """The INSERT column list and VALUES placeholders must both have 18 entries."""
         batch = self._make_batch(1)
         await ops.insert_facts_batch(conn=mock_conn, **batch)
 
         query, _ = mock_conn.executemany.call_args.args
         # Extract the column list between "(" and ")" after INSERT INTO ... (
         # and count the $N placeholders in VALUES
-        assert query.count("$") == 17, "VALUES clause must have 17 placeholders"
+        assert query.count("$") == 18, "VALUES clause must have 18 placeholders"
 
     @pytest.mark.asyncio
     async def test_tags_json_decoded_to_list(self, ops, mock_conn):

@@ -363,6 +363,8 @@ ENV_RETAIN_SEMANTIC_CHUNKING_ENABLED = "HMS_API_RETAIN_SEMANTIC_CHUNKING_ENABLED
 ENV_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY = "HMS_API_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY"
 ENV_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS = "HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS"
 ENV_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES = "HMS_API_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES"
+ENV_RETAIN_AFFECT_ENABLED = "HMS_API_RETAIN_AFFECT_ENABLED"
+ENV_RETAIN_AFFECT_VERSION = "HMS_API_RETAIN_AFFECT_VERSION"
 
 # File storage configuration
 ENV_FILE_STORAGE_TYPE = "HMS_API_FILE_STORAGE_TYPE"
@@ -695,6 +697,8 @@ DEFAULT_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY = "fixed_fallback"
 RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICIES = ("fixed_fallback", "raise")
 DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS = 1024
 DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES = 1
+DEFAULT_RETAIN_AFFECT_ENABLED = False
+DEFAULT_RETAIN_AFFECT_VERSION = "affect-v1"
 
 # File storage defaults
 DEFAULT_FILE_STORAGE_TYPE = "native"  # PostgreSQL BYTEA storage
@@ -1358,6 +1362,8 @@ class HMSConfig:
     retain_semantic_chunking_failure_policy: str = DEFAULT_RETAIN_SEMANTIC_CHUNKING_FAILURE_POLICY
     retain_semantic_chunking_max_completion_tokens: int = DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_COMPLETION_TOKENS
     retain_semantic_chunking_max_retries: int = DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES
+    retain_affect_enabled: bool = DEFAULT_RETAIN_AFFECT_ENABLED
+    retain_affect_version: str = DEFAULT_RETAIN_AFFECT_VERSION
     embedding_fingerprint_policy: Literal["strict", "warn", "off"] = DEFAULT_EMBEDDING_FINGERPRINT_POLICY
     embedding_fingerprint_legacy_attestation: str | None = None
     vector_index_provider: str = DEFAULT_VECTOR_INDEX_PROVIDER
@@ -1461,6 +1467,7 @@ class HMSConfig:
         "retain_default_strategy",
         "retain_strategies",
         "retain_chunk_batch_size",
+        "retain_affect_enabled",
         # Entity labels (controlled vocabulary for entity classification)
         "entity_labels",
         "entities_allow_free_form",
@@ -2204,6 +2211,13 @@ class HMSConfig:
                     str(DEFAULT_RETAIN_SEMANTIC_CHUNKING_MAX_RETRIES),
                 )
             ),
+            retain_affect_enabled=os.getenv(
+                ENV_RETAIN_AFFECT_ENABLED,
+                str(DEFAULT_RETAIN_AFFECT_ENABLED),
+            ).lower()
+            == "true",
+            retain_affect_version=os.getenv(ENV_RETAIN_AFFECT_VERSION, DEFAULT_RETAIN_AFFECT_VERSION).strip()
+            or DEFAULT_RETAIN_AFFECT_VERSION,
             # File storage
             file_storage_type=os.getenv(ENV_FILE_STORAGE_TYPE, DEFAULT_FILE_STORAGE_TYPE),
             file_storage_s3_bucket=os.getenv(ENV_FILE_STORAGE_S3_BUCKET) or None,

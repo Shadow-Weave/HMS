@@ -10,6 +10,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from ...response_models import TokenUsage
+from ...retain.affect import AffectSignals
 from ..domain import ChunkPlan, ContentItem, FrozenJson, freeze_json, thaw_json
 from .models import CausalFactRelation, FactCandidate, compute_fact_key
 from .passthrough import build_content_position_map, extract_passthrough
@@ -477,6 +478,11 @@ class FactExtractorAdapter:
                     entity_mentions=_string_tuple(
                         getattr(fact, "entities", None),
                         field_name=f"fact[{fact_index}].entities",
+                    ),
+                    affect=(
+                        getattr(fact, "affect", None)
+                        if isinstance(getattr(fact, "affect", None), AffectSignals)
+                        else None
                     ),
                     causal_relations=(),
                 )

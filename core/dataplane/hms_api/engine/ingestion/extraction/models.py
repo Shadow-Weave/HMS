@@ -7,6 +7,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime
 
+from ...retain.affect import AffectSignals
 from ..domain import FrozenJson, ObservationScopes
 
 FACT_KEY_VERSION = "retain-fact-v1"
@@ -98,6 +99,7 @@ class FactCandidate:
     # objects.  Passthrough extraction deliberately leaves these empty, which
     # preserves the existing projection manifest semantics.
     entity_mentions: tuple[str, ...]
+    affect: AffectSignals | None
     causal_relations: tuple[CausalFactRelation, ...]
 
     def __post_init__(self) -> None:
@@ -137,6 +139,8 @@ class FactCandidate:
             not isinstance(entity, str) for entity in self.entity_mentions
         ):
             raise TypeError("entity_mentions must be a tuple of strings")
+        if self.affect is not None and not isinstance(self.affect, AffectSignals):
+            raise TypeError("affect must be AffectSignals or None")
         if not isinstance(self.causal_relations, tuple) or any(
             not isinstance(relation, CausalFactRelation) for relation in self.causal_relations
         ):

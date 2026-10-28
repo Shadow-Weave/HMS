@@ -68,6 +68,7 @@ class PostgreSQLOps(DataAccessOps):
         observation_scopes_list: list,
         text_signals_list: list,
         projection_jsons: list[str],
+        affect_jsons: list[str | None] | None = None,
         text_search_extension: str = "native",
     ) -> list[str]:
         from ...config import get_config
@@ -81,6 +82,8 @@ class PostgreSQLOps(DataAccessOps):
         # explicit contract and match the existing Oracle implementation.
         unit_uuids = [uuid4() for _ in fact_texts]
         unit_ids = [str(unit_id) for unit_id in unit_uuids]
+        if affect_jsons is None:
+            affect_jsons = [None] * len(fact_texts)
 
         if config.text_search_extension == "vchord":
             query = f"""
@@ -88,14 +91,14 @@ class PostgreSQLOps(DataAccessOps):
                     SELECT * FROM unnest(
                         $2::uuid[], $3::text[], $4::vector[], $5::timestamptz[], $6::timestamptz[], $7::timestamptz[],
                         $8::timestamptz[], $9::text[], $10::text[], $11::jsonb[], $12::text[], $13::text[], $14::jsonb[],
-                        $15::jsonb[], $16::text[], $17::jsonb[]
+                        $15::jsonb[], $16::text[], $17::jsonb[], $18::jsonb[]
                     ) AS t(id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                            context, fact_type, metadata, chunk_id, document_id, tags_json,
-                           observation_scopes_json, text_signals, projection)
+                           observation_scopes_json, text_signals, projection, affect)
                 )
                 INSERT INTO {table} (id, bank_id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                                      context, fact_type, metadata, chunk_id, document_id, tags,
-                                     observation_scopes, text_signals, projection, search_vector)
+                                     observation_scopes, text_signals, projection, affect, search_vector)
                 SELECT
                     id, $1,
                     text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
@@ -107,6 +110,7 @@ class PostgreSQLOps(DataAccessOps):
                     observation_scopes_json,
                     text_signals,
                     COALESCE(projection, '{{}}'::jsonb),
+                    affect,
                     tokenize(
                         COALESCE(text, '') || ' ' || COALESCE(context, '') || ' ' || COALESCE(text_signals, ''),
                         'llmlingua2'
@@ -119,14 +123,14 @@ class PostgreSQLOps(DataAccessOps):
                     SELECT * FROM unnest(
                         $2::uuid[], $3::text[], $4::vector[], $5::timestamptz[], $6::timestamptz[], $7::timestamptz[],
                         $8::timestamptz[], $9::text[], $10::text[], $11::jsonb[], $12::text[], $13::text[], $14::jsonb[],
-                        $15::jsonb[], $16::text[], $17::jsonb[]
+                        $15::jsonb[], $16::text[], $17::jsonb[], $18::jsonb[]
                     ) AS t(id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                            context, fact_type, metadata, chunk_id, document_id, tags_json,
-                           observation_scopes_json, text_signals, projection)
+                           observation_scopes_json, text_signals, projection, affect)
                 )
                 INSERT INTO {table} (id, bank_id, text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
                                      context, fact_type, metadata, chunk_id, document_id, tags,
-                                     observation_scopes, text_signals, projection)
+                                     observation_scopes, text_signals, projection, affect)
                 SELECT
                     id, $1,
                     text, embedding, event_date, occurred_start, occurred_end, mentioned_at,
@@ -137,7 +141,8 @@ class PostgreSQLOps(DataAccessOps):
                     ),
                     observation_scopes_json,
                     text_signals,
-                    COALESCE(projection, '{{}}'::jsonb)
+                    COALESCE(projection, '{{}}'::jsonb),
+                    affect
                 FROM input_data
             """
 
@@ -160,6 +165,7 @@ class PostgreSQLOps(DataAccessOps):
             observation_scopes_list,
             text_signals_list,
             projection_jsons,
+            affect_jsons,
         )
         return unit_ids
 

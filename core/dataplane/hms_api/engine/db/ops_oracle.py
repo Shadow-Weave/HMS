@@ -66,12 +66,15 @@ class OracleOps(DataAccessOps):
         observation_scopes_list: list,
         text_signals_list: list,
         projection_jsons: list[str],
+        affect_jsons: list[str | None] | None = None,
         text_search_extension: str = "native",
     ) -> list[str]:
         table = self._get_mu_table()
         # Generate UUIDs client-side so we can use executemany (single network
         # round-trip) instead of N individual INSERT+RETURNING calls.
         unit_ids = [str(uuid_mod.uuid4()) for _ in range(len(fact_texts))]
+        if affect_jsons is None:
+            affect_jsons = [None] * len(fact_texts)
         rows_data = []
         for i in range(len(fact_texts)):
             tags_value = json.loads(tags_list[i]) if tags_list[i] else []
@@ -94,14 +97,15 @@ class OracleOps(DataAccessOps):
                     observation_scopes_list[i],
                     text_signals_list[i],
                     projection_jsons[i] or "{}",
+                    affect_jsons[i],
                 )
             )
         await conn.executemany(
             f"""
             INSERT INTO {table} (id, bank_id, text, embedding, event_date, occurred_start,
                 occurred_end, mentioned_at, context, fact_type, metadata, chunk_id, document_id,
-                tags, observation_scopes, text_signals, projection)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+                tags, observation_scopes, text_signals, projection, affect)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
             """,
             rows_data,
         )

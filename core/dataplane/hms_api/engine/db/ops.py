@@ -92,6 +92,7 @@ class DataAccessOps(ABC):
         observation_scopes_list: list,
         text_signals_list: list,
         projection_jsons: list[str],
+        affect_jsons: list[str | None] | None = None,
         text_search_extension: str = "native",
     ) -> list[str]:
         """Batch-insert facts, returning IDs.

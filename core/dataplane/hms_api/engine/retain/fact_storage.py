@@ -78,6 +78,7 @@ async def insert_facts_batch(
     observation_scopes_list = []
     text_signals_list = []
     projection_jsons = []
+    affect_jsons = []
 
     for fact in facts:
         fact_texts.append(_sanitize_text(fact.fact_text))
@@ -117,6 +118,7 @@ async def insert_facts_batch(
                 pass
         text_signals_list.append(" ".join(signal_parts) if signal_parts else None)
         projection_jsons.append(json.dumps(fact.projection or {}))
+        affect_jsons.append(json.dumps(fact.affect.to_json()) if fact.affect is not None else None)
 
     # Batch insert all facts — delegates to DataAccessOps which handles
     # unnest (PG) vs row-by-row (Oracle) transparently.
@@ -140,6 +142,7 @@ async def insert_facts_batch(
         observation_scopes_list,
         text_signals_list,
         projection_jsons,
+        affect_jsons,
         text_search_extension=config.text_search_extension,
     )
     return unit_ids
