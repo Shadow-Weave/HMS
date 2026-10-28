@@ -1,0 +1,202 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>陪伴玩具记忆账本</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --bg: #F2F4F7; --surface: #FFFFFF; --ink: #1D2230; --muted: #5C6376; --line: #D9DEE7;
+    --accent: #1F7A72; --accent-soft: #DDEFEC; --warn: #B5701E; --warn-soft: #F6E9D3; --mono-bg: #EEF1F5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171E; --surface: #1C2029; --ink: #E6E9F0; --muted: #9AA2B3; --line: #303645;
+      --accent: #57B9AE; --accent-soft: #1E3532; --warn: #E0A458; --warn-soft: #3A2E1B; --mono-bg: #232835;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171E; --surface: #1C2029; --ink: #E6E9F0; --muted: #9AA2B3; --line: #303645;
+    --accent: #57B9AE; --accent-soft: #1E3532; --warn: #E0A458; --warn-soft: #3A2E1B; --mono-bg: #232835;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.7; }
+  .page { max-width: 1040px; margin: 0 auto; padding: 40px 24px 72px; }
+  h1, h2, h3 { font-family: "Noto Serif SC", "Songti SC", "SimSun", serif; text-wrap: balance; margin: 0; }
+  h1 { font-size: 34px; font-weight: 700; letter-spacing: 0.01em; line-height: 1.25; }
+  h2 { font-size: 21px; font-weight: 600; margin-top: 8px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 700; font-family: "JetBrains Mono", monospace; }
+  header { display: grid; gap: 12px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+  header p { max-width: 68ch; color: var(--muted); margin: 0; }
+  section { display: grid; gap: 14px; padding: 32px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: 0; }
+  section > p { max-width: 68ch; margin: 0; }
+  .num { font-family: "JetBrains Mono", "SF Mono", Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 4px; }
+  .kpi .label { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  .kpi .value { font-size: 24px; font-weight: 600; line-height: 1.2; }
+  .kpi .sub { font-size: 12px; color: var(--muted); }
+  .kpi.accent { border-color: var(--accent); background: var(--accent-soft); }
+  .tablewrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 500; color: var(--muted); font-size: 12px; letter-spacing: 0.04em; background: var(--mono-bg); }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; }
+  .ref td { color: var(--muted); }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 7px; border: 1px solid var(--line); color: var(--muted); margin-left: 6px; vertical-align: middle; font-family: "JetBrains Mono", monospace; }
+  .tag.measured { color: var(--accent); border-color: var(--accent); }
+  .tag.assumed { color: var(--warn); border-color: var(--warn); }
+  .flow { background: var(--surface); border: 1px solid var(--line); padding: 8px 12px; overflow-x: auto; }
+  pre.mermaid { margin: 0; }
+  .lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lane { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 8px; align-content: start; }
+  .lane h3 { font-size: 15px; font-family: "Noto Sans SC", sans-serif; font-weight: 700; }
+  .lane.critical h3 { color: var(--accent); }
+  .lane.async h3 { color: var(--warn); }
+  .lane ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
+  .lane li b { font-weight: 500; }
+  .note { border-left: 3px solid var(--warn); background: var(--warn-soft); padding: 10px 14px; font-size: 14px; max-width: 72ch; }
+  .sources { font-size: 13px; color: var(--muted); display: grid; gap: 4px; padding-left: 18px; margin: 0; }
+  code { font-family: "JetBrains Mono", monospace; font-size: 0.92em; background: var(--mono-bg); padding: 1px 5px; }
+  @media (max-width: 720px) { .lanes { grid-template-columns: 1fr; } h1 { font-size: 28px; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">HMS Elite · deepseek-flash · 2026-09-11 实测折算</div>
+    <h1>陪伴玩具记忆账本</h1>
+    <p>一只毛绒外形的情感陪伴 AI 玩具接入 HMS Elite 记忆层之后，每一句话的写入速度、检索速度、token 消耗和人民币费用。所有数字来自本轮 EgoLife 真实评测与单句探针；假设项单独标出。</p>
+    <div class="kpis">
+      <div class="kpi accent"><div class="label">检索一次（本地，无 API 费用）</div><div class="value num">11 ms</div><div class="sub">8,439 条记忆时的中位数，P95 28 ms；几百条时 6–9 ms</div></div>
+      <div class="kpi"><div class="label">逐句即时写入一句</div><div class="value num">2.4 s · ¥0.0025</div><div class="sub">异步，不在回复关键路径；空闲价，高峰 ¥0.0050</div></div>
+      <div class="kpi"><div class="label">会话末批量写入，摊到每句</div><div class="value num">0.4 s · ¥0.0007</div><div class="sub">15 句一批约 5.9 s；空闲价，高峰 ¥0.0015</div></div>
+      <div class="kpi"><div class="label">每台玩具每月（1,350 句）</div><div class="value num">¥0.99 – ¥3.37</div><div class="sub">批量写 → 逐句写，空闲价；高峰翻倍</div></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>场景与假设</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>项</th><th>取值</th><th>性质</th></tr></thead>
+      <tbody>
+        <tr><td>产品</td><td>毛绒外形的情感陪伴 AI 玩具，语音交互；记忆层记住孩子说过的事、喜好、情绪、家人</td><td>场景设定</td></tr>
+        <tr><td>交互量</td><td>每天 3 次对话 × 15 轮用户话语 = 每天 45 句，每月 <span class="num">1,350</span> 句</td><td><span class="tag assumed">假设</span></td></tr>
+        <tr><td>每句长度</td><td>20–40 个汉字，与探针的 15–18 词英文句同量级</td><td><span class="tag assumed">假设</span> token 实测基于英文</td></tr>
+        <tr><td>记忆产出</td><td>逐句写入每句约 1 条记忆；批量写入每句约 1.7 条原子</td><td><span class="tag measured">实测</span></td></tr>
+        <tr><td>计价</td><td>deepseek-flash，元 / 百万 token：缓存命中 0.02（高峰 0.04）、未命中 1（高峰 2）、输出 4（高峰 8）。高峰 = 北京时间周一至周五 9:00–12:00、14:00–18:00</td><td>官方价目，2026-09-11</td></tr>
+        <tr><td>使用时段</td><td>儿童玩具以晚间和周末为主，多数请求落在空闲价</td><td><span class="tag assumed">假设</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>数据流</h2>
+    <div class="flow"><pre class="mermaid">
+flowchart LR
+  U[孩子说话] --> ASR[ASR 转文字<br/>产品侧]
+  ASR --> Q[本轮话语]
+  Q --> S["HMS.search(query, filters={user_id}, limit=5)<br/>本地 6–30 ms，无 API 费用"]
+  S --> C[记忆上下文 ≈ 87 token]
+  C --> LLM[对话 LLM<br/>产品侧]
+  LLM --> TTS[TTS 播放]
+  Q -. 异步，不阻塞回复 .-> A["HMS.add(messages=[本轮话语], user_id, timestamp)"]
+  A --> TA[Txn A：源事件 + 见证锚点落库<br/>本地约 5 ms]
+  TA --> X[deepseek-flash 抽取（compact 契约，可选）<br/>约 2.3 s]
+  X --> TB[Txn B：记忆原子 + 7 轴 + 修订/冲突边 + 向量索引<br/>本地约 5 ms]
+  TB --> N[下一轮即可被检索]
+    </pre></div>
+    <div class="lanes">
+      <div class="lane critical">
+        <h3>关键路径：孩子说完到玩具开口</h3>
+        <ol>
+          <li><b>ASR</b> 转文字 · 产品侧，不计</li>
+          <li><b>检索</b> 5 条相关记忆 · 本地 <span class="num">6–30 ms</span>，含查询嵌入 3.8 ms</li>
+          <li><b>拼上下文</b> ≈ <span class="num">87</span> token · 本地 &lt;1 ms</li>
+          <li><b>对话 LLM 生成回复</b> · 产品侧；记忆上下文若走 deepseek-flash 约 ¥0.00009/轮</li>
+          <li><b>TTS</b> 播放 · 产品侧</li>
+        </ol>
+        <p style="margin:0;font-size:13px;color:var(--muted)">记忆层在关键路径上只占毫秒级，回复延迟由 ASR、对话 LLM、TTS 决定。</p>
+      </div>
+      <div class="lane async">
+        <h3>旁路：把这句话变成记忆</h3>
+        <ol>
+          <li><b>Txn A</b> 源事件 + 见证锚点落库 · 本地约 5 ms，此后原话已不可丢</li>
+          <li><b>抽取</b> deepseek-flash，compact 契约（可选，库默认 full）只输出 text / type / speaker / 日期 / 修订引用 / entities · 约 <span class="num">2.3 s</span></li>
+          <li><b>本地推导</b> 情绪、主题、实体、谓词等 7 轴 · 毫秒级</li>
+          <li><b>Txn B</b> 原子 + 边 + 向量索引落库 · 本地约 5 ms</li>
+          <li><b>可检索</b> 说完约 2.4 s 后；若孩子 2.4 s 内又说了下一句，这一段由对话 LLM 自己的上下文窗口覆盖</li>
+        </ol>
+      </div>
+    </div>
+    <div class="note">记忆层在这个场景里做的三件事：<b>修订不删除</b>（「最喜欢奥特曼」→ 一个月后「现在最喜欢恐龙」，新原子经 supersession 边替代旧原子，旧的保留为历史，检索默认只回当前有效的）；<b>情绪轴</b>（每条原子带 sentiment，状态卡片能给出最近几天的情绪走向，供对话 LLM 调语气）；<b>可回溯</b>（每条记忆指向原话的见证锚点，家长端能看到「玩具为什么这么记」）。</div>
+  </section>
+
+  <section>
+    <h2>写入：两种策略</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>指标</th><th>A · 逐句即时写（每句一次 add）</th><th>B · 会话结束批量写（15 句一次 add）</th></tr></thead>
+      <tbody>
+        <tr><td>每句 token：输入（缓存命中 / 未命中）/ 输出</td><td class="num">1,943（1,280 / 645）/ 456</td><td class="num">281（69 / 212）/ 130</td></tr>
+        <tr><td>每句费用（空闲 / 高峰）</td><td class="num">¥0.00249 / ¥0.00499</td><td class="num">¥0.00073 / ¥0.00147</td></tr>
+        <tr><td>延迟</td><td>端到端 <span class="num">2,355 ms</span>（LLM 2,350 ms），异步</td><td>每句摊 <span class="num">385 ms</span> 模型 + 10 ms 本地；15 句一批约 <span class="num">5.9 s</span>，会话末异步</td></tr>
+        <tr><td>记忆可检索的时刻</td><td>说完约 2.4 s 后</td><td>会话结束约 6 s 后</td></tr>
+        <tr><td>每句产出</td><td>约 1 条记忆</td><td>约 1.7 条原子</td></tr>
+        <tr class="ref"><td>参考：full 契约</td><td class="num">¥0.00306 / ¥0.00612，3,140 ms</td><td class="num">¥0.00237 / ¥0.00474，每句摊 595 ms</td></tr>
+      </tbody>
+    </table></div>
+    <p>A 的单句费用是 B 的三倍多：每次请求都要重读系统提示词（缓存命中 1,280 token），并输出完整信封（456 个输出 token 里只有约 80 个是记忆本身）。产品上可以混合：情绪强烈或明确的「记住这个」用 A，其余用 B。</p>
+  </section>
+
+  <section>
+    <h2>检索</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>指标</th><th>数值</th><th>来源</th></tr></thead>
+      <tbody>
+        <tr><td>检索本地耗时（几百条记忆）</td><td class="num">6–9 ms</td><td>单句探针</td></tr>
+        <tr><td>检索本地耗时（8,439 条原子）</td><td class="num">中位 11.4 ms，P95 28 ms（含查询嵌入 3.8 ms）</td><td>r3，204 题</td></tr>
+        <tr><td>API 费用</td><td class="num">¥0</td><td>嵌入与打分都在本地</td></tr>
+        <tr><td>注入对话 LLM 的记忆上下文</td><td class="num">5 条 ≈ 87 token / 轮 → 约 ¥0.00009 / 轮</td><td>r3 每行 59 字符换算</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>账单</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>每台玩具每月（1,350 句）</th><th class="num">费用 空闲 / 高峰</th><th class="num">输入 token（其中缓存命中）</th><th class="num">输出 token</th><th class="num">新增原子</th></tr></thead>
+      <tbody>
+        <tr><td>A · 逐句即时写</td><td class="num">¥3.37 / ¥6.74</td><td class="num">2.62M（1.73M）</td><td class="num">0.62M</td><td class="num">≈1,350</td></tr>
+        <tr><td>B · 会话批量写</td><td class="num">¥0.99 / ¥1.98</td><td class="num">0.38M（0.09M）</td><td class="num">0.18M</td><td class="num">≈2,300</td></tr>
+        <tr class="ref"><td>参考：full 契约 A</td><td class="num">¥4.13 / ¥8.26</td><td class="num">3.34M</td><td class="num">0.83M</td><td class="num">≈1,350</td></tr>
+        <tr class="ref"><td>参考：full 契约 B</td><td class="num">¥3.20 / ¥6.39</td><td class="num">0.76M</td><td class="num">0.67M</td><td class="num">≈2,360</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>1 万台玩具每月</th><th class="num">空闲价</th><th class="num">高峰价</th></tr></thead>
+      <tbody>
+        <tr><td>A · 逐句即时写</td><td class="num">¥33,677</td><td class="num">¥67,354</td></tr>
+        <tr><td>B · 会话批量写</td><td class="num">¥9,901</td><td class="num">¥19,801</td></tr>
+        <tr><td>检索侧</td><td class="num">¥0</td><td class="num">¥0</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>存储增长 <span class="tag measured">实测折算</span></h2>
+    <p>r3 整库 54.6 MB / 8,439 条原子，即每条原子连同源事件、锚点、FTS 与 384 维向量约 6.5 KB（实测）。A 策略每台每月约 9 MB，B 约 15 MB；一年 105–180 MB/台，单机 SQLite 可承载，万级用户需按用户分库或换 Milvus 索引提供者。</p>
+  </section>
+
+  <section>
+    <h2>口径与来源</h2>
+    <ul class="sources">
+      <li>单句写入：<code>benchmarks/egolife/results/probe_single_message.json</code>（6 句英文探针，热态中位，2026-09-11）。</li>
+      <li>批量写入：<code>results/real/elite_compact_entities_smoke5_r2</code>（18 批 / 395 窗口 / 672 原子，deepseek-flash 实际 usage）。</li>
+      <li>full 参考：<code>results/real/elite_full204_r3</code>（290 批 / 4,851 窗口 / 8,473 原子）。</li>
+      <li>检索：r3 的 <code>questions_elite_rows.jsonl</code> timing_ms.recall_local；探针 search 计时。</li>
+      <li>计算脚本输出：<code>benchmarks/egolife/results/scenario_companion_toy.json</code>；同内容的文档 <code>docs/design/SCENARIO_COMPANION_TOY_2026-09-11.md</code>。</li>
+      <li>未实测：中文 token 数（按英文同量级假设）、交互频次、对话 LLM 与 ASR/TTS 的费用与延迟（产品侧，不计入）。</li>
+    </ul>
+  </section>
+</div>
+
+</body></html>

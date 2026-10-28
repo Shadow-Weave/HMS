@@ -1,0 +1,1178 @@
+{
+  "provider": "milvus",
+  "python": "3.14.6",
+  "repeat": 20,
+  "top_k": 20,
+  "max_candidates": 1000000,
+  "as_of": "2026-06-15T09:00:00Z",
+  "runs": [
+    {
+      "query": "who is Sarah",
+      "rows_out": 20,
+      "candidates_hydrated": 300,
+      "axis_selects": 1,
+      "total_ms_median": 68.391,
+      "total_ms_min": 60.676,
+      "buckets_ms": {
+        "plan": 0.038,
+        "axis_sql": 3.065,
+        "hydrate": 6.108,
+        "embed": 0.031,
+        "milvus_in_expr": 0.053,
+        "milvus_ann_rpc": 49.138,
+        "milvus_rescore": 0.877,
+        "index_search": 50.185,
+        "semantic_scores_total": 50.227,
+        "entity_lookup": 0.056,
+        "sig_keyword_tokens": 4.858,
+        "sig_keyword_overlap": 0.357,
+        "sig_entity": 0.179,
+        "sig_recency": 0.454,
+        "sig_support": 0.04,
+        "signals_total": 6.819,
+        "fuse": 0.229,
+        "score_details": 0.312,
+        "execute_total": 68.223,
+        "row_format": 0.046
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 300,
+        "embed": 1,
+        "milvus_in_expr": 1,
+        "milvus_ann_rpc": 1,
+        "milvus_rescore": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "entity_lookup": 2,
+        "sig_keyword_tokens": 300,
+        "sig_keyword_overlap": 300,
+        "sig_entity": 300,
+        "sig_recency": 300,
+        "sig_support": 300,
+        "signals_total": 300,
+        "fuse": 300,
+        "score_details": 300,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 2,
+          "tottime_ms": 0.041,
+          "cumtime_ms": 98.389
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 2430,
+          "tottime_ms": 2.07,
+          "cumtime_ms": 98.342
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.015,
+          "cumtime_ms": 98.275
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.845,
+          "cumtime_ms": 83.421
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.05,
+          "cumtime_ms": 59.86
+        },
+        {
+          "func": "hms_elite/index/milvus.py:500(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.005,
+          "cumtime_ms": 59.461
+        },
+        {
+          "func": "hms_elite/index/milvus.py:342(_ann)",
+          "ncalls": 1,
+          "tottime_ms": 0.131,
+          "cumtime_ms": 58.177
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/milvus_client/milvus_client.py:420(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 53.548
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:514(handler)",
+          "ncalls": 1,
+          "tottime_ms": 0.005,
+          "cumtime_ms": 53.544
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:560(handler)",
+          "ncalls": 1,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 53.538
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:380(handler)",
+          "ncalls": 1,
+          "tottime_ms": 0.019,
+          "cumtime_ms": 53.529
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1390(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 53.372
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1326(_execute_search)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 53.366
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:267(__call__)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 53.107
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:286(_with_call)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 53.103
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/interceptor.py:31(intercept_unary_unary)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 53.095
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:304(continuation)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 53.078
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_channel.py:1170(with_call)",
+          "ncalls": 1,
+          "tottime_ms": 0.179,
+          "cumtime_ms": 53.075
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:81(run)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 52.674
+        },
+        {
+          "func": "~:0(<method 'run' of '_contextvars.Context' objects>)",
+          "ncalls": 2,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 52.659
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:71(run)",
+          "ncalls": 1,
+          "tottime_ms": 0.001,
+          "cumtime_ms": 52.659
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:775(_unary_response_in_pool)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 52.655
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:588(_call_behavior)",
+          "ncalls": 1,
+          "tottime_ms": 0.109,
+          "cumtime_ms": 52.498
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/adapter/grpc/servicer.py:527(Search)",
+          "ncalls": 1,
+          "tottime_ms": 0.056,
+          "cumtime_ms": 52.38
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/engine/collection.py:647(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.103,
+          "cumtime_ms": 49.403
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/search/executor_indexed.py:49(execute_search_with_index)",
+          "ncalls": 1,
+          "tottime_ms": 1.254,
+          "cumtime_ms": 49.234
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/storage/memtable.py:219(to_search_snapshot)",
+          "ncalls": 1,
+          "tottime_ms": 33.035,
+          "cumtime_ms": 39.537
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 300,
+          "tottime_ms": 0.982,
+          "cumtime_ms": 19.306
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.005,
+          "cumtime_ms": 14.311
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.047,
+          "cumtime_ms": 14.304
+        }
+      ],
+      "label": "entity",
+      "n": 3000
+    },
+    {
+      "query": "retry.ts backoff patch",
+      "rows_out": 20,
+      "candidates_hydrated": 2917,
+      "axis_selects": 1,
+      "total_ms_median": 316.942,
+      "total_ms_min": 304.909,
+      "buckets_ms": {
+        "plan": 0.044,
+        "axis_sql": 11.188,
+        "hydrate": 50.206,
+        "embed": 0.041,
+        "milvus_in_expr": 0.421,
+        "milvus_ann_rpc": 173.0,
+        "milvus_rescore": 7.581,
+        "index_search": 182.019,
+        "semantic_scores_total": 182.41,
+        "entity_lookup": 0.062,
+        "sig_keyword_tokens": 33.908,
+        "sig_keyword_overlap": 5.314,
+        "sig_entity": 0.725,
+        "sig_recency": 3.631,
+        "sig_support": 0.327,
+        "signals_total": 51.646,
+        "fuse": 1.85,
+        "score_details": 2.644,
+        "execute_total": 316.755,
+        "row_format": 0.046
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 2917,
+        "embed": 1,
+        "milvus_in_expr": 3,
+        "milvus_ann_rpc": 3,
+        "milvus_rescore": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "entity_lookup": 2,
+        "sig_keyword_tokens": 2917,
+        "sig_keyword_overlap": 2917,
+        "sig_entity": 2917,
+        "sig_recency": 2917,
+        "sig_support": 2917,
+        "signals_total": 2917,
+        "fuse": 2917,
+        "score_details": 2917,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 2,
+          "tottime_ms": 0.061,
+          "cumtime_ms": 578.433
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 23370,
+          "tottime_ms": 17.21,
+          "cumtime_ms": 578.372
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.016,
+          "cumtime_ms": 578.304
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 6.54,
+          "cumtime_ms": 472.137
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.412,
+          "cumtime_ms": 281.977
+        },
+        {
+          "func": "hms_elite/index/milvus.py:500(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.035,
+          "cumtime_ms": 279.774
+        },
+        {
+          "func": "hms_elite/index/milvus.py:342(_ann)",
+          "ncalls": 3,
+          "tottime_ms": 1.006,
+          "cumtime_ms": 267.364
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/milvus_client/milvus_client.py:420(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.017,
+          "cumtime_ms": 226.716
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:514(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 226.691
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:560(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.014,
+          "cumtime_ms": 226.681
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:380(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.03,
+          "cumtime_ms": 226.666
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1390(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.022,
+          "cumtime_ms": 226.505
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1326(_execute_search)",
+          "ncalls": 3,
+          "tottime_ms": 0.03,
+          "cumtime_ms": 226.274
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:267(__call__)",
+          "ncalls": 3,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 224.46
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:286(_with_call)",
+          "ncalls": 3,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 224.453
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/interceptor.py:31(intercept_unary_unary)",
+          "ncalls": 3,
+          "tottime_ms": 0.007,
+          "cumtime_ms": 224.437
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:304(continuation)",
+          "ncalls": 3,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 224.41
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_channel.py:1170(with_call)",
+          "ncalls": 3,
+          "tottime_ms": 0.228,
+          "cumtime_ms": 224.378
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:81(run)",
+          "ncalls": 3,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 222.977
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:71(run)",
+          "ncalls": 3,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 222.938
+        },
+        {
+          "func": "~:0(<method 'run' of '_contextvars.Context' objects>)",
+          "ncalls": 6,
+          "tottime_ms": 0.013,
+          "cumtime_ms": 222.938
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:775(_unary_response_in_pool)",
+          "ncalls": 3,
+          "tottime_ms": 0.022,
+          "cumtime_ms": 222.924
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:588(_call_behavior)",
+          "ncalls": 3,
+          "tottime_ms": 0.937,
+          "cumtime_ms": 222.359
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/adapter/grpc/servicer.py:527(Search)",
+          "ncalls": 3,
+          "tottime_ms": 0.309,
+          "cumtime_ms": 221.396
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/engine/collection.py:647(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.367,
+          "cumtime_ms": 196.767
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/search/executor_indexed.py:49(execute_search_with_index)",
+          "ncalls": 3,
+          "tottime_ms": 4.448,
+          "cumtime_ms": 195.995
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2917,
+          "tottime_ms": 8.453,
+          "cumtime_ms": 155.127
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/storage/memtable.py:219(to_search_snapshot)",
+          "ncalls": 3,
+          "tottime_ms": 114.293,
+          "cumtime_ms": 132.512
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 102.76
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.371,
+          "cumtime_ms": 102.753
+        }
+      ],
+      "label": "identifier",
+      "n": 3000
+    },
+    {
+      "query": "what happened in March",
+      "rows_out": 20,
+      "candidates_hydrated": 166,
+      "axis_selects": 1,
+      "total_ms_median": 47.668,
+      "total_ms_min": 46.775,
+      "buckets_ms": {
+        "plan": 0.045,
+        "axis_sql": 1.258,
+        "hydrate": 2.881,
+        "embed": 0.035,
+        "milvus_in_expr": 0.026,
+        "milvus_ann_rpc": 39.122,
+        "milvus_rescore": 0.418,
+        "index_search": 39.639,
+        "semantic_scores_total": 39.665,
+        "sig_keyword_tokens": 2.001,
+        "sig_keyword_overlap": 0.245,
+        "sig_recency": 0.221,
+        "sig_support": 0.019,
+        "signals_total": 2.871,
+        "fuse": 0.099,
+        "score_details": 0.145,
+        "execute_total": 47.527,
+        "row_format": 0.039
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 166,
+        "embed": 1,
+        "milvus_in_expr": 1,
+        "milvus_ann_rpc": 1,
+        "milvus_rescore": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 166,
+        "sig_keyword_overlap": 166,
+        "sig_recency": 166,
+        "sig_support": 166,
+        "signals_total": 166,
+        "fuse": 166,
+        "score_details": 166,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 2,
+          "tottime_ms": 0.036,
+          "cumtime_ms": 66.014
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 1190,
+          "tottime_ms": 0.943,
+          "cumtime_ms": 65.976
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.013,
+          "cumtime_ms": 65.896
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.394,
+          "cumtime_ms": 59.008
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.029,
+          "cumtime_ms": 48.376
+        },
+        {
+          "func": "hms_elite/index/milvus.py:500(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.005,
+          "cumtime_ms": 48.167
+        },
+        {
+          "func": "hms_elite/index/milvus.py:342(_ann)",
+          "ncalls": 1,
+          "tottime_ms": 0.072,
+          "cumtime_ms": 47.484
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/milvus_client/milvus_client.py:420(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 45.111
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:514(handler)",
+          "ncalls": 1,
+          "tottime_ms": 0.005,
+          "cumtime_ms": 45.107
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:560(handler)",
+          "ncalls": 1,
+          "tottime_ms": 0.007,
+          "cumtime_ms": 45.102
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:380(handler)",
+          "ncalls": 1,
+          "tottime_ms": 0.016,
+          "cumtime_ms": 45.094
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1390(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 44.959
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1326(_execute_search)",
+          "ncalls": 1,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 44.953
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:267(__call__)",
+          "ncalls": 1,
+          "tottime_ms": 0.002,
+          "cumtime_ms": 44.799
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:286(_with_call)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 44.795
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/interceptor.py:31(intercept_unary_unary)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 44.787
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:304(continuation)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 44.772
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_channel.py:1170(with_call)",
+          "ncalls": 1,
+          "tottime_ms": 0.169,
+          "cumtime_ms": 44.769
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:81(run)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 44.389
+        },
+        {
+          "func": "~:0(<method 'run' of '_contextvars.Context' objects>)",
+          "ncalls": 2,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 44.375
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:71(run)",
+          "ncalls": 1,
+          "tottime_ms": 0.001,
+          "cumtime_ms": 44.375
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:775(_unary_response_in_pool)",
+          "ncalls": 1,
+          "tottime_ms": 0.012,
+          "cumtime_ms": 44.372
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:588(_call_behavior)",
+          "ncalls": 1,
+          "tottime_ms": 0.061,
+          "cumtime_ms": 44.237
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/adapter/grpc/servicer.py:527(Search)",
+          "ncalls": 1,
+          "tottime_ms": 0.046,
+          "cumtime_ms": 44.168
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/engine/collection.py:647(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.083,
+          "cumtime_ms": 42.552
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/search/executor_indexed.py:49(execute_search_with_index)",
+          "ncalls": 1,
+          "tottime_ms": 1.155,
+          "cumtime_ms": 42.423
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/storage/memtable.py:219(to_search_snapshot)",
+          "ncalls": 1,
+          "tottime_ms": 29.425,
+          "cumtime_ms": 36.084
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 166,
+          "tottime_ms": 0.439,
+          "cumtime_ms": 8.634
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 6.535
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.022,
+          "cumtime_ms": 6.529
+        }
+      ],
+      "label": "month",
+      "n": 3000
+    },
+    {
+      "query": "what coffee does alice like",
+      "rows_out": 20,
+      "candidates_hydrated": 2917,
+      "axis_selects": 4,
+      "total_ms_median": 317.53,
+      "total_ms_min": 307.101,
+      "buckets_ms": {
+        "plan": 0.041,
+        "axis_sql": 11.877,
+        "hydrate": 50.423,
+        "embed": 0.046,
+        "milvus_in_expr": 0.419,
+        "milvus_ann_rpc": 175.204,
+        "milvus_rescore": 7.506,
+        "index_search": 184.769,
+        "semantic_scores_total": 185.167,
+        "sig_keyword_tokens": 34.506,
+        "sig_keyword_overlap": 5.823,
+        "sig_recency": 3.683,
+        "sig_support": 0.33,
+        "signals_total": 51.064,
+        "fuse": 1.745,
+        "score_details": 3.391,
+        "execute_total": 317.342,
+        "row_format": 0.046
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 4,
+        "hydrate": 2917,
+        "embed": 1,
+        "milvus_in_expr": 3,
+        "milvus_ann_rpc": 3,
+        "milvus_rescore": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 2917,
+        "sig_keyword_overlap": 2917,
+        "sig_recency": 2917,
+        "sig_support": 2917,
+        "signals_total": 2917,
+        "fuse": 2917,
+        "score_details": 2917,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 2,
+          "tottime_ms": 0.047,
+          "cumtime_ms": 580.719
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 20451,
+          "tottime_ms": 16.285,
+          "cumtime_ms": 580.668
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.019,
+          "cumtime_ms": 580.61
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 7.212,
+          "cumtime_ms": 472.077
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.492,
+          "cumtime_ms": 282.356
+        },
+        {
+          "func": "hms_elite/index/milvus.py:500(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.041,
+          "cumtime_ms": 279.972
+        },
+        {
+          "func": "hms_elite/index/milvus.py:342(_ann)",
+          "ncalls": 3,
+          "tottime_ms": 1.033,
+          "cumtime_ms": 243.228
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/milvus_client/milvus_client.py:420(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.017,
+          "cumtime_ms": 202.33
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:514(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 202.304
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:560(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.014,
+          "cumtime_ms": 202.294
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:380(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.03,
+          "cumtime_ms": 202.277
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1390(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 202.097
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1326(_execute_search)",
+          "ncalls": 3,
+          "tottime_ms": 0.026,
+          "cumtime_ms": 201.846
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:267(__call__)",
+          "ncalls": 3,
+          "tottime_ms": 0.007,
+          "cumtime_ms": 200.031
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:286(_with_call)",
+          "ncalls": 3,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 200.021
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/interceptor.py:31(intercept_unary_unary)",
+          "ncalls": 3,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 200.003
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:304(continuation)",
+          "ncalls": 3,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 199.976
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_channel.py:1170(with_call)",
+          "ncalls": 3,
+          "tottime_ms": 0.241,
+          "cumtime_ms": 199.943
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:81(run)",
+          "ncalls": 3,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 198.747
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:71(run)",
+          "ncalls": 3,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 198.703
+        },
+        {
+          "func": "~:0(<method 'run' of '_contextvars.Context' objects>)",
+          "ncalls": 6,
+          "tottime_ms": 0.02,
+          "cumtime_ms": 198.703
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:775(_unary_response_in_pool)",
+          "ncalls": 3,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 198.682
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:588(_call_behavior)",
+          "ncalls": 3,
+          "tottime_ms": 0.934,
+          "cumtime_ms": 198.114
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/adapter/grpc/servicer.py:527(Search)",
+          "ncalls": 3,
+          "tottime_ms": 0.293,
+          "cumtime_ms": 197.155
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/engine/collection.py:647(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.405,
+          "cumtime_ms": 172.011
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/search/executor_indexed.py:49(execute_search_with_index)",
+          "ncalls": 3,
+          "tottime_ms": 4.452,
+          "cumtime_ms": 171.183
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2917,
+          "tottime_ms": 7.704,
+          "cumtime_ms": 154.323
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/storage/memtable.py:219(to_search_snapshot)",
+          "ncalls": 3,
+          "tottime_ms": 89.323,
+          "cumtime_ms": 107.959
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 4,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 105.136
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 4,
+          "tottime_ms": 0.395,
+          "cumtime_ms": 105.122
+        }
+      ],
+      "label": "preference",
+      "n": 3000
+    },
+    {
+      "query": "部署 回滚 测试",
+      "rows_out": 20,
+      "candidates_hydrated": 2917,
+      "axis_selects": 1,
+      "total_ms_median": 317.814,
+      "total_ms_min": 307.995,
+      "buckets_ms": {
+        "plan": 0.034,
+        "axis_sql": 11.256,
+        "hydrate": 51.74,
+        "embed": 0.031,
+        "milvus_in_expr": 0.415,
+        "milvus_ann_rpc": 176.764,
+        "milvus_rescore": 7.703,
+        "index_search": 185.914,
+        "semantic_scores_total": 186.295,
+        "sig_keyword_tokens": 34.142,
+        "sig_keyword_overlap": 5.199,
+        "sig_recency": 3.642,
+        "sig_support": 0.329,
+        "signals_total": 50.008,
+        "fuse": 1.736,
+        "score_details": 2.722,
+        "execute_total": 317.647,
+        "row_format": 0.045
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 2917,
+        "embed": 1,
+        "milvus_in_expr": 3,
+        "milvus_ann_rpc": 3,
+        "milvus_rescore": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 2917,
+        "sig_keyword_overlap": 2917,
+        "sig_recency": 2917,
+        "sig_support": 2917,
+        "signals_total": 2917,
+        "fuse": 2917,
+        "score_details": 2917,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 2,
+          "tottime_ms": 0.042,
+          "cumtime_ms": 566.121
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 20451,
+          "tottime_ms": 16.179,
+          "cumtime_ms": 566.075
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.016,
+          "cumtime_ms": 566.021
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 6.206,
+          "cumtime_ms": 436.472
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.436,
+          "cumtime_ms": 254.509
+        },
+        {
+          "func": "hms_elite/index/milvus.py:500(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.034,
+          "cumtime_ms": 252.268
+        },
+        {
+          "func": "hms_elite/index/milvus.py:342(_ann)",
+          "ncalls": 3,
+          "tottime_ms": 1.024,
+          "cumtime_ms": 240.049
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/milvus_client/milvus_client.py:420(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.016,
+          "cumtime_ms": 200.856
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:514(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 200.831
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:560(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.013,
+          "cumtime_ms": 200.82
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/decorators.py:380(handler)",
+          "ncalls": 3,
+          "tottime_ms": 0.028,
+          "cumtime_ms": 200.805
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1390(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.022,
+          "cumtime_ms": 200.639
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/grpc_handler.py:1326(_execute_search)",
+          "ncalls": 3,
+          "tottime_ms": 0.027,
+          "cumtime_ms": 200.408
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:267(__call__)",
+          "ncalls": 3,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 198.629
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:286(_with_call)",
+          "ncalls": 3,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 198.62
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pymilvus/client/interceptor.py:31(intercept_unary_unary)",
+          "ncalls": 3,
+          "tottime_ms": 0.007,
+          "cumtime_ms": 198.604
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_interceptor.py:304(continuation)",
+          "ncalls": 3,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 198.576
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_channel.py:1170(with_call)",
+          "ncalls": 3,
+          "tottime_ms": 0.248,
+          "cumtime_ms": 198.542
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:81(run)",
+          "ncalls": 3,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 197.303
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/concurrent/futures/thread.py:71(run)",
+          "ncalls": 3,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 197.265
+        },
+        {
+          "func": "~:0(<method 'run' of '_contextvars.Context' objects>)",
+          "ncalls": 6,
+          "tottime_ms": 0.011,
+          "cumtime_ms": 197.264
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:775(_unary_response_in_pool)",
+          "ncalls": 3,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 197.252
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/grpc/_server.py:588(_call_behavior)",
+          "ncalls": 3,
+          "tottime_ms": 0.959,
+          "cumtime_ms": 196.664
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/adapter/grpc/servicer.py:527(Search)",
+          "ncalls": 3,
+          "tottime_ms": 0.292,
+          "cumtime_ms": 195.679
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/engine/collection.py:647(search)",
+          "ncalls": 3,
+          "tottime_ms": 0.363,
+          "cumtime_ms": 171.224
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/milvus_lite/search/executor_indexed.py:49(execute_search_with_index)",
+          "ncalls": 3,
+          "tottime_ms": 4.586,
+          "cumtime_ms": 170.446
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2917,
+          "tottime_ms": 7.313,
+          "cumtime_ms": 148.097
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 125.823
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.404,
+          "cumtime_ms": 125.816
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.254,
+          "cumtime_ms": 125.401
+        }
+      ],
+      "label": "cjk",
+      "n": 3000
+    }
+  ]
+}

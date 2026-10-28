@@ -1,0 +1,344 @@
+1
+00:50:02,700 --> 00:50:04,300
+杰克: 检查一下配送群。
+Jake: Check the delivery group.
+
+2
+00:50:04,533 --> 00:50:06,000
+杰克: 如果有消息，就发在那里。
+Jake: If there is something, post it there.
+
+3
+00:50:10,766 --> 00:50:15,266
+杰克: 任务完成一半我来处理。
+Jake: I'll take half of the mission complete.
+
+4
+00:50:15,266 --> 00:50:16,066
+杰克: 关于充电宝。
+Jake: On the power bank.
+
+5
+00:50:29,366 --> 00:50:30,333
+杰克: 有配送吗？
+Jake: Any delivery?
+
+6
+00:50:32,800 --> 00:50:34,000
+杰克: 好的，行。
+Jake: Alright, okay.
+
+7
+00:51:26,200 --> 00:51:28,500
+杰克: 谢斌竹，把你的充电宝给我充电。
+Jake: Xie Binzhu, give me your power bank to charge.
+
+8
+00:51:28,666 --> 00:51:29,500
+Others: 找不到。
+Others: Can't find it.
+
+9
+00:51:29,500 --> 00:51:31,200
+杰克: 就在你旁边。
+Jake: It's right next to you.
+
+10
+00:51:31,533 --> 00:51:33,500
+杰克: 没错，让我看看。
+Jake: It's right, let me see.
+
+11
+00:51:35,466 --> 00:51:36,266
+杰克: 找到了。
+Jake: Found it.
+
+12
+00:51:36,833 --> 00:51:38,900
+Others: 我以为你说的是黑色的那个。
+Others: I thought you meant the black one.
+
+13
+00:52:39,733 --> 00:52:40,533
+杰克: 来吧。
+Jake: Come on.
+
+14
+00:52:40,200 --> 00:52:41,000
+舒尔: 来吧。
+Shure: Come on.
+
+15
+00:52:44,800 --> 00:52:45,600
+杰克: 来。
+Jake: Come.
+
+16
+00:53:30,933 --> 00:53:32,400
+杰克: 把你的配送发出去，好吗？
+Jake: Send your delivery, okay?
+
+17
+00:53:32,733 --> 00:53:34,200
+塔莎: 发了。
+Tasha: Sent it.
+
+18
+00:53:34,766 --> 00:53:36,133
+杰克: 配送已发送。
+Jake: Delivery sent.
+
+19
+00:53:36,700 --> 00:53:37,933
+塔莎: 配送。
+Tasha: Delivery.
+
+20
+00:53:38,100 --> 00:53:40,166
+杰克: 对，你可以发在群里看看他会不会接。
+Jake: Yeah, you can post it in the group to see if he picks it up.
+
+21
+00:53:40,166 --> 00:53:42,866
+杰克: 如果他不接，我们就接。如果他接了，我们就不接。
+Jake: If he doesn't, we pick it up. If he does, we don't.
+
+22
+00:53:43,766 --> 00:53:44,533
+杰克: 我的天。
+Jake: Oh my gosh.
+
+23
+00:53:44,533 --> 00:53:45,933
+杰克: 你一口气全做完了。
+Jake: You did it all in one go.
+
+24
+00:54:04,900 --> 00:54:07,133
+杰克: 今天早上，我只把这一副眼镜放在这里。
+Jake: This morning, I only put this one pair of glasses here.
+
+25
+00:54:08,466 --> 00:54:12,100
+杰克: 因为你说你早上想戴。
+Jake: Because you said you wanted to wear it in the morning.
+
+26
+00:54:16,733 --> 00:54:18,866
+杰克: 差不多了，现在才7:49。
+Jake: Almost, it's just 7:49 now.
+
+27
+00:54:18,866 --> 00:54:24,466
+杰克: 他刚醒得挺早的，哈哈哈。
+Jake: He just woke up quite early, hahaha.
+
+28
+00:54:50,366 --> 00:54:52,100
+杰克: 你昨天在调情。
+Jake: You were flirting yesterday.
+
+29
+00:54:52,100 --> 00:54:54,900
+杰克: 你昨天什么时候把眼镜放下的？
+Jake: When did you put the glasses down yesterday?
+
+30
+00:54:56,733 --> 00:54:58,866
+卡特里娜: 我昨天给的眼镜。
+Katrina: I gave the glasses yesterday.
+
+31
+00:55:01,933 --> 00:55:08,800
+卡特里娜: 我昨天在做手工，把眼镜给了。
+Katrina: I was doing some crafts yesterday and gave the glasses.
+
+32
+00:55:10,133 --> 00:55:12,300
+杰克: 有记录。
+Jake: It's recorded.
+
+33
+00:55:15,300 --> 00:55:16,166
+杰克: 搞定了。
+Jake: It's done.
+
+34
+00:55:17,700 --> 00:55:18,533
+杰克: 搞定了。
+Jake: It's done.
+
+35
+00:55:20,166 --> 00:55:20,966
+杰克: 搞定了。
+Jake: It's done.
+
+36
+00:55:26,933 --> 00:55:27,733
+杰克: 什么？
+Jake: What?
+
+37
+00:55:28,933 --> 00:55:29,600
+杰克: 啊，不，没什么。
+Jake: Ah, no, nothing.
+
+38
+00:55:29,600 --> 00:55:34,366
+杰克: 我们只是不知道他把这些眼镜拿下来了。
+Jake: We just didn't know he brought these glasses down.
+
+39
+00:55:34,366 --> 00:55:36,066
+杰克: 然后睡觉前，
+Jake: Then before going to sleep,
+
+40
+00:55:36,066 --> 00:55:38,000
+杰克: 我踢了一下，发现是一副眼镜。
+Jake: I kicked it and found out it was a pair of glasses.
+
+41
+00:55:38,000 --> 00:55:40,866
+杰克: 所以，还不错，还是搞定了。
+Jake: So, it's pretty good, still got it done.
+
+42
+00:55:47,066 --> 00:55:47,933
+塔莎: 当当当
+Tasha: Dun dun dun
+
+43
+00:55:59,100 --> 00:56:00,200
+杰克: 舒尔不认识你。
+Jake: Shure doesn't know you.
+
+44
+00:56:00,533 --> 00:56:01,633
+舒尔: 不认识什么？
+Shure: Doesn't know what?
+
+45
+00:56:01,766 --> 00:56:02,800
+杰克: 他不认识你。
+Jake: He doesn't know you.
+
+46
+00:56:03,600 --> 00:56:05,266
+杰克: 对，他不认识。
+Jake: Yeah, he doesn't know.
+
+47
+00:56:05,266 --> 00:56:06,066
+杰克: 你叫什么名字？
+Jake: What's your name?
+
+48
+00:56:14,166 --> 00:56:15,266
+杰克: 你叫什么名字？
+Jake: What's your name?
+
+49
+00:56:15,900 --> 00:56:16,700
+舒尔: 我笑了。
+Shure: I laugh.
+
+50
+00:56:17,200 --> 00:56:18,000
+舒尔: 我不改名字。
+Shure: I don't change my name.
+
+51
+00:56:18,000 --> 00:56:18,733
+舒尔: 我不改姓。
+Shure: I don't change my surname.
+
+52
+00:56:18,733 --> 00:56:20,066
+杰克: 我是舒尔先生。
+Jake: I am Mr. Shure.
+
+53
+00:56:56,133 --> 00:56:57,366
+杰克: 用30秒解释这部电影。
+Jake: Explain the movie in 30 seconds.
+
+54
+00:56:57,600 --> 00:57:00,200
+杰克: 什么？这就是用30秒解释电影？
+Jake: What? Is this explaining the movie in 30 seconds?
+
+55
+00:57:00,400 --> 00:57:02,133
+杰克: 哈哈哈
+Jake: Hahaha
+
+56
+00:57:02,100 --> 00:57:04,166
+舒尔: 一口气看完整个动漫。
+Shure: Watch the entire anime in one go.
+
+57
+00:57:20,733 --> 00:57:21,533
+杰克: 早上好。
+Jake: Good morning.
+
+58
+00:57:22,600 --> 00:57:23,466
+杰克: 我的天。
+Jake: Oh my gosh.
+
+59
+00:58:30,133 --> 00:58:31,166
+杰克: 你的眼镜修好了。
+Jake: Your glasses are fixed.
+
+60
+00:58:32,500 --> 00:58:37,166
+杰克: 我们和你的眼镜搏斗了一整晚。
+Jake: We battled with your glasses all night.
+
+61
+00:58:38,166 --> 00:58:40,333
+杰克: 好像你眼镜上这根线有问题。
+Jake: Seems like there's something wrong with this wire on your glasses.
+
+62
+00:58:40,333 --> 00:58:41,700
+杰克: 我们不知道怎么回事。
+Jake: We have no idea what's going on.
+
+63
+00:58:41,766 --> 00:58:45,400
+杰克: 我们只能硬拼了。
+Jake: We'll just have to fight it out.
+
+64
+00:58:45,400 --> 00:58:48,900
+杰克: 如果上传不了，我们就重新上传，哈哈。
+Jake: If it doesn't upload, we'll just re-upload it, haha.
+
+65
+00:58:53,200 --> 00:58:54,666
+杰克: 嘿，让我先删掉它。
+Jake: Hey, let me delete it first.
+
+66
+00:59:32,566 --> 00:59:33,900
+杰克: 不管怎样，最后还是上传了。
+Jake: Anyway, it got uploaded in the end.
+
+67
+00:59:34,900 --> 00:59:35,700
+杰克: 对。
+Jake: Yeah.
+
+68
+00:59:55,300 --> 00:59:56,400
+杰克: 也许我们需要重启。
+Jake: Maybe we need to restart.
+
+69
+00:59:57,100 --> 00:59:58,800
+杰克: 否则不会显示那个小跳转。
+Jake: Or it won't show that little jump.

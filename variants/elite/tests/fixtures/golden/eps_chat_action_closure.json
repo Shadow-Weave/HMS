@@ -1,0 +1,27 @@
+[
+  {
+    "a": "patched retry.ts to add backoff",
+    "b": "",
+    "confidence": 0.7,
+    "entity_mentions": [
+      "retry.ts",
+      "billing_e2e"
+    ],
+    "event_idx": 0,
+    "id": "0",
+    "kappa": {
+      "constraints": [],
+      "visibility": "private"
+    },
+    "r": "negative",
+    "scale": "L1_micro",
+    "time_anchor": "2026-06-15T10:04:00+00:00",
+    "topic_tags": [
+      "engineering",
+      "billing"
+    ],
+    "u": "the webhook kept timing out",
+    "uses_ep_ids": [],
+    "y": "billing_e2e failed"
+  }
+]

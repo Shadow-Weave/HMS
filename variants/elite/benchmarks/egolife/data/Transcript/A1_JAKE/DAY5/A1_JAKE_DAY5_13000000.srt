@@ -1,0 +1,35 @@
+1
+00:00:03,166 --> 00:00:03,966
+Jake:1,500
+Jake: ...1,500.
+
+2
+00:00:12,833 --> 00:00:13,633
+其他人：啊
+Others: Ah.
+
+3
+00:00:21,633 --> 00:00:23,566
+Shure: 换一个灶壁放
+Shure: Change a stove wall.
+
+4
+00:00:23,866 --> 00:00:25,200
+Shure: 这个灶壁太贵了
+Shure: This stove wall is too expensive.
+
+5
+00:00:25,466 --> 00:00:29,233
+Shure: 多少钱 0.5的那个饼要100多
+Shure: How much? A 0.5 one costs over 100.
+
+6
+00:00:29,233 --> 00:00:30,100
+Shure: 新加坡的
+Shure: From Singapore.
+
+7
+00:00:31,233 --> 00:00:32,033
+Jake:哦这么贵
+Jake: Oh, that's so pricey.
+

@@ -1,0 +1,28 @@
+{
+  "axis_gates": [
+    "time",
+    "entity",
+    "obs_type",
+    "scope",
+    "validity"
+  ],
+  "score_details": [
+    "semantic_score",
+    "bm25_score",
+    "entity_boost",
+    "raw_score",
+    "max_possible_score",
+    "final_score",
+    "threshold",
+    "recency_score",
+    "support_score",
+    "keyword_backend",
+    "axis_gates",
+    "primary_axis",
+    "route",
+    "signals",
+    "recalled_by",
+    "pool_size",
+    "channel_sizes"
+  ]
+}

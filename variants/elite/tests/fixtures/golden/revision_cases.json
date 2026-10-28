@@ -1,0 +1,107 @@
+[
+  {
+    "name": "rule1_identical_text_none",
+    "rule": 1,
+    "new": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee"], "relation": "single_fact", "text": "User likes black coffee.", "date_observed": "2026-04-20"},
+    "old": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee"], "relation": "single_fact", "text": "user likes black coffee", "date_observed": "2026-04-02", "valid_from": "2026-04-02T08:00:00+00:00"},
+    "decision": "NONE"
+  },
+  {
+    "name": "rule2_different_type_add",
+    "rule": 2,
+    "new": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["Paris"], "relation": "single_fact", "text": "User likes Paris.", "date_observed": "2026-05-01"},
+    "old": {"id": "0", "type": "fact", "subject": "user", "predicate": "lives_in", "objects": ["Paris"], "relation": "single_fact", "text": "User lives in Paris.", "date_observed": "2026-04-01", "valid_from": "2026-04-01T09:00:00+00:00"},
+    "decision": "ADD"
+  },
+  {
+    "name": "rule3_temporal_fact_add",
+    "rule": 3,
+    "new": {"id": "0", "type": "temporal_fact", "subject": "Sarah", "predicate": "did", "objects": [], "relation": "single_fact", "text": "Sarah shipped the webhook retry design on May 6.", "date_observed": "2026-05-06"},
+    "old": {"id": "0", "type": "temporal_fact", "subject": "Sarah", "predicate": "did", "objects": [], "relation": "single_fact", "text": "Sarah joined the billing team in March.", "date_observed": "2026-03-01", "valid_from": "2026-03-02T09:00:00+00:00"},
+    "decision": "ADD"
+  },
+  {
+    "name": "rule3_habit_add",
+    "rule": 3,
+    "new": {"id": "0", "type": "habit", "subject": "user", "predicate": "does", "objects": ["run every morning"], "relation": "habit", "text": "User usually run every morning.", "date_observed": "2026-06-01"},
+    "old": {"id": "0", "type": "habit", "subject": "user", "predicate": "does", "objects": ["run every morning"], "relation": "habit", "text": "User always run every morning.", "date_observed": "2026-05-01", "valid_from": "2026-05-01T09:00:00+00:00"},
+    "decision": "ADD"
+  },
+  {
+    "name": "rule4_different_subject_add",
+    "rule": 4,
+    "new": {"id": "0", "type": "fact", "subject": "user", "predicate": "lives_in", "objects": ["Berlin"], "relation": "single_fact", "text": "User lives in Berlin.", "date_observed": "2026-05-01"},
+    "old": {"id": "0", "type": "fact", "subject": "Sarah", "predicate": "lives_in", "objects": ["Paris"], "relation": "single_fact", "text": "Sarah lives in Paris.", "date_observed": "2026-04-01", "valid_from": "2026-04-01T09:00:00+00:00"},
+    "decision": "ADD"
+  },
+  {
+    "name": "rule5_same_predicate_overlapping_objects_none",
+    "rule": 5,
+    "new": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee beans"], "relation": "single_fact", "text": "User likes black coffee beans.", "date_observed": "2026-05-01"},
+    "old": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee"], "relation": "single_fact", "text": "User likes black coffee.", "date_observed": "2026-04-20", "valid_from": "2026-04-20T08:00:00+00:00"},
+    "decision": "NONE"
+  },
+  {
+    "name": "rule6_supersession_cue_revise",
+    "rule": 6,
+    "new": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee"], "relation": "supersession", "text": "User likes black coffee.", "date_observed": "2026-04-20"},
+    "old": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["oat-milk lattes in the morning"], "relation": "single_fact", "text": "User likes oat-milk lattes in the morning.", "date_observed": "2026-04-02", "valid_from": "2026-04-02T08:00:00+00:00"},
+    "decision": "REVISE"
+  },
+  {
+    "name": "rule6_supersession_cue_older_date_add",
+    "rule": 6,
+    "new": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee"], "relation": "supersession", "text": "User likes black coffee.", "date_observed": "2026-03-20"},
+    "old": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["oat-milk lattes in the morning"], "relation": "single_fact", "text": "User likes oat-milk lattes in the morning.", "date_observed": "2026-04-02", "valid_from": "2026-04-02T08:00:00+00:00"},
+    "decision": "ADD"
+  },
+  {
+    "name": "rule6_cross_family_supersession_add",
+    "rule": 6,
+    "new": {"id": "0", "type": "fact", "subject": "user", "predicate": "works_at", "objects": ["Acme"], "relation": "supersession", "text": "User now works at Acme.", "date_observed": "2026-05-01"},
+    "old": {"id": "0", "type": "fact", "subject": "user", "predicate": "states", "objects": ["Berlin"], "relation": "single_fact", "text": "User mentioned Berlin.", "date_observed": "2026-04-01", "valid_from": "2026-04-01T09:00:00+00:00"},
+    "decision": "ADD"
+  },
+  {
+    "name": "rule7_exclusive_newer_revise",
+    "rule": 7,
+    "new": {"id": "0", "type": "fact", "subject": "user", "predicate": "lives_in", "objects": ["Paris"], "relation": "single_fact", "text": "User live in Paris.", "date_observed": "2026-05-01"},
+    "old": {"id": "0", "type": "fact", "subject": "user", "predicate": "lives_in", "objects": ["Berlin"], "relation": "single_fact", "text": "User live in Berlin.", "date_observed": "2026-04-01", "valid_from": "2026-04-01T09:00:00+00:00"},
+    "decision": "REVISE"
+  },
+  {
+    "name": "rule7_exclusive_older_conflict",
+    "rule": 7,
+    "new": {"id": "0", "type": "fact", "subject": "user", "predicate": "lives_in", "objects": ["Berlin"], "relation": "single_fact", "text": "User live in Berlin.", "date_observed": "2026-04-01"},
+    "old": {"id": "0", "type": "fact", "subject": "user", "predicate": "lives_in", "objects": ["Paris"], "relation": "single_fact", "text": "User live in Paris.", "date_observed": "2026-05-01", "valid_from": "2026-05-01T09:00:00+00:00"},
+    "decision": "CONFLICT"
+  },
+  {
+    "name": "rule8_polarity_flip_with_supersession_revise",
+    "rule": 8,
+    "new": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "dislikes", "objects": ["black coffee"], "relation": "supersession", "text": "User dislikes black coffee.", "date_observed": "2026-05-01"},
+    "old": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee"], "relation": "single_fact", "text": "User likes black coffee.", "date_observed": "2026-04-20", "valid_from": "2026-04-20T08:00:00+00:00"},
+    "decision": "REVISE"
+  },
+  {
+    "name": "rule8_polarity_flip_without_cue_conflict",
+    "rule": 8,
+    "new": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "dislikes", "objects": ["black coffee"], "relation": "single_fact", "text": "User dislikes black coffee.", "date_observed": "2026-05-01"},
+    "old": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee"], "relation": "single_fact", "text": "User likes black coffee.", "date_observed": "2026-04-20", "valid_from": "2026-04-20T08:00:00+00:00"},
+    "decision": "CONFLICT"
+  },
+  {
+    "name": "rule9_constraint_polarity_conflict",
+    "rule": 9,
+    "new": {"id": "0", "type": "constraint", "subject": "project", "predicate": "must", "objects": ["subscription state machine"], "relation": "constraint", "text": "Always refactor the subscription state machine.", "date_observed": "2026-06-16"},
+    "old": {"id": "0", "type": "constraint", "subject": "project", "predicate": "must_not", "objects": ["subscription state machine"], "relation": "constraint", "text": "Do not modify the subscription state machine.", "date_observed": "2026-06-15", "valid_from": "2026-06-15T09:00:00+00:00"},
+    "decision": "CONFLICT"
+  },
+  {
+    "name": "rule10_additive_add",
+    "rule": 10,
+    "new": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["green tea"], "relation": "single_fact", "text": "User likes green tea.", "date_observed": "2026-05-01"},
+    "old": {"id": "0", "type": "preference_event", "subject": "user", "predicate": "likes", "objects": ["black coffee"], "relation": "single_fact", "text": "User likes black coffee.", "date_observed": "2026-04-20", "valid_from": "2026-04-20T08:00:00+00:00"},
+    "decision": "ADD"
+  }
+]

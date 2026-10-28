@@ -1,0 +1,482 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>HMS Elite 架构解剖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --paper:#fbfaf8; --sunk:#f2f0ec; --card:#ffffff; --line:#dedbd4; --line-soft:#eae7e1;
+  --ink:#191b20; --body:#33363e; --slate:#646b78; --faint:#8a909c;
+  --axis:#3a4fb8; --axis-bg:#eceffb; --graph:#9c5a0d; --graph-bg:#faf1e4;
+  --win:#2c6a4d; --win-bg:#e8f2ec; --loss:#8f5410; --loss-bg:#f9f0e3;
+  --same:#5a6170; --same-bg:#eeeff2;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --col:68ch;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#14161a; --sunk:#1b1e24; --card:#1e2128; --line:#333842; --line-soft:#282c34;
+    --ink:#f0f1f3; --body:#c9ccd3; --slate:#9aa1ae; --faint:#767d8b;
+    --axis:#93a6f0; --axis-bg:#1e2440; --graph:#e0a458; --graph-bg:#332510;
+    --win:#7cc39c; --win-bg:#162c22; --loss:#dda45e; --loss-bg:#2f2411;
+    --same:#9aa1ae; --same-bg:#242830;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14161a; --sunk:#1b1e24; --card:#1e2128; --line:#333842; --line-soft:#282c34;
+  --ink:#f0f1f3; --body:#c9ccd3; --slate:#9aa1ae; --faint:#767d8b;
+  --axis:#93a6f0; --axis-bg:#1e2440; --graph:#e0a458; --graph-bg:#332510;
+  --win:#7cc39c; --win-bg:#162c22; --loss:#dda45e; --loss-bg:#2f2411;
+  --same:#9aa1ae; --same-bg:#242830;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--body);font-family:var(--serif);font-size:16.5px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;margin:0;padding:0 20px 96px}
+.wrap{max-width:1180px;margin:0 auto}
+.masthead{padding:56px 0 30px;border-bottom:2px solid var(--ink)}
+.kicker{font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin:0 0 14px}
+h1{font-family:var(--sans);font-weight:700;font-size:clamp(30px,4.4vw,46px);line-height:1.1;letter-spacing:-.02em;
+  color:var(--ink);margin:0 0 14px;text-wrap:balance}
+.dek{font-size:19px;line-height:1.55;color:var(--slate);max-width:60ch;margin:0}
+.dek b{color:var(--ink);font-weight:600}
+.facts{display:flex;flex-wrap:wrap;gap:0;margin:26px 0 0;border-top:1px solid var(--line-soft)}
+.fact{padding:14px 26px 14px 0;margin-right:26px;border-right:1px solid var(--line-soft)}
+.fact:last-child{border-right:0}
+.fact dt{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 3px}
+.fact dd{font-family:var(--mono);font-size:17px;font-weight:500;color:var(--ink);margin:0;font-variant-numeric:tabular-nums}
+main{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:1000px){main{grid-template-columns:180px minmax(0,1fr);gap:52px;align-items:start}}
+nav.toc{display:none}
+@media(min-width:1000px){
+  nav.toc{display:block;position:sticky;top:28px;padding-top:44px;font-family:var(--sans);font-size:13px;line-height:1.5}
+  nav.toc a{display:block;color:var(--slate);text-decoration:none;padding:5px 0 5px 11px;border-left:2px solid var(--line-soft)}
+  nav.toc a:hover{color:var(--ink);border-left-color:var(--axis)}
+  nav.toc .grp{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:20px 0 5px;padding-left:11px}
+}
+section{padding-top:46px;scroll-margin-top:24px}
+h2{font-family:var(--sans);font-weight:600;font-size:25px;letter-spacing:-.012em;color:var(--ink);
+  margin:0 0 6px;text-wrap:balance}
+h2 .num{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--faint);margin-right:11px}
+h3{font-family:var(--sans);font-weight:600;font-size:16.5px;color:var(--ink);margin:32px 0 8px;letter-spacing:-.005em}
+.sub{font-family:var(--sans);font-size:14px;color:var(--slate);margin:0 0 22px;max-width:var(--col)}
+p{max-width:var(--col);margin:0 0 15px}
+code{font-family:var(--mono);font-size:.87em;background:var(--sunk);padding:.12em .38em;border-radius:3px;color:var(--ink);
+  border:1px solid var(--line-soft)}
+strong{color:var(--ink);font-weight:600}
+.scroll{overflow-x:auto;margin:0 0 22px;border:1px solid var(--line);border-radius:5px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:13.5px;line-height:1.5}
+th{text-align:left;font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  padding:11px 15px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--sunk)}
+td{padding:12px 15px;border-bottom:1px solid var(--line-soft);vertical-align:top;color:var(--body)}
+tr:last-child td{border-bottom:0}
+td.dim{font-weight:600;color:var(--ink);white-space:nowrap}
+td.mono,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.chip{display:inline-block;font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.05em;
+  padding:2px 8px;border-radius:99px;white-space:nowrap}
+.c-win{background:var(--win-bg);color:var(--win)} .c-loss{background:var(--loss-bg);color:var(--loss)}
+.c-same{background:var(--same-bg);color:var(--same)}
+.planes{display:grid;gap:16px;margin:0 0 24px}
+@media(min-width:720px){.planes{grid-template-columns:1fr 1fr}}
+.plane{border:1px solid var(--line);border-radius:6px;padding:18px 20px 20px;background:var(--card)}
+.plane.ax{border-top:3px solid var(--axis)} .plane.gr{border-top:3px solid var(--graph)}
+.plane h4{font-family:var(--sans);font-size:14px;font-weight:600;margin:0 0 3px;color:var(--ink)}
+.plane .who{font-family:var(--mono);font-size:11.5px;margin:0 0 12px}
+.plane.ax .who{color:var(--axis)} .plane.gr .who{color:var(--graph)}
+.plane ul{margin:0;padding-left:17px;font-size:14.5px;line-height:1.62}
+.plane li{margin-bottom:5px}
+.plane li::marker{color:var(--faint)}
+figure{margin:0 0 26px}
+figcaption{font-family:var(--sans);font-size:12.5px;color:var(--faint);margin-top:9px;max-width:var(--col)}
+.steps{list-style:none;padding:0;margin:0 0 22px;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:0 0 13px 40px;max-width:var(--col)}
+.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:1px;font-family:var(--mono);
+  font-size:12px;font-weight:500;color:var(--faint)}
+.steps b{font-family:var(--sans);font-size:14.5px}
+.txn{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:500;padding:1px 7px;border-radius:3px;
+  background:var(--axis-bg);color:var(--axis);margin-left:7px;vertical-align:1px}
+.txn.unl{background:var(--sunk);color:var(--slate)}
+.note{border-left:3px solid var(--graph);background:var(--graph-bg);padding:14px 18px;margin:0 0 22px;
+  font-size:15px;max-width:var(--col);border-radius:0 4px 4px 0}
+.note p{margin:0} .note p+p{margin-top:9px}
+.formula{font-family:var(--mono);font-size:13.5px;background:var(--sunk);border:1px solid var(--line-soft);
+  border-radius:5px;padding:15px 18px;margin:0 0 20px;overflow-x:auto;color:var(--ink);line-height:1.8}
+.formula .k{color:var(--axis);font-weight:500}
+.kv{list-style:none;padding:0;margin:0 0 22px;border-top:1px solid var(--line-soft);max-width:var(--col)}
+.kv li{display:flex;gap:16px;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:14.5px}
+.kv b{font-family:var(--mono);font-size:12.5px;font-weight:500;color:var(--axis);flex:0 0 148px;padding-top:2px}
+.lift{display:grid;gap:10px;margin:0 0 22px}
+@media(min-width:640px){.lift{grid-template-columns:repeat(3,1fr)}}
+.liftbox{border:1px solid var(--line);border-radius:5px;padding:13px 15px;background:var(--card)}
+.liftbox .n{font-family:var(--mono);font-size:23px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.liftbox .l{font-family:var(--sans);font-size:12px;color:var(--slate);margin-top:2px}
+footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--line);font-family:var(--sans);font-size:12.5px;
+  color:var(--faint);max-width:var(--col)}
+svg{display:block;max-width:100%;height:auto}
+.svgtext{font-family:var(--sans);font-size:11.5px;fill:var(--body)}
+.svglabel{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.09em;fill:var(--faint)}
+.svgmono{font-family:var(--mono);font-size:10px;fill:var(--slate)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--axis);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header class="masthead">
+  <p class="kicker">架构参考 · 2026-09-09</p>
+  <h1>HMS Elite 架构解剖</h1>
+  <p class="dek">一个把经验编译成状态的记忆引擎。<b>轴负责找，图负责继承，ContextIR 负责行动。</b>本文记录改名后的当前代码结构、各层逻辑，以及与 Mem0 v2.0.19 的逐项对比。</p>
+  <dl class="facts">
+    <div class="fact"><dt>包</dt><dd>hms_elite</dd></div>
+    <div class="fact"><dt>库代码</dt><dd>30,924 行 / 67 文件</dd></div>
+    <div class="fact"><dt>SQLite 表</dt><dd>22</dd></div>
+    <div class="fact"><dt>测试</dt><dd>222 全绿 / 4 秒</dd></div>
+    <div class="fact"><dt>运行时依赖</dt><dd>pydantic</dd></div>
+  </dl>
+</header>
+
+<main>
+<nav class="toc" aria-label="目录">
+  <div class="grp">架构</div>
+  <a href="#planes">双平面</a>
+  <a href="#layers">分层与依赖</a>
+  <a href="#store">存储与不变量</a>
+  <div class="grp">逻辑</div>
+  <a href="#write">写入路径</a>
+  <a href="#read">检索路径</a>
+  <a href="#compile">编译与溯因</a>
+  <a href="#ops">修订与整理</a>
+  <div class="grp">接口</div>
+  <a href="#api">公开 API</a>
+  <a href="#hms4eye">hms4eye 对齐层</a>
+  <div class="grp">对比</div>
+  <a href="#delta">与 Mem0 逐项</a>
+  <a href="#mem0only">Mem0 更强处</a>
+  <a href="#parity">迁移会碰到的差异</a>
+</nav>
+
+<div>
+
+<section id="planes">
+  <h2><span class="num">01</span>双平面</h2>
+  <p class="sub">整个系统只有一个结构性主张：查询和继承是两件事，不该由同一个数据结构承担。</p>
+
+  <div class="planes">
+    <div class="plane ax">
+      <h4>State Index — 状态索引</h4>
+      <p class="who">hms_elite/mvmi/ · 1,901 行</p>
+      <ul>
+        <li>热路径：<code>add</code> / <code>search</code> / <code>get_all</code></li>
+        <li>七个轴：时间、有效期、实体、主题、角色、情感、尺度</li>
+        <li>只存坐标与出处，<strong>不存边</strong></li>
+        <li>有效期是 WHERE 子句的一部分，不是事后过滤</li>
+      </ul>
+    </div>
+    <div class="plane gr">
+      <h4>Support Graph — 支持图</h4>
+      <p class="who">hms_elite/graph/ · 1,660 行</p>
+      <ul>
+        <li>继承路径：<code>why</code> / <code>compile(deep)</code> / <code>consolidate</code></li>
+        <li>六类边：temporal、causal、revision、conflict、use、distill</li>
+        <li>每条边至少一个见证锚点，零见证直接抛异常</li>
+        <li>高层 InterfaceEP 是低层子图的<strong>接口</strong>，不是摘要</li>
+      </ul>
+    </div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 880 300" role="img" aria-label="从原始输入到状态输出的数据流：事件与锚点先落库，再分流到索引平面与图平面，最后由编译器产出可行动状态">
+      <text x="0" y="14" class="svglabel">原始输入</text>
+      <rect x="0" y="26" width="126" height="66" rx="4" fill="var(--sunk)" stroke="var(--line)"/>
+      <text x="12" y="48" class="svgtext">对话消息</text>
+      <text x="12" y="66" class="svgtext">工具调用 / diff</text>
+      <text x="12" y="84" class="svgtext">测试日志</text>
+
+      <text x="164" y="14" class="svglabel">事务 A · 证据</text>
+      <rect x="164" y="26" width="128" height="66" rx="4" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="176" y="50" class="svgtext">SourceEvent</text>
+      <text x="176" y="72" class="svgtext">→ Anchor (sha256)</text>
+
+      <text x="330" y="14" class="svglabel">无锁 · 抽取</text>
+      <rect x="330" y="26" width="126" height="66" rx="4" fill="var(--sunk)" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text x="342" y="48" class="svgtext">路由 / LLM</text>
+      <text x="342" y="66" class="svgtext">embedding</text>
+      <text x="342" y="84" class="svgtext">修订决策</text>
+
+      <text x="494" y="14" class="svglabel">事务 B · 物化</text>
+      <rect x="494" y="26" width="150" height="30" rx="4" fill="var(--axis-bg)" stroke="var(--axis)"/>
+      <text x="506" y="46" class="svgtext" fill="var(--axis)">State Index 原子 + 轴</text>
+      <rect x="494" y="62" width="150" height="30" rx="4" fill="var(--graph-bg)" stroke="var(--graph)"/>
+      <text x="506" y="82" class="svgtext" fill="var(--graph)">Support Graph 节点 + 边</text>
+
+      <text x="682" y="14" class="svglabel">输出</text>
+      <rect x="682" y="26" width="150" height="66" rx="4" fill="var(--card)" stroke="var(--line)"/>
+      <text x="694" y="48" class="svgtext">Mem0 形状的行</text>
+      <text x="694" y="70" class="svgtext">ContextIR / 工作状态卡</text>
+
+      <g stroke="var(--faint)" stroke-width="1.2" fill="none">
+        <path d="M130 59 H158" marker-end="url(#a)"/>
+        <path d="M296 59 H324" marker-end="url(#a)"/>
+        <path d="M460 59 H488" marker-end="url(#a)"/>
+        <path d="M648 41 H676" marker-end="url(#a)"/>
+        <path d="M648 77 H676" marker-end="url(#a)"/>
+      </g>
+      <defs><marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0 0 L8 4 L0 8 z" fill="var(--faint)"/></marker></defs>
+
+      <line x1="0" y1="128" x2="880" y2="128" stroke="var(--line-soft)"/>
+      <text x="0" y="152" class="svglabel">读路径</text>
+      <rect x="0" y="164" width="196" height="52" rx="4" fill="var(--axis-bg)" stroke="var(--axis)"/>
+      <text x="14" y="186" class="svgtext" fill="var(--axis)">search() 只读索引平面</text>
+      <text x="14" y="206" class="svgmono">store.trace 断言保证</text>
+
+      <rect x="228" y="164" width="240" height="52" rx="4" fill="var(--card)" stroke="var(--line)"/>
+      <text x="242" y="186" class="svgtext">compile() 先查轴，需要时展开图</text>
+      <text x="242" y="206" class="svgmono">fast 模式从不触碰 graph_*</text>
+
+      <rect x="500" y="164" width="196" height="52" rx="4" fill="var(--graph-bg)" stroke="var(--graph)"/>
+      <text x="514" y="186" class="svgtext" fill="var(--graph)">why() 沿边反向 BFS</text>
+      <text x="514" y="206" class="svgmono">返回带见证的子图</text>
+
+      <text x="0" y="258" class="svglabel">训练数据</text>
+      <rect x="0" y="268" width="696" height="26" rx="4" fill="var(--sunk)" stroke="var(--line)"/>
+      <text x="14" y="286" class="svgmono">transitions() → (S_t, a_t, S_t+1, r_t, κ_t, w_t) · 按 (source_kind, source_id) 幂等</text>
+    </svg>
+    <figcaption>写路径先提交证据再物化状态，中间的 LLM 与 embedding 调用不持有数据库锁。读路径按代价分层：轴查询最便宜，图展开按需。</figcaption>
+  </figure>
+</section>
+
+<section id="layers">
+  <h2><span class="num">02</span>分层与依赖</h2>
+  <p class="sub">八个所有权组，依赖是无环的，由一个测试用 AST 扫描导入语句强制。</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>组</th><th>目录</th><th>行数</th><th>职责</th><th>可依赖</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">A 基础</td><td class="mono">models · enums · configs · utils · memory/{schema,storage}</td><td class="mono">10,379</td><td>类型、22 表 DDL、StateStore、六个 Prompt 契约</td><td class="mono">—</td></tr>
+      <tr><td class="dim">B 提供者</td><td class="mono">llms · embeddings · index</td><td class="mono">3,389</td><td>规则 LLM、哈希嵌入器、SQLite 索引、工厂</td><td class="mono">A</td></tr>
+      <tr><td class="dim">C 摄取</td><td class="mono">ingest/</td><td class="mono">3,261</td><td>事件、锚点、抽取、闭包构建、原子物化</td><td class="mono">A B</td></tr>
+      <tr><td class="dim">D 索引</td><td class="mono">mvmi/ · utils/scoring</td><td class="mono">1,901</td><td>过滤 DSL、查询规划、五信号融合</td><td class="mono">A B</td></tr>
+      <tr><td class="dim">E 图</td><td class="mono">graph/</td><td class="mono">1,660</td><td>节点边见证、coarsen/project/refine、溯因</td><td class="mono">A B C</td></tr>
+      <tr><td class="dim">F 编译</td><td class="mono">compiler/</td><td class="mono">1,562</td><td>六槽 ContextIR、工作状态卡、PC-IR</td><td class="mono">A B D E</td></tr>
+      <tr><td class="dim">G 运维</td><td class="mono">ops/</td><td class="mono">3,430</td><td>反馈、检查点、交接、转移导出、调度</td><td class="mono">A–F</td></tr>
+      <tr><td class="dim">H 门面</td><td class="mono">memory/main · cli · migrate</td><td class="mono">3,410</td><td>class HMS 的 24 个公开方法</td><td class="mono">全部</td></tr>
+      <tr><td class="dim">— 对齐</td><td class="mono">hms4eye/</td><td class="mono">1,932</td><td>引擎适配器、字段映射、能力扩展</td><td class="mono">A</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><code>mvmi/</code> 在导入拓扑上够不到 <code>graph/</code>、<code>compiler/</code>、<code>ops/</code>——这是"原子不存边"从类型约束延伸到模块结构的一层保障。</p>
+</section>
+
+<section id="store">
+  <h2><span class="num">03</span>存储与不变量</h2>
+  <p class="sub">一个 SQLite 文件装下全部平面。83 条 DDL 语句由枚举生成：22 张表、39 个索引、22 个触发器。</p>
+
+  <h3>四条不变量，三层强制</h3>
+  <ul class="kv">
+    <li><b>见证必需</b><span><code>anchor_ids</code> 是 <code>Annotated[list[str], Field(min_length=1)]</code>；DDL 上是 <code>NOT NULL REFERENCES anchors</code>；<code>insert_edge</code> 在建模型之前就检查见证为空并抛 <code>WitnessMissingError</code>。</span></li>
+      <li><b>原子不存边</b><span>模型校验器拒绝 <code>content</code> 里出现 <code>edges</code>、<code>src_id</code> 等键；<code>mvmi/</code> 无法导入 <code>graph/</code>；<code>search()</code> 不碰任何 <code>graph_*</code> 表。</span></li>
+      <li><b>修订代替删除</b><span><code>BEFORE DELETE</code> 触发器拦截证据表与状态表的物理删除；<code>BEFORE UPDATE</code> 触发器让内容列不可变，只有有效期、置信度、可见性等少数列可改。</span></li>
+      <li><b>高层是接口</b><span><code>interface_eps.primary_support_node_id NOT NULL</code>，支撑节点至少 2 个；只有边界边带 <code>witness_edge_id</code>，触发器据此自动写 <code>edge_projections</code>。</span></li>
+  </ul>
+
+  <h3>事务纪律</h3>
+  <p>StateStore 是唯一跑 SQL 的地方，113 个公开方法。连接以 <code>isolation_level=None</code> 打开（自动提交），事务由显式 <code>BEGIN IMMEDIATE</code> 界定，配一个可重入锁与深度计数器。游标在锁内取完行才释放——这是一次审查确认的并发缺陷的修复点。时钟与 id 工厂都可注入，测试因此逐字节可复现。</p>
+
+  <div class="note">
+    <p><strong>代价要说清楚。</strong>系统从不物理删除任何状态行。可回滚、可审计、可解释都建立在这上面，但库的体积随写入单调增长，没有压缩路径。Mem0 的原地覆盖让可搜索集合始终正比于不同记忆的条数。</p>
+  </div>
+</section>
+
+<section id="write">
+  <h2><span class="num">04</span>写入路径</h2>
+  <p class="sub">两条路：对话消息走 LLM 抽取，结构化事件走零 LLM 的闭包构建。</p>
+
+  <h3>对话消息 · <code>add()</code></h3>
+  <ol class="steps">
+    <li><b>落证据</b><span class="txn">事务 A</span><br>每条消息归一化成 <code>SourceEvent</code>，算 sha256 得 <code>payload_hash</code>，生成 <code>Anchor</code>。相同 (哈希, 时间, 范围) 的事件去重。这一步先提交，之后崩溃也能靠 <code>consolidate(collect)</code> 捡回。</li>
+    <li><b>抽取与决策</b><span class="txn unl">无锁</span><br>取最近 10 个事件与最相似的 10 个有效原子作上下文（真实 id 从不暴露给 LLM，用 <code>'0'..'n'</code> 代替）；抽出带 subject / predicate / objects / date 的结构化观察，而非一句话；带行动闭包的消息额外抽 EP 六元组；批量算向量；对每条新观察跑修订决策。</li>
+    <li><b>物化</b><span class="txn">事务 B</span><br>按决策落原子：<code>ADD</code> 新开谱系；<code>REVISE</code> 归档旧版、新版进同一谱系版本 +1、写 revision 边；<code>CONFLICT</code> 新谱系加 conflict 边；<code>NONE</code> 给旧原子加一个见证。同时写轴表、向量、图节点，以及 temporal 与 use 这类便宜的行内边。</li>
+  </ol>
+
+  <h3>结构化事件 · <code>add_events()</code></h3>
+  <p><code>tool_call</code> 压栈，<code>test_log</code> 弹出最近未闭合的动作，拼成一个 <code>(u, b, a, y, r, κ)</code> EP，锚点同时挂动作与结果两个事件。结果为负的 EP 自动派生一条约束原子，用 distill 边连回去。<strong>全程零 LLM 调用</strong>，所以 <code>add_events</code> 一返回，工作状态卡的失败路径与下一步动作就已经可以生成。</p>
+</section>
+
+<section id="read">
+  <h2><span class="num">05</span>检索路径</h2>
+  <p class="sub">先用 SQL 轴门控收窄候选集，再对候选集算五个信号。这与"取回 top-k 向量再重排"是两种不同的检索模型。</p>
+
+  <ol class="steps">
+    <li><b>解析过滤</b><br>Mem0 的完整语法解析成 AST：<code>AND</code> / <code>OR</code> / <code>NOT</code>、<code>in</code> / <code>gte</code> / <code>contains</code>、<code>'*'</code>、<code>meta.&lt;key&gt;</code>。顶层 <code>AND</code> 里的标量范围键会被上提。</li>
+    <li><b>规划查询</b><br>识别中英文月份、ISO 与相对日期 → <strong>硬性时间门</strong>；识别实体提示 → <strong>硬性实体门</strong>；识别 <code>retry.ts</code> 这类标识符 → 关键词权重 ×2。</li>
+    <li><b>轴门控</b><br>SQL 层施加范围、有效期、过滤 AST、尺度、时间门、实体门，上限 2000 条候选。门控为空时退回一次去掉计划门的查询，<code>primary_axis</code> 标为 <code>fallback</code>。</li>
+    <li><b>融合与阈值</b><br>阈值作用在<strong>融合后</strong>的分数上，所以轴命中但向量弱的结果不会被误杀。</li>
+  </ol>
+
+  <div class="formula">
+<span class="k">semantic</span> = max(0, cos(q, v))<br>
+<span class="k">keyword</span>  = Σ w(t) over Q∩A / Σ w(t) over Q     <span style="color:var(--faint)">w=2.0 标识符，否则 1</span><br>
+<span class="k">entity</span>   = |Q∩A| / |Q| · 1/(1 + 0.001·max(0, deg−3)²)<br>
+<span class="k">recency</span>  = exp(−ln2 · age_days / 30)<br>
+<span class="k">support</span>  = tanh(n_undisputed_anchors / 3)<br><br>
+final = Σ(w·s) / Σ(w)  <span style="color:var(--faint)">仅对激活信号</span>   w = 1.0 / 0.5 / 0.5 / 0.25 / 0.25
+  </div>
+
+  <p><code>explain=True</code> 时每行带 14 个 <code>score_details</code> 字段：Mem0 的 7 个原样保留，再追加 <code>recency_score</code>、<code>support_score</code>、<code>axis_gates</code>、<code>primary_axis</code>、<code>route</code> 等。</p>
+</section>
+
+<section id="compile">
+  <h2><span class="num">06</span>编译与溯因</h2>
+  <p class="sub">检索返回行，编译返回状态。这是 Mem0 没有对应物的一层。</p>
+
+  <h3><code>compile()</code> → ContextIR</h3>
+  <p>轴查询取候选（默认 50 条，阈值 0）→ 工作状态场景下补全该范围所有有效 EP 与约束 → 沿五类边扩展一跳 → 按有序规则把每个原子放进<strong>六个互斥槽</strong>之一 → 推导下一步动作 → 按份额切预算（约束槽保底 3 条，证据行永远保留）。产出的 ContextIR 有校验器保证各槽 id 互斥、每项都带见证。</p>
+  <ul class="kv">
+    <li><b>slot_shares</b><span>facts 0.30 · episodes 0.25 · constraints 0.15 · audit 0.15 · preferences 0.10 · skills 0.05，预算默认 1200 token</span></li>
+    <li><b>to_text()</b><span>渲染成工作状态卡：当前目标 / 有效事实 / 失效假设 / 失败路径 / 约束 / 下一步 / 证据</span></li>
+    <li><b>to_pcir()</b><span>降为 payload + witness + human_gloss + proof_obligations；见证缺失或存在未解冲突时抛 <code>ProofObligationError</code></span></li>
+  </ul>
+  <p><code>compile()</code> 是只读的，前后表行数一致；<code>fast</code> 模式不触碰任何图表。</p>
+
+  <h3><code>why()</code> → 支持子图</h3>
+  <p>目标可以是任意一种 id，也可以是一个问题（先编译一次取第一个约束/情节/事实作目标）。然后沿入边 <code>{causal, use, distill, revision, conflict}</code> 与出边 <code>use</code> 反向 BFS，遇到 InterfaceEP 按需展开，返回节点、带见证的边、锚点、路径，以及一条确定性的可读链条。</p>
+</section>
+
+<section id="ops">
+  <h2><span class="num">07</span>修订与整理</h2>
+  <p class="sub">每一次变更本身也是一个有证据的事件。</p>
+
+  <h3>十一种反馈</h3>
+  <p>处理器先写一个 feedback 类型的事件与锚点，再分发到十一个处理器。<code>state_outdated</code> 归档并可建后继；<code>state_wrong</code> 建 0.95 置信度的修订边并解决冲突；<code>evidence_wrong</code> 只把锚点标为有争议，绝不删除；<strong>只有 <code>privacy_violation</code> 能改可见性</strong>。</p>
+
+  <h3><code>consolidate()</code> 四阶段</h3>
+  <ul class="kv">
+    <li><b>orient</b><span>只读，看最近活跃的主题、实体与未闭合的失败</span></li>
+    <li><b>collect</b><span>补算缺失向量；把有锚点但没原子的事件重新走一遍抽取</span></li>
+    <li><b>consolidate</b><span>建实体原子、时间边、因果边、冲突边；按连通分量 coarsen 成 L2 的 InterfaceEP 再 project；≥2 个支撑节点共享的不变量提升为 L3 技能；导出转移；编译并存档一张卡</span></li>
+    <li><b>prune</b><span><code>staleness = (1−recency)·(1−clamp(confidence−0.6))·(1−use_recency)</code>；超阈值且低置信的归档，但钉住的、有冲突的、约束与技能永不动</span></li>
+  </ul>
+  <p>同一范围连跑三次 <code>consolidate()</code>，<code>graph_stats</code> 完全相同——幂等已验证。</p>
+</section>
+
+<section id="api">
+  <h2><span class="num">08</span>公开 API</h2>
+  <p class="sub">24 个方法：11 个与 Mem0 逐字同签名，13 个是 HMS 原生的。</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>面</th><th>方法</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Mem0 兼容</td><td class="mono">add · get · get_all · search · update · delete · delete_all · history · reset · close · from_config</td><td>签名、返回信封、filters 语法、config dict 与 v2.0.19 一致，由 <code>inspect.signature</code> 测试钉住</td></tr>
+      <tr><td class="dim">状态输出</td><td class="mono">compile · why · handoff · import_package · transitions</td><td>ContextIR、溯因子图、交接包、六元组转移</td></tr>
+      <tr><td class="dim">写入扩展</td><td class="mono">add_events · feedback · revoke</td><td>结构化事件闭包、十一种反馈、证据撤销级联</td></tr>
+      <tr><td class="dim">时间旅行</td><td class="mono">checkpoint · rollback</td><td>范围内全量状态快照与对称恢复</td></tr>
+      <tr><td class="dim">运维</td><td class="mono">consolidate · axis_query · graph_stats</td><td>调度四阶段、直接轴查询、图统计</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="hms4eye">
+  <h2><span class="num">09</span>hms4eye 对齐层</h2>
+  <p class="sub">让本引擎可以直接替换掉 hms4eye 兼容服务里的 mem0。</p>
+  <p>那个服务的引擎接缝是 duck-typed 的七个方法，构造点唯一。<code>HMSEngineAdapter</code> 逐字对齐这七个签名，并遵守它的隐性约束：<code>_hms_tenant_id</code> 与 <code>_hms_bank_id</code> 必须原样存取（租户隔离靠 metadata 回读），且不能存在名为 <code>update</code> 或 <code>delete</code> 的方法（它有测试断言这两个属性不存在）。</p>
+  <p>读侧还把我们的富字段投影进 <code>_hms_*</code> 命名空间，所以那个服务<strong>一行代码不改</strong>就能看到真实的三态 fact_type 与时间区间。</p>
+
+  <div class="lift">
+    <div class="liftbox"><div class="n">13</div><div class="l">它的 33 个 no-op 中被点亮的数量</div></div>
+    <div class="liftbox"><div class="n">6 → 14</div><div class="l">native 能力数（它 → 我们）</div></div>
+    <div class="liftbox"><div class="n">7</div><div class="l">适配器方法数，全部结构一致</div></div>
+  </div>
+  <p>点亮的是 entities、entity_graph、graph、consolidation 触发（native），以及 mental-models、directives、observations 清理、consolidation 恢复（adapted）。剩下 20 个 no-op 是 webhook、bank template、chunk 编辑这类服务层设施，本引擎也不做。</p>
+
+  <div class="note">
+    <p><strong>为什么叫 Elite。</strong>那个服务的分发名与导入名同为 <code>hms-lite</code> / <code>hms_lite</code>，与本项目原名完全相同，同一环境装不了。改名后已验证两个包可在同一进程共存，它的 <code>MemoryService</code> 能直接跑在本引擎上，跨租户越权读仍正确返回空。</p>
+  </div>
+</section>
+
+<section id="delta">
+  <h2><span class="num">10</span>与 Mem0 逐项对比</h2>
+  <p class="sub">Mem0 侧依据 v2.0.19 源码的工程地图，本侧依据当前代码；结论逐条跑代码验证过。</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>维度</th><th>Mem0 v2.0.19</th><th>HMS Elite</th><th>判定</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">存储单元</td><td>一条扁平 payload：文本、md5、时间戳、范围键</td><td>MemoryAtom，30+ 声明字段 + 22 张表的关系</td><td><span class="chip c-same">不同</span></td></tr>
+      <tr><td class="dim">证据</td><td>无证据对象；缺 <code>data</code> 键的 payload 被静默跳过</td><td>见证是类型级不变量，DDL 与写入路径三层强制</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">写入决策</td><td>v2 只发 <code>ADD</code>，去重靠文本 md5 全等</td><td>ADD / REVISE / CONFLICT / NONE 四态</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">更新语义</td><td>原地覆盖，旧向量与 payload 消失</td><td>版本 n+1，旧版归档保留，写 revision 边</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">删除语义</td><td>硬删向量，内容只剩 history 里的文本</td><td>归档，行还在，可用 <code>show_expired</code> 查到</td><td><span class="chip c-same">不同</span></td></tr>
+      <tr><td class="dim">过期</td><td>一个日期串，Python 侧事后过滤</td><td>双时态有效区间，进 SQL 谓词</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">置信度</td><td>无此字段</td><td>每原子存储，反馈调整，衰减参与剪枝</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">版本</td><td>只有 history 增量日志，当前版本仅存于 payload</td><td>主平面完整版本链 + revision 边 + 每行锚点</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">候选选择</td><td>只有向量命中，过取 <code>max(4k, 60)</code></td><td>SQL 轴选择 + 硬门 + 上限 2000，一次无门回退</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">排序公式</td><td>三信号，<code>max_possible</code> 按查询定</td><td>五信号加权，按每原子激活集归一</td><td><span class="chip c-same">不同</span></td></tr>
+      <tr><td class="dim">阈值位置</td><td>融合<strong>前</strong>卡语义分</td><td>融合<strong>后</strong>卡最终分</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">可解释性</td><td><code>score_details</code> 7 个键</td><td>7 个键保留 + 7 个新键，另有 <code>why()</code> 溯因</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">图</td><td>v2.0.0 从开源版删除，约 4000 行；只剩实体倒排</td><td>一等公民：六类边、见证、多尺度投影</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">实体处理</td><td>spaCy NER，五类候选生成，向量归并 ≥0.95</td><td>正则与词表，优先级消歧，无学习模型</td><td><span class="chip c-same">不同</span></td></tr>
+      <tr><td class="dim">后台整理</td><td>无。没有 consolidation、回填或调度</td><td>四阶段调度，实体、边、冲突、粗化、技能、剪枝</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">反馈</td><td>开源版没有；托管版三档枚举</td><td>本地十一种类型化动词，各有处理器</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">Agent 轨迹</td><td>整段对话压成一条不可检索的 markdown</td><td>零 LLM 闭包成 EP，负结果派生约束</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">行以外的输出</td><td>只有行</td><td>ContextIR、PC-IR、交接包、六元组转移</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">提供者广度</td><td>18 LLM / 11 嵌入 / 25 向量库 / 4 重排</td><td>4 LLM / 2 嵌入 / 2 索引 / 无重排</td><td><span class="chip c-same">不同</span></td></tr>
+      <tr><td class="dim">离线能力</td><td>默认需要 OpenAI key，导入即拉 qdrant-client</td><td>默认规则 LLM + 哈希嵌入 + SQLite，零网络</td><td><span class="chip c-win">Elite</span></td></tr>
+      <tr><td class="dim">异步</td><td>完整 AsyncMemory 镜像</td><td>无。整个包零 <code>async def</code></td><td><span class="chip c-loss">Mem0</span></td></tr>
+      <tr><td class="dim">多模态</td><td>视觉前置解析，图片转文字描述</td><td>无任何图像处理</td><td><span class="chip c-loss">Mem0</span></td></tr>
+      <tr><td class="dim">部署面</td><td>库 + FastAPI 服务 + 托管平台客户端</td><td>库 + 一个 argparse 命令行</td><td><span class="chip c-loss">Mem0</span></td></tr>
+      <tr><td class="dim">依赖足迹</td><td>8 个核心依赖</td><td>1 个：pydantic</td><td><span class="chip c-win">Elite</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="mem0only">
+  <h2><span class="num">11</span>Mem0 更强的地方</h2>
+  <p class="sub">这部分要诚实说。以下每条都核实过。</p>
+  <ul class="kv">
+    <li><b>异步</b><span>AsyncMemory 镜像每个公开方法，阻塞调用包进线程池，实体加权带信号量。本包零 <code>async def</code>，异步应用要自己丢进执行器。</span></li>
+    <li><b>规模化检索</b><span>Qdrant HNSW 加稀疏 BM25，按查询长度校准的 sigmoid 归一。本包是在 SQL 候选集上暴力点积，候选上限 2000。</span></li>
+    <li><b>重排</b><span>Mem0 有真正生效的重排器接口与 Cohere/LLM 实现。本包接受 <code>rerank=True</code> 但只记一条警告，实际无操作。</span></li>
+    <li><b>学习型实体识别</b><span>spaCy NER 加向量归并；本包只有正则与词表，中文靠 CJK 规则，覆盖面窄。</span></li>
+    <li><b>多模态</b><span>视觉前置解析把图片部分换成 LLM 描述。本包不理解多部件消息。</span></li>
+    <li><b>部署与运维</b><span>自托管 REST 服务、托管平台客户端、批量接口、导出、遥测与首次运行提示。本包只有一个命令行。</span></li>
+    <li><b>存储有界</b><span>Mem0 的更新原地覆盖、删除真删，可搜索集合始终正比于记忆条数。本包从不物理删除，库随写入单调增长。</span></li>
+    <li><b>生态成熟度</b><span>按 issue 编号组织的回归测试、镜像提供者结构的测试树、三版本 CI 矩阵、版本号变更的 changelog 门禁。本包 222 个测试虽全离线且 4 秒跑完，但更年轻。</span></li>
+  </ul>
+</section>
+
+<section id="parity">
+  <h2><span class="num">12</span>迁移会碰到的差异</h2>
+  <p class="sub">十一个方法同签名，但一个 Mem0 用户切过来会真实感知到这些。</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>场景</th><th>Mem0 行为</th><th>HMS Elite 行为</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">导入</td><td class="mono">from mem0 import Memory</td><td class="mono">from hms_elite import HMS</td></tr>
+      <tr><td class="dim">add 的 event</td><td>永远是 <code>ADD</code></td><td>可能是 <code>ADD</code> / <code>UPDATE</code> / <code>NONE</code>，并可能带 <code>revises</code></td></tr>
+      <tr><td class="dim">add(timestamp=)</td><td>抛 ValueError，标为平台专用</td><td>接受，用作原子的事件时间</td></tr>
+      <tr><td class="dim">search(reference_date=)</td><td>抛 ValueError</td><td>接受，用作有效期判定的 as_of</td></tr>
+      <tr><td class="dim">过去的 expiration_date</td><td>存下并在读时隐藏</td><td>抛 VALIDATION_004，因为它映射到 valid_to</td></tr>
+      <tr><td class="dim">delete 之后</td><td>向量被移除</td><td>归档；<code>show_expired=True</code> 仍能查到</td></tr>
+      <tr><td class="dim">行的形状</td><td>10 个键</td><td>另加 atom_id、version、anchor_ids、valid_from/to、confidence 与嵌套 hms 块</td></tr>
+      <tr><td class="dim">阈值含义</td><td>卡语义分</td><td>卡融合分，弱向量但轴命中的行会保留</td></tr>
+      <tr><td class="dim">rerank=True</td><td>真的重排</td><td>接受但无操作，记一条警告</td></tr>
+      <tr><td class="dim">vector_store</td><td>25 个提供者</td><td>只有 <code>sqlite</code> 与 <code>memory</code>，其余抛 CONFIG_002</td></tr>
+      <tr><td class="dim">未知 config 键</td><td>静默忽略</td><td><code>extra='forbid'</code>，带 difflib 提示</td></tr>
+      <tr><td class="dim">导入副作用</td><td>写 <code>~/.mem0/config.json</code>，发遥测与 stderr 提示</td><td>无副作用，无遥测，无提示</td></tr>
+      <tr><td class="dim">默认能跑通吗</td><td>需要 API key</td><td>零 key 离线可跑，但抽取质量是规则级</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  规范文档在仓库 <code>docs/design/</code>：CONTRACT 为实现契约，DESIGN 为设计定稿，MEM0_MAP 为 Mem0 v2.0.19 工程拆解，各有中文版。本文所有结论由六个并行读者核对当前代码得出，关键行为另跑离线脚本验证。
+</footer>
+
+</div>
+</main>
+</div>
+
+</body></html>

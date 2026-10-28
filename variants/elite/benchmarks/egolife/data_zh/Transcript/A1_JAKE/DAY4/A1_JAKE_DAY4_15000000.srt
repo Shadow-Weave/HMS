@@ -1,0 +1,1826 @@
+1
+00:30:50,566 --> 00:30:51,700
+杰克: 啊
+Jake: Ah
+
+2
+00:31:17,333 --> 00:31:17,966
+露西亚: 你在找什么？
+Lucia: What are you looking for?
+
+3
+00:31:17,966 --> 00:31:19,433
+杰克: 就随便逛逛。
+Jake: Just wandering around.
+
+4
+00:31:22,733 --> 00:31:23,533
+杰克: 我们开始干活吧。
+Jake: Let's get to work.
+
+5
+00:31:25,700 --> 00:31:26,766
+杰克: 该干活了，该干活了。
+Jake: Time to work, time to work.
+
+6
+00:31:31,233 --> 00:31:34,533
+杰克: 把快递拆了。也许我们得收拾一下二楼。
+Jake: Unbox the deliveries. Maybe we need to tidy up the second floor.
+
+7
+00:31:34,533 --> 00:31:36,900
+杰克: 你们今天要做狗吗？
+Jake: Are you guys making dogs today?
+
+8
+00:31:38,166 --> 00:31:39,033
+杰克: 你们今天要看狗吗？
+Jake: Are you looking at dogs today?
+
+9
+00:31:39,066 --> 00:31:40,333
+露西亚: 通常我们可以做。
+Lucia: Usually we can do it.
+
+10
+00:31:40,433 --> 00:31:41,933
+露西亚: 我们是做狗还是看狗？
+Lucia: Are we making or looking at dogs?
+
+11
+00:31:41,933 --> 00:31:42,733
+杰克: 我们可以都做。
+Jake: We can do both.
+
+12
+00:31:43,566 --> 00:31:44,533
+杰克: 我们可以看狗。
+Jake: We can look at dogs.
+
+13
+00:31:45,566 --> 00:31:47,733
+杰克: 我们先建立一些逻辑怎么样？
+Jake: How about we establish some logic first?
+
+14
+00:31:47,733 --> 00:31:48,700
+杰克: 作为一个...
+Jake: As a...
+
+15
+00:31:48,833 --> 00:31:52,466
+杰克: 这也算某种人或什么...
+Jake: This is also some kind of person or what...
+
+16
+00:31:52,666 --> 00:31:53,533
+杰克: 建立一些年龄...
+Jake: Establish some age...
+
+17
+00:31:53,533 --> 00:31:54,533
+杰克: 我们先看狗。
+Jake: Let's look at the dogs first.
+
+18
+00:31:54,966 --> 00:31:57,333
+杰克: 然后根据狗来做狗。
+Jake: Then make dogs based on the dogs.
+
+19
+00:31:57,633 --> 00:31:59,233
+露西亚: 建立逻辑是给人用的。
+Lucia: Establishing logic is for people.
+
+20
+00:31:59,233 --> 00:31:59,533
+杰克: 给人用的，对。
+Jake: For people, right.
+
+21
+00:32:03,166 --> 00:32:06,600
+卡特里娜: 所以我们先看一些狗的样式。
+Katrina: So we'll first look at some dog styles.
+
+22
+00:32:05,533 --> 00:32:06,600
+尼克斯: “做狗”是什么意思？
+Nicous: What does "making dogs" mean?
+
+23
+00:32:06,100 --> 00:32:07,666
+卡特里娜: 然后开始挑选。
+Katrina: Then start choosing.
+
+24
+00:32:06,966 --> 00:32:07,366
+杰克: 嗯。
+Jake: Hmm.
+
+25
+00:32:07,666 --> 00:32:08,500
+卡特里娜: 然后做它们。
+Katrina: Then make them.
+
+26
+00:32:07,666 --> 00:32:08,500
+卡特里娜: 然后做它们。
+Katrina: Then make them.
+
+27
+00:32:09,333 --> 00:32:10,100
+露西亚: 好的。
+Lucia: Okay.
+
+28
+00:32:10,666 --> 00:32:13,600
+杰克: 做狗的时候，它们会有一个纸板。
+Jake: When making dogs, they will have a cardboard.
+
+29
+00:32:11,466 --> 00:32:15,500
+露西亚: 只要我们能画个大概轮廓就行。
+Lucia: As long as we can draw a rough outline, it's fine.
+
+30
+00:32:15,766 --> 00:32:17,266
+杰克: 然后把纸板变成狗。
+Jake: Then turn the cardboard into a dog.
+
+31
+00:32:16,466 --> 00:32:18,733
+露西亚: 我们暂时不用太担心头部。
+Lucia: We don't need to worry too much about the head for now.
+
+32
+00:32:18,966 --> 00:32:20,233
+露西亚: 哦，点。
+Lucia: Oh, point.
+
+33
+00:32:20,233 --> 00:32:24,100
+塔莎: 通过管理利息，你可以在三个阶段升到8级，哇。
+Tasha: You can level up to 8 in three stages by managing interest, wow.
+
+34
+00:32:22,033 --> 00:32:23,166
+杰克: 我们需要做狗。
+Jake: We need to make dogs.
+
+35
+00:32:23,166 --> 00:32:23,600
+舒尔: 告密者。
+Shure: Snitch.
+
+36
+00:32:25,933 --> 00:32:27,700
+露西亚: 当我的眼镜突然被转到一边...
+Lucia: When my glasses suddenly got turned sideways...
+
+37
+00:32:26,833 --> 00:32:27,933
+舒尔: 你知道Sneetch，对吧？
+Shure: You know Sneetch, right?
+
+38
+00:32:27,700 --> 00:32:29,233
+露西亚: AI会认为这是地震吗？
+Lucia: Will the AI think it's an earthquake?
+
+39
+00:32:30,633 --> 00:32:32,266
+杰克: 那也许地震频率太高了。
+Jake: Then maybe the earthquake frequency is too high.
+
+40
+00:32:32,266 --> 00:32:33,866
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+41
+00:32:34,200 --> 00:32:35,833
+露西亚: 不经常发生，对吧？
+Lucia: Not very often, right?
+
+42
+00:32:34,633 --> 00:32:36,100
+杰克: 好的好的。
+Jake: Okay okay.
+
+43
+00:32:36,300 --> 00:32:38,866
+露西亚: 我只是突然切换到之前的线路。
+Lucia: I just suddenly switched to the line earlier.
+
+44
+00:32:40,300 --> 00:32:41,100
+杰克: 那就没电了。
+Jake: Then there's no power.
+
+45
+00:32:41,100 --> 00:32:41,766
+杰克: 确实，和地震一起。
+Jake: Indeed, with the earthquake.
+
+46
+00:32:41,766 --> 00:32:42,933
+露西亚: 老板，我需要一支笔。
+Lucia: Boss, I need a pen.
+
+47
+00:32:42,933 --> 00:32:43,733
+杰克: 什么样的笔？
+Jake: What kind of pen?
+
+48
+00:32:44,633 --> 00:32:45,133
+露西亚: 任何笔都行。
+Lucia: Any pen will do.
+
+49
+00:32:45,133 --> 00:32:47,866
+露西亚: 只要能在纸板上画线。
+Lucia: As long as it can draw a line on the cardboard.
+
+50
+00:32:46,300 --> 00:32:47,366
+杰克: 哦。
+Jake: Oh.
+
+51
+00:32:48,566 --> 00:32:51,500
+杰克: 我们之前买的彩色笔到了吗？
+Jake: And the colored pens we bought earlier, have they arrived yet?
+
+52
+00:32:51,500 --> 00:32:53,433
+露西亚: 嗯，我们已经无纸化了。
+Lucia: Well, we've already gone paperless.
+
+53
+00:32:53,433 --> 00:32:54,600
+露西亚: 所以我们现在没有笔，对吧？
+Lucia: So we don't have any pens now, right?
+
+54
+00:32:56,966 --> 00:32:57,933
+杰克: 它们还没到，对吧？
+Jake: They haven't arrived yet, right?
+
+55
+00:32:57,133 --> 00:32:59,933
+舒尔: 我们干脆想象一只纸狗怎么样？
+Shure: Should we just imagine a paper dog?
+
+56
+00:33:02,633 --> 00:33:04,533
+露西亚: 因为我怕用这个白板笔太多。
+Lucia: Because I'm afraid of using this whiteboard pen too much.
+
+57
+00:33:04,533 --> 00:33:05,533
+露西亚: 它会没墨的。
+Lucia: It'll run out of ink.
+
+58
+00:33:05,533 --> 00:33:07,533
+杰克: 嗯，买，买，买。
+Jake: Hmm, buy, buy, buy.
+
+59
+00:33:07,833 --> 00:33:10,100
+杰克: 所以它还没到，还是怎么回事？
+Jake: So it hasn't arrived yet, or what's going on?
+
+60
+00:33:11,733 --> 00:33:12,700
+杰克: 我们之前买的那个。
+Jake: The one we bought before.
+
+61
+00:33:11,733 --> 00:33:13,600
+露西亚: 什么还没到？
+Lucia: What hasn't arrived?
+
+62
+00:33:13,000 --> 00:33:13,166
+露西亚: 笔吗？
+Lucia: The pens?
+
+63
+00:33:13,500 --> 00:33:13,766
+杰克: 笔。
+Jake: The pens.
+
+64
+00:33:14,033 --> 00:33:14,766
+卡特里娜: 彩色笔刚到了。
+Katrina: The colored pens just arrived.
+
+65
+00:33:14,100 --> 00:33:15,033
+杰克: 彩色笔。
+Jake: The colored pens.
+
+66
+00:33:14,500 --> 00:33:16,366
+卡特里娜: 刚到菜鸟驿站。
+Katrina: Just arrived at the Cainiao station.
+
+67
+00:33:14,766 --> 00:33:15,866
+卡特里娜: 刚到菜鸟驿站。
+Katrina: Just arrived at the Cainiao station.
+
+68
+00:33:15,866 --> 00:33:17,533
+杰克: 哦，那我们还能去取吗？
+Jake: Oh, so we can still pick them up?
+
+69
+00:33:16,966 --> 00:33:17,766
+露西亚: 啊。
+Lucia: Ah.
+
+70
+00:33:17,533 --> 00:33:18,166
+杰克: 我们今天能拿到吗？
+Jake: We can get them today?
+
+71
+00:33:18,166 --> 00:33:18,833
+杰克: 我们今天能拿到。
+Jake: We can get them today.
+
+72
+00:33:18,833 --> 00:33:20,600
+杰克: 催他们快点。
+Jake: Push them to hurry up.
+
+73
+00:33:25,833 --> 00:33:27,700
+露西亚: Yuxuan有那种普通的书写笔。
+Lucia: Yuxuan has that kind of normal writing pen.
+
+74
+00:33:27,700 --> 00:33:29,966
+露西亚: 但我觉得可能有点...
+Lucia: But I feel like it might be a bit...
+
+75
+00:33:29,966 --> 00:33:34,066
+露西亚: 在纸上做标记有点细，所以...
+Lucia: A bit fine for making marks on the paper, so...
+
+76
+00:33:31,166 --> 00:33:31,600
+杰克: 好的。
+Jake: Okay.
+
+77
+00:33:35,733 --> 00:33:37,233
+杰克: 那我们去取包裹吧。
+Jake: Then let's go get the package.
+
+78
+00:33:38,333 --> 00:33:39,866
+塔莎: 尽管它能容纳7个人，
+Tasha: Even though it can fit 7 people,
+
+79
+00:33:39,866 --> 00:33:43,933
+塔莎: 卡组中的概率仍然是那个...
+Tasha: The probability in the card set is still that...
+
+80
+00:33:43,966 --> 00:33:45,433
+塔莎: 那种概率，是的。
+Tasha: That level of probability, yeah.
+
+81
+00:33:58,333 --> 00:34:01,500
+杰克: 我们去收拾二楼，这样你可以在那里跳舞。
+Jake: Let's go clean up the second floor so you can dance there.
+
+82
+00:34:02,033 --> 00:34:03,100
+舒尔: 二楼有什么？
+Shure: What's on the second floor?
+
+83
+00:34:03,100 --> 00:34:06,033
+杰克: 二楼有饺子。
+Jake: There are dumplings on the second floor.
+
+84
+00:34:07,866 --> 00:34:09,233
+舒尔: 午饭都还没准备好。
+Shure: The lunch isn't even ready yet.
+
+85
+00:34:09,233 --> 00:34:10,033
+杰克: 嗯。
+Jake: Hmm.
+
+86
+00:34:10,833 --> 00:34:11,766
+杰克: 我们找点事做吧。
+Jake: Let's find something to do.
+
+87
+00:34:46,033 --> 00:34:46,766
+舒尔: 我们从哪里开始？
+Shure: Where do we start?
+
+88
+00:34:50,733 --> 00:34:52,100
+舒尔: 为什么这些包子都吃了一半？
+Shure: Why are all these buns half-eaten?
+
+89
+00:34:55,366 --> 00:34:56,200
+杰克: 我撕开的。
+Jake: I tore them apart.
+
+90
+00:34:57,666 --> 00:34:58,133
+杰克: 嗯。
+Jake: Hmm.
+
+91
+00:35:17,700 --> 00:35:18,766
+杰克: 先放这里吧。
+Jake: Let's leave it here for now.
+
+92
+00:35:19,333 --> 00:35:20,400
+杰克: 想吃的时候再吃。
+Jake: Eat it later if we feel like it.
+
+93
+00:35:24,366 --> 00:35:25,433
+杰克: 嗯，哦天哪，该死。
+Jake: Hmm, oh my, darn.
+
+94
+00:35:26,066 --> 00:35:26,800
+杰克: 有水。
+Jake: There's water.
+
+95
+00:35:27,733 --> 00:35:28,733
+杰克: 没看见，有点瞎。
+Jake: Didn't see it, a bit blind.
+
+96
+00:35:30,366 --> 00:35:32,366
+舒尔: 是的，这意味着这些眼镜...
+Shure: Yeah, it means these glasses...
+
+97
+00:35:34,066 --> 00:35:35,800
+杰克: ...造成了一些问题。
+Jake: ...have caused some issues.
+
+98
+00:35:36,666 --> 00:35:37,833
+舒尔: 透光性不好。
+Shure: The light transmission isn't good.
+
+99
+00:35:37,833 --> 00:35:38,300
+杰克: 嗯。
+Jake: Hmm.
+
+100
+00:35:43,200 --> 00:35:44,533
+杰克: 看来我们需要开灯。
+Jake: Looks like we need to turn on the lights.
+
+101
+00:35:45,866 --> 00:35:47,500
+舒尔: 或者可能是佩戴者的问题。
+Shure: Or maybe it's the wearer's fault.
+
+102
+00:35:48,066 --> 00:35:48,700
+杰克: 嗯。
+Jake: Hmm.
+
+103
+00:35:48,700 --> 00:35:49,766
+杰克: 但暂时，我们先不考虑...
+Jake: But for now, let's not consider...
+
+104
+00:35:49,766 --> 00:35:51,833
+杰克: ...那种可能性。
+Jake: ...that possibility.
+
+105
+00:35:52,766 --> 00:35:55,133
+舒尔: 假设佩戴者是正常人，对吧？
+Shure: Assume the wearer is a normal human, right?
+
+106
+00:35:55,366 --> 00:35:56,233
+杰克: 是的，是的。
+Jake: Yeah, yeah.
+
+107
+00:36:30,966 --> 00:36:32,700
+杰克: 我下楼去催人。
+Jake: I'm going downstairs to hurry people up.
+
+108
+00:36:32,766 --> 00:36:34,533
+杰克: 让那些没干活的人开始。
+Jake: Get those who aren't working to start.
+
+109
+00:36:47,433 --> 00:36:50,066
+杰克: 不亮，又融化了。
+Jake: It's not bright and it's melted again.
+
+110
+00:36:51,166 --> 00:36:56,300
+露西亚: 抱歉，我成功把它重塑成了一个很短的视频。
+Lucia: Sorry, I successfully reshaped it into a very short video.
+
+111
+00:36:56,300 --> 00:36:58,700
+杰克: 好吧，再试着打开它。
+Jake: Alright, try opening it again.
+
+112
+00:36:58,900 --> 00:37:00,433
+杰克: 又一个，又一个。
+Jake: Another one, another one.
+
+113
+00:37:01,633 --> 00:37:02,733
+杰克: 有包裹要打开吗？
+Jake: Any packages to open?
+
+114
+00:37:03,366 --> 00:37:05,066
+杰克: 没有？那我们下午做什么？
+Jake: No? Then what are we doing this afternoon?
+
+115
+00:37:05,566 --> 00:37:06,766
+露西亚: 什么都行。
+Lucia: Anything is fine.
+
+116
+00:37:07,033 --> 00:37:07,833
+杰克: 什么都行。
+Jake: Anything is fine.
+
+117
+00:37:08,733 --> 00:37:09,766
+杰克: 有包裹要打开吗？
+Jake: Any packages to open?
+
+118
+00:37:10,866 --> 00:37:11,900
+杰克: 那我们下午做什么？
+Jake: Then what are we doing this afternoon?
+
+119
+00:37:12,466 --> 00:37:13,300
+杰克: 玩金铲铲？
+Jake: Play Golden Shovel?
+
+120
+00:37:13,333 --> 00:37:14,133
+杰克: 好的。
+Jake: Okay.
+
+121
+00:37:15,100 --> 00:37:16,566
+杰克: 你可能有很多花要压。
+Jake: You probably have a lot of flowers to press.
+
+122
+00:37:16,766 --> 00:37:18,466
+杰克: 而且你还需要有人帮你压。
+Jake: And you still need someone to help you press them.
+
+123
+00:37:18,966 --> 00:37:19,766
+杰克: 是的，对。
+Jake: Yeah, right.
+
+124
+00:37:20,133 --> 00:37:21,333
+露西亚: 我在学怎么压花。
+Lucia: I'm learning how to press flowers.
+
+125
+00:37:21,133 --> 00:37:21,933
+杰克: 好的。
+Jake: Okay.
+
+126
+00:37:22,333 --> 00:37:25,700
+杰克: 也许我们应该收拾一下二楼。
+Jake: Maybe we should tidy up the second floor.
+
+127
+00:37:25,933 --> 00:37:26,700
+尼克斯: 我们走吧。
+Nicous: Let's go.
+
+128
+00:37:28,433 --> 00:37:28,833
+杰克: 我们走吧。
+Jake: Let's go.
+
+129
+00:37:28,933 --> 00:37:29,733
+爱丽丝: 小狗在哪里？
+Alice: Where's the puppy?
+
+130
+00:37:29,800 --> 00:37:30,700
+杰克: 狗是...
+Jake: The dog is...
+
+131
+00:37:31,566 --> 00:37:32,900
+杰克: 你说的是活的还是死的？
+Jake: You mean alive or dead?
+
+132
+00:37:33,066 --> 00:37:35,100
+塔莎: 哈哈，哦我的天。
+Tasha: Haha, oh my gosh.
+
+133
+00:37:35,133 --> 00:37:38,433
+杰克: 活的，哈哈，活狗。
+Jake: Alive, haha, alive dog.
+
+134
+00:37:38,433 --> 00:37:39,233
+卡特里娜: 咖啡馆的那只？
+Katrina: The one at the cafe?
+
+135
+00:37:39,233 --> 00:37:40,033
+杰克: 是的，是的。
+Jake: Yeah, yeah.
+
+136
+00:37:41,100 --> 00:37:42,433
+杰克: 我们可以去看看活狗。
+Jake: We can check out the live dog.
+
+137
+00:37:42,933 --> 00:37:44,966
+杰克: 我还没去过咖啡馆。
+Jake: I haven't been to the cafe.
+
+138
+00:37:45,066 --> 00:37:47,133
+杰克: 他们说只有200米远。
+Jake: They say it's only 200 meters away.
+
+139
+00:37:47,733 --> 00:37:50,433
+露西亚: 我们可以先想象我们自己版本的狗。
+Lucia: We can first imagine our own version of a dog.
+
+140
+00:37:50,433 --> 00:37:51,066
+杰克: 是的，对。
+Jake: Yeah, right.
+
+141
+00:37:51,066 --> 00:37:53,633
+杰克: 然后看看画的狗像不像真的。
+Jake: Then see if the drawn dog looks like the real one.
+
+142
+00:37:52,500 --> 00:37:54,066
+杰克: 如果像的话。
+Jake: If it looks alike.
+
+143
+00:37:53,933 --> 00:37:55,500
+杰克: 如果像的话。
+Jake: If it looks alike.
+
+144
+00:37:55,800 --> 00:37:57,233
+露西亚: 白马，黑马。
+Lucia: White horse, black horse.
+
+145
+00:37:56,033 --> 00:37:56,733
+杰克: 对。
+Jake: Right.
+
+146
+00:37:57,666 --> 00:37:58,866
+杰克: 我们去收拾二楼吧。
+Jake: Let's go tidy up the second floor.
+
+147
+00:37:58,866 --> 00:38:00,933
+杰克: 大家别担心。
+Jake: No worries, everyone.
+
+148
+00:38:24,700 --> 00:38:26,800
+杰克: 这个地方能变成KTV吗？
+Jake: Can this place be turned into a KTV?
+
+149
+00:38:28,633 --> 00:38:29,300
+舒尔: 可以。
+Shure: It can.
+
+150
+00:38:31,033 --> 00:38:31,766
+舒尔: 可以改造。
+Shure: It can be transformed.
+
+151
+00:38:38,200 --> 00:38:39,433
+杰克: 怎么，我们需要...
+Jake: How, we need...
+
+152
+00:38:40,366 --> 00:38:41,666
+舒尔: 我们需要一个麦克风。
+Shure: We need a microphone.
+
+153
+00:38:41,666 --> 00:38:42,033
+杰克: 我们没有那个。
+Jake: We don't have that.
+
+154
+00:38:43,700 --> 00:38:45,066
+杰克: 我们肯定需要一个麦克风。
+Jake: We definitely need a mic.
+
+155
+00:38:45,066 --> 00:38:45,966
+杰克: 插哪里？
+Jake: Where to plug it in?
+
+156
+00:38:45,966 --> 00:38:46,766
+杰克: 插电脑。
+Jake: Into the computer.
+
+157
+00:38:47,300 --> 00:38:49,033
+舒尔: 是的，可以插到电脑上。
+Shure: Yes, it can be plugged into the computer.
+
+158
+00:39:09,966 --> 00:39:12,033
+杰克: 如果我们把这个剪辑成综艺节目，我们可能会被骂死。
+Jake: If we edit this into a variety show, we'll probably get scolded to death.
+
+159
+00:39:13,966 --> 00:39:14,533
+舒尔: 为什么？
+Shure: Why?
+
+160
+00:39:14,533 --> 00:39:15,500
+杰克: 就因为浪费。
+Jake: Just because it's a waste.
+
+161
+00:39:15,500 --> 00:39:17,533
+杰克: 现在一般综艺上面是不是都要
+
+162
+00:39:17,533 --> 00:39:20,133
+杰克: 就是都会特地标一个什么没浪费的
+
+163
+00:39:20,133 --> 00:39:21,233
+舒尔:  对没有浪费
+
+164
+00:39:21,233 --> 00:39:23,100
+舒尔:  给剧组人员全吃了
+
+165
+00:39:23,100 --> 00:39:23,900
+杰克:对对
+
+166
+00:39:25,900 --> 00:39:29,333
+舒尔:  那我们这这么给剧组人员吃是吗
+
+167
+00:39:28,766 --> 00:39:30,633
+尼克斯: 我们做的这些东西都是给 哎哟
+
+168
+00:39:31,666 --> 00:39:32,833
+舒尔:  喂给流浪猫了
+
+169
+00:39:31,900 --> 00:39:33,766
+尼克斯: 喂给流浪的小狗吃
+
+170
+00:39:33,833 --> 00:39:34,633
+杰克: 哦真的
+
+171
+00:39:34,700 --> 00:39:35,700
+杰克: 走我们喂狗去
+
+172
+00:39:37,033 --> 00:39:37,900
+舒尔:  哈哈哈哈
+
+173
+00:39:37,900 --> 00:39:39,066
+舒尔:  他比咱吃的好
+
+174
+00:39:39,066 --> 00:39:40,966
+舒尔:  说实话哈哈
+
+175
+00:39:41,100 --> 00:39:44,433
+舒尔:  那只狗比我命应该金贵
+
+176
+00:39:47,066 --> 00:39:48,533
+杰克: 但是你可以玩了
+
+177
+00:39:56,666 --> 00:39:57,666
+杰克: 我先把这丢了吧
+
+178
+00:39:57,666 --> 00:39:59,933
+杰克: 然后你们再把这收拾
+
+179
+00:41:01,600 --> 00:41:02,266
+杰克:走
+
+180
+00:41:23,366 --> 00:41:25,100
+杰克:擦擦擦擦擦
+
+181
+00:41:28,733 --> 00:41:31,133
+杰克: 你必须实时监控他吗？
+Jake: Do you have to monitor him in real-time?
+
+182
+00:41:31,133 --> 00:41:33,366
+尼克斯: 不，你不必清理太多。
+Nicous: No, you don't have to clean up too much.
+
+183
+00:41:34,066 --> 00:41:34,866
+杰克: 嗯。
+Jake: Hmm.
+
+184
+00:41:42,466 --> 00:41:44,266
+杰克: 你拆完包裹了吗？
+Jake: Did you finish unpacking your package?
+
+185
+00:41:44,266 --> 00:41:45,166
+爱丽丝: 还没到。
+Alice: It hasn't arrived yet.
+
+186
+00:41:45,333 --> 00:41:46,133
+杰克: 还没。
+Jake: Not yet.
+
+187
+00:41:56,666 --> 00:41:59,933
+杰克: 我们一会儿把这张桌子清空。
+Jake: Let's clear off this table in a bit.
+
+188
+00:42:00,133 --> 00:42:02,300
+杰克: 把它移到角落或墙边。
+Jake: Move it to the corner or the wall.
+
+189
+00:42:13,200 --> 00:42:14,766
+舒尔: 我们要清理这张桌子吗？
+Shure: Are we going to clean this table?
+
+190
+00:42:15,833 --> 00:42:16,633
+杰克: 是的。
+Jake: Yes.
+
+191
+00:42:18,166 --> 00:42:19,133
+杰克: 还有别的垃圾要扔吗？
+Jake: Any other trash to throw away?
+
+192
+00:42:19,133 --> 00:42:20,266
+杰克: 那就扔了吧。
+Jake: Then just toss it.
+
+193
+00:42:26,333 --> 00:42:27,133
+杰克: 好的。
+Jake: Alright.
+
+194
+00:42:32,333 --> 00:42:35,500
+杰克: 是的，我们好好打扫一下。
+Jake: Yeah, let's do some proper cleaning.
+
+195
+00:43:19,900 --> 00:43:20,700
+杰克: 谢斌很着急。
+Jake: Xie Bin is in a hurry.
+
+196
+00:45:15,666 --> 00:45:18,033
+杰克: 我听说你搞乱了Xinru。
+Jake: I heard you messed with Xinru.
+
+197
+00:45:18,433 --> 00:45:19,633
+塔莎: 是的。
+Tasha: Yes.
+
+198
+00:45:19,633 --> 00:45:20,866
+杰克: 是的。
+Jake: Yes.
+
+199
+00:45:21,466 --> 00:45:22,566
+杰克: 你现在在什么位置？
+Jake: What place are you in now?
+
+200
+00:45:23,333 --> 00:45:24,833
+塔莎: 我现在用这个名字。
+Tasha: I go by this name now.
+
+201
+00:45:24,833 --> 00:45:27,166
+塔莎: 但实际上，我一直在连败。
+Tasha: But actually, I've just been on a losing streak.
+
+202
+00:45:27,166 --> 00:45:27,833
+杰克: 哦。
+Jake: Oh.
+
+203
+00:45:28,233 --> 00:45:30,133
+杰克: 所以Xinru暂时还是第一名，对吧？
+Jake: So Xinru is still temporarily in first place, right?
+
+204
+00:45:30,133 --> 00:45:30,666
+塔莎: 是的。
+Tasha: Yes.
+
+205
+00:45:31,066 --> 00:45:32,333
+杰克: 但你还是把他搞糊涂了。
+Jake: But you still managed to confuse him.
+
+206
+00:45:31,066 --> 00:45:33,400
+杰克: 他也想连败。
+Jake: He also wants to be on a losing streak.
+
+207
+00:45:32,333 --> 00:45:33,300
+塔莎: 他也想连败。
+Tasha: He also wants to be on a losing streak.
+
+208
+00:45:33,300 --> 00:45:34,700
+露西亚: 他有点沮丧。
+Lucia: He's slightly frustrated.
+
+209
+00:45:34,700 --> 00:45:35,533
+塔莎: 他想连败。
+Tasha: He wants to be on a losing streak.
+
+210
+00:45:35,533 --> 00:45:36,633
+塔莎: 我也想连败。
+Tasha: I also want to be on a losing streak.
+
+211
+00:45:36,633 --> 00:45:38,100
+塔莎: 但他不能输得比我多。
+Tasha: But he can't lose more than me.
+
+212
+00:45:38,266 --> 00:45:39,066
+杰克: 哦。
+Jake: Oh.
+
+213
+00:45:39,766 --> 00:45:41,533
+塔莎: 这让我笑死了。
+Tasha: This is making me laugh so hard.
+
+214
+00:45:39,866 --> 00:45:41,633
+杰克: 太搞笑了。
+Jake: It's hilarious.
+
+215
+00:45:42,700 --> 00:45:43,633
+杰克: 这很难解释。
+Jake: This is hard to explain.
+
+216
+00:45:43,633 --> 00:45:45,900
+杰克: 我都不知道该怎么解释。
+Jake: I don't even know how to explain it.
+
+217
+00:45:49,666 --> 00:45:51,266
+卡特里娜: 我们看看小红书上的教程吧。
+Katrina: Let's check the tutorial on Little Red Book.
+
+218
+00:45:51,266 --> 00:45:52,266
+卡特里娜: 我也是随便弄的。
+Katrina: I'm just winging it too.
+
+219
+00:45:52,333 --> 00:45:55,266
+露西亚: 我做了，但感觉这些厚花...
+Lucia: I did, but it feels like these thick flowers...
+
+220
+00:45:55,266 --> 00:45:56,966
+露西亚: 它们容易缩水。
+Lucia: They tend to shrink easily.
+
+221
+00:45:57,100 --> 00:45:58,933
+露西亚: 我想知道你有没有办法防止。
+Lucia: I'm wondering if you have any way to prevent that.
+
+222
+00:45:57,400 --> 00:45:58,666
+卡特里娜: 那你可以像这样压这些小花。
+Katrina: Then you can press these small flowers like this.
+
+223
+00:45:59,866 --> 00:46:01,566
+露西亚: 是的，那些小的更容易压。
+Lucia: Yeah, those small ones are easier to press.
+
+224
+00:46:02,033 --> 00:46:04,366
+露西亚: 但这些小的现在开得正好。
+Lucia: But these small ones are blooming so well right now.
+
+225
+00:46:04,366 --> 00:46:06,266
+露西亚: 剪掉它们我觉得不好。
+Lucia: I feel bad about cutting them.
+
+226
+00:46:06,766 --> 00:46:07,966
+露西亚: 太残忍了。
+Lucia: It's so cruel.
+
+227
+00:46:07,966 --> 00:46:08,933
+杰克: 就剪一半。
+Jake: Just cut half.
+
+228
+00:46:11,233 --> 00:46:12,266
+杰克: 这样可以吗？
+Jake: Is that okay?
+
+229
+00:46:11,266 --> 00:46:12,100
+露西亚: 我们可以那样做吗？
+Lucia: Can we do that?
+
+230
+00:46:12,533 --> 00:46:14,533
+露西亚: 是的，我们可以，但是...
+Lucia: Yeah, we can, but...
+
+231
+00:46:14,666 --> 00:46:17,333
+露西亚: 剩下的一半会孤单。
+Lucia: The remaining half will be lonely.
+
+232
+00:46:17,233 --> 00:46:17,966
+杰克: 哦。
+Jake: Oh.
+
+233
+00:46:17,333 --> 00:46:18,833
+卡特里娜: 但我不能卖这个。
+Katrina: But I can't sell this.
+
+234
+00:46:21,766 --> 00:46:23,366
+露西亚: 没关系，我们不用真钱。
+Lucia: It's okay, we're not using real money.
+
+235
+00:46:23,366 --> 00:46:23,666
+露西亚: 而且...
+Lucia: Besides...
+
+236
+00:46:23,666 --> 00:46:26,100
+露西亚: 你的下一个肯定会成功。
+Lucia: Your next one will definitely be a success.
+
+237
+00:46:26,366 --> 00:46:27,933
+露西亚: 第一个只是试验。
+Lucia: The first one was just a trial.
+
+238
+00:46:27,933 --> 00:46:28,733
+卡特里娜: 是的。
+Katrina: Yeah.
+
+239
+00:46:29,100 --> 00:46:30,233
+杰克: 嘿，把它对齐。
+Jake: Hey, align it properly.
+
+240
+00:46:32,166 --> 00:46:33,233
+卡特里娜: 买那个钟。
+Katrina: Buy that clock.
+
+241
+00:46:33,333 --> 00:46:33,866
+杰克: 是的。
+Jake: Yes.
+
+242
+00:46:34,500 --> 00:46:38,366
+杰克: 那个钟，我们每层放一个。
+Jake: That clock, we put one on each level.
+
+243
+00:46:39,966 --> 00:46:40,766
+杰克: 呃...
+Jake: Uh...
+
+244
+00:46:42,300 --> 00:46:46,266
+杰克: 所以，每一帧都有时间戳，对吧？
+Jake: So, every frame has a timestamp, right?
+
+245
+00:46:46,366 --> 00:46:48,133
+杰克: 这是为了测试。
+Jake: It's for testing purposes.
+
+246
+00:46:48,233 --> 00:46:50,133
+杰克: 实际上，每一帧都有时间戳。
+Jake: Actually, every frame has a timestamp.
+
+247
+00:46:50,866 --> 00:46:51,733
+杰克: 只是为了检查。
+Jake: Just to check.
+
+248
+00:46:51,733 --> 00:46:54,533
+露西亚: 理论上，拍电影应该是这样的。
+Lucia: In theory, that's how filming a movie should be.
+
+249
+00:46:55,166 --> 00:46:58,933
+露西亚: 但考虑到这不是电影...
+Lucia: But considering this isn't a movie...
+
+250
+00:47:01,833 --> 00:47:03,066
+杰克: 嘿，你看到了，对吧？
+Jake: Hey, you've seen it, right?
+
+251
+00:47:04,533 --> 00:47:05,600
+塔莎: 是的，我看到了。
+Tasha: Yes, I've seen it.
+
+252
+00:47:05,133 --> 00:47:06,300
+杰克: 好的。
+Jake: Okay.
+
+253
+00:47:06,566 --> 00:47:08,766
+露西亚: 我觉得是他。
+Lucia: I think it's him.
+
+254
+00:47:19,300 --> 00:47:20,266
+塔莎: 我打不过你。
+Tasha: I can't beat you.
+
+255
+00:47:21,633 --> 00:47:23,300
+尼克斯: 别再输了。
+Nicous: Don't lose again.
+
+256
+00:47:23,333 --> 00:47:27,366
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+257
+00:47:25,166 --> 00:47:26,766
+尼克斯: 你刚赢了。
+Nicous: You just won.
+
+258
+00:47:27,700 --> 00:47:28,900
+塔莎: 你赢了不好吗？
+Tasha: Isn't it good that you won?
+
+259
+00:47:28,900 --> 00:47:30,100
+塔莎: 看，我打不过你。
+Tasha: See, I can't beat you.
+
+260
+00:47:33,166 --> 00:47:33,366
+塔莎: 怎么样？
+Tasha: How about it?
+
+261
+00:47:33,366 --> 00:47:35,333
+杰克: 你们只能冲突一次吗？
+Jake: Can you guys only clash once?
+
+262
+00:47:35,166 --> 00:47:36,200
+尼克斯: 你是说我破防了？
+Nicous: Are you saying I broke my defense?
+
+263
+00:47:36,300 --> 00:47:39,100
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+264
+00:47:39,100 --> 00:47:39,900
+杰克: 诅咒游戏。
+Jake: Cursing the game.
+
+265
+00:47:40,566 --> 00:47:42,100
+露西亚: 我说他勉强破防了，哈哈。
+Lucia: I said he barely broke his defense, haha.
+
+266
+00:47:42,566 --> 00:47:45,933
+尼克斯: 她骗我，说“我们玩LoL吧。”
+Nicous: She tricked me, saying "Let's play LoL."
+
+267
+00:47:45,966 --> 00:47:47,066
+杰克: 哈。
+Jake: Ha.
+
+268
+00:47:46,066 --> 00:47:48,200
+尼克斯: 没关系，我们可以玩。
+Nicous: It's okay, we can play.
+
+269
+00:47:49,266 --> 00:47:50,066
+塔莎: 我们可以玩。
+Tasha: We can play.
+
+270
+00:47:49,633 --> 00:47:50,300
+尼克斯: 就这样玩。
+Nicous: Playing like this.
+
+271
+00:47:51,300 --> 00:47:53,533
+塔莎: 哈哈，看，你还是第一名。
+Tasha: Haha, look, you're still in first place.
+
+272
+00:47:53,533 --> 00:47:55,433
+塔莎: 这不是好兆头吗？
+Tasha: Isn't that a good sign?
+
+273
+00:47:55,200 --> 00:47:56,800
+尼克斯: 哇，你刚毁了我的背景，像条狗一样。
+Nicous: Wow, you just ruined my background, like a dog.
+
+274
+00:47:57,933 --> 00:48:00,433
+塔莎: 嘿，我的防御也被破了。
+Tasha: Hey, I just got my defense broken too.
+
+275
+00:48:00,433 --> 00:48:02,633
+塔莎: 好吧，我还在60多级。
+Tasha: Well, I'm still only in the 60s.
+
+276
+00:48:01,966 --> 00:48:02,733
+尼克斯: 没关系，是谁？
+Nicous: It's okay, who was it?
+
+277
+00:48:03,400 --> 00:48:04,066
+尼克斯: 我会收拾他们。
+Nicous: I'll get them.
+
+278
+00:48:05,133 --> 00:48:07,933
+塔莎: 是Hibernation，但他已经走了。
+Tasha: It was Hibernation, but he's already gone.
+
+279
+00:48:07,600 --> 00:48:08,366
+尼克斯: 该死。
+Nicous: Damn.
+
+280
+00:48:15,033 --> 00:48:16,566
+露西亚: 只是轻轻一碰。
+Lucia: Just a light touch.
+
+281
+00:48:16,866 --> 00:48:18,100
+卡特里娜:  我这一层是厚的
+
+282
+00:48:18,100 --> 00:48:19,566
+卡特里娜: 我之前压的花瓣。
+Katrina: The petals I pressed before.
+
+283
+00:48:18,466 --> 00:48:19,400
+杰克: 我也想喝一杯。
+Jake: I want a drink too.
+
+284
+00:48:36,433 --> 00:48:38,033
+塔莎: 你几级了？你六级。
+Tasha: What level are you? You're level six.
+
+285
+00:48:38,366 --> 00:48:40,733
+塔莎: 你知道我快10级了。
+Tasha: You know I'm about to reach level 10 soon.
+
+286
+00:48:52,100 --> 00:48:54,033
+杰克: 你把楼上的桌子搬完了吗？
+Jake: Have you finished moving the tables upstairs?
+
+287
+00:48:55,266 --> 00:48:56,100
+舒尔: 擦完了。
+Shure: Finished wiping them.
+
+288
+00:49:46,633 --> 00:49:47,233
+杰克: 呃...
+Jake: Uh...
+
+289
+00:50:01,766 --> 00:50:02,166
+杰克: 什么？
+Jake: What?
+
+290
+00:50:02,966 --> 00:50:04,366
+舒尔: 我把我的放在微波炉前面了。
+Shure: I put mine in front of the microwave.
+
+291
+00:50:06,800 --> 00:50:07,233
+露西亚: 啊。
+Lucia: Ah.
+
+292
+00:50:09,166 --> 00:50:09,566
+舒尔: 来吧。
+Shure: Come on.
+
+293
+00:50:09,633 --> 00:50:10,133
+杰克: 来吧。
+Jake: Come on.
+
+294
+00:50:19,133 --> 00:50:19,733
+舒尔: 还有一个。
+Shure: There's another one.
+
+295
+00:50:23,900 --> 00:50:24,400
+杰克: 花 杰克: 花
+Jake: flower
+Jake: flower
+
+296
+00:50:25,300 --> 00:50:26,433
+杰克: 这样转就对了。
+Jake: Turning it like this is just right.
+
+297
+00:50:28,100 --> 00:50:28,966
+杰克: 花在这边。
+Jake: flower over here.
+
+298
+00:50:39,900 --> 00:50:40,300
+杰克: 太棒了。
+Jake: Awesome.
+
+299
+00:50:45,500 --> 00:50:47,433
+舒尔: 那我们现在第二层怎么办？
+Shure: So what are we doing with the second layer now?
+
+300
+00:50:48,766 --> 00:50:49,833
+杰克: 之后你们得跳舞。
+Jake: Later you guys need to dance.
+
+301
+00:50:50,366 --> 00:50:50,733
+俢硕: 啊
+
+302
+00:50:52,266 --> 00:50:52,600
+杰克:我操
+
+303
+00:50:52,600 --> 00:50:54,233
+俢硕: 我差点忘了
+
+304
+00:50:54,233 --> 00:50:54,733
+舒尔:  我们还有
+
+305
+00:50:54,733 --> 00:50:56,533
+杰克: 你们还有重要任务
+
+306
+00:52:28,266 --> 00:52:30,033
+俢硕：人家不爆杀你嘛
+
+307
+00:52:30,033 --> 00:52:31,766
+舒尔:  随便杀他装备都没上呢
+
+308
+00:52:34,266 --> 00:52:38,533
+舒尔:  略施小计就把你玩的团团转谢彬竹
+
+309
+00:53:06,733 --> 00:53:09,266
+俢硕: 我我是建立这个经济体系的人嘛
+
+310
+00:53:09,266 --> 00:53:10,233
+舒尔:  你忘记了吗
+
+311
+00:53:13,233 --> 00:53:17,100
+舒尔:  我的唯一任务就是把货币做出来
+
+312
+00:53:17,466 --> 00:53:18,566
+卡特里娜:  货币已经买了
+
+313
+00:53:18,966 --> 00:53:20,766
+舒尔:  OK解决解决
+
+314
+00:53:23,633 --> 00:53:25,166
+舒尔:  伟大无需多言
+
+315
+00:53:26,533 --> 00:53:27,700
+杰克: 落地了是吧
+
+316
+00:53:28,833 --> 00:53:29,666
+舒尔:  对
+
+317
+00:53:29,666 --> 00:53:30,366
+杰克:伟大的构想
+
+318
+00:53:31,166 --> 00:53:31,966
+舒尔:  是的
+
+319
+00:53:32,366 --> 00:53:35,766
+舒尔:  你知道我国第一个货币叫做什么吗
+
+320
+00:53:38,166 --> 00:53:38,966
+舒尔: 让我
+Shure: Let me
+
+321
+00:53:40,366 --> 00:53:41,166
+杰克: 舒尔币
+Jake: Shure coin
+
+322
+00:53:42,033 --> 00:53:44,500
+舒尔: 那么，它出现在哪个朝代？
+Shure: So, in which dynasty did it appear?
+
+323
+00:53:42,366 --> 00:53:45,000
+杰克: 到，到，更多狗币
+Jake: To, to, more dog coin
+
+324
+00:53:48,200 --> 00:53:48,733
+杰克: 狗 杰克: 狗
+Jake:dog
+Jake: dog
+
+325
+00:53:49,400 --> 00:53:50,300
+杰克: 狗狗币
+Jake: Dogecoin
+
+326
+00:53:50,866 --> 00:53:52,233
+舒尔: 宋朝的骄傲
+Shure: The pride of the Song dynasty
+
+327
+00:53:52,233 --> 00:53:54,766
+舒尔: 它是我国第一种纸币
+Shure: It was the first paper currency in our country
+
+328
+00:53:55,366 --> 00:53:56,700
+杰克: 真的吗，是真的吗？
+Jake: Really, is that true?
+
+329
+00:54:01,766 --> 00:54:02,933
+舒尔: 需要帮忙吗？
+Shure: Need any help?
+
+330
+00:54:03,700 --> 00:54:05,633
+卡特里娜: 如果你想的话，还有一块板可以弄
+Katrina: There's another board you can work on if you want
+
+331
+00:54:27,833 --> 00:54:30,333
+塔莎: 我觉得这个版本里Lissandra最强
+Tasha: I think Lissandra is the strongest in this version
+
+332
+00:54:30,900 --> 00:54:32,066
+塔莎: 在5费卡中
+Tasha: Among the 5-cost cards
+
+333
+00:54:33,766 --> 00:54:34,766
+塔莎: 嗯
+Tasha: Hmm
+
+334
+00:54:34,933 --> 00:54:37,733
+塔莎: 在Irelia和Wukong之间，Wukong强一点
+Tasha: Between Irelia and Wukong, Wukong is a bit stronger
+
+335
+00:54:48,300 --> 00:54:49,200
+尼克斯: 该死
+Nicous: Damn
+
+336
+00:54:49,700 --> 00:54:51,466
+塔莎: 说真的，你想要什么？
+Tasha: Seriously, what do you want?
+
+337
+00:54:55,300 --> 00:54:56,300
+塔莎: 你可以拿第二名
+Tasha: You can take the second place
+
+338
+00:54:56,300 --> 00:54:58,966
+塔莎: 我可以给你第二名和卡牌
+Tasha: I can give you the second place and the cards
+
+339
+00:55:08,033 --> 00:55:09,533
+杰克: 谢斌主还能拿第二？
+Jake: Xie Binzhu can still take the second place?
+
+340
+00:55:09,533 --> 00:55:10,333
+杰克: 那很厉害
+Jake: That's impressive
+
+341
+00:55:15,133 --> 00:55:15,766
+舒尔: 说实话
+Shure: Honestly
+
+342
+00:55:15,766 --> 00:55:18,533
+舒尔: 其实，其他6个可能是机器人
+Shure: Actually, the other 6 are probably bots
+
+343
+00:55:19,233 --> 00:55:20,366
+杰克: 哈哈哈
+Jake: Hahaha
+
+344
+00:55:20,366 --> 00:55:21,833
+塔莎: 所以我们打不过他们
+Tasha: So we can't beat them
+
+345
+00:55:21,833 --> 00:55:22,766
+塔莎: 你知道吗？
+Tasha: You know?
+
+346
+00:55:23,233 --> 00:55:24,533
+杰克: 哦，机器人挺强的
+Jake: Oh, bots are quite strong
+
+347
+00:55:25,466 --> 00:55:29,166
+舒尔: 不，所以他没打败一个人类
+Shure: No, so he didn't beat a single human
+
+348
+00:55:29,166 --> 00:55:30,866
+舒尔: 他是人类中最差的
+Shure: He is the worst among humans
+
+349
+00:55:36,966 --> 00:55:39,433
+舒尔: 我们左边的这个RGB是干嘛的？
+Shure: What's this RGB on our left for?
+
+350
+00:55:40,166 --> 00:55:41,533
+杰克: 你说这盏灯？
+Jake: You mean this light?
+
+351
+00:55:43,833 --> 00:55:44,966
+杰克: 就是灯
+Jake: It's just light
+
+352
+00:55:45,766 --> 00:55:47,433
+杰克: 然后它散开
+Jake: Then it disperses
+
+353
+00:55:49,100 --> 00:55:50,133
+杰克: 是白光
+Jake: It's white light
+
+354
+00:55:50,300 --> 00:55:52,500
+杰克: 然后它朝那个方向散开
+Jake: Then it disperses in that direction
+
+355
+00:55:52,500 --> 00:55:53,266
+杰克: 它就散开了
+Jake: It just disperses
+
+356
+00:55:53,266 --> 00:55:54,700
+塔莎: 我谁都打不过
+Tasha: I can't beat anyone
+
+357
+00:55:55,700 --> 00:55:57,566
+塔莎: 不，你为什么不争第二？
+Tasha: No, why don't you aim for second place?
+
+358
+00:56:03,733 --> 00:56:04,466
+塔莎: 哈哈，怎么了？
+Tasha: Haha, what's up?
+
+359
+00:57:29,266 --> 00:57:31,566
+塔莎: 嘿，三星Udyr
+Tasha: Hey, a three-star Udyr
+
+360
+00:57:31,833 --> 00:57:35,166
+塔莎: 就这样，我等着
+Tasha: Just like that, I'll wait
+
+361
+00:57:36,033 --> 00:57:39,133
+舒尔: 不，那是镜像的。
+Shure: No, that's mirrored.
+
+362
+00:57:39,433 --> 00:57:40,300
+塔莎: 真的吗？
+Tasha: Really?
+
+363
+00:57:40,933 --> 00:57:42,233
+舒尔: 你不给他装这个吗？
+Shure: Aren't you going to install this for him?
+
+364
+00:57:42,233 --> 00:57:43,233
+塔莎: 我的天。
+Tasha: Oh my gosh.
+
+365
+00:57:43,633 --> 00:57:44,533
+塔莎: 我没装。
+Tasha: I didn't install it.
+
+366
+00:57:44,533 --> 00:57:46,166
+塔莎: 这是个魔法工具。
+Tasha: It's a magic tool.
+
+367
+00:58:01,366 --> 00:58:03,366
+舒尔: “炸弹已安放”，对吧？
+Shure: "bomb has been planted", right?
+
+368
+00:58:10,566 --> 00:58:13,366
+杰克: 天哪，这东西可以当闹钟用。
+Jake: Oh my, this thing can be used as an alarm clock.
+
+369
+00:58:23,366 --> 00:58:24,866
+卡特里娜: 你弄那只小狗。
+Katrina: You make that little dog.
+
+370
+00:58:34,800 --> 00:58:37,033
+塔莎: 我卖了一个两星的。
+Tasha: I sold a two-star one.
+
+371
+00:58:40,233 --> 00:58:42,133
+塔莎: 你在干嘛，哈哈。
+Tasha: What are you doing, haha.
+
+372
+00:59:58,133 --> 00:59:59,533
+塔莎: 他为什么不能装备？
+Tasha: Why can't he equip it?
+
+373
+00:59:59,933 --> 01:00:02,233
+尼克斯: 拜托，你给了他那个东西。
+Nicous: Come on, you gave him that thing.

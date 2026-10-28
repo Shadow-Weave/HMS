@@ -1,0 +1,7338 @@
+1
+00:02:34,166 --> 00:02:34,966
+杰克: 哦，糟了
+Jake: Oh crap
+
+2
+00:07:03,500 --> 00:07:05,000
+爱丽丝: 它们长度不一样
+Alice: They aren't the same length
+
+3
+00:07:15,900 --> 00:07:16,700
+爱丽丝: 看起来好多了
+Alice: Looks better
+
+4
+00:12:31,300 --> 00:12:33,600
+杰克: 你好
+Jake: Hello
+
+5
+00:12:36,166 --> 00:12:38,700
+杰克: 你好，你在哪儿？
+Jake: Hello, where are you?
+
+6
+00:12:40,433 --> 00:12:41,266
+杰克: 你在哪儿？
+Jake: Where are you?
+
+7
+00:12:44,100 --> 00:12:44,900
+杰克: 你好
+Jake: Hello
+
+8
+00:12:47,466 --> 00:12:48,266
+杰克: 你在哪儿？
+Jake: Where are you?
+
+9
+00:12:48,966 --> 00:12:49,800
+杰克: 你在哪儿 杰克: 你在哪儿？
+Jake: where are you
+Jake: Where are you?
+
+10
+00:12:51,400 --> 00:12:52,966
+杰克: 你听不见我说话吗？
+Jake: Can’t you hear me?
+
+11
+00:12:55,300 --> 00:12:56,166
+杰克: 你好
+Jake: Hello
+
+12
+00:12:56,633 --> 00:12:59,066
+杰克: 你好
+Jake: Hello
+
+13
+00:12:59,166 --> 00:13:00,033
+杰克: 你在哪儿 杰克: 你在哪儿
+Jake: where are you
+Jake: where are you
+
+14
+00:13:01,533 --> 00:13:02,400
+杰克: 该死
+Jake: Damn
+
+15
+00:14:07,266 --> 00:14:08,866
+Others: 天哪，兄弟
+Others: Oh my god, bro
+
+16
+00:14:10,300 --> 00:14:11,233
+杰克: 嘿，你好
+Jake: Hey, hello
+
+17
+00:14:12,166 --> 00:14:13,433
+Others: 你预约了吗？
+Others: Did you make the reservation?
+
+18
+00:14:13,433 --> 00:14:14,100
+杰克: 是的，我预约了
+Jake: Yes, I did
+
+19
+00:14:14,100 --> 00:14:15,666
+Others: 兄弟，我的预约是3点
+Others: Bro, my appointment was at 3
+
+20
+00:14:15,600 --> 00:14:16,800
+Others: 我10点半就到了
+Others: I got here at 10:30
+
+21
+00:14:16,833 --> 00:14:18,533
+Others: 我已经等了45分钟
+Others: I've been waiting for 45 minutes
+
+22
+00:14:18,533 --> 00:14:21,366
+Others: 你需要额外付费
+Others: You'll need to pay an extra fee for this
+
+23
+00:14:21,400 --> 00:14:22,600
+杰克: 好吧，好吧，我付
+Jake: Alright, alright, I'll pay
+
+24
+00:14:22,600 --> 00:14:23,200
+Others: 天哪
+Others: Oh my god
+
+25
+00:14:23,233 --> 00:14:26,266
+Others: 我在门口喊了那么久，你都没听见
+Others: I've been shouting at the door for so long, and you didn't hear me
+
+26
+00:14:26,666 --> 00:14:28,866
+杰克: 我真的不知道，我真的不知道
+Jake: I really didn't know, I really didn't know
+
+27
+00:14:28,866 --> 00:14:30,333
+Others: 有个验证码，查一下
+Others: There's a code, check it out
+
+28
+00:14:30,166 --> 00:14:31,633
+杰克: 好的，好的，我会的
+Jake: Okay, okay, I will
+
+29
+00:14:34,100 --> 00:14:35,966
+Others: 我喊了很久了
+Others: I've been shouting for a long time
+
+30
+00:14:37,100 --> 00:14:38,433
+杰克: 这个手机
+Jake: This phone
+
+31
+00:14:38,433 --> 00:14:39,500
+杰克: 电话号码错了
+Jake: The phone number is wrong
+
+32
+00:14:39,766 --> 00:14:41,166
+杰克: 这是什么？
+Jake: What is this?
+
+33
+00:14:40,600 --> 00:14:42,000
+Others: 检查一下这是不是正确的验证码
+Others: Check if this is the right code
+
+34
+00:14:41,166 --> 00:14:42,033
+杰克: 我怎么查这个？
+Jake: How do I check this?
+
+35
+00:14:43,233 --> 00:14:44,033
+杰克: 这是淘宝来的吗？
+Jake: Is this from Taobao?
+
+36
+00:14:44,100 --> 00:14:46,033
+Others: 是的，你的短信里有一条消息
+Others: Yeah, there's a message in your SMS
+
+37
+00:14:49,033 --> 00:14:50,666
+杰克: 我的短信，好的
+Jake: My SMS, alright
+
+38
+00:14:50,666 --> 00:14:51,433
+Others: 你写错了电话号码
+Others: You wrote the wrong phone number
+
+39
+00:14:51,433 --> 00:14:52,266
+杰克: 我写错了电话号码
+Jake: I wrote the wrong phone number
+
+40
+00:14:52,266 --> 00:14:54,300
+Others: 如果错了，你就收不到，嗯哼
+Others: If it's wrong, you won't get it, uh-huh
+
+41
+00:14:59,500 --> 00:15:01,533
+Others: 检查收据上的验证码
+Others: Check the receipt code
+
+42
+00:15:02,100 --> 00:15:03,300
+Others: 他联系你了吗？
+Others: Did he contact you?
+
+43
+00:15:03,300 --> 00:15:04,433
+Others: 他出来取了吗？
+Others: Did he come out to get it?
+
+44
+00:15:05,300 --> 00:15:06,100
+Others: 他给你钱了吗？
+Others: Did he give you money?
+
+45
+00:15:06,100 --> 00:15:08,366
+Others: 还没，等等，先给我工坊的验证码，然后再给他
+Others: Not yet, wait, give me the workshop code first, then give it to him
+
+46
+00:15:08,366 --> 00:15:09,366
+Others: 他稍后会给我钱
+Others: He'll give me the money later
+
+47
+00:15:09,366 --> 00:15:10,400
+杰克: 哈哈
+Jake: Haha
+
+48
+00:15:11,233 --> 00:15:12,466
+Others: 没事，先给我验证码
+Others: It's fine, just give me the code first
+
+49
+00:15:12,466 --> 00:15:14,266
+Others: 兄弟，我得赶紧走了
+Others: Bro, I need to leave quickly
+
+50
+00:15:14,266 --> 00:15:15,200
+Others: 快超时了
+Others: It'll be overtime soon
+
+51
+00:15:15,166 --> 00:15:16,000
+Others: 已经超时了
+Others: It's already overtime
+
+52
+00:15:17,166 --> 00:15:18,000
+Others: 等等，让我查一下
+Others: Wait, let me check
+
+53
+00:15:24,466 --> 00:15:26,000
+Others: 查一下取件码。
+Others: Check the collection code.
+
+54
+00:15:26,033 --> 00:15:26,933
+Others: 他没有取件码吗？
+Others: Doesn't he have a collection code?
+
+55
+00:15:26,966 --> 00:15:28,033
+Others: 他留错了电话号码。
+Others: He left the wrong phone number.
+
+56
+00:15:28,033 --> 00:15:28,966
+Others: 他留错了电话号码。
+Others: He left the wrong phone number.
+
+57
+00:15:29,000 --> 00:15:29,800
+Others: 没有验证码。
+Others: No code.
+
+58
+00:15:30,266 --> 00:15:32,966
+Others: 111511，三个1和一个5，对吧？
+Others: 111511, three 1's and a 5, right?
+
+59
+00:15:33,033 --> 00:15:34,400
+Others: 啊，他又留错号码了。
+Others: Ah, he left the wrong number again.
+
+60
+00:15:34,666 --> 00:15:36,366
+Others: 啊，是的，好的。
+Others: Ah, yeah, okay.
+
+61
+00:15:38,800 --> 00:15:40,833
+杰克: 我刚告诉他他留错了号码。
+Jake: I just told him he left the wrong number.
+
+62
+00:15:40,833 --> 00:15:41,866
+杰克: 他可能……
+Jake: He might...
+
+63
+00:15:41,533 --> 00:15:42,400
+Others: 他也给你打电话了。
+Others: He also called you.
+
+64
+00:15:42,400 --> 00:15:43,100
+Others: 我也给你打电话了。
+Others: I also called you.
+
+65
+00:15:43,100 --> 00:15:45,600
+Others: 我敲了半天的门，行吗？
+Others: I've been knocking for ages, okay?
+
+66
+00:15:49,166 --> 00:15:50,500
+Others: 呃，你可以扫微信。
+Others: Uh, you can scan WeChat.
+
+67
+00:15:50,500 --> 00:15:51,500
+杰克: 微信？微信？
+Jake: WeChat? WeChat?
+
+68
+00:15:52,666 --> 00:15:53,566
+Others: 哦，我来扫。
+Others: Oh, I'll scan it.
+
+69
+00:15:53,600 --> 00:15:55,600
+Others: 我嗓子都喊干了。
+Others: My throat is all dry from this.
+
+70
+00:15:55,600 --> 00:15:57,766
+杰克: 抱歉，抱歉。
+Jake: Sorry, sorry.
+
+71
+00:15:58,666 --> 00:15:59,833
+杰克: 你扫吧，你扫吧。
+Jake: You scan it, you scan it.
+
+72
+00:15:59,866 --> 00:16:00,900
+杰克: 扫，扫，扫。
+Jake: Scan, scan, scan.
+
+73
+00:16:01,600 --> 00:16:02,533
+Others: 多少分钟？
+Others: How many minutes?
+
+74
+00:16:02,533 --> 00:16:04,633
+Others: 如果就几分钟，那还好。
+Others: If it's a few minutes, then it's fine.
+
+75
+00:16:04,666 --> 00:16:06,633
+Others: 结果我等了大概4450分钟。
+Others: In the end, I waited for like 4450 minutes.
+
+76
+00:16:06,600 --> 00:16:07,400
+杰克: 哦。
+Jake: Oh.
+
+77
+00:16:08,266 --> 00:16:09,000
+杰克: 抱歉。
+Jake: Sorry.
+
+78
+00:16:09,000 --> 00:16:11,600
+杰克: 你们通常怎么处理这个？
+Jake: How do you usually handle this?
+
+79
+00:16:11,600 --> 00:16:12,233
+Others: 就一分钟。
+Others: Just one minute.
+
+80
+00:16:12,266 --> 00:16:13,800
+Others: 一分钟，一美元，就这样。
+Others: One minute, one dollar, that's it.
+
+81
+00:16:14,033 --> 00:16:15,600
+杰克: 哦，那现在多少分钟？
+Jake: Oh, so how many minutes now?
+
+82
+00:16:15,766 --> 00:16:19,266
+杰克: 呃，404545，抱歉。
+Jake: Uh, 404545, sorry.
+
+83
+00:16:19,266 --> 00:16:19,700
+Others: 没事，没事。
+Others: It's okay, it's okay.
+
+84
+00:16:19,666 --> 00:16:21,200
+杰克: 好的，保重。
+Jake: Alright, take care.
+
+85
+00:16:22,366 --> 00:16:24,233
+Others: 如果你的门铃也坏了怎么办？
+Others: What if your doorbell is broken too?
+
+86
+00:16:24,766 --> 00:16:25,700
+杰克: 我不知道。
+Jake: I don't know about that.
+
+87
+00:16:25,666 --> 00:16:26,866
+杰克: 这地方是租的。
+Jake: This place is rented.
+
+88
+00:16:28,600 --> 00:16:30,133
+杰克: 好的，好的，谢谢。
+Jake: Okay, okay, thank you.
+
+89
+00:16:30,166 --> 00:16:30,966
+杰克: 谢谢。
+Jake: Thanks.
+
+90
+00:16:31,766 --> 00:16:32,766
+杰克: 是的，是的，是的。
+Jake: Yeah, yeah, yeah.
+
+91
+00:16:32,766 --> 00:16:34,400
+杰克: 非常感谢，好的。
+Jake: Thank you so much, alright.
+
+92
+00:16:33,333 --> 00:16:34,966
+Others: 啊，没什么，没什么。
+Others: Ah, it's nothing, it's nothing.
+
+93
+00:16:38,266 --> 00:16:39,533
+卡特里娜: 我们只能在这里跳舞。
+Katrina: We can only dance here.
+
+94
+00:16:39,900 --> 00:16:41,300
+卡特里娜: 那天我们可以在这里跳舞。
+Katrina: That day we can dance here.
+
+95
+00:16:41,300 --> 00:16:43,733
+卡特里娜: 然后他们会坐在这里，坐在这里。
+Katrina: And then they'll sit here, sit here.
+
+96
+00:16:41,500 --> 00:16:42,266
+露西亚: 变换队形。
+Lucia: Formation change.
+
+97
+00:16:42,266 --> 00:16:45,166
+露西亚: 在上面，大家就站着，不要变换队形。
+Lucia: Up there, everyone should just stand and not change formation.
+
+98
+00:16:45,233 --> 00:16:46,033
+杰克: 这是舞台。
+Jake: This is the stage.
+
+99
+00:16:45,333 --> 00:16:46,700
+卡特里娜: 这里不需要安排队形。
+Katrina: No need to arrange formation here.
+
+100
+00:16:46,666 --> 00:16:48,500
+卡特里娜: 就这里。
+Katrina: Just here.
+
+101
+00:16:47,366 --> 00:16:47,900
+杰克: 这是舞台。
+Jake: This is the stage.
+
+102
+00:16:47,900 --> 00:16:49,500
+杰克: 对，我们可以从这里看。
+Jake: Right, we can watch from here.
+
+103
+00:16:48,533 --> 00:16:49,466
+卡特里娜: 这是舞台。
+Katrina: This is the stage.
+
+104
+00:16:49,733 --> 00:16:51,100
+卡特里娜: 因为二楼太小了。
+Katrina: Because the second floor is too small.
+
+105
+00:16:51,100 --> 00:16:53,100
+卡特里娜: 晚上我们肯定得在外面跳舞。
+Katrina: We definitely have to dance outside at night.
+
+106
+00:16:53,166 --> 00:16:55,033
+卡特里娜: 这个位置正好。
+Katrina: This spot is just perfect.
+
+107
+00:16:53,166 --> 00:16:53,966
+杰克: 哦。
+Jake: Oh.
+
+108
+00:16:54,466 --> 00:16:58,700
+露西亚: 但我觉得我们只能并排站。
+Lucia: But I feel like we can only stand side by side here.
+
+109
+00:16:55,800 --> 00:16:57,600
+卡特里娜: 是的，只能站5个人散开。
+Katrina: Yeah, only 5 people can spread out.
+
+110
+00:16:58,666 --> 00:17:00,266
+露西亚: 我们不能前后站人。
+Lucia: We can't stand people front and back.
+
+111
+00:17:00,666 --> 00:17:02,333
+露西亚: 对，我就是这么觉得的。
+Lucia: Right, that's what I feel.
+
+112
+00:17:01,266 --> 00:17:02,733
+卡特里娜: 最多2个人。
+Katrina: 2 people at most.
+
+113
+00:17:02,366 --> 00:17:03,466
+杰克: 下面也站几个。
+Jake: Stand a few below too.
+
+114
+00:17:02,733 --> 00:17:03,933
+卡特里娜: 也许两排。
+Katrina: Maybe two rows.
+
+115
+00:17:03,900 --> 00:17:06,033
+杰克: 如果下面站人，他们会掉下去吗？
+Jake: If we have people below, will they fall?
+
+116
+00:17:05,300 --> 00:17:07,166
+卡特里娜: 我们可以前面三个，后面两个。
+Katrina: We can do three in the front, two in the back.
+
+117
+00:17:05,333 --> 00:17:07,400
+露西亚: 下面，我们不能在下面站人。
+Lucia: Below, we can't stand people below.
+
+118
+00:17:06,833 --> 00:17:07,833
+杰克: 下面不站人。
+Jake: No people below.
+
+119
+00:17:07,500 --> 00:17:08,866
+露西亚: 对，下面很难跳舞。
+Lucia: Right, it's hard to dance below.
+
+120
+00:17:08,800 --> 00:17:10,266
+卡特里娜: 前面三个，后面两个。
+Katrina: Three in front, two in back.
+
+121
+00:17:08,966 --> 00:17:09,766
+杰克: 哦。
+Jake: Oh.
+
+122
+00:17:11,900 --> 00:17:12,866
+塔莎: 好吃吧？
+Tasha: Delicious, huh?
+
+123
+00:17:12,866 --> 00:17:15,033
+卡特里娜: 而且动作更小。
+Katrina: And the movements are smaller.
+
+124
+00:17:13,500 --> 00:17:14,333
+露西亚: 是的，那可能行。
+Lucia: Yeah, that's possible.
+
+125
+00:17:14,333 --> 00:17:16,000
+露西亚: 不需要整个……
+Lucia: No need for the whole...
+
+126
+00:17:16,000 --> 00:17:17,033
+露西亚: 怎么形容呢？
+Lucia: How to describe it?
+
+127
+00:17:17,033 --> 00:17:19,300
+露西亚: 队形之间的间距不需要很大。
+Lucia: The spacing between the formation doesn't need to be large.
+
+128
+00:17:19,533 --> 00:17:21,500
+露西亚: 也许前面三个可以稍微往前移动。
+Lucia: Maybe the three in front can move slightly forward.
+
+129
+00:17:21,533 --> 00:17:23,400
+露西亚: 后面两个可以稍微往后移动。
+Lucia: The two in the back can move slightly backward.
+
+130
+00:17:24,766 --> 00:17:27,866
+露西亚: 大约1.5排的间距应该可以。
+Lucia: A spacing of about 1.5 rows should be fine.
+
+131
+00:17:27,866 --> 00:17:29,033
+卡特里娜: 哦，这个可以晾衣服。
+Katrina: Oh, this can dry clothes.
+
+132
+00:17:28,166 --> 00:17:31,200
+杰克: 太好了，我们在这里搭个舞台幕布。
+Jake: Great, let's set up a stage curtain here.
+
+133
+00:17:32,266 --> 00:17:34,400
+露西亚: 啊，我们可以把投影仪搬到外面吗？
+Lucia: Ah, can we move the projector outside?
+
+134
+00:17:34,033 --> 00:17:35,233
+杰克: 不行，那只是个屏幕。
+Jake: No, it's just a screen.
+
+135
+00:17:35,266 --> 00:17:39,766
+杰克: 是的，是实际的物理屏幕。
+Jake: Yeah, it's an actual physical screen.
+
+136
+00:17:40,100 --> 00:17:41,733
+卡特里娜: 那你需要买一个这样的。
+Katrina: Then you need to buy one like this.
+
+137
+00:17:40,233 --> 00:17:41,033
+杰克: 挂在这里。
+Jake: Hang it here.
+
+138
+00:17:41,766 --> 00:17:43,866
+杰克: 是的，我们之前买了不少这样的。
+Jake: Yes, we bought quite a few of these before.
+
+139
+00:17:43,866 --> 00:17:44,833
+杰克: 每个大约20块钱。
+Jake: They were around 20 bucks each.
+
+140
+00:17:44,833 --> 00:17:45,600
+杰克: 你这样拿着。
+Jake: You hold it like this.
+
+141
+00:17:46,366 --> 00:17:49,000
+露西亚: 像摄影棚里的那种？
+Lucia: Like the ones in a film studio?
+
+142
+00:17:47,366 --> 00:17:48,300
+卡特里娜: 量一下午。
+Katrina: Measure for an afternoon.
+
+143
+00:17:48,733 --> 00:17:50,000
+卡特里娜: 网上搜？
+Katrina: Search online?
+
+144
+00:17:49,300 --> 00:17:52,100
+杰克: 是的，是用于广告的。
+Jake: Yeah, it's for advertising.
+
+145
+00:17:53,966 --> 00:17:56,233
+杰克: 你知道村口那些大广告吗？
+Jake: You know those big ads at the entrance of the village?
+
+146
+00:17:56,300 --> 00:17:58,766
+露西亚: 哦，哈哈哈，那可以。
+Lucia: Oh, hahaha, that's fine.
+
+147
+00:17:56,300 --> 00:17:58,866
+杰克: 哦，哈哈，那可以。
+Jake: Oh, haha, that's fine.
+
+148
+00:17:59,166 --> 00:18:00,133
+露西亚: 我们可以考虑一下。
+Lucia: We can think about it.
+
+149
+00:18:00,033 --> 00:18:01,066
+卡特里娜: 吃吧，吃吧。
+Katrina: Let's eat, let's eat.
+
+150
+00:18:00,166 --> 00:18:02,300
+露西亚: 你想在上面弄什么图案或颜色？
+Lucia: What kind of pattern or color do you want on it?
+
+151
+00:18:07,800 --> 00:18:09,666
+杰克: 这是什么歌？
+Jake: What song is this?
+
+152
+00:18:09,900 --> 00:18:11,033
+卡特里娜: 奔跑的青春。
+Katrina: Running Youth.
+
+153
+00:18:11,166 --> 00:18:15,333
+卡特里娜: 哈哈，但我们还没决定几个。
+Katrina: Haha, but we haven't decided on a few yet.
+
+154
+00:18:17,666 --> 00:18:19,266
+卡特里娜: 我们得看看对大家来说有多难。
+Katrina: We need to see how difficult it is for everyone.
+
+155
+00:18:30,300 --> 00:18:31,533
+卡特里娜: 有点慢。
+Katrina: It's a bit slow.
+
+156
+00:18:36,166 --> 00:18:37,133
+卡特里娜: 你拿到筷子了吗？
+Katrina: Did you get the chopsticks?
+
+157
+00:18:43,900 --> 00:18:45,233
+杰克: 我又被怼了。
+Jake: I got dissed again.
+
+158
+00:18:45,833 --> 00:18:48,466
+杰克: 你又怼我了，哈哈。
+Jake: You dissed me again, haha.
+
+159
+00:18:49,933 --> 00:18:51,033
+杰克: 我从不回他消息。
+Jake: I never reply to his messages.
+
+160
+00:18:51,033 --> 00:18:53,200
+杰克: 他让我吃早饭。
+Jake: He told me to eat breakfast.
+
+161
+00:18:55,166 --> 00:18:56,766
+杰克: 厉害。
+Jake: Impressive.
+
+162
+00:18:56,333 --> 00:18:57,500
+塔莎: 看看你，别看了。
+Tasha: Look at you, stop looking.
+
+163
+00:18:57,833 --> 00:19:01,500
+塔莎: 哈哈哈，这锅导热很好。
+Tasha: Hahaha, this pot has great heat conduction.
+
+164
+00:18:58,500 --> 00:18:59,933
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+165
+00:19:02,033 --> 00:19:03,400
+杰克: 哦，太多了。
+Jake: Oh, that's too much.
+
+166
+00:19:04,100 --> 00:19:05,633
+露西亚: 我觉得看起来很好吃。
+Lucia: I think it looks delicious.
+
+167
+00:19:06,000 --> 00:19:07,800
+杰克: 是的。
+Jake: Yeah.
+
+168
+00:19:06,933 --> 00:19:07,733
+塔莎: 不，不会的。
+Tasha: No, it won't.
+
+169
+00:19:09,400 --> 00:19:10,900
+杰克: 为什么不会？会的。
+Jake: Why not? It will.
+
+170
+00:19:09,900 --> 00:19:12,133
+露西亚: 这牛奶是你的。
+Lucia: This milk is yours.
+
+171
+00:19:12,933 --> 00:19:14,033
+塔莎: 我没信心。
+Tasha: I don't have confidence.
+
+172
+00:19:16,833 --> 00:19:17,633
+杰克: 试试，试试。
+Jake: Try it, try it.
+
+173
+00:19:18,566 --> 00:19:20,533
+露西亚: 如果需要更多咖啡，请自己加。
+Lucia: If you need more coffee, please add it yourself.
+
+174
+00:19:20,533 --> 00:19:22,100
+露西亚: 因为我不知道你想要多浓。
+Lucia: Because I don't know how strong you want it.
+
+175
+00:19:20,766 --> 00:19:22,200
+杰克: 好的。
+Jake: Okay.
+
+176
+00:19:22,166 --> 00:19:23,833
+杰克: 没问题。
+Jake: No problem.
+
+177
+00:19:23,300 --> 00:19:24,066
+塔莎: 加糖。
+Tasha: Add sugar.
+
+178
+00:19:25,433 --> 00:19:26,233
+杰克: 糖在哪儿？
+Jake: Where's the sugar?
+
+179
+00:19:26,900 --> 00:19:27,933
+爱丽丝: 我去拿。
+Alice: I'll get it.
+
+180
+00:19:28,033 --> 00:19:29,766
+塔莎: 糖，糖，蘸糖。
+Tasha: Sugar, sugar, dip the sugar.
+
+181
+00:19:29,433 --> 00:19:30,300
+露西亚: 这个碗。
+Lucia: This bowl.
+
+182
+00:19:31,933 --> 00:19:34,300
+露西亚: 倒一个，然后再拿一个。
+Lucia: Pour one and then get another one.
+
+183
+00:19:33,366 --> 00:19:33,800
+爱丽丝: 不，我不要。
+Alice: No, I don't want it.
+
+184
+00:19:33,800 --> 00:19:34,933
+爱丽丝: 我的已经吃完了。
+Alice: I'm done with mine.
+
+185
+00:19:34,766 --> 00:19:36,500
+露西亚: 啊，啊。
+Lucia: Ah, ah.
+
+186
+00:19:34,933 --> 00:19:36,233
+爱丽丝: 我已经洗了我的碗。
+Alice: I've already washed my bowl.
+
+187
+00:19:37,533 --> 00:19:41,266
+露西亚: 那我先把这个拿走。
+Lucia: Then I'll take this one away first.
+
+188
+00:19:38,500 --> 00:19:39,666
+爱丽丝: 用纸巾擦一下。
+Alice: Wipe it with a tissue.
+
+189
+00:19:40,500 --> 00:19:42,400
+爱丽丝: 把糖放在这个里面。
+Alice: Put the sugar in this one.
+
+190
+00:19:46,433 --> 00:19:47,066
+杰克: 什么纸巾？
+Jake: What tissue?
+
+191
+00:19:46,733 --> 00:19:48,500
+爱丽丝: 这不是用来蘸糖的吗？
+Alice: Isn't this for dipping sugar?
+
+192
+00:19:48,500 --> 00:19:49,933
+爱丽丝: 或者直接倒进你自己的碗里。
+Alice: Or just pour it into your own bowl.
+
+193
+00:19:51,766 --> 00:19:53,000
+塔莎: 这是你自己的碗。
+Tasha: This is your own bowl.
+
+194
+00:19:53,666 --> 00:19:54,300
+卡特里娜: 倒进你自己的碗里。
+Katrina: Pour it into your own bowl.
+
+195
+00:19:54,333 --> 00:19:55,100
+爱丽丝: 这是谁的碗？
+Alice: Whose bowl is it?
+
+196
+00:19:55,666 --> 00:19:57,000
+卡特里娜: 如果没人用，就给他吧。
+Katrina: If no one's using it, just give it to him.
+
+197
+00:19:57,666 --> 00:19:58,133
+杰克: 好的。
+Jake: Okay.
+
+198
+00:19:58,166 --> 00:19:59,300
+爱丽丝: 你自己倒。
+Alice: Pour it yourself.
+
+199
+00:19:59,500 --> 00:20:00,566
+爱丽丝: 我不知道你想要多少。
+Alice: I don't know how much you want.
+
+200
+00:20:00,566 --> 00:20:01,466
+爱丽丝: 告诉我什么时候停。
+Alice: Just tell me when to stop.
+
+201
+00:20:01,666 --> 00:20:03,033
+杰克: 我自己倒，没事。
+Jake: I'll pour it myself, it's fine.
+
+202
+00:20:20,433 --> 00:20:21,600
+杰克: 怎么倒不出来？
+Jake: Why won't it pour?
+
+203
+00:20:21,800 --> 00:20:23,500
+爱丽丝: 因为有点潮。
+Alice: Because it's a bit damp.
+
+204
+00:20:24,066 --> 00:20:26,100
+塔莎: 这种糖粉本来就是这样的。
+Tasha: This powdered sugar is naturally like this.
+
+205
+00:20:26,166 --> 00:20:27,233
+杰克: 哦，好的。
+Jake: Oh, okay.
+
+206
+00:20:29,233 --> 00:20:30,433
+杰克: 买得好，挺不错的。
+Jake: Good buy, pretty nice.
+
+207
+00:20:32,166 --> 00:20:33,866
+爱丽丝: 天哪，跟谁？
+Alice: Oh my God, with whom?
+
+208
+00:20:32,566 --> 00:20:33,366
+杰克: 哦，天哪。
+Jake: Oh man.
+
+209
+00:20:33,900 --> 00:20:35,900
+爱丽丝: 分一点，哈哈。
+Alice: Share some, haha.
+
+210
+00:20:34,900 --> 00:20:36,433
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+211
+00:20:35,033 --> 00:20:35,833
+塔莎: 哈哈。
+Tasha: Haha.
+
+212
+00:20:36,433 --> 00:20:37,400
+杰克: 强制推销。
+Jake: Forced sale.
+
+213
+00:20:36,566 --> 00:20:38,666
+塔莎: 哦哈哈
+Tasha: Oh haha
+
+214
+00:20:36,666 --> 00:20:39,300
+爱丽丝: 不行，你得压碎一点
+Alice: You can't, you need to crush it a bit
+
+215
+00:20:39,500 --> 00:20:40,733
+杰克: 强制推销
+Jake: Forced selling
+
+216
+00:20:45,900 --> 00:20:46,666
+杰克: 这样可以吗？
+Jake: Is that okay?
+
+217
+00:20:47,166 --> 00:20:49,666
+露西亚: 这个里面应该放糖吗？
+Lucia: Should there be sugar in this?
+
+218
+00:20:47,366 --> 00:20:48,166
+杰克: 你还要吗？
+Jake: Do you want more?
+
+219
+00:20:50,166 --> 00:20:51,633
+杰克: 分一点
+Jake: Share a bit
+
+220
+00:20:50,566 --> 00:20:51,366
+塔莎: 哈哈
+Tasha: Haha
+
+221
+00:20:50,666 --> 00:20:51,866
+爱丽丝: 来自江苏人
+Alice: From Jiangsu people
+
+222
+00:20:52,000 --> 00:20:52,966
+杰克: 我分你一点
+Jake: I'll share some with you
+
+223
+00:20:53,000 --> 00:20:53,833
+露西亚: 呃，好的
+Lucia: Uh, okay
+
+224
+00:20:53,833 --> 00:20:54,600
+杰克: 好的
+Jake: Alright
+
+225
+00:20:55,033 --> 00:20:57,200
+露西亚: 你倒太多了
+Lucia: You poured too much
+
+226
+00:20:56,733 --> 00:20:58,666
+塔莎: 是的，太多了，哈哈
+Tasha: Yeah, it's too much, haha
+
+227
+00:20:57,366 --> 00:20:59,400
+杰克: 是的，都太多了
+Jake: Yeah, it's all too much
+
+228
+00:20:59,400 --> 00:21:00,500
+杰克: 我放太多了
+Jake: I put too much
+
+229
+00:21:00,500 --> 00:21:01,800
+爱丽丝: 你要糖吗，Xuan？
+Alice: Do you want sugar, Xuan?
+
+230
+00:21:01,033 --> 00:21:03,266
+塔莎: 然后，嗯，面对面站
+Tasha: And then, hmm, face-to-face stand
+
+231
+00:21:01,433 --> 00:21:02,933
+杰克: 你要吗？好的
+Jake: Do you want it? Okay
+
+232
+00:21:01,666 --> 00:21:02,533
+卡特里娜: 我不要糖
+Katrina: I don't want sugar
+
+233
+00:21:03,300 --> 00:21:04,166
+杰克: 你也不要
+Jake: You don't want it either
+
+234
+00:21:05,300 --> 00:21:06,066
+爱丽丝: 我不吃糖
+Alice: I don't eat sugar
+
+235
+00:21:06,100 --> 00:21:07,100
+爱丽丝: 我会流鼻血
+Alice: I'll get a nosebleed
+
+236
+00:21:06,800 --> 00:21:07,833
+杰克: 哦，肯定的
+Jake: Oh, definitely
+
+237
+00:21:08,166 --> 00:21:09,066
+卡特里娜: 这个舞也可以
+Katrina: This dance is okay too
+
+238
+00:21:08,900 --> 00:21:09,733
+塔莎: 你需要接受它
+Tasha: You need to accept it
+
+239
+00:21:09,300 --> 00:21:12,666
+露西亚: 这好像是我们学校的周年庆
+Lucia: This seems like our school anniversary
+
+240
+00:21:10,933 --> 00:21:12,266
+卡特里娜: 我高中时跳过
+Katrina: I danced it in high school
+
+241
+00:21:12,500 --> 00:21:13,766
+卡特里娜: 在高中晚会上跳过
+Katrina: Danced it at the high school evening party
+
+242
+00:21:16,000 --> 00:21:17,533
+露西亚: 虽然我觉得动作可能不同
+Lucia: Although I think the moves might be different
+
+243
+00:21:17,533 --> 00:21:19,866
+露西亚: 但背景音乐是一样的
+Lucia: But the background music is the same
+
+244
+00:21:19,066 --> 00:21:19,866
+卡特里娜: 这个其实可以
+Katrina: This is actually okay
+
+245
+00:21:19,900 --> 00:21:21,500
+卡特里娜: 如果你能接受青春奔跑
+Katrina: If you can accept the youth run
+
+246
+00:21:21,500 --> 00:21:22,966
+卡特里娜: 那你就更能接受这个了
+Katrina: Then you can accept this even more
+
+247
+00:21:23,266 --> 00:21:24,666
+卡特里娜: 动作更慢更简单
+Katrina: Slower and simpler moves
+
+248
+00:21:25,733 --> 00:21:26,500
+卡特里娜: 声音更大
+Katrina: Louder sound
+
+249
+00:21:25,933 --> 00:21:26,633
+露西亚: 这个也可以
+Lucia: This one is fine too
+
+250
+00:21:26,666 --> 00:21:28,600
+露西亚: 鼓点更清晰
+Lucia: The drum beats are clearer
+
+251
+00:21:29,233 --> 00:21:30,000
+露西亚: 我喜欢这种
+Lucia: I like this kind
+
+252
+00:21:30,000 --> 00:21:31,866
+露西亚: 我能很快找到它的节奏
+Lucia: I can quickly find its rhythm
+
+253
+00:21:41,166 --> 00:21:41,866
+爱丽丝: 充电宝在哪儿？
+Alice: Where's the power bank?
+
+254
+00:21:41,900 --> 00:21:43,900
+爱丽丝: 我觉得我的快没电了。
+Alice: I think mine needs to be charged soon.
+
+255
+00:21:43,833 --> 00:21:44,500
+杰克: 好的。
+Jake: Okay.
+
+256
+00:21:44,500 --> 00:21:46,966
+塔莎: 别拿我的充电宝，我去拿。
+Tasha: Don't take my power bank, let me go get it.
+
+257
+00:21:45,533 --> 00:21:47,533
+爱丽丝: 告诉我它在哪儿，我去拿。
+Alice: Just tell me where it is and I'll get it.
+
+258
+00:21:47,300 --> 00:21:48,600
+杰克: 我去拿，我去拿。
+Jake: I'll get it, I'll get it.
+
+259
+00:21:54,766 --> 00:21:55,533
+爱丽丝: 味道怎么样？
+Alice: How does it taste?
+
+260
+00:22:01,066 --> 00:22:03,700
+塔莎: 我觉得我们用错了面团，或者面粉。
+Tasha: I think we used the wrong dough, or flour.
+
+261
+00:22:05,433 --> 00:22:06,433
+杰克: 密度正好。
+Jake: The density is just right.
+
+262
+00:22:07,666 --> 00:22:10,033
+杰克: 这个面团的密度正好。
+Jake: The density of this dough is just right.
+
+263
+00:22:10,766 --> 00:22:11,633
+杰克: 这是你的吗？
+Jake: Is this yours?
+
+264
+00:22:11,900 --> 00:22:14,833
+杰克: 这个，这个，这个……
+Jake: This, this, this...
+
+265
+00:22:14,833 --> 00:22:15,700
+杰克: 这是什么？
+Jake: What is this?
+
+266
+00:22:17,033 --> 00:22:17,900
+爱丽丝: 我不知道是谁的。
+Alice: I don't know whose it is.
+
+267
+00:22:18,666 --> 00:22:19,500
+爱丽丝: 不是他的。
+Alice: It's not his.
+
+268
+00:22:19,500 --> 00:22:20,700
+爱丽丝: 他的上面有个小蝴蝶。
+Alice: His has a little butterfly on it.
+
+269
+00:22:19,533 --> 00:22:20,266
+杰克: 这是什么？
+Jake: What is this?
+
+270
+00:22:20,866 --> 00:22:21,766
+爱丽丝: 不，小翅膀。
+Alice: No, little wings.
+
+271
+00:22:23,000 --> 00:22:23,933
+杰克: 你怎么看？
+Jake: How do you look at it?
+
+272
+00:22:27,166 --> 00:22:28,300
+露西亚: 是我的吗？
+Lucia: Is it mine?
+
+273
+00:22:29,166 --> 00:22:31,500
+杰克: 是露西亚的。
+Jake: It's Lucia's.
+
+274
+00:22:30,400 --> 00:22:31,166
+爱丽丝: 啊，姜。
+Alice: Ah, ginger.
+
+275
+00:22:31,500 --> 00:22:32,366
+杰克: 这是姜。
+Jake: This is ginger.
+
+276
+00:22:32,500 --> 00:22:33,433
+杰克: 哦，真的吗？
+Jake: Oh, really?
+
+277
+00:22:35,000 --> 00:22:36,100
+露西亚: 是的，没错。
+Lucia: Yeah, it is.
+
+278
+00:22:35,566 --> 00:22:36,633
+杰克: 这是姜。
+Jake: This is ginger.
+
+279
+00:22:36,666 --> 00:22:40,433
+杰克: 哦，哦，哦，好的，好的。
+Jake: Oh, oh, oh, okay, okay.
+
+280
+00:22:41,000 --> 00:22:42,266
+杰克: 你要一些吗？
+Jake: Do you want some?
+
+281
+00:22:42,266 --> 00:22:43,100
+杰克: 你也要一些吗？
+Jake: You also want some?
+
+282
+00:22:45,866 --> 00:22:47,300
+杰克: 先把这些放好。
+Jake: Just put these first.
+
+283
+00:22:49,100 --> 00:22:49,566
+卡特里娜: 我就跟着那个跳舞。
+Katrina: I'll just dance to that.
+
+284
+00:22:49,566 --> 00:22:50,466
+卡特里娜: 跟着这个跳舞怎么样？
+Katrina: How about dancing to this?
+
+285
+00:22:54,300 --> 00:22:55,500
+爱丽丝: 味道还行吗？
+Alice: Does it taste okay?
+
+286
+00:22:55,433 --> 00:22:57,366
+塔莎: 啊哈哈哈。
+Tasha: Ahahaha.
+
+287
+00:22:56,900 --> 00:22:58,166
+卡特里娜: 这个还有3分钟。
+Katrina: This still has 3 minutes left.
+
+288
+00:22:58,166 --> 00:22:59,233
+塔莎: 关键是动作。
+Tasha: It's about the moves.
+
+289
+00:22:58,166 --> 00:22:59,966
+卡特里娜: 动作都是重复的。
+Katrina: The moves are all repetitive.
+
+290
+00:23:02,900 --> 00:23:04,666
+杰克: 好吧，这个更明显。
+Jake: Okay, this one's more obvious.
+
+291
+00:23:10,600 --> 00:23:11,633
+杰克: 正好，你坐着。
+Jake: Just right, you're sitting.
+
+292
+00:23:12,766 --> 00:23:14,200
+卡特里娜: 哦，我需要充电，对吧？
+Katrina: Oh, I need to charge, right?
+
+293
+00:23:14,600 --> 00:23:15,566
+杰克: 我们可以充一会儿。
+Jake: We can charge it for a while.
+
+294
+00:23:20,233 --> 00:23:21,000
+杰克: 嘿。
+Jake: Hey.
+
+295
+00:23:21,933 --> 00:23:22,733
+杰克: 还不够吗？
+Jake: Isn't it enough?
+
+296
+00:23:30,566 --> 00:23:32,866
+卡特里娜: 感觉像机器人充电。
+Katrina: It feels like a robot getting powered up.
+
+297
+00:23:32,033 --> 00:23:32,766
+杰克: 是的。
+Jake: Yeah.
+
+298
+00:23:35,600 --> 00:23:38,000
+杰克: 一旦连接，记忆加速。
+Jake: Once it's connected, memory speeds up.
+
+299
+00:23:38,166 --> 00:23:39,233
+杰克: 一秒学会一支舞。
+Jake: Learn a dance in one second.
+
+300
+00:23:38,166 --> 00:23:40,566
+卡特里娜: 激活了，正好赶上。
+Katrina: Activated, just in time.
+
+301
+00:23:40,166 --> 00:23:40,933
+杰克: 是的。
+Jake: Yeah.
+
+302
+00:23:55,800 --> 00:23:56,566
+杰克: 这是谁的？
+Jake: Whose is this?
+
+303
+00:23:56,666 --> 00:23:57,800
+塔莎: 这个真好吃。
+Tasha: This is really delicious.
+
+304
+00:23:57,833 --> 00:23:59,400
+杰克: 哈哈哈我的。
+Jake: Hahaha mine.
+
+305
+00:23:58,000 --> 00:24:01,033
+塔莎: 哈哈哈哈哈。
+Tasha: Hahahahaha.
+
+306
+00:23:59,400 --> 00:24:00,800
+杰克: 是我的，对吧？
+Jake: It's mine, right?
+
+307
+00:24:03,000 --> 00:24:04,800
+杰克: 真的吗？
+Jake: Really?
+
+308
+00:24:03,666 --> 00:24:04,800
+塔莎: 是的，这是第一个结果。
+Tasha: Yes, this is the first result.
+
+309
+00:24:04,800 --> 00:24:05,666
+塔莎: 第一个成就。
+Tasha: The first achievement.
+
+310
+00:24:09,366 --> 00:24:11,166
+杰克: 真的，你真的吃了吗？
+Jake: Really, you really ate it?
+
+311
+00:24:10,866 --> 00:24:13,433
+塔莎: 哈哈哈哈。
+Tasha: Hahahaha.
+
+312
+00:24:12,500 --> 00:24:13,433
+杰克: 哈哈哈哈哈。
+Jake: Hahahahaha.
+
+313
+00:24:13,066 --> 00:24:14,433
+卡特里娜: 哈哈哈哈。
+Katrina: Hahahaha.
+
+314
+00:24:13,433 --> 00:24:16,233
+露西亚: 假吃，还能...
+Lucia: Fake eating, can still...
+
+315
+00:24:15,333 --> 00:24:17,166
+塔莎: 最好别吃，哈哈。
+Tasha: Better not eat it, haha.
+
+316
+00:24:31,666 --> 00:24:33,200
+杰克: 刚才那个猪猪侠舞怎么跳的？
+Jake: How did that Pig Hero dance just now?
+
+317
+00:24:33,233 --> 00:24:34,233
+杰克: 我很好奇。
+Jake: I'm really curious.
+
+318
+00:24:34,666 --> 00:24:35,833
+卡特里娜: 为什么，很简单。
+Katrina: Why, it's very simple.
+
+319
+00:24:36,033 --> 00:24:38,333
+卡特里娜: 就1、2、3、4然后一个动作。
+Katrina: Just 1, 2, 3, 4 and then a move.
+
+320
+00:24:38,300 --> 00:24:39,900
+露西亚: 是的，这个挺简单的。
+Lucia: Yeah, this one's quite simple.
+
+321
+00:24:43,400 --> 00:24:46,666
+杰克: 好的，我们看看。
+Jake: Okay, let's take a look.
+
+322
+00:24:46,900 --> 00:24:49,100
+露西亚: 她的节奏感不是那么...
+Lucia: Her rhythm sense isn't that...
+
+323
+00:24:51,900 --> 00:24:53,500
+塔莎: 很简单，对吧？
+Tasha: It's very simple, right?
+
+324
+00:24:53,433 --> 00:24:54,733
+杰克: 是的，有点无聊。
+Jake: Yeah, it's a bit dull.
+
+325
+00:25:01,800 --> 00:25:02,866
+露西亚: 那我们可以按Yuxuan说的做。
+Lucia: Then we can do as Yuxuan said.
+
+326
+00:25:02,866 --> 00:25:04,833
+杰克: 是的。
+Jake: Yeah.
+
+327
+00:25:05,000 --> 00:25:06,000
+露西亚: 然后跳这个。
+Lucia: And then dance this.
+
+328
+00:25:06,666 --> 00:25:08,133
+杰克: 当然，我们可以那样做。
+Jake: Sure, we can do that.
+
+329
+00:25:07,666 --> 00:25:08,166
+卡特里娜: 每个人都能做。
+Katrina: Everyone can do it.
+
+330
+00:25:08,166 --> 00:25:10,133
+卡特里娜: 每个人都戴蘑菇头，那个蘑菇，蘑菇。
+Katrina: Everyone wears a mushroom head, that mushroom, mushroom.
+
+331
+00:25:10,866 --> 00:25:13,333
+卡特里娜: 哈哈哈。
+Katrina: Hahaha.
+
+332
+00:25:11,266 --> 00:25:12,533
+露西亚: 啊哈哈。
+Lucia: Ahaha.
+
+333
+00:25:13,000 --> 00:25:13,966
+露西亚: 有道理。
+Lucia: Makes sense.
+
+334
+00:25:13,800 --> 00:25:15,666
+卡特里娜: 是的，就买两个头套。
+Katrina: Yeah, just buy two head covers.
+
+335
+00:25:17,500 --> 00:25:18,300
+杰克: 好的。
+Jake: Okay.
+
+336
+00:25:26,400 --> 00:25:28,166
+杰克: 我们买一个那种气球。
+Jake: Let's buy one of those balloons.
+
+337
+00:25:31,033 --> 00:25:32,133
+杰克: 用空气充气的。
+Jake: That blows up with air.
+
+338
+00:25:31,100 --> 00:25:32,166
+卡特里娜: 你是说造型气球？
+Katrina: You mean the shaped balloons?
+
+339
+00:25:32,666 --> 00:25:35,166
+卡特里娜: 哦，哦，哦，用空气充气的那个。
+Katrina: Oh, oh, oh, the one that inflates with air.
+
+340
+00:25:56,766 --> 00:25:57,933
+露西亚: 嗯，外卖到了吗？
+Lucia: Hmm, is the delivery here?
+
+341
+00:25:58,066 --> 00:25:58,866
+杰克: 是的。
+Jake: Yeah.
+
+342
+00:25:59,066 --> 00:26:00,233
+露西亚: 不是外卖，是Meituan的药。
+Lucia: It's not food delivery, it's medicine from Meituan.
+
+343
+00:25:59,500 --> 00:26:01,666
+塔莎: 你点外卖了吗？
+Tasha: Did you order food delivery?
+
+344
+00:25:59,900 --> 00:26:00,666
+杰克: 到了。
+Jake: It's here.
+
+345
+00:26:02,033 --> 00:26:03,600
+杰克: 是的，是的，好的。
+Jake: Yeah, yeah, okay.
+
+346
+00:26:02,500 --> 00:26:05,066
+塔莎: 嗯，我以为午餐。
+Tasha: Hmm, I thought it was lunch.
+
+347
+00:26:03,433 --> 00:26:04,600
+露西亚: 你好，嗨。
+Lucia: Hello, hi.
+
+348
+00:26:05,166 --> 00:26:06,666
+杰克: 是的，是的，嗯哼，嗯哼。
+Jake: Yeah, yeah, uh-huh, uh-huh.
+
+349
+00:26:07,800 --> 00:26:09,900
+露西亚: 呃，我们有黄色的铁门吗？
+Lucia: Uh, do we have a yellow iron gate?
+
+350
+00:26:09,900 --> 00:26:10,666
+塔莎: 他来了。
+Tasha: He's here.
+
+351
+00:26:10,000 --> 00:26:10,800
+卡特里娜: 他现在来了。
+Katrina: He's here now.
+
+352
+00:26:11,166 --> 00:26:12,233
+卡特里娜: 我听到他的声音了。
+Katrina: I heard his voice.
+
+353
+00:26:12,266 --> 00:26:13,033
+卡特里娜: 他就在这里。
+Katrina: He's right here.
+
+354
+00:26:12,833 --> 00:26:13,833
+露西亚: 哦，我明白了。
+Lucia: Oh, I see.
+
+355
+00:26:13,833 --> 00:26:15,300
+露西亚: 呃，应该是同一个。
+Lucia: Uh, it should be the same one.
+
+356
+00:26:15,300 --> 00:26:16,233
+露西亚: 请稍等。
+Lucia: Please hold on a second.
+
+357
+00:26:16,333 --> 00:26:17,733
+卡特里娜: 是蓝绿色的。
+Katrina: It's blue-green.
+
+358
+00:26:18,433 --> 00:26:20,333
+露西亚: 是一栋蓝绿色的楼。
+Lucia: It's a blue-green building.
+
+359
+00:26:26,600 --> 00:26:27,400
+杰克: 哦。
+Jake: Oh.
+
+360
+00:26:28,166 --> 00:26:29,200
+杰克: 这不是铁门。
+Jake: This isn't an iron gate.
+
+361
+00:26:29,766 --> 00:26:31,500
+Others: 我说我习惯了铁门。
+Others: I said I was used to iron gates.
+
+362
+00:26:31,500 --> 00:26:34,433
+杰克: 哈哈，谢谢，谢谢，再见。
+Jake: Haha, thank you, thank you, goodbye.
+
+363
+00:26:36,933 --> 00:26:37,733
+杰克: 是的。
+Jake: Yeah.
+
+364
+00:26:42,000 --> 00:26:43,400
+杰克: 隔音真的那么差吗？
+Jake: Is the soundproofing really that bad?
+
+365
+00:26:43,433 --> 00:26:44,800
+杰克: 我怎么没听到？
+Jake: How come I didn't hear it?
+
+366
+00:26:48,566 --> 00:26:49,766
+杰克: 你的听力怎么这么好？
+Jake: How come your hearing is so good?
+
+367
+00:26:50,166 --> 00:26:51,433
+杰克: 还是隔音太差了？
+Jake: Or is the soundproofing too bad?
+
+368
+00:26:51,733 --> 00:26:54,600
+卡特里娜: 哈哈，我以为有人在你们房间说话。
+Katrina: Haha, I thought someone was talking in your room.
+
+369
+00:26:55,000 --> 00:26:55,666
+杰克: 哦，我明白了。
+Jake: Oh, I see.
+
+370
+00:27:19,000 --> 00:27:20,566
+杰克: 你怎么去郑州？
+Jake: How do you get to Zhengzhou?
+
+371
+00:27:20,900 --> 00:27:22,000
+塔莎: 嘿，你怎么...对吧？
+Tasha: Hey, how do you... right?
+
+372
+00:27:21,900 --> 00:27:23,366
+杰克: 你刚在电话里提到的。
+Jake: You just mentioned it on the phone.
+
+373
+00:27:25,566 --> 00:27:26,366
+杰克: 你去哪儿？
+Jake: Where are you going?
+
+374
+00:27:27,400 --> 00:27:28,166
+爱丽丝: 和我约会。
+Alice: On a date with me.
+
+375
+00:27:28,666 --> 00:27:29,933
+杰克: 哦，当然。
+Jake: Oh, sure.
+
+376
+00:27:28,766 --> 00:27:29,933
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+377
+00:27:30,300 --> 00:27:31,500
+卡特里娜: 你要去郑州吗？
+Katrina: Are you going to Zhengzhou?
+
+378
+00:27:31,933 --> 00:27:32,733
+塔莎: 是的。
+Tasha: Yes.
+
+379
+00:27:32,800 --> 00:27:35,000
+卡特里娜: 你为什么去郑州？开会？
+Katrina: Why are you going to Zhengzhou? For a meeting?
+
+380
+00:27:35,933 --> 00:27:38,800
+塔莎: 去玩五一
+
+381
+00:27:38,000 --> 00:27:39,033
+杰克: 五一去郑州？
+Jake: Going to Zhengzhou for May Day?
+
+382
+00:27:39,066 --> 00:27:42,633
+杰克: 人会很多，对吧？
+Jake: There will be a lot of people, right?
+
+383
+00:27:39,500 --> 00:27:40,766
+爱丽丝: 啊，你要去郑州？
+Alice: Ah, you're going to Zhengzhou?
+
+384
+00:27:42,866 --> 00:27:44,600
+爱丽丝: 不，具体去郑州哪里？
+Alice: No, where exactly in Zhengzhou are you going?
+
+385
+00:27:44,800 --> 00:27:45,566
+塔莎: 我不知道。
+Tasha: I don't know.
+
+386
+00:27:46,066 --> 00:27:48,433
+卡特里娜: 哈哈哈，我有个室友是郑州的。
+Katrina: Hahaha, I have a roommate from Zhengzhou.
+
+387
+00:27:46,533 --> 00:27:47,700
+爱丽丝: 你应该去。
+Alice: You should go.
+
+388
+00:27:47,433 --> 00:27:48,566
+露西亚: 本地人。
+Lucia: A local.
+
+389
+00:27:48,666 --> 00:27:51,500
+爱丽丝: 你应该问我，问我。
+Alice: You should ask me, ask me.
+
+390
+00:27:48,666 --> 00:27:49,566
+塔莎: 哦，问我。
+Tasha: Oh, ask me.
+
+391
+00:27:50,066 --> 00:27:50,866
+塔莎: 啊。
+Tasha: Ah.
+
+392
+00:27:51,400 --> 00:27:52,933
+塔莎: 我还不知道去哪儿。
+Tasha: I still don't know where to go.
+
+393
+00:27:53,300 --> 00:27:54,733
+塔莎: 他们会给我安排。
+Tasha: They'll arrange it for me.
+
+394
+00:27:54,733 --> 00:27:56,533
+塔莎: 我只是个小人物。
+Tasha: I'm just a nobody.
+
+395
+00:27:56,766 --> 00:27:57,300
+爱丽丝: 天哪。
+Alice: Oh my god.
+
+396
+00:27:57,300 --> 00:27:58,866
+塔莎: 我就跟着走。
+Tasha: I'll just follow along.
+
+397
+00:27:57,300 --> 00:27:59,866
+爱丽丝: 我搞不懂哪里好玩。
+Alice: I can't understand where to go for fun.
+
+398
+00:27:58,566 --> 00:27:59,366
+卡特里娜: 完了。
+Katrina: It's over.
+
+399
+00:27:59,266 --> 00:28:00,633
+露西亚: 哈哈哈，Jiayi。
+Lucia: Hahaha, Jiayi.
+
+400
+00:28:00,833 --> 00:28:03,000
+露西亚: 只有遇到比我更没头绪的朋友...
+Lucia: Only when I meet friends who are even more clueless than me...
+
+401
+00:28:00,866 --> 00:28:02,333
+爱丽丝: 带你去洛阳。
+Alice: Take you to Luoyang.
+
+402
+00:28:03,000 --> 00:28:03,800
+露西亚: ...我才会做计划。
+Lucia: ...do I make plans.
+
+403
+00:28:03,800 --> 00:28:05,666
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+404
+00:28:04,166 --> 00:28:07,533
+爱丽丝: 哈哈哈，洛阳和开封都很近。
+Alice: Hahaha, Luoyang and Kaifeng are both pretty close.
+
+405
+00:28:07,933 --> 00:28:11,133
+爱丽丝: 从郑州东站出发，哈哈哈。
+Alice: Depart from Zhengzhou East Station, hahaha.
+
+406
+00:28:09,666 --> 00:28:11,100
+塔莎: 哈哈哈，什么？
+Tasha: Hahaha, what?
+
+407
+00:28:09,933 --> 00:28:12,733
+卡特里娜: 哈哈哈，郑州最好的就是东站。
+Katrina: Hahaha, the best thing in Zhengzhou is the East Station.
+
+408
+00:28:11,066 --> 00:28:12,166
+塔莎: 我不去。
+Tasha: I'm not going.
+
+409
+00:28:12,533 --> 00:28:14,333
+爱丽丝: 郑州东站，哈哈。
+Alice: Zhengzhou East Station, haha.
+
+410
+00:28:12,733 --> 00:28:14,400
+卡特里娜: 买张去别处的票。
+Katrina: Buy a ticket to somewhere else.
+
+411
+00:28:14,100 --> 00:28:14,966
+塔莎: 啊，好的。
+Tasha: Ah, okay.
+
+412
+00:28:14,600 --> 00:28:15,400
+杰克: 好吧。
+Jake: Alright.
+
+413
+00:28:17,000 --> 00:28:18,066
+爱丽丝: 我给你讲个地方。
+Alice: Let me tell you about a place.
+
+414
+00:28:19,733 --> 00:28:22,533
+爱丽丝: 是一家超好吃的甜品店。
+Alice: It's a super delicious dessert shop.
+
+415
+00:28:23,300 --> 00:28:23,933
+塔莎: 哦，说吧。
+Tasha: Oh, go ahead.
+
+416
+00:28:23,300 --> 00:28:24,000
+杰克: 好的，说吧。
+Jake: Alright, go ahead.
+
+417
+00:28:23,933 --> 00:28:26,166
+塔莎: 万一我不去，他们也能吃。
+Tasha: Just in case I don't go, they can still eat.
+
+418
+00:28:24,266 --> 00:28:25,933
+爱丽丝: 我觉得那栋楼里只有几个地方...
+Alice: I think there are only a few places in that building...
+
+419
+00:28:25,933 --> 00:28:28,900
+爱丽丝: ...还活着。
+Alice: ...that are still alive and kicking.
+
+420
+00:28:29,333 --> 00:28:30,100
+塔莎: 继续。
+Tasha: Go on.
+
+421
+00:28:30,500 --> 00:28:31,300
+爱丽丝: 是的。
+Alice: Yeah.
+
+422
+00:28:31,000 --> 00:28:33,000
+杰克: 这个咖啡怎么弄？
+Jake: How do I make this coffee?
+
+423
+00:28:33,100 --> 00:28:36,733
+爱丽丝: 把浓缩倒进去，拉起来就行。
+Alice: Just pour the concentrate in and pull up.
+
+424
+00:28:34,266 --> 00:28:35,933
+卡特里娜: 就拉出一条。
+Katrina: Just pull out one strip.
+
+425
+00:28:36,666 --> 00:28:37,833
+杰克: 哦，明白了。
+Jake: Oh, got it.
+
+426
+00:28:38,500 --> 00:28:40,433
+爱丽丝: 在上海城。
+Alice: It's at Shanghai City.
+
+427
+00:28:40,433 --> 00:28:41,233
+杰克: 挺多的。
+Jake: There's quite a lot.
+
+428
+00:28:41,900 --> 00:28:44,800
+塔莎: 哦，上海城，然后呢？
+Tasha: Oh, Shanghai City, and then?
+
+429
+00:28:42,366 --> 00:28:43,366
+卡特里娜: 就这样倒进去。
+Katrina: Just pour it in like this.
+
+430
+00:28:44,500 --> 00:28:45,933
+爱丽丝: 东东鲜芋圆。
+Alice: Dong Dong Fresh Taro Balls.
+
+431
+00:28:45,933 --> 00:28:47,100
+卡特里娜: 很浓郁。
+Katrina: It's very rich.
+
+432
+00:28:46,033 --> 00:28:47,233
+爱丽丝: 东是东方的东。
+Alice: Dong as in east.
+
+433
+00:28:46,100 --> 00:28:50,933
+塔莎: 东东鲜芋圆，明白了。
+Tasha: Dong Dong Fresh Taro Balls, got it.
+
+434
+00:28:47,933 --> 00:28:53,466
+爱丽丝: 是的，东东鲜芋圆，他们的东西超好吃。
+Alice: Yeah, Dong Dong Fresh Taro Balls, their stuff is super tasty.
+
+435
+00:28:56,100 --> 00:28:56,500
+爱丽丝: 你会发现...
+Alice: You'll find...
+
+436
+00:28:56,500 --> 00:28:58,900
+爱丽丝: ...那个商场基本处于破产状态。
+Alice: ...that the mall is basically in a state of bankruptcy.
+
+437
+00:28:59,366 --> 00:29:00,500
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+438
+00:28:59,866 --> 00:29:00,666
+爱丽丝: 哈哈哈。
+Alice: Hahaha.
+
+439
+00:29:27,666 --> 00:29:27,800
+爱丽丝: 嘿。
+Alice: Hey.
+
+440
+00:29:27,800 --> 00:29:29,933
+爱丽丝: 如果你真的五一过来，可以来我这儿玩。
+Alice: If you really come during May Day, you can come hang out at my place.
+
+441
+00:29:30,766 --> 00:29:32,700
+爱丽丝: 说真的，不如住我这儿？
+Alice: Seriously, why don't you stay at my place?
+
+442
+00:29:32,900 --> 00:29:34,366
+卡特里娜: 这样能省酒店钱。
+Katrina: That'll save on hotel costs.
+
+443
+00:29:34,900 --> 00:29:36,566
+爱丽丝: 说真的，不如住我这儿？
+Alice: Seriously, why don't you stay at my place?
+
+444
+00:29:36,733 --> 00:29:37,933
+爱丽丝: 我这儿人不多。
+Alice: There aren't many people at my place.
+
+445
+00:29:37,400 --> 00:29:38,600
+杰克: 你能带几个人？
+Jake: Can you bring a few people?
+
+446
+00:29:38,600 --> 00:29:40,166
+杰克: 哈哈哈，能住几个？
+Jake: Hahaha, how many can stay?
+
+447
+00:29:40,500 --> 00:29:41,933
+塔莎: 能住几个？哈哈。
+Tasha: How many can stay? Haha.
+
+448
+00:29:41,333 --> 00:29:42,533
+爱丽丝: 嗯哼，你们有几个人？
+Alice: Uh-huh, how many do you have?
+
+449
+00:29:42,433 --> 00:29:43,666
+露西亚: 对，我那儿离你那儿很近。
+Lucia: Right, my place is really close to yours.
+
+450
+00:29:42,533 --> 00:29:43,566
+爱丽丝: 我那儿离你那儿很近。
+Alice: My place is really close to yours.
+
+451
+00:29:43,566 --> 00:29:44,366
+爱丽丝: 我也可以去网吧。
+Alice: I can also go to the internet cafe.
+
+452
+00:29:43,666 --> 00:29:45,433
+露西亚: 我也可以接待两个人。
+Lucia: I can also host two people.
+
+453
+00:29:44,300 --> 00:29:46,366
+塔莎: 天哪，哈哈
+Tasha: Oh my gosh, haha
+
+454
+00:29:44,400 --> 00:29:45,366
+爱丽丝: 来吧，来吧
+Alice: Come on, come on
+
+455
+00:29:45,500 --> 00:29:47,033
+爱丽丝: 你们有几个人？
+Alice: How many of you are there?
+
+456
+00:29:46,800 --> 00:29:47,833
+露西亚: 一只手
+Lucia: One hand
+
+457
+00:29:47,066 --> 00:29:49,033
+塔莎: 应该是3到4个
+Tasha: It should be 3 to 4
+
+458
+00:29:49,033 --> 00:29:50,766
+塔莎: 呃，4到5个吧
+Tasha: Uh, 4 to 5 maybe
+
+459
+00:29:50,400 --> 00:29:51,300
+爱丽丝: 啊 把我弟赶出家门
+
+460
+00:29:51,300 --> 00:29:52,166
+爱丽丝: 把他们赶出家门
+Alice: Kick them out of the house
+
+461
+00:29:52,000 --> 00:30:00,366
+塔莎: 啊，哈哈哈哈哈哈哈哈哈
+Tasha: Ah, hahahahahahahahaha
+
+462
+00:29:52,800 --> 00:29:54,666
+爱丽丝: 别让他们回来
+Alice: Don't let them come back
+
+463
+00:29:53,400 --> 00:29:54,666
+卡特里娜: 别让他们回来
+Katrina: Don't let them come back
+
+464
+00:29:55,166 --> 00:29:57,133
+爱丽丝: 这样房间就能空出来
+Alice: Then we can have the room available
+
+465
+00:30:20,566 --> 00:30:23,766
+塔莎: 4月18日早上8点开票
+Tasha: Tickets go on sale at 8 AM on April 18th
+
+466
+00:30:24,300 --> 00:30:25,433
+塔莎: 为什么什么都要抢？
+Tasha: Why does everything need a rush?
+
+467
+00:30:26,766 --> 00:30:28,366
+杰克: 要抢五一票，对吧？
+Jake: Need to rush for May Day tickets, right?
+
+468
+00:30:31,566 --> 00:30:33,166
+杰克: 糟了，我五一要回新加坡
+Jake: Oh no, I'm going back to Singapore for May Day
+
+469
+00:30:33,166 --> 00:30:34,033
+杰克: 不是超贵吗？
+Jake: Aren't they super expensive?
+
+470
+00:30:34,833 --> 00:30:37,366
+杰克: 哈哈，我还没订票
+Jake: Haha, I haven't booked the tickets yet
+
+471
+00:30:35,100 --> 00:30:36,566
+卡特里娜: 还没订票
+Katrina: Haven't booked the tickets yet
+
+472
+00:30:38,900 --> 00:30:40,066
+杰克: 没人会订票
+Jake: Nobody knows how to book tickets
+
+473
+00:30:40,300 --> 00:30:43,666
+杰克: 哈哈哈
+Jake: Hahaha
+
+474
+00:30:40,333 --> 00:30:43,733
+露西亚: 你可以讲讲你以前的故事
+Lucia: You can tell your story from before
+
+475
+00:30:40,366 --> 00:30:41,533
+爱丽丝: 我五一要回家
+Alice: I'm going home for May Day
+
+476
+00:30:40,933 --> 00:30:41,933
+塔莎: 哈哈
+Tasha: Haha
+
+477
+00:30:41,533 --> 00:30:42,900
+爱丽丝: 我还没开始订
+Alice: I haven't started booking yet
+
+478
+00:30:42,933 --> 00:30:44,033
+爱丽丝: 哈哈
+Alice: Haha
+
+479
+00:30:44,033 --> 00:30:46,233
+露西亚: 哈哈，连我的屁都震惊
+Lucia: Haha, even my fart is shocking
+
+480
+00:30:45,933 --> 00:30:46,733
+塔莎: 什么？
+Tasha: What?
+
+481
+00:30:46,000 --> 00:30:47,400
+杰克: 哈哈，我已经登机了
+Jake: Haha, I already boarded the flight
+
+482
+00:30:47,500 --> 00:30:49,000
+杰克: 在机场买票
+Jake: Buy the ticket at the airport
+
+483
+00:30:49,666 --> 00:30:50,733
+卡特里娜: 嗯，我受不了
+Katrina: Hmm, I can't handle it
+
+484
+00:30:50,233 --> 00:30:52,766
+杰克: 哈哈哈
+Jake: Hahaha
+
+485
+00:30:50,533 --> 00:30:52,233
+爱丽丝: 啊，什么？
+Alice: Ah, what?
+
+486
+00:30:50,733 --> 00:30:53,166
+卡特里娜: 哈哈哈
+Katrina: Hahaha
+
+487
+00:30:52,766 --> 00:30:54,633
+杰克: 因为
+Jake: Because
+
+488
+00:30:52,933 --> 00:30:54,600
+塔莎: 在机场买票
+Tasha: Buy the ticket at the airport
+
+489
+00:30:54,400 --> 00:30:55,166
+爱丽丝: 啊
+Alice: Ah
+
+490
+00:30:54,766 --> 00:30:56,000
+杰克: 因为更便宜
+Jake: Because it's cheaper
+
+491
+00:30:56,333 --> 00:30:57,100
+塔莎: 真的吗？
+Tasha: Really?
+
+492
+00:30:56,366 --> 00:30:57,433
+杰克: 是的
+Jake: Yeah
+
+493
+00:30:57,533 --> 00:31:00,433
+杰克: 因为如果我提前买票，我通常会错过航班。
+Jake: Because if I buy tickets in advance, I usually miss the flight.
+
+494
+00:31:01,166 --> 00:31:02,400
+杰克: 所以我得改签。
+Jake: So I have to reschedule.
+
+495
+00:31:01,333 --> 00:31:02,500
+爱丽丝: 哦，我明白了。
+Alice: Oh, I see.
+
+496
+00:31:02,500 --> 00:31:03,700
+爱丽丝: 天哪。
+Alice: Oh my god.
+
+497
+00:31:02,933 --> 00:31:05,200
+卡特里娜: 但现场买票不是很贵吗？
+Katrina: But isn't it really expensive to buy tickets on the spot?
+
+498
+00:31:05,166 --> 00:31:05,966
+卡特里娜: 有时候。
+Katrina: Sometimes.
+
+499
+00:31:06,166 --> 00:31:07,766
+杰克: 但反正我总是错过航班。
+Jake: But I always miss the flight anyway.
+
+500
+00:31:08,300 --> 00:31:10,766
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+501
+00:31:08,366 --> 00:31:10,333
+爱丽丝: 原来如此。
+Alice: So that's how it is.
+
+502
+00:31:09,333 --> 00:31:10,933
+卡特里娜: 我真受不了你。
+Katrina: I can't stand you, really.
+
+503
+00:31:10,833 --> 00:31:12,500
+杰克: 是的，所以省钱。
+Jake: Yeah, so it saves money.
+
+504
+00:31:12,300 --> 00:31:13,166
+爱丽丝: 这是能说的吗？
+Alice: Is that something you can say?
+
+505
+00:31:12,500 --> 00:31:13,300
+杰克: 是的。
+Jake: Yeah.
+
+506
+00:31:13,166 --> 00:31:14,500
+爱丽丝: 让外国人震惊。
+Alice: Give the foreigners a shock.
+
+507
+00:31:14,933 --> 00:31:15,733
+卡特里娜: 呵呵呵。
+Katrina: Hehehe.
+
+508
+00:31:15,566 --> 00:31:16,533
+杰克: 这样说没问题，对吧？
+Jake: It's okay to say this, right?
+
+509
+00:31:16,766 --> 00:31:17,900
+爱丽丝: 哈哈。
+Alice: Haha.
+
+510
+00:31:20,166 --> 00:31:21,933
+杰克: 我以前试过很多次。
+Jake: I have tried many times before.
+
+511
+00:31:21,933 --> 00:31:26,000
+杰克: 每次，我可能提前40分钟值机。
+Jake: Every time, I might check in 40 minutes early.
+
+512
+00:31:26,033 --> 00:31:28,833
+杰克: 然后我可能39或38分钟到。
+Jake: And then I might arrive at 39 or 38 minutes.
+
+513
+00:31:29,233 --> 00:31:30,866
+杰克: 然后，哈哈。
+Jake: And then, haha.
+
+514
+00:31:30,866 --> 00:31:31,833
+杰克: 真的很失望。
+Jake: It's really disappointing.
+
+515
+00:31:31,833 --> 00:31:33,033
+杰克: 所以我不再提前买票了。
+Jake: So I stopped buying tickets in advance.
+
+516
+00:31:33,733 --> 00:31:35,433
+爱丽丝: 哈哈，这是我第一次听说。
+Alice: Haha, this is the first time I've heard that.
+
+517
+00:31:35,433 --> 00:31:36,333
+爱丽丝: 哈哈。
+Alice: Haha.
+
+518
+00:31:36,066 --> 00:31:38,166
+露西亚: 不震惊吗？
+Lucia: Isn't it shocking?
+
+519
+00:31:37,266 --> 00:31:39,733
+爱丽丝: 我以为我已经很厉害了。
+Alice: I thought I was already quite something.
+
+520
+00:31:40,166 --> 00:31:42,200
+杰克: 嘿，露西亚，你把这个关了。
+Jake: Hey, Lucia, you turned this off.
+
+521
+00:31:41,866 --> 00:31:42,666
+露西亚: 啊？
+Lucia: Huh?
+
+522
+00:31:42,533 --> 00:31:45,666
+杰克: 是的，为什么关了？
+Jake: Yes, why did it turn off?
+
+523
+00:31:42,666 --> 00:31:43,733
+爱丽丝: 呃，充电。
+Alice: Uh, charging.
+
+524
+00:31:46,166 --> 00:31:47,066
+杰克: 看看，看看。
+Jake: Take a look, take a look.
+
+525
+00:31:47,066 --> 00:31:47,866
+杰克: 什么，什么？
+Jake: What, what?
+
+526
+00:31:48,100 --> 00:31:49,266
+塔莎: 无语。
+Tasha: Speechless.
+
+527
+00:31:50,033 --> 00:31:50,866
+杰克: 哈哈哈，太多了。
+Jake: Hahaha, too much.
+
+528
+00:31:50,033 --> 00:31:54,166
+塔莎: 还是，还是太多钱了。
+Tasha: Still, still too much money.
+
+529
+00:31:50,900 --> 00:31:51,866
+露西亚: 他被你吓到了。
+Lucia: He got scared by you.
+
+530
+00:31:53,800 --> 00:31:55,033
+杰克: 不，他没有。
+Jake: No, he didn't.
+
+531
+00:31:57,500 --> 00:31:58,366
+杰克: 还是得省钱。
+Jake: Still need to save money.
+
+532
+00:31:58,666 --> 00:32:00,066
+塔莎: 家里还是太多钱了。
+Tasha: Still too much money at home.
+
+533
+00:31:59,800 --> 00:32:00,866
+杰克: 还是不能浪费钱。
+Jake: Still can't waste money.
+
+534
+00:32:00,866 --> 00:32:01,866
+杰克: 贵一点没关系。
+Jake: It's okay to be a bit expensive.
+
+535
+00:32:01,866 --> 00:32:03,033
+杰克: 但不能浪费钱。
+Jake: But can't waste money.
+
+536
+00:32:02,900 --> 00:32:04,400
+塔莎: 你家里肯定太多钱了。
+Tasha: You must have too much money at home.
+
+537
+00:32:04,666 --> 00:32:06,033
+卡特里娜: 太搞笑了。
+Katrina: That's so funny.
+
+538
+00:32:05,266 --> 00:32:06,233
+露西亚: 他脸色越来越白。
+Lucia: He's getting paler.
+
+539
+00:32:06,233 --> 00:32:07,100
+露西亚: 但我没关它。
+Lucia: But I didn't close it.
+
+540
+00:32:07,066 --> 00:32:10,000
+露西亚: 我的...
+Lucia: Oh my...
+
+541
+00:32:09,000 --> 00:32:10,266
+塔莎: 哈哈哈！
+Tasha: Hahaha!
+
+542
+00:32:10,000 --> 00:32:10,800
+露西亚: 关了吗？
+Lucia: Did it close?
+
+543
+00:32:11,766 --> 00:32:14,133
+塔莎: 打完电话会自动关闭吗？
+Tasha: Does it automatically close after you finish the call?
+
+544
+00:32:14,033 --> 00:32:14,833
+露西亚: 它影响了。
+Lucia: It affects it.
+
+545
+00:32:15,600 --> 00:32:16,466
+杰克: 应该不会。
+Jake: It shouldn't.
+
+546
+00:32:28,433 --> 00:32:31,433
+露西亚: 嘿，好像他刚才突然断开了。
+Lucia: Hey, it seems like he suddenly disconnected just now.
+
+547
+00:32:32,166 --> 00:32:33,400
+露西亚: 我再试试。
+Lucia: Let me try again.
+
+548
+00:32:38,433 --> 00:32:41,500
+爱丽丝: 嘿，嘿，我真的很好奇你的计划。
+Alice: Hey, hey, I'm really curious about your plan.
+
+549
+00:32:40,066 --> 00:32:41,466
+塔莎: 啊，我也很好奇。
+Tasha: Ah, I'm really curious too.
+
+550
+00:32:41,500 --> 00:32:43,533
+爱丽丝: 我也想知道郑州有什么好玩的。
+Alice: I also want to know what fun stuff is there in Zhengzhou.
+
+551
+00:32:41,500 --> 00:32:42,333
+塔莎: 我也想知道。
+Tasha: I want to know too.
+
+552
+00:32:43,500 --> 00:32:45,633
+塔莎: 不知道，有什么好玩的？
+Tasha: No idea, what is there to do?
+
+553
+00:32:45,266 --> 00:32:46,933
+卡特里娜: 看看非本地人做的攻略就知道了。
+Katrina: Check out the guides made by non-locals and you'll know.
+
+554
+00:32:46,500 --> 00:32:48,333
+爱丽丝: 没错，哈哈哈。
+Alice: Exactly, hahaha.
+
+555
+00:32:46,933 --> 00:32:48,533
+卡特里娜: 哈哈哈。
+Katrina: Hahaha.
+
+556
+00:32:47,266 --> 00:32:47,700
+杰克: 嘿。
+Jake: Hey.
+
+557
+00:32:48,066 --> 00:32:49,033
+塔莎: 我不知道。
+Tasha: I don't know.
+
+558
+00:32:49,033 --> 00:32:50,066
+塔莎: 我什么都不知道。
+Tasha: I don't know anything.
+
+559
+00:32:50,066 --> 00:32:52,300
+塔莎: 今天刚接到电话说去郑州玩。
+Tasha: Just got a call today saying to go play in Zhengzhou.
+
+560
+00:32:52,800 --> 00:32:56,100
+塔莎: 哈哈，我说有空就去。
+Tasha: Haha, I said if I'm free, I'll go.
+
+561
+00:32:54,900 --> 00:32:56,900
+爱丽丝: 你是去演唱会还是什么？
+Alice: Are you going to a concert or something?
+
+562
+00:32:56,933 --> 00:32:57,733
+塔莎: 真的吗？
+Tasha: Really?
+
+563
+00:32:58,366 --> 00:32:59,800
+爱丽丝: 真的吗？我不知道。
+Alice: Really? I don't know.
+
+564
+00:32:59,433 --> 00:33:00,433
+塔莎: 不知道。
+Tasha: No idea.
+
+565
+00:33:00,333 --> 00:33:01,666
+卡特里娜: 不如来武汉玩？
+Katrina: Why don't you come to Wuhan to play?
+
+566
+00:33:03,300 --> 00:33:04,433
+塔莎: 武汉？
+Tasha: Wuhan?
+
+567
+00:33:04,433 --> 00:33:07,866
+塔莎: 有人邀请我去，哈哈哈。
+Tasha: Someone invited me to go, hahaha.
+
+568
+00:33:05,500 --> 00:33:07,433
+卡特里娜: 你觉得是我邀请你吗？
+Katrina: Do you think it's me inviting you?
+
+569
+00:33:05,866 --> 00:33:08,266
+杰克: 哈哈哈哈哈哈哈哈哈哈。
+Jake: Hahahahahahahahahahaha.
+
+570
+00:33:08,166 --> 00:33:10,033
+卡特里娜: 武汉比郑州好玩一点。
+Katrina: Wuhan is slightly more fun than Zhengzhou.
+
+571
+00:33:10,800 --> 00:33:12,233
+露西亚: 我还没去过郑州。
+Lucia: I haven't been to Zhengzhou yet.
+
+572
+00:33:12,433 --> 00:33:13,566
+塔莎: 我也没。
+Tasha: Me neither.
+
+573
+00:33:12,500 --> 00:33:15,300
+卡特里娜: 武汉，但五一期间，人应该很多。
+Katrina: Wuhan, but during May Day, there should be a lot of people.
+
+574
+00:33:14,000 --> 00:33:15,066
+爱丽丝: 来吧，来找我。
+Alice: Come on, come find me.
+
+575
+00:33:15,066 --> 00:33:16,533
+塔莎: 哈哈，五一我应该在家。
+Tasha: Haha, I should be at home during May Day.
+
+576
+00:33:15,066 --> 00:33:16,666
+爱丽丝: 五一我应该在家。
+Alice: I should be at home during May Day.
+
+577
+00:33:17,166 --> 00:33:18,366
+爱丽丝: 我还没开始订票。
+Alice: I haven't started booking tickets yet.
+
+578
+00:33:18,400 --> 00:33:20,166
+爱丽丝: 我看到票已经卖完了。
+Alice: I saw the tickets were sold out.
+
+579
+00:33:20,166 --> 00:33:21,400
+爱丽丝: 所以我还没开始订。
+Alice: So I haven't started booking yet.
+
+580
+00:33:21,833 --> 00:33:23,800
+露西亚: 嗯，原来大家都在拖延。
+Lucia: Well, it turns out everyone is procrastinating.
+
+581
+00:33:23,933 --> 00:33:25,133
+爱丽丝: 反正无所谓。
+Alice: It doesn't matter anyway.
+
+582
+00:33:25,166 --> 00:33:27,366
+爱丽丝: 嗯，买不到票就买不到吧。
+Alice: Hmm, if I can't buy a ticket, then I just can't.
+
+583
+00:33:25,900 --> 00:33:26,666
+塔莎: 买不到票。
+Tasha: Can't buy a ticket.
+
+584
+00:33:27,266 --> 00:33:29,233
+露西亚: 我也经常只提前两三天订。
+Lucia: I also often book just two or three days in advance.
+
+585
+00:33:29,233 --> 00:33:32,800
+露西亚: 但是，你知道，哈哈哈。
+Lucia: But, you know, hahaha.
+
+586
+00:33:29,500 --> 00:33:30,300
+塔莎: 哈哈哈哈哈。
+Tasha: Hahahaha.
+
+587
+00:33:35,766 --> 00:33:38,633
+杰克: 通常，提前两小时左右，对吧？
+Jake: Usually, about two hours in advance, right?
+
+588
+00:33:40,166 --> 00:33:41,966
+杰克: 提前两小时就能买到机票。
+Jake: Just two hours in advance and you can get a flight.
+
+589
+00:33:44,933 --> 00:33:45,933
+爱丽丝: 第一次听说。
+Alice: First time hearing this.
+
+590
+00:33:45,933 --> 00:33:47,500
+爱丽丝: 真是闻所未闻。
+Alice: Really unheard of.
+
+591
+00:33:47,533 --> 00:33:48,333
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+592
+00:33:48,366 --> 00:33:51,300
+杰克: 我到机场看大屏幕，觉得这个不错。
+Jake: When I get to the airport and see the board, I think this one is good.
+
+593
+00:33:48,766 --> 00:33:49,866
+爱丽丝: 哈哈。
+Alice: Haha.
+
+594
+00:33:51,300 --> 00:33:51,933
+杰克: 看看多少钱。
+Jake: Let's see how much it costs.
+
+595
+00:33:51,300 --> 00:33:55,000
+爱丽丝: 哈哈哈哈哈。
+Alice: Hahahahaha.
+
+596
+00:33:51,933 --> 00:33:54,533
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+597
+00:33:52,000 --> 00:33:53,433
+卡特里娜: 哈哈哈哈哈。
+Katrina: Hahahahaha.
+
+598
+00:33:54,533 --> 00:33:56,833
+露西亚: 大开眼界。
+Lucia: Eye-opening.
+
+599
+00:33:55,000 --> 00:33:55,800
+卡特里娜: 哈。
+Katrina: Ha.
+
+600
+00:33:56,866 --> 00:33:58,233
+塔莎: 闻所未闻。
+Tasha: Unheard of.
+
+601
+00:33:58,366 --> 00:33:58,733
+爱丽丝: 我觉得……
+Alice: I think...
+
+602
+00:33:58,733 --> 00:34:01,400
+爱丽丝: 提前一两天订票已经很勉强了。
+Alice: Booking a ticket one or two days in advance is already pushing it.
+
+603
+00:33:59,433 --> 00:34:00,233
+塔莎: 提前两天订票。
+Tasha: Two days to book a ticket.
+
+604
+00:34:01,400 --> 00:34:03,500
+爱丽丝: 像别人，他们可能票一放出就订了。
+Alice: Like others, they probably book as soon as the tickets are released.
+
+605
+00:34:03,500 --> 00:34:05,633
+爱丽丝: 或者提前几天票放出时订。
+Alice: Or a few days in advance when tickets are released.
+
+606
+00:34:05,666 --> 00:34:06,433
+爱丽丝: 提前几天。
+Alice: A few days in advance.
+
+607
+00:34:06,433 --> 00:34:09,233
+爱丽丝: 也许他们总共提前十到二十天。
+Alice: Maybe they push it forward ten to twenty days in total.
+
+608
+00:34:09,266 --> 00:34:10,266
+爱丽丝: 然后开始抢票。
+Alice: And then start grabbing tickets.
+
+609
+00:34:10,300 --> 00:34:11,800
+爱丽丝: 我大学时也是。
+Alice: During my college days too.
+
+610
+00:34:12,033 --> 00:34:13,333
+爱丽丝: 他们已经在想……
+Alice: They were already thinking about...
+
+611
+00:34:13,366 --> 00:34:14,800
+爱丽丝: 哪天抢票。
+Alice: Which day to grab tickets.
+
+612
+00:34:14,800 --> 00:34:16,033
+爱丽丝: 每次快到回家的时候。
+Alice: And every time it was almost time to go home.
+
+613
+00:34:16,033 --> 00:34:17,533
+爱丽丝: 我想查票。
+Alice: I want to check the tickets.
+
+614
+00:34:17,533 --> 00:34:20,533
+爱丽丝: 看！卖完了！哈哈哈！
+Alice: Look! Sold out! Hahaha!
+
+615
+00:34:19,433 --> 00:34:20,433
+杰克: 哈哈，是的。
+Jake: Haha, yes.
+
+616
+00:34:27,533 --> 00:34:30,600
+杰克: 有一次我飞回南京，然后……
+Jake: One time I was flying home to Nanjing and...
+
+617
+00:34:32,166 --> 00:34:32,800
+杰克: 我错过了航班。
+Jake: I missed the flight.
+
+618
+00:34:32,800 --> 00:34:34,000
+杰克: 自然错过了。
+Jake: Naturally, I missed it.
+
+619
+00:34:34,033 --> 00:34:35,366
+杰克: 那天，最后一班……
+Jake: That day, the last...
+
+620
+00:34:35,266 --> 00:34:39,033
+塔莎: 哈哈哈，自然错过了。
+Tasha: Hahaha, naturally missed it.
+
+621
+00:34:35,400 --> 00:34:37,800
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+622
+00:34:35,500 --> 00:34:39,500
+爱丽丝: 哈哈哈，自然错过了。
+Alice: Hahaha, naturally missed it.
+
+623
+00:34:39,433 --> 00:34:40,633
+杰克: 是的，自然错过了。
+Jake: Yes, naturally missed it.
+
+624
+00:34:40,666 --> 00:34:42,933
+杰克: 所以那天，我赶上了最后一班……
+Jake: So that day, I caught the last one...
+
+625
+00:34:42,933 --> 00:34:43,566
+杰克: 回中国。
+Jake: Back to China.
+
+626
+00:34:43,566 --> 00:34:44,466
+杰克: 先到成都。
+Jake: First to Chengdu.
+
+627
+00:34:45,000 --> 00:34:46,566
+杰克: 是的，我在成都住了一晚。
+Jake: Yes, I stayed in Chengdu for a night.
+
+628
+00:34:46,566 --> 00:34:49,033
+杰克: 我以为从成都到南京的高铁会很快。
+Jake: I thought the high-speed train from Chengdu to Nanjing would be quick.
+
+629
+00:34:49,066 --> 00:34:50,133
+塔莎: 你也错过了。
+Tasha: And you missed it too.
+
+630
+00:34:50,166 --> 00:34:51,000
+卡特里娜: 非常非常远。
+Katrina: Very, very far.
+
+631
+00:34:51,000 --> 00:34:52,166
+卡特里娜: 1800公里。
+Katrina: 1,800 kilometers.
+
+632
+00:34:51,166 --> 00:34:53,500
+杰克: 是的，我以为会很快。
+Jake: Yes, I thought it would be quick.
+
+633
+00:34:51,766 --> 00:34:52,733
+爱丽丝: 哈哈哈哈哈。
+Alice: Hahahahaha.
+
+634
+00:34:52,500 --> 00:34:53,300
+塔莎: 以为会很快。
+Tasha: Thought it would be quick.
+
+635
+00:34:53,500 --> 00:34:55,533
+杰克: 因为我觉得北京也……
+Jake: Because I thought Beijing is also...
+
+636
+00:34:55,166 --> 00:34:57,600
+爱丽丝: 哈哈。
+Alice: Haha.
+
+637
+00:34:55,533 --> 00:34:56,833
+杰克: 距离差不多，对吧？
+Jake: About the same distance, right?
+
+638
+00:34:57,000 --> 00:34:58,600
+杰克: 对吧？应该几个小时。
+Jake: Right? It should be a few hours.
+
+639
+00:34:57,766 --> 00:34:59,200
+塔莎: 所以，你赶上了吗？
+Tasha: So, did you make it?
+
+640
+00:34:58,600 --> 00:35:01,366
+杰克: 但我在机场买的票，所以……
+Jake: But I bought the ticket at the airport, so...
+
+641
+00:35:01,400 --> 00:35:05,500
+杰克: 我赶上了，哈哈哈。
+Jake: I made it, hahaha.
+
+642
+00:35:03,166 --> 00:35:05,600
+爱丽丝: 哈哈哈哈哈。
+Alice: Hahahahaha.
+
+643
+00:35:05,533 --> 00:35:07,366
+杰克: 所以，我去了成都，然后……
+Jake: So, I went to Chengdu and...
+
+644
+00:35:07,400 --> 00:35:09,666
+杰克: 到成都后买的票。
+Jake: Bought the ticket after arriving in Chengdu.
+
+645
+00:35:09,666 --> 00:35:13,966
+杰克: 我在春熙路逛了一晚。
+Jake: I wandered around Chunxi Road for a night.
+
+646
+00:35:14,000 --> 00:35:15,800
+杰克: 因为第二天早上的航班……
+Jake: Because the next morning's flight...
+
+647
+00:35:16,233 --> 00:35:17,700
+杰克: 我飞走了。
+Jake: I flew out.
+
+648
+00:35:17,866 --> 00:35:18,933
+杰克: 原本计划坐高铁。
+Jake: Originally planned to take the high-speed train.
+
+649
+00:35:18,933 --> 00:35:19,333
+杰克: 但是……
+Jake: But...
+
+650
+00:35:19,366 --> 00:35:22,000
+杰克: 高铁大概要七八个小时，对吧？
+Jake: The high-speed train takes about seven or eight hours, right?
+
+651
+00:35:21,933 --> 00:35:22,800
+卡特里娜: 没有高铁。
+Katrina: No high-speed train.
+
+652
+00:35:22,800 --> 00:35:24,666
+卡特里娜: 成都到武汉要九小时。
+Katrina: Chengdu to Wuhan takes nine hours.
+
+653
+00:35:25,233 --> 00:35:27,500
+卡特里娜: 从武汉到南京还要两三个小时。
+Katrina: It takes another two or three hours from Wuhan to Nanjing.
+
+654
+00:35:27,866 --> 00:35:28,900
+爱丽丝: 不一定。
+Alice: Not necessarily.
+
+655
+00:35:29,666 --> 00:35:31,200
+卡特里娜: 但超过10小时。
+Katrina: But it's more than 10 hours.
+
+656
+00:35:32,333 --> 00:35:33,200
+杰克: 太可怕了。
+Jake: That's terrifying.
+
+657
+00:35:32,333 --> 00:35:33,800
+卡特里娜: 我通常买机票。
+Katrina: I usually buy plane tickets.
+
+658
+00:35:34,100 --> 00:35:35,166
+卡特里娜: 我也这么想。
+Katrina: I thought so too.
+
+659
+00:35:35,166 --> 00:35:36,666
+卡特里娜: 我以为武汉和长沙……
+Katrina: I thought Wuhan and Changsha...
+
+660
+00:35:36,666 --> 00:35:37,733
+卡特里娜: ……和成都离得很近。
+Katrina: ...and Chengdu were close to each other.
+
+661
+00:35:37,766 --> 00:35:38,533
+卡特里娜: 你知道吗？
+Katrina: You know?
+
+662
+00:35:38,766 --> 00:35:40,266
+卡特里娜: 武汉和长沙只差一小时。
+Katrina: Wuhan and Changsha are only an hour apart.
+
+663
+00:35:40,266 --> 00:35:42,733
+卡特里娜: 但到四川和重庆，真的很远。
+Katrina: But to Sichuan and Chongqing, it's really far.
+
+664
+00:35:42,733 --> 00:35:43,733
+卡特里娜: 要六个小时。
+Katrina: It takes six hours.
+
+665
+00:35:43,666 --> 00:35:44,633
+杰克: 你得绕路。
+Jake: You have to go around.
+
+666
+00:35:47,300 --> 00:35:48,266
+杰克: 我也以为挺近的。
+Jake: I also thought it was pretty close.
+
+667
+00:35:48,266 --> 00:35:50,266
+杰克: 我以为中国的高铁没那么……
+Jake: I thought China's high-speed rail wasn't that...
+
+668
+00:35:50,266 --> 00:35:51,400
+杰克: 哈哈，没那么慢。
+Jake: Haha, wasn't that slow.
+
+669
+00:35:50,333 --> 00:35:51,766
+爱丽丝: 哈哈哈哈 爱丽丝: 哈哈哈哈。
+Alice: ha ha ha ha
+Alice: Ha ha ha ha.
+
+670
+00:35:50,666 --> 00:35:51,500
+卡特里娜: 哈哈哈。
+Katrina: Hahaha.
+
+671
+00:35:51,400 --> 00:35:53,233
+杰克: 我的高铁要十多个小时。
+Jake: My high-speed rail takes more than ten hours.
+
+672
+00:35:53,000 --> 00:35:53,566
+露西亚: 到武汉。
+Lucia: To Wuhan.
+
+673
+00:35:53,233 --> 00:35:54,900
+露西亚: 比从成都到北京还慢。
+Lucia: It's slower than from Chengdu to Beijing.
+
+674
+00:35:55,033 --> 00:35:57,000
+露西亚: 嗯，总觉得……
+Lucia: Hmm, it always feels like...
+
+675
+00:35:58,033 --> 00:36:00,733
+露西亚: 感觉到北京更远。
+Lucia: It feels like it's farther to Beijing.
+
+676
+00:36:00,800 --> 00:36:02,666
+爱丽丝: 他们给高铁减速了吗？
+Alice: Did they slow down the high-speed rail?
+
+677
+00:36:04,333 --> 00:36:05,800
+爱丽丝: 他们现在给高铁减速了吗？
+Alice: Did they slow down the high-speed rail now?
+
+678
+00:36:05,800 --> 00:36:07,666
+爱丽丝: 现在通常都超过300。
+Alice: It's usually over 300 now.
+
+679
+00:36:08,033 --> 00:36:09,533
+杰克: 是的，都是300，是的。
+Jake: Yeah, it's all 300, yeah.
+
+680
+00:36:08,333 --> 00:36:09,666
+爱丽丝: 嗯，都超过300。
+Alice: Hmm, it's all over 300.
+
+681
+00:36:09,533 --> 00:36:11,566
+杰克: 正好300，怎么……
+Jake: Exactly 300, how...
+
+682
+00:36:09,800 --> 00:36:10,800
+塔莎: 太离谱了。
+Tasha: That's ridiculous.
+
+683
+00:36:12,800 --> 00:36:15,500
+塔莎: 他给我找了张从北京到郑州的汽车票。
+Tasha: He found me a bus ticket from Beijing to Zhengzhou.
+
+684
+00:36:15,566 --> 00:36:16,366
+爱丽丝: 啊。
+Alice: Ah.
+
+685
+00:36:15,733 --> 00:36:19,933
+塔莎: 哈哈哈哈哈。
+Tasha: Hahahaha.
+
+686
+00:36:16,866 --> 00:36:17,666
+爱丽丝: 什么？
+Alice: What?
+
+687
+00:36:17,666 --> 00:36:18,433
+杰克: 转几次车？
+Jake: How many transfers?
+
+688
+00:36:20,166 --> 00:36:21,633
+爱丽丝: 告诉我，哈哈。
+Alice: Tell me, haha.
+
+689
+00:36:20,566 --> 00:36:22,233
+塔莎: 我说，我说如果我不去……
+Tasha: I said, I said if I don't go...
+
+690
+00:36:21,800 --> 00:36:23,000
+杰克: 嘿，九死一生。
+Jake: Hey, narrow escape.
+
+691
+00:36:22,400 --> 00:36:25,033
+塔莎: 我说，我说如果我24号去北京……
+Tasha: I said, I said if I go to Beijing on the 24th...
+
+692
+00:36:25,033 --> 00:36:27,033
+塔莎: 他说如果我不去，他就杀了我。
+Tasha: He said if I don't go, he'll kill me.
+
+693
+00:36:27,033 --> 00:36:28,066
+塔莎: 我问住哪儿。
+Tasha: I asked where to stay.
+
+694
+00:36:28,333 --> 00:36:31,800
+塔莎: 然后他说赶紧订汽车票。
+Tasha: Then he said to quickly book the bus ticket.
+
+695
+00:36:28,933 --> 00:36:29,733
+卡特里娜: 问妈妈。
+Katrina: Ask mom.
+
+696
+00:36:31,800 --> 00:36:32,933
+塔莎: 哈哈。
+Tasha: Haha.
+
+697
+00:36:31,866 --> 00:36:34,700
+露西亚: 哈哈哈，你朋友是真的吗？
+Lucia: Hahaha, is your friend real?
+
+698
+00:36:32,933 --> 00:36:34,566
+塔莎: 你朋友是真的，对吧？
+Tasha: Your friend is real, right?
+
+699
+00:36:34,866 --> 00:36:37,233
+杰克: 北京任何地方。
+Jake: Anywhere in Beijing.
+
+700
+00:36:36,500 --> 00:36:38,866
+卡特里娜: 你怎么在这儿坐公交？
+Katrina: How are you going to take the bus here?
+
+701
+00:36:38,333 --> 00:36:39,300
+塔莎: 嗯。
+Tasha: Hmm.
+
+702
+00:36:38,566 --> 00:36:39,366
+杰克: 你什么意思？
+Jake: What do you mean?
+
+703
+00:36:40,100 --> 00:36:41,966
+塔莎: 从北京任何地方到郑州。
+Tasha: From anywhere in Beijing to Zhengzhou.
+
+704
+00:36:42,766 --> 00:36:44,400
+露西亚: 你可以坐公交到郑州？
+Lucia: You can take a bus to Zhengzhou?
+
+705
+00:36:44,333 --> 00:36:45,100
+塔莎: 嗯。
+Tasha: Hmm.
+
+706
+00:36:44,933 --> 00:36:46,900
+爱丽丝: 天哪，开门。
+Alice: Oh my god, open the door.
+
+707
+00:36:46,100 --> 00:36:46,933
+塔莎: 门到门服务。
+Tasha: Door-to-door service.
+
+708
+00:36:46,933 --> 00:36:48,166
+塔莎: 门到门服务。
+Tasha: Door-to-door service.
+
+709
+00:36:47,033 --> 00:36:47,600
+露西亚: 门到门服务。
+Lucia: Door-to-door service.
+
+710
+00:36:47,600 --> 00:36:49,200
+杰克: 哈哈，门到门。
+Jake: Haha, door-to-door.
+
+711
+00:36:49,066 --> 00:36:51,100
+爱丽丝: 天哪，哈哈哈。
+Alice: Oh my god, hahaha.
+
+712
+00:36:51,066 --> 00:36:52,000
+杰克: 专车，对吧？
+Jake: A dedicated car, right?
+
+713
+00:36:52,000 --> 00:36:52,866
+杰克: 专车才280。
+Jake: A dedicated car is only 280.
+
+714
+00:36:52,900 --> 00:36:53,766
+露西亚: 是的，我想问。
+Lucia: Yeah, I wanted to ask.
+
+715
+00:36:53,766 --> 00:36:54,533
+露西亚: 那么便宜？
+Lucia: That cheap?
+
+716
+00:36:55,433 --> 00:36:56,433
+爱丽丝: 比我的高铁还便宜。
+Alice: Cheaper than my high-speed train.
+
+717
+00:36:56,433 --> 00:36:58,666
+爱丽丝: 但太长了，我屁股会疼。
+Alice: But it's too long, my butt would be sore.
+
+718
+00:36:58,566 --> 00:36:59,700
+塔莎: 10小时。
+Tasha: 10 hours.
+
+719
+00:37:00,433 --> 00:37:01,666
+塔莎: 唉，好吧。
+Tasha: Sigh, alright.
+
+720
+00:37:01,666 --> 00:37:03,333
+塔莎: 9.5小时。
+Tasha: 9.5 hours.
+
+721
+00:37:01,866 --> 00:37:02,933
+露西亚: 国内我们不用那样。
+Lucia: We don't have to do that domestically.
+
+722
+00:37:02,933 --> 00:37:05,200
+露西亚: 干嘛大惊小怪，哈哈哈。
+Lucia: Why make a fuss or hahaha.
+
+723
+00:37:05,233 --> 00:37:06,366
+露西亚: 就是公交。
+Lucia: It's just a bus.
+
+724
+00:37:06,266 --> 00:37:08,166
+塔莎: 到了再订酒店。
+Tasha: We'll book a hotel when we get there.
+
+725
+00:37:08,400 --> 00:37:09,766
+爱丽丝: 我查查。
+Alice: Let me check.
+
+726
+00:37:13,100 --> 00:37:15,333
+爱丽丝: 他怎么想出来的？
+Alice: How did he even come up with this?
+
+727
+00:37:15,366 --> 00:37:16,700
+爱丽丝: 我从来没听说过。
+Alice: I've never heard of it.
+
+728
+00:37:16,566 --> 00:37:19,666
+塔莎: 他还建议我骑自行车去，哈哈哈。
+Tasha: He even suggested I ride a bike there, hahaha.
+
+729
+00:37:19,400 --> 00:37:20,500
+爱丽丝: 骑自行车，真的。
+Alice: Ride a bike, really.
+
+730
+00:37:20,866 --> 00:37:23,400
+杰克: 从北京骑自行车到郑州要多久？
+Jake: How long would it take to ride a bike from Beijing to Zhengzhou?
+
+731
+00:37:21,733 --> 00:37:22,500
+塔莎: 啊？
+Tasha: Huh?
+
+732
+00:37:23,166 --> 00:37:23,966
+塔莎: 不知道。
+Tasha: No idea.
+
+733
+00:37:24,600 --> 00:37:25,600
+露西亚: 饭好了。
+Lucia: The food's ready.
+
+734
+00:37:25,600 --> 00:37:27,200
+杰克: 大概五一。
+Jake: It's about May 1st.
+
+735
+00:37:26,766 --> 00:37:28,433
+露西亚: 接待站不会收他。
+Lucia: The reception station won’t accept him.
+
+736
+00:37:29,400 --> 00:37:31,500
+爱丽丝: 调度费太贵了，哈哈。
+Alice: The dispatch fee is too expensive, haha.
+
+737
+00:37:30,800 --> 00:37:31,500
+杰克: 是的。
+Jake: Yeah.
+
+738
+00:37:32,400 --> 00:37:35,433
+塔莎: 那我得用新手机号注册。
+Tasha: Then I have to use a new phone number to register.
+
+739
+00:37:35,433 --> 00:37:39,266
+塔莎: 他们说新用户首次免调度费。
+Tasha: And they said new users get free dispatch for the first time.
+
+740
+00:37:39,300 --> 00:37:40,666
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+741
+00:37:39,366 --> 00:37:42,433
+露西亚: 哈哈，你每到一个城市可以换一两个尼克斯。
+Lucia: Haha, you can change one or two Nicous in each city you arrive.
+
+742
+00:37:42,433 --> 00:37:43,400
+露西亚: 在相邻城市之间。
+Lucia: Between adjacent cities.
+
+743
+00:37:43,433 --> 00:37:44,800
+露西亚: 就在城市之间。
+Lucia: Just between the cities.
+
+744
+00:37:45,266 --> 00:37:47,666
+塔莎: 你不考虑可行性吗？
+Tasha: Aren’t you considering the feasibility of this?
+
+745
+00:37:47,666 --> 00:37:49,400
+塔莎: 我到了是不是得先治腿？
+Tasha: Should I treat my leg first when I get there?
+
+746
+00:37:50,566 --> 00:37:52,733
+爱丽丝: 我包饺子就为了醋。
+Alice: I made dumplings just for the vinegar.
+
+747
+00:37:52,600 --> 00:37:54,366
+杰克: 哈哈哈哈哈。
+Jake: Hahahaha.
+
+748
+00:37:56,100 --> 00:37:56,900
+爱丽丝: 好像……
+Alice: It seems like...
+
+749
+00:37:56,666 --> 00:37:59,833
+露西亚: 为了保证你能顺利去郑州啊
+
+750
+00:37:59,933 --> 00:38:00,866
+爱丽丝: 没听说过。
+Alice: Never heard of this.
+
+751
+00:38:02,233 --> 00:38:03,933
+杰克: 导航到郑州最好的医院。
+Jake: Navigate to the best hospital in Zhengzhou.
+
+752
+00:38:03,933 --> 00:38:08,466
+杰克: 哈哈哈哈哈。
+Jake: Hahahaha.
+
+753
+00:38:04,266 --> 00:38:08,333
+爱丽丝: 哈哈哈哈哈哈哈哈哈
+Alice: Hahahahahahahahaha
+
+754
+00:38:04,433 --> 00:38:06,100
+塔莎: 哈哈哈哈哈哈
+Tasha: Hahahahahahaha
+
+755
+00:38:08,833 --> 00:38:10,800
+杰克: 骨科
+Jake: Orthopedics
+
+756
+00:38:09,266 --> 00:38:11,500
+塔莎: 我懂了，就这样。
+Tasha: I get it, just like that.
+
+757
+00:38:11,733 --> 00:38:13,933
+塔莎: 我摔在半路。
+Tasha: I fell in the middle of it.
+
+758
+00:38:13,933 --> 00:38:17,566
+塔莎: 然后郑州的救护车来接我，哈哈。
+Tasha: Then an ambulance from Zhengzhou came to pick me up, haha.
+
+759
+00:38:16,166 --> 00:38:17,033
+杰克: 哦。
+Jake: Oh.
+
+760
+00:38:17,033 --> 00:38:17,966
+爱丽丝: 哈哈。
+Alice: Haha.
+
+761
+00:38:25,666 --> 00:38:26,633
+爱丽丝: 郑州真的有
+Alice: Zhengzhou really does have
+
+762
+00:38:26,666 --> 00:38:27,533
+爱丽丝: 一家骨科医院。
+Alice: an orthopedic hospital.
+
+763
+00:38:33,566 --> 00:38:34,966
+爱丽丝: 离东站不远。
+Alice: It's not far from the east station.
+
+764
+00:38:35,266 --> 00:38:37,800
+爱丽丝: 你可以直接去，哈哈。
+Alice: You can just go straight there, haha.
+
+765
+00:38:36,933 --> 00:38:37,733
+塔莎: 哈哈。
+Tasha: Haha.
+
+766
+00:38:39,400 --> 00:38:42,166
+露西亚: 所以你不用去酒店，对吧？哈哈。
+Lucia: So you don't need to go to the hotel, right? Haha.
+
+767
+00:38:39,666 --> 00:38:41,733
+爱丽丝: 哈哈哈。
+Alice: Hahaha.
+
+768
+00:38:59,500 --> 00:39:00,300
+杰克: 五一
+Jake: May Day
+
+769
+00:39:01,166 --> 00:39:02,166
+杰克: 五一放几天假？
+Jake: How many days off for May Day?
+
+770
+00:39:03,400 --> 00:39:04,166
+爱丽丝: 没查。
+Alice: Haven't checked.
+
+771
+00:39:03,400 --> 00:39:06,433
+杰克: 七天，对吧？
+Jake: Seven days, right?
+
+772
+00:39:03,400 --> 00:39:06,433
+杰克: 七天，对吧？
+Jake: Seven days, right?
+
+773
+00:39:06,766 --> 00:39:08,266
+爱丽丝: 如果没休息够，就请假。
+Alice: If you don't get enough rest, just take leave.
+
+774
+00:39:10,933 --> 00:39:12,400
+露西亚: 你可以大胆一点。
+Lucia: You can be a bit bolder.
+
+775
+00:39:12,433 --> 00:39:13,433
+露西亚: 如果没休息够，就逃课。
+Lucia: If you don't get enough rest, just skip class.
+
+776
+00:39:15,500 --> 00:39:16,933
+塔莎: 是的，我今天逃课了。
+Tasha: Yeah, I skipped class today.
+
+777
+00:39:17,666 --> 00:39:18,466
+杰克: 什么课？
+Jake: What class?
+
+778
+00:39:18,866 --> 00:39:19,766
+塔莎: 课不重要。
+Tasha: The class doesn't matter.
+
+779
+00:39:19,766 --> 00:39:22,700
+塔莎: 其实，我从来没见过他，哈哈。
+Tasha: Actually, I've never met him, haha.
+
+780
+00:39:29,666 --> 00:39:32,866
+杰克: 这么多人，哈哈。
+Jake: So many people, haha.
+
+781
+00:39:31,400 --> 00:39:32,166
+塔莎: 哈。
+Tasha: Ha.
+
+782
+00:39:32,366 --> 00:39:33,300
+爱丽丝: 这么多人。
+Alice: So many people.
+
+783
+00:39:34,300 --> 00:39:36,333
+爱丽丝: 我最近在查演唱会票。
+Alice: I'm checking for concert tickets lately.
+
+784
+00:39:34,666 --> 00:39:36,033
+卡特里娜: 这个舞蹈版不错。
+Katrina: This dance version is not bad.
+
+785
+00:39:44,733 --> 00:39:45,700
+卡特里娜: 1点5，6。
+Katrina: 1 point 5, 6.
+
+786
+00:39:48,900 --> 00:39:50,566
+塔莎: 在北京，你居然要抢医院预约。
+Tasha: In Beijing, you actually have to fight for hospital appointments.
+
+787
+00:39:50,666 --> 00:39:51,933
+塔莎: 你知道抢票吧？
+Tasha: You know about fighting for tickets, right?
+
+788
+00:39:52,566 --> 00:39:57,100
+塔莎: 你得提前7天开始抢。
+Tasha: You have to start fighting for them 7 days in advance.
+
+789
+00:39:53,800 --> 00:39:57,433
+露西亚: 嘿，我明明充了电，怎么又低电量了？
+Lucia: Hey, I clearly charged it, why is it low battery again?
+
+790
+00:39:57,100 --> 00:39:58,866
+塔莎: 治疗的预约号。
+Tasha: The appointment number for treatment.
+
+791
+00:39:57,266 --> 00:39:59,033
+杰克: 我看看。
+Jake: Let me take a look.
+
+792
+00:39:59,500 --> 00:40:01,666
+塔莎: 挂号费怎么这么贵？100元。
+Tasha: Why is the registration fee so expensive? 100 yuan.
+
+793
+00:40:01,933 --> 00:40:03,466
+爱丽丝: 你挂的什么号？
+Alice: What kind of appointment did you get?
+
+794
+00:40:01,933 --> 00:40:03,566
+卡特里娜: 怎么又有一个独奏？
+Katrina: Why is there another solo?
+
+795
+00:40:03,566 --> 00:40:04,633
+塔莎: 专家号。
+Tasha: Specialist appointment.
+
+796
+00:40:03,800 --> 00:40:04,666
+爱丽丝: 专家号？
+Alice: Specialist appointment?
+
+797
+00:40:04,666 --> 00:40:06,500
+爱丽丝: 专家号更贵。
+Alice: Specialist appointments are more expensive.
+
+798
+00:40:06,166 --> 00:40:07,033
+杰克: 呃，还行。
+Jake: Uh, it's okay.
+
+799
+00:40:06,866 --> 00:40:10,500
+爱丽丝: 你会发现专家只给你简短咨询。
+Alice: You’ll find that specialists only give you a brief consultation.
+
+800
+00:40:07,033 --> 00:40:08,833
+杰克: 大概吧。
+Jake: Probably.
+
+801
+00:40:09,033 --> 00:40:12,033
+露西亚: 但我刚拿到时，还是30%。
+Lucia: But when I first got it, it was still 30%.
+
+802
+00:40:12,033 --> 00:40:14,833
+露西亚: 但有一小段时间没插电。
+Lucia: But there was a short period when it wasn’t plugged in.
+
+803
+00:40:12,366 --> 00:40:13,266
+爱丽丝: 有一会儿。
+Alice: For a bit of time.
+
+804
+00:40:13,100 --> 00:40:15,866
+塔莎: 还有急诊挂号。
+Tasha: There's also emergency appointment registration.
+
+805
+00:40:15,900 --> 00:40:17,300
+塔莎: 每次500元。
+Tasha: 500 yuan per appointment.
+
+806
+00:40:17,000 --> 00:40:17,800
+杰克: 好的。
+Jake: Okay.
+
+807
+00:40:18,266 --> 00:40:21,633
+杰克: 我给你拿个电量更高的。
+Jake: I'll get you a higher charged one.
+
+808
+00:40:18,766 --> 00:40:19,533
+爱丽丝: 急诊？
+Alice: Emergency?
+
+809
+00:40:19,400 --> 00:40:20,166
+塔莎: 是的。
+Tasha: Yes.
+
+810
+00:40:20,500 --> 00:40:21,800
+爱丽丝: 急诊也要预约？
+Alice: You even need an appointment for emergencies?
+
+811
+00:40:21,933 --> 00:40:24,366
+塔莎: 是啊，急诊为什么要预约？
+Tasha: Yeah, why do you need an appointment for emergencies?
+
+812
+00:40:22,733 --> 00:40:24,800
+爱丽丝: 急诊为什么要预约？
+Alice: Why do you need an appointment for emergencies?
+
+813
+00:40:24,433 --> 00:40:27,533
+塔莎: 这是急诊预约。
+Tasha: It's an emergency appointment.
+
+814
+00:40:25,733 --> 00:40:26,500
+爱丽丝: 好吧。
+Alice: Okay.
+
+815
+00:40:27,533 --> 00:40:28,866
+塔莎: 每人500元。
+Tasha: 500 yuan per person.
+
+816
+00:40:27,666 --> 00:40:30,200
+杰克: 嗯，我给你大的。
+Jake: Hmm, I'll give you the big one.
+
+817
+00:40:30,566 --> 00:40:31,066
+杰克: 大的。
+Jake: The big one.
+
+818
+00:40:30,933 --> 00:40:33,266
+爱丽丝: 我还没急诊过。
+Alice: I haven't had an emergency yet.
+
+819
+00:40:32,033 --> 00:40:32,433
+杰克: 贵的那个。
+Jake: The expensive one.
+
+820
+00:40:34,933 --> 00:40:35,500
+塔莎: 在我们学校，
+Tasha: At our school,
+
+821
+00:40:35,500 --> 00:40:37,766
+塔莎: 诊所挂号费只要1元。
+Tasha: the clinic registration fee is just 1 yuan.
+
+822
+00:40:38,366 --> 00:40:40,600
+塔莎: 你们学校也一样，对吧？
+Tasha: It's the same at your school, right?
+
+823
+00:40:39,000 --> 00:40:41,033
+爱丽丝: 因为补贴，对吧？
+Alice: Because of the subsidy, right?
+
+824
+00:40:41,366 --> 00:40:43,600
+露西亚: 我们学校诊所，以前只要0.5元。
+Lucia: At our school clinic, it used to be only 0.5 yuan.
+
+825
+00:40:43,566 --> 00:40:45,033
+杰克: 换一个。
+Jake: Change it.
+
+826
+00:40:43,566 --> 00:40:45,033
+杰克: 换一个。
+Jake: Change it.
+
+827
+00:40:45,033 --> 00:40:46,166
+露西亚: 太不公平了。
+Lucia: That's so unfair.
+
+828
+00:40:46,166 --> 00:40:47,700
+塔莎: 那1元，我……
+Tasha: That 1 yuan, I...
+
+829
+00:40:49,066 --> 00:40:51,033
+杰克: 是的，你得让灯亮着。
+Jake: Yeah, you have to keep the light on.
+
+830
+00:40:51,033 --> 00:40:52,066
+杰克: 这样才能充电。
+Jake: Only then it can charge.
+
+831
+00:40:53,400 --> 00:40:56,300
+塔莎: 而且每次拿药，都要一大袋。
+Tasha: And every time you get medicine, you need a big bag.
+
+832
+00:40:53,933 --> 00:40:57,333
+露西亚: 哈哈，怎么回事，哈哈！
+Lucia: Haha, what's with that, haha!
+
+833
+00:40:56,300 --> 00:40:57,166
+塔莎: 为了提着，对吧？
+Tasha: To carry it, right?
+
+834
+00:40:57,166 --> 00:40:58,866
+塔莎: 哈哈，对吧？
+Tasha: Haha, right?
+
+835
+00:40:58,800 --> 00:41:00,566
+露西亚: 哈哈哈。
+Lucia: Hahaha.
+
+836
+00:40:58,900 --> 00:41:01,933
+塔莎: 是的，他们至少开10盒。
+Tasha: Yeah, they prescribe at least 10 boxes.
+
+837
+00:41:02,166 --> 00:41:03,066
+露西亚: 没那么夸张。
+Lucia: It's not that exaggerated.
+
+838
+00:41:03,066 --> 00:41:04,666
+塔莎: 没那么夸张吗？
+Tasha: Is it not that exaggerated?
+
+839
+00:41:04,666 --> 00:41:06,500
+露西亚: 每次都是乱七八糟的男女混合。
+Lucia: Every time, it's like a ridiculous mix of male and female.
+
+840
+00:41:07,000 --> 00:41:08,500
+塔莎: 哈哈，不夸张。
+Tasha: Haha, not using exaggeration.
+
+841
+00:41:08,500 --> 00:41:10,933
+塔莎: 比如，我感冒了，
+Tasha: For example, if I have a cold,
+
+842
+00:41:10,933 --> 00:41:13,233
+塔莎: 他们问哪里疼。
+Tasha: they ask where it hurts.
+
+843
+00:41:13,266 --> 00:41:14,433
+塔莎: 你喉咙疼吗？
+Tasha: Does your throat hurt?
+
+844
+00:41:14,433 --> 00:41:15,633
+塔莎: 如果我说我喉咙痛，
+Tasha: If I say my throat hurts,
+
+845
+00:41:15,766 --> 00:41:17,933
+塔莎: 他们就开喉咙药。
+Tasha: they prescribe throat medicine.
+
+846
+00:41:18,033 --> 00:41:19,100
+塔莎: 喉咙喷雾。
+Tasha: Throat spray.
+
+847
+00:41:19,300 --> 00:41:21,433
+塔莎: 感冒冲剂、解毒胶囊。
+Tasha: Cold granules, detox capsules.
+
+848
+00:41:21,500 --> 00:41:25,533
+塔莎: 哈哈，每种药都开两三盒。
+Tasha: Haha, they prescribe 2 or 3 boxes of each medicine.
+
+849
+00:41:25,566 --> 00:41:28,966
+塔莎: 可能是因为免费吧？
+Tasha: Maybe because it's free?
+
+850
+00:41:29,100 --> 00:41:30,233
+塔莎: 所以他们一直开。
+Tasha: So they keep prescribing.
+
+851
+00:41:32,266 --> 00:41:33,233
+杰克: 用脑药治头痛。
+Jake: Treating a headache with brain medicine.
+
+852
+00:41:37,166 --> 00:41:38,766
+杰克: 嗯，哈哈。
+Jake: Hmm, haha.
+
+853
+00:41:41,400 --> 00:41:43,100
+爱丽丝: 我今年没抢到票。
+Alice: I didn't get a ticket this year.
+
+854
+00:41:43,866 --> 00:41:44,666
+杰克: 什么票？
+Jake: What ticket?
+
+855
+00:41:44,666 --> 00:41:46,400
+爱丽丝: 一张演唱会票都没抢到。
+Alice: Couldn't get a single concert ticket.
+
+856
+00:41:46,933 --> 00:41:47,733
+杰克: 你都有什么？
+Jake: What all do you have?
+
+857
+00:41:46,933 --> 00:41:48,266
+卡特里娜: 我甚至雇人帮我抢。
+Katrina: I even hired someone to get it for me.
+
+858
+00:41:48,433 --> 00:41:49,233
+露西亚: 让
+Lucia: Let
+
+859
+00:41:49,900 --> 00:41:50,666
+爱丽丝: 啊？
+Alice: Huh?
+
+860
+00:41:50,266 --> 00:41:50,900
+露西亚: 让杰克
+Lucia: Let Jake
+
+861
+00:41:50,866 --> 00:41:51,666
+露西亚: 哈哈
+Lucia: Haha
+
+862
+00:41:50,900 --> 00:41:52,066
+露西亚: 用他的设备
+Lucia: Use his equipment
+
+863
+00:41:51,933 --> 00:41:53,133
+塔莎: 帮你抢票的设备。
+Tasha: Equipment to help you get the tickets.
+
+864
+00:41:52,800 --> 00:41:53,933
+卡特里娜: 哈哈哈
+Katrina: Hahaha
+
+865
+00:41:53,166 --> 00:41:54,233
+爱丽丝: 哦，他能吗？
+Alice: Oh, can he?
+
+866
+00:41:54,533 --> 00:41:55,833
+塔莎: 打开加速器。
+Tasha: Turn on the accelerator.
+
+867
+00:41:54,566 --> 00:41:56,066
+杰克: 打开7台电脑。
+Jake: Turn on 7 computers.
+
+868
+00:41:55,066 --> 00:41:56,866
+卡特里娜: 需要写个Python脚本。
+Katrina: Need to write a Python script.
+
+869
+00:41:57,833 --> 00:41:59,266
+露西亚: 因为他有那么多电脑。
+Lucia: It's because he has so many computers.
+
+870
+00:41:59,400 --> 00:42:01,600
+杰克: 哈哈，都一样。
+Jake: Haha, it's all the same.
+
+871
+00:42:01,600 --> 00:42:02,766
+杰克: 你猜怎么着，这些电脑
+Jake: Guess what, these computers
+
+872
+00:42:02,800 --> 00:42:05,400
+杰克: 所有这些电脑都是租的。
+Jake: All these computers are rented.
+
+873
+00:42:05,400 --> 00:42:06,900
+杰克: 租了十天。
+Jake: Rented for ten days.
+
+874
+00:42:07,500 --> 00:42:08,366
+杰克: 你觉得每台多少钱？
+Jake: How much do you think each costs?
+
+875
+00:42:08,366 --> 00:42:09,900
+杰克: 猜猜十天多少钱？
+Jake: Guess how much for ten days?
+
+876
+00:42:10,033 --> 00:42:11,066
+杰克: 一台电脑。
+Jake: For one computer.
+
+877
+00:42:10,033 --> 00:42:12,033
+塔莎: 一台多少钱？多少？
+Tasha: How much for one? How much?
+
+878
+00:42:12,533 --> 00:42:15,400
+杰克: 给个数字，就一个数字。
+Jake: Give a number, just a number.
+
+879
+00:42:12,866 --> 00:42:15,033
+露西亚: 不然他就直接买了。
+Lucia: Otherwise, he'd just buy them.
+
+880
+00:42:13,666 --> 00:42:15,000
+塔莎: 100块？
+Tasha: 100 bucks?
+
+881
+00:42:17,666 --> 00:42:19,500
+卡特里娜: 我们学校还跳这个舞。
+Katrina: Our school even does this dance.
+
+882
+00:42:18,366 --> 00:42:20,666
+杰克: 差不多。
+Jake: Close enough.
+
+883
+00:42:19,266 --> 00:42:20,600
+塔莎: 我把电脑借给你。
+Tasha: I'll lend you my computer.
+
+884
+00:42:21,033 --> 00:42:26,566
+杰克: 哈哈，十天八十。
+Jake: Haha, eighty for ten days.
+
+885
+00:42:26,000 --> 00:42:26,800
+塔莎: 啊？
+Tasha: Huh?
+
+886
+00:42:26,800 --> 00:42:28,033
+露西亚: 十天八十。
+Lucia: Eighty for ten days.
+
+887
+00:42:26,800 --> 00:42:29,900
+杰克: 十天八十。
+Jake: Eighty for ten days.
+
+888
+00:42:27,866 --> 00:42:28,700
+塔莎: 一天八十？
+Tasha: Eighty a day?
+
+889
+00:42:29,900 --> 00:42:31,433
+杰克: 一台电脑十天。
+Jake: Ten days for one computer.
+
+890
+00:42:31,433 --> 00:42:32,600
+杰克: 一台电脑，八十。
+Jake: One computer, eighty.
+
+891
+00:42:33,333 --> 00:42:34,100
+塔莎: 十天？
+Tasha: Ten days?
+
+892
+00:42:33,900 --> 00:42:35,500
+爱丽丝: 一天八块？
+Alice: Eight bucks a day?
+
+893
+00:42:35,400 --> 00:42:36,766
+塔莎: 一天才8块钱。
+Tasha: Only 8 yuan a day.
+
+894
+00:42:35,533 --> 00:42:36,800
+杰克: 对。
+Jake: Yeah.
+
+895
+00:42:36,266 --> 00:42:37,033
+爱丽丝: 多少？
+Alice: How much?
+
+896
+00:42:37,300 --> 00:42:39,000
+杰克: 对，一台电脑一天8块钱。
+Jake: Yeah, 8 yuan a day for one computer.
+
+897
+00:42:40,833 --> 00:42:41,933
+杰克: 我们可以不租了，对吧？
+Jake: We can stop renting, right?
+
+898
+00:42:42,166 --> 00:42:43,500
+杰克: 哈哈。
+Jake: Haha.
+
+899
+00:42:42,433 --> 00:42:43,366
+塔莎: 啊，不行。
+Tasha: Ah, no.
+
+900
+00:42:43,666 --> 00:42:44,366
+杰克: 你也可以租。
+Jake: You can also rent it.
+
+901
+00:42:44,366 --> 00:42:45,666
+杰克: 真的？
+Jake: Really?
+
+902
+00:42:44,733 --> 00:42:45,733
+卡特里娜: 这个是5。
+Katrina: This one is 5.
+
+903
+00:42:44,766 --> 00:42:45,533
+塔莎: 呃。
+Tasha: Uh.
+
+904
+00:42:45,733 --> 00:42:47,400
+卡特里娜: 这是我们电脑美术组的。
+Katrina: It's from our computer art group.
+
+905
+00:42:47,233 --> 00:42:48,500
+卡特里娜: 还有我们学校的。
+Katrina: And from our school.
+
+906
+00:42:49,400 --> 00:42:50,666
+塔莎: 80块钱10天。
+Tasha: 80 yuan for 10 days.
+
+907
+00:42:50,666 --> 00:42:53,100
+卡特里娜: 我学姐在杭州工作，哈哈。
+Katrina: My senior is working in Hangzhou, haha.
+
+908
+00:42:51,766 --> 00:42:52,700
+杰克: 哦。
+Jake: Oh.
+
+909
+00:42:53,933 --> 00:42:54,966
+杰克: 她现在在工作。
+Jake: She is working now.
+
+910
+00:42:54,033 --> 00:42:56,266
+塔莎: 那以后我可能不买电脑打游戏了。
+Tasha: Then maybe I won't buy a computer for gaming in the future.
+
+911
+00:42:55,233 --> 00:42:56,833
+杰克: 她一边工作一边做的。
+Jake: She did this while working.
+
+912
+00:42:56,300 --> 00:42:57,500
+塔莎: 我就租电脑。
+Tasha: I'll just rent a computer.
+
+913
+00:42:56,933 --> 00:42:58,500
+卡特里娜: 这是她毕业晚会上的。
+Katrina: This was from her graduation party.
+
+914
+00:42:57,000 --> 00:42:58,633
+杰克: 哦。
+Jake: Oh.
+
+915
+00:42:57,500 --> 00:42:58,166
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+916
+00:42:58,166 --> 00:43:00,266
+塔莎: 但我觉得租电脑可能没那么贵。
+Tasha: But I think renting a computer might not be that expensive.
+
+917
+00:42:58,500 --> 00:42:59,933
+卡特里娜: 她大四，我大一。
+Katrina: She was a senior, I was a freshman.
+
+918
+00:42:58,666 --> 00:43:00,433
+杰克: 哦哦哦。
+Jake: Oh oh oh.
+
+919
+00:43:00,266 --> 00:43:01,033
+卡特里娜: 难以置信。
+Katrina: Unbelievable.
+
+920
+00:43:01,366 --> 00:43:03,500
+塔莎: 哦，一台破电脑。
+Tasha: Oh, a crappy computer.
+
+921
+00:43:01,433 --> 00:43:02,866
+杰克: 哈哈。
+Jake: Haha.
+
+922
+00:43:01,533 --> 00:43:02,933
+卡特里娜: 四年前我跳得比你好。
+Katrina: I danced better than you 4 years ago.
+
+923
+00:43:02,866 --> 00:43:06,000
+杰克: 哈哈。
+Jake: Haha.
+
+924
+00:43:02,933 --> 00:43:05,733
+卡特里娜: 想跳舞吗？哈哈。
+Katrina: Want to dance? Haha.
+
+925
+00:43:03,933 --> 00:43:04,733
+露西亚: 我不知道。
+Lucia: I don't know.
+
+926
+00:43:05,600 --> 00:43:06,400
+露西亚: 不知道。
+Lucia: No idea.
+
+927
+00:43:09,100 --> 00:43:10,500
+塔莎: 我弟弟得了一种怪病。
+Tasha: My brother got a strange illness.
+
+928
+00:43:10,533 --> 00:43:11,666
+塔莎: 他需要去北京治疗。
+Tasha: He needs to go to Beijing for treatment.
+
+929
+00:43:11,800 --> 00:43:13,400
+塔莎: 我们县医院治不了。
+Tasha: He couldn't be treated at our county hospital.
+
+930
+00:43:13,400 --> 00:43:14,933
+塔莎: 扬州医院也治不了。
+Tasha: He couldn't be treated at Yangzhou hospital.
+
+931
+00:43:14,933 --> 00:43:17,200
+塔莎: 南京医院也治不了。
+Tasha: He couldn't be treated at Nanjing hospital either.
+
+932
+00:43:16,900 --> 00:43:17,766
+卡特里娜: 这真难办。
+Katrina: This is really tough.
+
+933
+00:43:17,333 --> 00:43:19,400
+塔莎: 那我们需要去北京医院治疗。
+Tasha: Then we need to go to Beijing Hospital for treatment.
+
+934
+00:43:19,666 --> 00:43:20,433
+爱丽丝: 他怎么了？
+Alice: What’s wrong with him?
+
+935
+00:43:20,766 --> 00:43:21,533
+塔莎: 他不长个。
+Tasha: He’s not growing.
+
+936
+00:43:23,166 --> 00:43:27,000
+杰克: 不长个？
+Jake: Not growing?
+
+937
+00:43:24,066 --> 00:43:24,866
+塔莎: 对。
+Tasha: Yeah.
+
+938
+00:43:24,066 --> 00:43:25,033
+卡特里娜: 他多大了？
+Katrina: How old is he?
+
+939
+00:43:25,433 --> 00:43:26,866
+塔莎: 他12岁。
+Tasha: He’s 12.
+
+940
+00:43:28,733 --> 00:43:31,300
+爱丽丝: 他是不是缺什么维生素之类的？
+Alice: Is he lacking some vitamins or something?
+
+941
+00:43:31,533 --> 00:43:32,566
+塔莎: 只有1米。
+Tasha: Only 1 meter.
+
+942
+00:43:34,666 --> 00:43:35,933
+爱丽丝: 大约1米？
+Alice: About 1 meter?
+
+943
+00:43:34,666 --> 00:43:36,000
+杰克: 1米是多少？
+Jake: How much is 1 meter?
+
+944
+00:43:39,100 --> 00:43:39,933
+卡特里娜: 他变异了吗？
+Katrina: Did he mutate?
+
+945
+00:43:41,600 --> 00:43:42,600
+杰克: 我有卷尺。
+Jake: I have a tape measure.
+
+946
+00:43:42,666 --> 00:43:44,766
+杰克: 好吧，哈哈。
+Jake: Alright, haha.
+
+947
+00:43:42,733 --> 00:43:43,500
+塔莎: 哦，不用。
+Tasha: Oh, no need.
+
+948
+00:43:42,733 --> 00:43:43,533
+爱丽丝: 哦，不用。
+Alice: Oh, no need.
+
+949
+00:43:42,933 --> 00:43:43,733
+卡特里娜: 哦，不用。
+Katrina: Oh, no need.
+
+950
+00:43:43,866 --> 00:43:45,100
+卡特里娜: 这确实有点……
+Katrina: That’s indeed a bit...
+
+951
+00:43:45,066 --> 00:43:46,733
+卡特里娜: 12岁才这么高。
+Katrina: 12 years old and only this tall.
+
+952
+00:43:46,733 --> 00:43:47,500
+塔莎: 是的。
+Tasha: Yes.
+
+953
+00:43:47,400 --> 00:43:48,166
+卡特里娜: 当然，我很着急。
+Katrina: Of course, I'm so anxious.
+
+954
+00:43:48,166 --> 00:43:49,266
+卡特里娜: 是男孩还是女孩？
+Katrina: Is it a boy or a girl?
+
+955
+00:43:49,066 --> 00:43:49,866
+塔莎: 男孩。
+Tasha: A boy.
+
+956
+00:43:49,666 --> 00:43:55,733
+爱丽丝: 是他的弟弟，哈哈哈哈哈哈。
+Alice: It's his little brother, hahahahahahaha.
+
+957
+00:43:51,000 --> 00:43:54,800
+杰克: 哈哈，太棒了。
+Jake: Haha, that's brilliant.
+
+958
+00:43:52,400 --> 00:43:54,166
+卡特里娜: 哦，我没听到开头。
+Katrina: Oh, I didn't catch the beginning.
+
+959
+00:43:54,933 --> 00:43:57,500
+塔莎: 我想他可能出生比较晚。
+Tasha: I think maybe he was born quite late.
+
+960
+00:43:58,666 --> 00:43:59,733
+卡特里娜: N激素，是吧？
+Katrina: N hormones, huh?
+
+961
+00:44:00,566 --> 00:44:02,866
+卡特里娜: 你知道，我爸的同事，他……
+Katrina: You know, my dad's colleague, he...
+
+962
+00:44:02,900 --> 00:44:04,666
+卡特里娜: 他叔叔很矮。
+Katrina: His uncle is really short.
+
+963
+00:44:04,666 --> 00:44:04,933
+卡特里娜: 所以……
+Katrina: So...
+
+964
+00:44:04,933 --> 00:44:09,166
+卡特里娜: 他小时候，他们给他打那些骨生长针。
+Katrina: When he was a kid, they gave him those bone growth injections.
+
+965
+00:44:09,166 --> 00:44:10,866
+卡特里娜: 反正一年花了几千块。
+Katrina: Anyway, it cost thousands of bucks a year.
+
+966
+00:44:11,266 --> 00:44:13,200
+卡特里娜: 因为他们怕他长不高。
+Katrina: Because they were afraid he wouldn't grow tall.
+
+967
+00:44:13,800 --> 00:44:15,266
+卡特里娜: 因为叔叔只有1.6米高。
+Katrina: Since the uncle is only 1.6 meters tall.
+
+968
+00:44:15,266 --> 00:44:16,800
+卡特里娜:  因为那叔叔也就一米六
+
+969
+00:44:15,800 --> 00:44:16,566
+塔莎: 对。
+Tasha: Right.
+
+970
+00:44:18,333 --> 00:44:20,300
+塔莎: 刚刚说要先来测骨相
+
+971
+00:44:20,500 --> 00:44:22,166
+卡特里娜: 对，检查骨龄，对吧？
+Katrina: Yeah, to check the bone age, right?
+
+972
+00:44:20,533 --> 00:44:23,100
+塔莎: 看看骨头还能不能长。
+Tasha: To see if the bones can still grow.
+
+973
+00:44:23,433 --> 00:44:24,866
+卡特里娜: 12岁应该还可以吧？
+Katrina: 12 years old should still be okay, right?
+
+974
+00:44:25,800 --> 00:44:28,266
+杰克: 是的。
+Jake: Yes.
+
+975
+00:44:26,100 --> 00:44:28,133
+爱丽丝: 他们不也检查骨骺线吗？
+Alice: Don't they also check the bone seams?
+
+976
+00:44:28,166 --> 00:44:29,800
+爱丽丝: 还有闭合酶之类的？
+Alice: And something like closure enzymes?
+
+977
+00:44:28,266 --> 00:44:29,433
+杰克: 是的。
+Jake: Yes.
+
+978
+00:44:29,433 --> 00:44:30,433
+露西亚: 对，对，他们需要检查。
+Lucia: Yes, yes, they need to check.
+
+979
+00:44:29,533 --> 00:44:30,933
+卡特里娜: 对，对，对，他们需要检查那个。
+Katrina: Yes, yes, yes, they need to check that.
+
+980
+00:44:30,433 --> 00:44:31,433
+露西亚: 运动员也需要检查那个。
+Lucia: Athletes also need to check that.
+
+981
+00:44:31,433 --> 00:44:31,800
+露西亚: 那个……
+Lucia: That...
+
+982
+00:44:31,800 --> 00:44:34,666
+露西亚: 是为了预测你未来的身体发育。
+Lucia: It's to predict your future physical development.
+
+983
+00:44:34,666 --> 00:44:35,533
+露西亚: 我小时候他们测过。
+Lucia: They measured it when I was a kid.
+
+984
+00:44:37,266 --> 00:44:37,933
+杰克: 想当运动员？
+Jake: Want to be an athlete?
+
+985
+00:44:37,300 --> 00:44:38,066
+塔莎: 哈
+Tasha: Ha
+
+986
+00:44:37,933 --> 00:44:39,033
+露西亚: 不，不。
+Lucia: No, no.
+
+987
+00:44:39,166 --> 00:44:39,766
+露西亚: 不，不。
+Lucia: No, no.
+
+988
+00:44:39,800 --> 00:44:41,100
+露西亚: 我其实不想当运动员。
+Lucia: I actually don't want to be an athlete.
+
+989
+00:44:41,100 --> 00:44:42,566
+露西亚: 只是碰巧。
+Lucia: It just happened by chance.
+
+990
+00:44:42,400 --> 00:44:43,433
+杰克: 你可以当运动员。
+Jake: You can be an athlete.
+
+991
+00:44:43,433 --> 00:44:44,400
+杰克: 但你不想当。
+Jake: But you don't want to be one.
+
+992
+00:44:46,366 --> 00:44:48,300
+塔莎: 你还记得我们小时候学习吗？
+Tasha: Do you remember when we were kids and we studied?
+
+993
+00:44:48,300 --> 00:44:50,366
+塔莎: 我上过某种国防班。
+Tasha: I was in some kind of national defense class.
+
+994
+00:44:50,366 --> 00:44:51,400
+爱丽丝: 对，当兵。
+Alice: Yeah, to be a soldier.
+
+995
+00:44:50,366 --> 00:44:52,666
+塔莎: 对，当兵，当飞行员。
+Tasha: Yeah, to be a soldier, a pilot.
+
+996
+00:44:51,433 --> 00:44:52,233
+露西亚: 哇，太棒了。
+Lucia: Wow, that's awesome.
+
+997
+00:44:52,933 --> 00:44:56,100
+塔莎: 那时候，有一批人被选去当飞行员。
+Tasha: At that time, there was a batch of people getting selected to be pilots.
+
+998
+00:44:56,366 --> 00:44:59,400
+爱丽丝: 你弟弟身高大概够吗？
+Alice: Does your brother have the height roughly?
+
+999
+00:44:59,266 --> 00:45:00,666
+塔莎: 对，那时候有一批……
+Tasha: Yeah, at that time there was a batch of...
+
+1000
+00:45:00,666 --> 00:45:02,000
+塔莎: 飞行员选拔结果。
+Tasha: Pilot selection results.
+
+1001
+00:45:02,000 --> 00:45:03,033
+塔莎: 他体检前一天，
+Tasha: The day before his physical exam,
+
+1002
+00:45:03,033 --> 00:45:04,866
+塔莎: 我不小心割伤了他的耳朵。
+Tasha: I accidentally cut his ear.
+
+1003
+00:45:04,600 --> 00:45:05,633
+露西亚: 那不对，哈哈。
+Lucia: That's wrong, haha.
+
+1004
+00:45:04,900 --> 00:45:07,166
+塔莎: 哈哈哈哈。
+Tasha: Hahahaha.
+
+1005
+00:45:04,933 --> 00:45:06,333
+杰克: 哈哈，哦。
+Jake: Haha, oh.
+
+1006
+00:45:05,033 --> 00:45:07,300
+爱丽丝: 哈哈哈哈哈哈。
+Alice: Hahahahahahaha.
+
+1007
+00:45:05,666 --> 00:45:08,433
+露西亚: 哈哈。
+Lucia: Haha.
+
+1008
+00:45:07,033 --> 00:45:07,633
+杰克: 不能飞了。
+Jake: Can't fly anymore.
+
+1009
+00:45:07,166 --> 00:45:11,233
+塔莎: 我在想，如果他没通过飞行员选拔，
+Tasha: I was thinking, if he doesn't pass as a pilot,
+
+1010
+00:45:11,266 --> 00:45:14,333
+塔莎: 会有人来找我麻烦吗？
+Tasha: Would people come looking for trouble with me?
+
+1011
+00:45:13,166 --> 00:45:15,566
+爱丽丝: 哈哈哈哈。
+Alice: Hahahaha.
+
+1012
+00:45:14,500 --> 00:45:16,100
+露西亚: 哈哈，飞行员。
+Lucia: Haha, pilots.
+
+1013
+00:45:15,033 --> 00:45:17,533
+塔莎: 飞行员身上不能有任何伤疤，对吧？
+Tasha: Pilots can't have any wounds on their bodies, right?
+
+1014
+00:45:16,533 --> 00:45:17,333
+爱丽丝: 对，没错。
+Alice: Yeah, that's right.
+
+1015
+00:45:17,533 --> 00:45:19,433
+塔莎: 啊，最后他没通过测试。
+Tasha: Ah, in the end, he didn't pass the test.
+
+1016
+00:45:19,433 --> 00:45:23,300
+塔莎: 哈哈。
+Tasha: Haha.
+
+1017
+00:45:19,733 --> 00:45:20,600
+露西亚: 哈哈哈。
+Lucia: Hahaha.
+
+1018
+00:45:21,166 --> 00:45:21,966
+杰克: 虚惊一场。
+Jake: False alarm.
+
+1019
+00:45:21,333 --> 00:45:21,933
+露西亚: 虚惊一场。
+Lucia: False alarm.
+
+1020
+00:45:21,933 --> 00:45:25,766
+露西亚: 哈哈，本来就不是我的错。
+Lucia: Haha, it wasn't my fault in the first place.
+
+1021
+00:45:22,000 --> 00:45:25,166
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1022
+00:45:23,333 --> 00:45:25,533
+塔莎: 本来就不是我的错。
+Tasha: It wasn't my fault in the first place.
+
+1023
+00:45:25,533 --> 00:45:28,333
+杰克: 对，对，撇清责任。
+Jake: Yeah, yeah, clear yourself of any responsibility.
+
+1024
+00:45:37,766 --> 00:45:39,100
+爱丽丝: 今天他们还要测视力。
+Alice: Today they also have to test vision.
+
+1025
+00:45:40,166 --> 00:45:40,933
+塔莎: 对。
+Tasha: Yeah.
+
+1026
+00:45:41,066 --> 00:45:43,766
+爱丽丝: 你知道，我们的女航天员刘洋。
+Alice: You know, our female astronaut, Liu Yang.
+
+1027
+00:45:43,733 --> 00:45:44,600
+卡特里娜: 嘘，这太……
+Katrina: Shh, this is too...
+
+1028
+00:45:44,033 --> 00:45:44,833
+塔莎: 对。
+Tasha: Yeah.
+
+1029
+00:45:44,566 --> 00:45:47,366
+卡特里娜: 她的核心力量太可怕了。
+Katrina: Her core strength is so scary.
+
+1030
+00:45:45,100 --> 00:45:46,833
+爱丽丝: 那时候……
+Alice: At that time...
+
+1031
+00:45:47,666 --> 00:45:49,700
+卡特里娜: 我什么时候能跳成那样？
+Katrina: When will I be able to jump like that?
+
+1032
+00:45:47,800 --> 00:45:48,833
+杰克: 也许这个？
+Jake: Maybe this one?
+
+1033
+00:45:48,933 --> 00:45:49,733
+杰克: 哈哈，对。
+Jake: Haha, yeah.
+
+1034
+00:45:49,733 --> 00:45:51,100
+卡特里娜: 我就是这样开始玩的。
+Katrina: This is how I started playing.
+
+1035
+00:45:49,766 --> 00:45:50,600
+杰克: 真的很高。
+Jake: It's really high.
+
+1036
+00:45:51,866 --> 00:45:53,166
+卡特里娜: 好吧，我关注这个上传者。
+Katrina: Okay, I'll follow the uploader.
+
+1037
+00:45:53,166 --> 00:45:54,233
+露西亚: 他太棒了。
+Lucia: He's amazing.
+
+1038
+00:45:53,166 --> 00:45:56,500
+卡特里娜: 哇，这是力量爵士。
+Katrina: Wow, this is power jazz.
+
+1039
+00:45:56,933 --> 00:45:58,666
+爱丽丝: 所以，他以前上的学校……
+Alice: So, the school he used to go to...
+
+1040
+00:45:57,733 --> 00:46:02,100
+卡特里娜: 如果我那样做，我的脖子会断，哈哈。
+Katrina: If I do that, my neck will crack, haha.
+
+1041
+00:46:03,300 --> 00:46:05,066
+爱丽丝: 那个航天员……
+Alice: That astronaut...
+
+1042
+00:46:04,900 --> 00:46:07,000
+卡特里娜: 我喜欢看那些专业舞者跳舞。
+Katrina: I like watching those pros dance.
+
+1043
+00:46:05,066 --> 00:46:05,666
+爱丽丝: 他原本……
+Alice: He originally...
+
+1044
+00:46:05,666 --> 00:46:07,433
+爱丽丝: 他在学校的时候，参加了选拔，对吧？
+Alice: When he was in school, he participated in the selection, right?
+
+1045
+00:46:07,100 --> 00:46:07,900
+塔莎: 啊。
+Tasha: Ah.
+
+1046
+00:46:07,500 --> 00:46:09,766
+爱丽丝: 很多人因为视力不够好被筛掉了。
+Alice: Many people were screened out because their vision wasn't good enough.
+
+1047
+00:46:09,800 --> 00:46:11,100
+爱丽丝: 但他当时的视力……
+Alice: But his vision at that time...
+
+1048
+00:46:10,500 --> 00:46:11,300
+卡特里娜: 哇。
+Katrina: Wow.
+
+1049
+00:46:11,733 --> 00:46:12,766
+卡特里娜: 太厉害了。
+Katrina: So impressive.
+
+1050
+00:46:12,400 --> 00:46:14,500
+塔莎: 但要想当飞行员，你需要极好的视力。
+Tasha: But to be a pilot, you need excellent vision.
+
+1051
+00:46:13,400 --> 00:46:14,500
+卡特里娜: 娜娜，录下来。
+Katrina: Nana, record this.
+
+1052
+00:46:14,500 --> 00:46:15,900
+塔莎: 而且身上不能有伤疤。
+Tasha: And no wounds on your body.
+
+1053
+00:46:14,566 --> 00:46:16,266
+爱丽丝: 嗯，对，没错。
+Alice: Hmm, yes, that's right.
+
+1054
+00:46:15,900 --> 00:46:18,933
+塔莎: 而且好像还需要转圈保持平衡。
+Tasha: And it seems like you also need to spin around to keep your balance.
+
+1055
+00:46:16,166 --> 00:46:17,133
+卡特里娜: 我查一下。
+Katrina: Let me check.
+
+1056
+00:46:17,100 --> 00:46:18,933
+卡特里娜: 你需要跳舞还是什么？
+Katrina: Do you need to dance or what?
+
+1057
+00:46:20,800 --> 00:46:22,033
+塔莎: 我也没通过。
+Tasha: I didn't pass either.
+
+1058
+00:46:21,066 --> 00:46:21,966
+杰克: 航天员，航天员。
+Jake: Astronaut, astronaut.
+
+1059
+00:46:22,000 --> 00:46:22,800
+杰克: 航天员。
+Jake: Astronaut.
+
+1060
+00:46:22,433 --> 00:46:25,500
+卡特里娜: 和那个偶像，偶像万岁。
+Katrina: With that idol, long live idols.
+
+1061
+00:46:23,300 --> 00:46:26,666
+塔莎: 哦，抱歉，其实是飞行员。
+Tasha: Oh, sorry, it's actually a pilot.
+
+1062
+00:46:23,433 --> 00:46:24,366
+杰克: 对，航天员。
+Jake: Yes, astronaut.
+
+1063
+00:46:23,766 --> 00:46:24,533
+爱丽丝: 航天员。
+Alice: Astronaut.
+
+1064
+00:46:25,500 --> 00:46:26,700
+卡特里娜: 还有《好时光》。
+Katrina: And "Good Time."
+
+1065
+00:46:26,433 --> 00:46:27,433
+杰克: 飞行员需要像这样。
+Jake: Pilots need to be like this.
+
+1066
+00:46:26,866 --> 00:46:27,666
+卡特里娜: 呃，就这个。
+Katrina: Uh, just this one.
+
+1067
+00:46:27,666 --> 00:46:28,700
+卡特里娜: 不如《好时光》，对吧？
+Katrina: Not as good as "Good Time," right?
+
+1068
+00:46:28,666 --> 00:46:30,266
+卡特里娜: 而且我们淘汰了猪猪侠。
+Katrina: And we eliminated Piggy Hero.
+
+1069
+00:46:30,000 --> 00:46:30,800
+塔莎: 还是不跳舞？
+Tasha: Or not dance?
+
+1070
+00:46:31,766 --> 00:46:32,666
+卡特里娜: 淘汰它？
+Katrina: Eliminate it?
+
+1071
+00:46:32,666 --> 00:46:34,200
+卡特里娜: 淘汰了，好的，好的。
+Katrina: Eliminated, okay, okay.
+
+1072
+00:46:32,866 --> 00:46:33,666
+塔莎: 好的 塔莎: 好的。
+Tasha: OK
+Tasha: Okay.
+
+1073
+00:46:33,566 --> 00:46:34,366
+露西亚: 好的好的 露西亚: 好的，好的。
+Lucia: OK OK
+Lucia: Okay, okay.
+
+1074
+00:46:34,066 --> 00:46:37,466
+杰克: 哈哈哈，天哪。
+Jake: Hahaha, oh my gosh.
+
+1075
+00:46:34,933 --> 00:46:39,266
+塔莎: 哈哈哈，我只知道一个动作。
+Tasha: Hahaha, I only know one move.
+
+1076
+00:46:34,933 --> 00:46:37,633
+卡特里娜: 哦，我会跳舞，是的，好的，我会。
+Katrina: Oh, I can dance, yes, okay, I can.
+
+1077
+00:46:35,100 --> 00:46:36,766
+露西亚: 哦，我也刚看到一些东西。
+Lucia: Oh, I just saw something too.
+
+1078
+00:46:35,566 --> 00:46:36,533
+爱丽丝: 是你吗？
+Alice: Is it you?
+
+1079
+00:46:36,533 --> 00:46:37,766
+爱丽丝: 哈哈哈哈哈哈。
+Alice: Hahahahaha.
+
+1080
+00:46:39,266 --> 00:46:40,933
+塔莎: 哈哈哈，对吧？
+Tasha: Hahahaha, right?
+
+1081
+00:46:39,366 --> 00:46:41,433
+杰克: 哈哈哈。
+Jake: Hahahaha.
+
+1082
+00:46:39,400 --> 00:46:40,666
+爱丽丝: 哈哈。
+Alice: Haha.
+
+1083
+00:46:39,566 --> 00:46:40,833
+露西亚: 哈哈哈哈。
+Lucia: Hahahahaha.
+
+1084
+00:46:40,933 --> 00:46:42,766
+卡特里娜: 我会跳舞，是的，好的，其实……
+Katrina: I can dance, yes, okay, actually...
+
+1085
+00:46:41,433 --> 00:46:42,533
+杰克: 对，很重要。
+Jake: Yes, very important.
+
+1086
+00:46:42,300 --> 00:46:43,066
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+1087
+00:46:43,166 --> 00:46:44,866
+杰克: 这是精髓，对吧？
+Jake: This is the essence, right?
+
+1088
+00:46:45,500 --> 00:46:46,933
+爱丽丝: 杨超越的是什么？
+Alice: What was Yang Chao Yue's?
+
+1089
+00:46:46,166 --> 00:46:48,666
+卡特里娜: 差不多像我高中跳的舞。
+Katrina: Almost like the dance I did in high school.
+
+1090
+00:46:47,866 --> 00:46:49,133
+塔莎: 呃，我不知道。
+Tasha: Uh, I don't know.
+
+1091
+00:46:49,166 --> 00:46:50,533
+塔莎: 《创造101》？
+Tasha: "Produce 101"?
+
+1092
+00:46:51,066 --> 00:46:52,333
+爱丽丝: 《青春有你》里有谁？
+Alice: Who's in "Youth With You"?
+
+1093
+00:46:52,866 --> 00:46:54,666
+卡特里娜: 我分不清那两个。
+Katrina: I can't tell those two apart.
+
+1094
+00:46:54,666 --> 00:46:55,700
+卡特里娜: 那两个节目。
+Katrina: Those two shows.
+
+1095
+00:46:55,366 --> 00:46:56,333
+爱丽丝: 有男团吗？
+Alice: Are there any boy bands?
+
+1096
+00:46:56,333 --> 00:46:57,266
+爱丽丝: 什么是男团？
+Alice: What's a boy band?
+
+1097
+00:46:57,266 --> 00:46:59,500
+卡特里娜: 男团就是范丞丞出道的那个。
+Katrina: A boy band is where Fan Chengcheng debuted.
+
+1098
+00:46:58,666 --> 00:46:59,833
+露西亚: 范丞丞出道。
+Lucia: Fan Chengcheng's debut.
+
+1099
+00:46:59,500 --> 00:47:00,500
+卡特里娜: 那个节目叫什么来着？
+Katrina: What's that show called again?
+
+1100
+00:47:00,500 --> 00:47:01,866
+塔莎: 你说的是什么节目？
+Tasha: What show are you talking about?
+
+1101
+00:47:00,533 --> 00:47:01,566
+爱丽丝: 天哪。
+Alice: Oh my gosh.
+
+1102
+00:47:01,900 --> 00:47:03,066
+塔莎: 是《创造101》吗？
+Tasha: Is it "Produce 101"?
+
+1103
+00:47:03,066 --> 00:47:04,333
+塔莎: 我不确定。
+Tasha: I'm not sure.
+
+1104
+00:47:04,733 --> 00:47:06,200
+爱丽丝: 《时代少年团》是谁？
+Alice: Who are the "Times Youth League"?
+
+1105
+00:47:05,066 --> 00:47:05,866
+塔莎: 少年团。
+Tasha: Youth League.
+
+1106
+00:47:06,566 --> 00:47:07,366
+爱丽丝: 呃。
+Alice: Eh.
+
+1107
+00:47:07,333 --> 00:47:08,933
+卡特里娜: 少年团是直接从公司出道的。
+Katrina: The Youth League debuted directly from the company.
+
+1108
+00:47:08,933 --> 00:47:10,866
+卡特里娜: 没有参加选秀节目。
+Katrina: There was no talent show involved.
+
+1109
+00:47:10,866 --> 00:47:12,033
+卡特里娜: 他们属于TF家族。
+Katrina: They belong to the TF family.
+
+1110
+00:47:14,300 --> 00:47:15,400
+塔莎: 你要收回去吗？
+Tasha: Are you going to take it back?
+
+1111
+00:47:14,800 --> 00:47:16,266
+杰克: 不，我只是玩玩。
+Jake: No, I'm just playing.
+
+1112
+00:47:21,400 --> 00:47:22,400
+爱丽丝: 我刚折好了。
+Alice: I just folded it.
+
+1113
+00:47:27,033 --> 00:47:27,833
+杰克: 哈哈。
+Jake: Haha.
+
+1114
+00:47:27,333 --> 00:47:28,100
+塔莎: 哈哈。
+Tasha: Haha.
+
+1115
+00:47:31,300 --> 00:47:33,100
+塔莎: 好吧，你能跳多远？
+Tasha: Okay, how far can you jump?
+
+1116
+00:47:33,533 --> 00:47:34,333
+杰克: 对。
+Jake: Right.
+
+1117
+00:47:34,766 --> 00:47:35,400
+塔莎: 哦天。
+Tasha: Oh my.
+
+1118
+00:47:35,400 --> 00:47:37,500
+塔莎: 真不敢相信我也想到了这个无聊的游戏。
+Tasha: I can't believe I thought of this boring game too.
+
+1119
+00:47:40,266 --> 00:47:41,900
+杰克: 也许就是这样。
+Jake: Maybe this is just how it is.
+
+1120
+00:47:42,066 --> 00:47:44,066
+杰克: 这东西的极限和人没多大关系。
+Jake: The limit of this thing doesn't have much to do with people.
+
+1121
+00:47:44,066 --> 00:47:44,866
+杰克: 我觉得。
+Jake: I think.
+
+1122
+00:47:46,166 --> 00:47:48,533
+塔莎: 其实，我刚在想挑战它。
+Tasha: Actually, I was just thinking about challenging it.
+
+1123
+00:47:48,500 --> 00:47:49,900
+塔莎: 看看我们能折多远。
+Tasha: To see how far we can fold it.
+
+1124
+00:47:50,533 --> 00:47:52,600
+杰克: 嗯。
+Jake: Hmm.
+
+1125
+00:47:52,366 --> 00:47:54,533
+塔莎: 好吧，我们猜猜能折多远。
+Tasha: Okay, let's guess how far we can fold it.
+
+1126
+00:47:54,533 --> 00:47:55,300
+杰克: 嗯。
+Jake: Hmm.
+
+1127
+00:47:54,933 --> 00:47:55,866
+塔莎: 谁能猜对？
+Tasha: Who can guess right?
+
+1128
+00:47:56,000 --> 00:47:58,266
+杰克: 哈哈，猜错的人得把这些全吃了。
+Jake: Haha, whoever guesses wrong has to eat all of this.
+
+1129
+00:47:59,100 --> 00:48:01,766
+塔莎: 猜错的人得把这些全吃了，好吗？
+Tasha: Whoever guesses wrong has to eat all of this, okay?
+
+1130
+00:48:01,233 --> 00:48:03,533
+杰克: 那每个人都得全吃了。
+Jake: Then everyone will have to eat it all.
+
+1131
+00:48:03,666 --> 00:48:05,900
+塔莎: 让我看看现在有多远。
+Tasha: Let me see how far it is now.
+
+1132
+00:48:04,866 --> 00:48:05,833
+杰克: 你在看什么？
+Jake: What are you looking at?
+
+1133
+00:48:05,800 --> 00:48:06,600
+杰克: 你得猜。
+Jake: You have to guess.
+
+1134
+00:48:07,466 --> 00:48:09,433
+杰克: 现在是1.4243米。
+Jake: Now it's 1.4243 meters.
+
+1135
+00:48:09,600 --> 00:48:10,733
+塔莎: 好吧，你猜多少？
+Tasha: Okay, what do you guess?
+
+1136
+00:48:10,966 --> 00:48:12,233
+杰克: 我猜1.45米。
+Jake: I guess 1.45 meters.
+
+1137
+00:48:13,466 --> 00:48:15,600
+塔莎: 会有点刺痛。
+Tasha: It will just sting.
+
+1138
+00:48:15,600 --> 00:48:17,100
+塔莎: 我们算失败。
+Tasha: We consider that a failure.
+
+1139
+00:48:17,166 --> 00:48:17,966
+杰克: 哦。
+Jake: Oh.
+
+1140
+00:48:18,600 --> 00:48:19,733
+塔莎: 我赌1.6米。
+Tasha: Let me bet 1.6 meters.
+
+1141
+00:48:20,733 --> 00:48:23,966
+爱丽丝: 我觉得你完蛋了，哈哈哈。
+Alice: I think you're done for, hahaha.
+
+1142
+00:48:22,233 --> 00:48:25,300
+塔莎: 啊，那我赌1.5米。
+Tasha: Ah, then I'll bet 1.5 meters.
+
+1143
+00:48:22,600 --> 00:48:24,033
+杰克: 我也觉得你完蛋了。
+Jake: I also think you're done for.
+
+1144
+00:48:26,000 --> 00:48:26,966
+杰克: 差不多就这样。
+Jake: That's pretty much it.
+
+1145
+00:48:26,366 --> 00:48:27,333
+塔莎: 你猜多少？
+Tasha: What's your guess?
+
+1146
+00:48:27,100 --> 00:48:30,433
+爱丽丝: 哈哈哈，1.45米。
+Alice: Hahaha, 1.45 meters.
+
+1147
+00:48:28,033 --> 00:48:29,900
+杰克: 1.45米。
+Jake: 1.45 meters.
+
+1148
+00:48:30,600 --> 00:48:31,966
+塔莎: 那我赌1.6米。
+Tasha: Then I'll bet 1.6 meters.
+
+1149
+00:48:32,866 --> 00:48:33,800
+杰克: 那你想吃就……
+Jake: Then if you want to eat, just...
+
+1150
+00:48:33,800 --> 00:48:34,800
+杰克: 想吃就吃吧。
+Jake: Eat, if you want to.
+
+1151
+00:48:34,666 --> 00:48:36,500
+塔莎: 那我赌1.555米。
+Tasha: Then I'll bet 1.555 meters.
+
+1152
+00:48:37,166 --> 00:48:37,466
+杰克: 好的。
+Jake: Okay.
+
+1153
+00:48:43,100 --> 00:48:43,866
+杰克: 你要多少？
+Jake: How much do you want?
+
+1154
+00:48:43,933 --> 00:48:44,866
+塔莎: 1.55米。
+Tasha: 1.55 meters.
+
+1155
+00:48:44,866 --> 00:48:45,733
+杰克: 1.55米。
+Jake: 1.55 meters.
+
+1156
+00:48:45,533 --> 00:48:48,500
+爱丽丝: 1.55米和1.45米差10厘米，哈哈。
+Alice: 1.55 meters and 1.45 meters differ by 10 cm, haha.
+
+1157
+00:48:45,866 --> 00:48:48,966
+杰克: 你，你自己来。你弄1.55米。
+Jake: You, you do it yourself. You do 1.55 meters.
+
+1158
+00:48:55,000 --> 00:48:55,800
+杰克: 哈哈。
+Jake: Haha.
+
+1159
+00:48:57,466 --> 00:48:58,233
+杰克: 哈哈。
+Jake: Haha.
+
+1160
+00:49:01,366 --> 00:49:02,333
+爱丽丝: 哈哈哈。
+Alice: Hahaha.
+
+1161
+00:49:01,366 --> 00:49:02,800
+杰克: 哈。
+Jake: Ha.
+
+1162
+00:49:02,733 --> 00:49:04,166
+爱丽丝: 因为越长，它……
+Alice: Because the longer it gets, it...
+
+1163
+00:49:08,866 --> 00:49:10,900
+塔莎: 哈哈哈哈。
+Tasha: Hahahaha.
+
+1164
+00:49:09,100 --> 00:49:11,233
+杰克: 哈哈哈哈。
+Jake: Hahahaha.
+
+1165
+00:49:17,100 --> 00:49:18,866
+杰克: 哇。
+Jake: Wow.
+
+1166
+00:49:23,533 --> 00:49:24,333
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+1167
+00:49:24,666 --> 00:49:25,666
+爱丽丝: 就悄悄动一下手臂。
+Alice: Just quietly move your arm.
+
+1168
+00:49:25,666 --> 00:49:27,566
+爱丽丝: 你可以把手再伸远一点。
+Alice: You can extend your hand a bit further.
+
+1169
+00:49:28,500 --> 00:49:29,733
+爱丽丝: 但你不能伸太远。
+Alice: But you can't stretch it too far.
+
+1170
+00:49:29,366 --> 00:49:32,933
+塔莎: 好的，行吧，好吧。
+Tasha: Okay, alright, fine.
+
+1171
+00:49:29,733 --> 00:49:33,200
+爱丽丝: 好了，就1.3米多一点，哈哈。
+Alice: Okay, it's just over 1.3 meters, haha.
+
+1172
+00:49:36,500 --> 00:49:37,300
+杰克: 挺厉害的。
+Jake: Pretty strong.
+
+1173
+00:49:41,533 --> 00:49:43,133
+卡特里娜: 这段副歌我们跳了三遍。
+Katrina: We danced this chorus three times.
+
+1174
+00:49:44,100 --> 00:49:46,033
+卡特里娜: 其实他没什么新动作。
+Katrina: Actually, he didn't have many new moves.
+
+1175
+00:49:44,233 --> 00:49:45,200
+杰克: 挺厉害的，挺厉害的。
+Jake: Pretty strong, pretty strong.
+
+1176
+00:49:44,666 --> 00:49:45,466
+爱丽丝: 还行，还行。
+Alice: It's okay.
+
+1177
+00:49:50,033 --> 00:49:51,300
+爱丽丝: 这东西会割到手。
+Alice: This thing can cut your hand.
+
+1178
+00:49:51,600 --> 00:49:52,833
+杰克: 对，小心点。
+Jake: Yeah, be careful.
+
+1179
+00:49:52,166 --> 00:49:52,933
+卡特里娜: 其实也没那么难。
+Katrina: Actually, it's not that hard.
+
+1180
+00:49:52,933 --> 00:49:54,533
+卡特里娜: 我看了，都是这样的。
+Katrina: I looked at it, it's all like that.
+
+1181
+00:49:54,033 --> 00:49:54,833
+爱丽丝: 慢慢来。
+Alice: Take it slow.
+
+1182
+00:49:55,166 --> 00:49:57,466
+卡特里娜: 那，你还想再看《青春奔跑》吗？
+Katrina: So, do you want to watch "Youth Running" again?
+
+1183
+00:49:58,533 --> 00:49:59,733
+爱丽丝: 那种借力的感觉。
+Alice: The feeling of leverage.
+
+1184
+00:50:01,100 --> 00:50:02,766
+卡特里娜: 《青春奔跑》看起来挺不错的。
+Katrina: "Youth Running" looks quite good.
+
+1185
+00:50:02,366 --> 00:50:03,533
+爱丽丝: 还行，还行。
+Alice: It's okay, it's okay.
+
+1186
+00:50:02,800 --> 00:50:04,366
+卡特里娜: 但我觉得我们只能跳一分钟。
+Katrina: But I feel like we can only dance it for a minute.
+
+1187
+00:50:06,300 --> 00:50:08,033
+爱丽丝: 哎呀，拖沓了，哈哈。
+Alice: Oh no, it's dragging, haha.
+
+1188
+00:50:11,866 --> 00:50:13,033
+塔莎: 啊，哈哈，不行。
+Tasha: Ah, haha, no.
+
+1189
+00:50:11,866 --> 00:50:14,666
+杰克: 哈哈哈，来吧，吃饭。
+Jake: Hahaha, come on, let's eat.
+
+1190
+00:50:12,000 --> 00:50:13,866
+爱丽丝: 哈哈哈哈。
+Alice: Hahahaha.
+
+1191
+00:50:19,366 --> 00:50:20,400
+杰克: 这是用什么做的？
+Jake: What's this made of?
+
+1192
+00:50:20,433 --> 00:50:23,433
+杰克: 你加了其他配料吗？
+Jake: Did you add any other ingredients?
+
+1193
+00:50:23,666 --> 00:50:27,233
+杰克: 除了面粉、面粉、面粉和鸡蛋，没别的了？
+Jake: Besides flour, flour, flour, and eggs, nothing else?
+
+1194
+00:50:24,166 --> 00:50:24,966
+爱丽丝: 面粉。
+Alice: Flour.
+
+1195
+00:50:24,233 --> 00:50:25,333
+塔莎: 面粉和鸡蛋。
+Tasha: Flour and eggs.
+
+1196
+00:50:28,033 --> 00:50:29,533
+杰克: 嗯，好吃。
+Jake: Hmm, it's good.
+
+1197
+00:50:37,100 --> 00:50:38,033
+杰克: 这是什么歌？
+Jake: What's this song?
+
+1198
+00:50:38,500 --> 00:50:40,666
+杰克: 天哪，是给小孩的吗？
+Jake: Oh my, is it for kids?
+
+1199
+00:50:40,666 --> 00:50:42,033
+杰克: 这是……
+Jake: This is...
+
+1200
+00:50:41,533 --> 00:50:42,333
+卡特里娜: 高中生。
+Katrina: High school students.
+
+1201
+00:50:42,033 --> 00:50:42,900
+杰克: 哈哈。
+Jake: Haha.
+
+1202
+00:50:43,800 --> 00:50:44,600
+杰克: 嗯。
+Jake: Hmm.
+
+1203
+00:50:45,500 --> 00:50:47,500
+爱丽丝: 我从来没见人配白糖吃过。
+Alice: I've never seen it eaten with white sugar.
+
+1204
+00:50:46,300 --> 00:50:50,733
+杰克: 真的吗？对，可能只有那个地方才有。
+Jake: Really? Yeah, it might only be in that area.
+
+1205
+00:50:48,166 --> 00:50:49,400
+爱丽丝: 嗯，对。
+Alice: Hmm, yeah.
+
+1206
+00:50:50,733 --> 00:50:52,033
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1207
+00:50:58,166 --> 00:51:00,166
+爱丽丝: 豆花有甜的和咸的。
+Alice: There are sweet and salty versions of tofu pudding.
+
+1208
+00:51:02,033 --> 00:51:02,533
+杰克: 是的。
+Jake: Yes.
+
+1209
+00:51:02,166 --> 00:51:03,666
+塔莎: 那我们要不要试试咸豆花？
+Tasha: Then should we try the salty tofu pudding?
+
+1210
+00:51:04,666 --> 00:51:06,233
+杰克: 啊，我不记得了。
+Jake: Ah, I don't remember anymore.
+
+1211
+00:51:09,100 --> 00:51:13,366
+杰克: 现在好像什么店都能开。
+Jake: Nowadays, it seems like any kind of shop can open.
+
+1212
+00:51:14,366 --> 00:51:17,533
+杰克: 我都不知道以前是什么味道了。
+Jake: I don't even know what it used to taste like.
+
+1213
+00:51:18,166 --> 00:51:20,500
+杰克: 因为有很多外地人。
+Jake: Because there are a lot of people from other places.
+
+1214
+00:51:20,666 --> 00:51:22,466
+杰克: 所以，什么口味都有。
+Jake: So, there are all kinds of flavors.
+
+1215
+00:51:32,100 --> 00:51:32,866
+卡特里娜: 嗯。
+Katrina: Hmm.
+
+1216
+00:51:36,033 --> 00:51:36,966
+卡特里娜: 这一分半钟的……
+Katrina: This one and a half minutes...
+
+1217
+00:51:36,966 --> 00:51:39,200
+卡特里娜: 感觉跟三分钟的差不多。
+Katrina: Feels almost like the three-minute one.
+
+1218
+00:51:39,600 --> 00:51:40,533
+卡特里娜: 也还行。
+Katrina: It's okay, too.
+
+1219
+00:52:05,100 --> 00:52:06,033
+杰克: 后面这里写的是什么？
+Jake: What's written here at the back?
+
+1220
+00:52:08,300 --> 00:52:09,100
+杰克: 这是一个团体。
+Jake: This is a group.
+
+1221
+00:52:09,100 --> 00:52:10,366
+杰克: 哦，好的。
+Jake: Oh, okay.
+
+1222
+00:52:12,166 --> 00:52:13,733
+塔莎: 狗剩不知道。
+Tasha: Gou Sheng doesn't know.
+
+1223
+00:52:12,300 --> 00:52:13,333
+爱丽丝: 狗剩是谁？
+Alice: Who is Gou Sheng?
+
+1224
+00:52:15,666 --> 00:52:17,133
+杰克: 我们后面也放个圈。
+Jake: We'll put a circle at the back too.
+
+1225
+00:52:18,033 --> 00:52:19,166
+杰克: 哈哈，放什么？
+Jake: Haha, what to put?
+
+1226
+00:52:19,533 --> 00:52:22,000
+露西亚: 因为这是自己设计的标志，哈哈。
+Lucia: Because it's a self-designed logo, haha.
+
+1227
+00:52:21,100 --> 00:52:22,100
+杰克: 哈哈，那也行。
+Jake: Haha, that's fine.
+
+1228
+00:52:22,733 --> 00:52:24,433
+露西亚: 因为每个舞者，你知道的……
+Lucia: Because every dancer, you know...
+
+1229
+00:52:23,866 --> 00:52:24,933
+塔莎: 哈哈，对吧？
+Tasha: Haha, right?
+
+1230
+00:52:25,100 --> 00:52:26,600
+露西亚: 他们都会放在后面。
+Lucia: They will put it at the back.
+
+1231
+00:52:25,533 --> 00:52:26,366
+塔莎: 记不住。
+Tasha: Can't remember.
+
+1232
+00:52:26,033 --> 00:52:26,533
+杰克: 哦。
+Jake: Oh.
+
+1233
+00:52:26,366 --> 00:52:27,533
+爱丽丝: 坐你旁边？
+Alice: Sit next to you?
+
+1234
+00:52:26,800 --> 00:52:28,033
+露西亚: 而且每次下课后……
+Lucia: And every time after class...
+
+1235
+00:52:28,033 --> 00:52:31,566
+露西亚: 有人会带一个很酷的，你知道的……
+Lucia: Someone would bring a cool, you know...
+
+1236
+00:52:31,600 --> 00:52:34,533
+露西亚: 像云台相机。
+Lucia: Like a gimbal camera.
+
+1237
+00:52:33,300 --> 00:52:34,533
+卡特里娜: 可以跳个“yes okay”舞。
+Katrina: Can do a "yes okay" dance.
+
+1238
+00:52:34,533 --> 00:52:37,433
+露西亚: 然后拍你来回走。
+Lucia: And record you going back and forth.
+
+1239
+00:52:34,533 --> 00:52:36,666
+卡特里娜: 哈哈，我们其实可以跳个“yes okay”舞。
+Katrina: Haha, we can actually do a "yes okay" dance.
+
+1240
+00:52:34,800 --> 00:52:36,233
+杰克: 哦，好的，好的。
+Jake: Oh, OK, OK.
+
+1241
+00:52:37,433 --> 00:52:39,433
+露西亚: 然后拍那种视频效果。
+Lucia: And record that kind of video effect.
+
+1242
+00:52:37,933 --> 00:52:40,366
+塔莎: 或者那个……呃……
+Tasha: Or that...uh...
+
+1243
+00:52:43,166 --> 00:52:44,000
+卡特里娜: 我发到群里怎么样？
+Katrina: How about I post it in the group?
+
+1244
+00:52:44,000 --> 00:52:44,800
+卡特里娜: 你们选。
+Katrina: You guys choose.
+
+1245
+00:52:48,100 --> 00:52:49,533
+卡特里娜: 说服舒尔。
+Katrina: Convince Shure.
+
+1246
+00:52:50,366 --> 00:52:51,466
+塔莎: 哦，Sun，你在干嘛？
+Tasha: Oh, Sun, what are you doing?
+
+1247
+00:52:50,500 --> 00:52:52,800
+卡特里娜: 哈哈，把他拉进来。
+Katrina: Haha, pull him in.
+
+1248
+00:52:51,800 --> 00:52:52,966
+杰克: 对。
+Jake: Right.
+
+1249
+00:52:52,866 --> 00:52:54,766
+卡特里娜: 我爱看男生跳女团舞。
+Katrina: I love watching guys dance girl group dances.
+
+1250
+00:52:55,300 --> 00:52:55,966
+杰克: 他会跳。
+Jake: He can dance.
+
+1251
+00:52:55,966 --> 00:52:56,800
+杰克: 我觉得他会。
+Jake: I think he can.
+
+1252
+00:52:56,100 --> 00:52:57,366
+卡特里娜: 我也觉得他会。
+Katrina: I think he can too.
+
+1253
+00:52:57,000 --> 00:52:58,933
+爱丽丝: 我觉得如果他们跳，可能会更
+Alice: I think if they jump, they might be even
+
+1254
+00:52:58,733 --> 00:53:00,933
+卡特里娜: 比我们更优雅，有可能
+Katrina: More graceful than us, it's possible
+
+1255
+00:52:59,100 --> 00:52:59,866
+塔莎: 啊
+Tasha: Ah
+
+1256
+00:53:00,600 --> 00:53:01,733
+爱丽丝: 更害羞
+Alice: Even more shy
+
+1257
+00:53:00,933 --> 00:53:04,000
+卡特里娜: 哈哈哈哈哈哈
+Katrina: Hahahahahaha
+
+1258
+00:53:01,733 --> 00:53:04,166
+爱丽丝: 哈哈，迷人，哈哈哈
+Alice: Haha, charming, hahaha
+
+1259
+00:53:04,000 --> 00:53:05,300
+卡特里娜: 这个也挺快的吧？
+Katrina: Isn't this quite fast too?
+
+1260
+00:53:06,000 --> 00:53:10,033
+塔莎: afterlike afterlike 塔莎: afterlike, afterlike
+Tasha: afterlike afterlike
+Tasha: afterlike, afterlike
+
+1261
+00:53:10,300 --> 00:53:11,933
+卡特里娜: Afterlife，是不是有点难？
+Katrina: Afterlife, isn't that a bit hard?
+
+1262
+00:53:12,000 --> 00:53:13,033
+塔莎: 有点难？
+Tasha: A bit hard?
+
+1263
+00:53:13,033 --> 00:53:15,100
+卡特里娜: 对，是女团舞
+Katrina: Yeah, it's a girl group dance
+
+1264
+00:53:14,533 --> 00:53:17,000
+爱丽丝: 很多男生在广场跳那个黄色的舞
+Alice: Many guys dance that yellow dance in the square
+
+1265
+00:53:16,966 --> 00:53:17,733
+塔莎: 哈哈
+Tasha: Haha
+
+1266
+00:53:18,733 --> 00:53:20,266
+塔莎: 还有那个Dota
+Tasha: And also that Dota
+
+1267
+00:53:22,166 --> 00:53:23,666
+卡特里娜: 鞠躬什么的？
+Katrina: Bowing or something?
+
+1268
+00:53:22,933 --> 00:53:23,733
+塔莎: 对，鞠躬
+Tasha: Yeah, bowing
+
+1269
+00:53:23,733 --> 00:53:24,533
+塔莎: 哈哈哈
+Tasha: Hahaha
+
+1270
+00:53:24,100 --> 00:53:25,533
+卡特里娜: 鞠躬，那有点难
+Katrina: Bowing, that's a bit hard
+
+1271
+00:53:25,500 --> 00:53:26,600
+塔莎: 那有点难吗？
+Tasha: Is that a bit hard?
+
+1272
+00:53:26,600 --> 00:53:29,000
+塔莎: 节奏很简单，对吧？
+Tasha: The rhythm is simple, right?
+
+1273
+00:53:31,166 --> 00:53:34,633
+卡特里娜: 他跳不了像Newton那样
+Katrina: He can't dance like Newton
+
+1274
+00:53:35,100 --> 00:53:35,866
+卡特里娜: 这个还行，对吧？
+Katrina: This is okay, right?
+
+1275
+00:53:35,866 --> 00:53:38,633
+卡特里娜: 多少，1分43秒，还行
+Katrina: How much, 1 minute 43 seconds, it's okay
+
+1276
+00:53:39,866 --> 00:53:41,066
+塔莎: afterlike 塔莎: Afterlike
+Tasha: afterlike
+Tasha: Afterlike
+
+1277
+00:53:40,866 --> 00:53:42,133
+卡特里娜: Afterlike，让我看看
+Katrina: Afterlike, let me see
+
+1278
+00:53:43,233 --> 00:53:44,100
+爱丽丝: 我们要换水吗？
+Alice: Should we change the water?
+
+1279
+00:53:45,500 --> 00:53:46,733
+卡特里娜: 呜呜，嘿
+Katrina: Woo woo, hey
+
+1280
+00:53:46,733 --> 00:53:48,233
+卡特里娜: 昨天，我们昨天换了
+Katrina: Yesterday, we changed it yesterday
+
+1281
+00:53:48,600 --> 00:53:50,666
+卡特里娜: 嗯，afterlike真有意思
+Katrina: Hmm, afterlike is so interesting
+
+1282
+00:53:52,366 --> 00:53:53,566
+塔莎: 哈哈哈哈哈哈
+Tasha: Hahahahaha
+
+1283
+00:53:59,366 --> 00:54:00,500
+卡特里娜: 张元英的团
+Katrina: Jang Won-young's group
+
+1284
+00:54:00,666 --> 00:54:01,466
+塔莎: 对
+Tasha: Yes
+
+1285
+00:54:02,000 --> 00:54:02,666
+卡特里娜: 这个有点难
+Katrina: This is a bit hard
+
+1286
+00:54:02,666 --> 00:54:03,466
+卡特里娜: 哈哈哈哈
+Katrina: Hahahaha
+
+1287
+00:54:04,233 --> 00:54:06,333
+塔莎: 挑战张元英的转圈舞
+Tasha: Challenge Jang Won-young's spinning dance
+
+1288
+00:54:05,866 --> 00:54:07,300
+卡特里娜: 哈
+Katrina: Ha
+
+1289
+00:54:06,000 --> 00:54:08,233
+杰克: 哈哈哈，当然
+Jake: Hahaha, sure
+
+1290
+00:54:06,033 --> 00:54:07,333
+露西亚: 哈哈哈哈
+Lucia: Hahahaha
+
+1291
+00:54:06,366 --> 00:54:07,900
+塔莎: 哈哈哈哈哈哈
+Tasha: Hahahahaha
+
+1292
+00:54:10,733 --> 00:54:12,000
+卡特里娜: 她是真正的偶像
+Katrina: She's a true idol
+
+1293
+00:54:24,533 --> 00:54:25,566
+卡特里娜: 看看张元英的。
+Katrina: Look at Jang Won-young's.
+
+1294
+00:54:25,066 --> 00:54:25,933
+露西亚: 她每两天就经常跳舞。
+Lucia: She dances often every two days.
+
+1295
+00:54:25,933 --> 00:54:26,666
+露西亚: 她非常厉害。
+Lucia: She's very powerful.
+
+1296
+00:54:26,666 --> 00:54:28,233
+露西亚: 她就是这样达到这个效果的。
+Lucia: That's how she achieves this effect.
+
+1297
+00:54:28,466 --> 00:54:31,933
+露西亚: 我觉得我们几天内可能做不到。
+Lucia: I think we might not be able to do it in a few days.
+
+1298
+00:54:28,966 --> 00:54:30,466
+卡特里娜: 呃……
+Katrina: Ugh...
+
+1299
+00:54:31,966 --> 00:54:32,733
+杰克: 嗯。
+Jake: Hmm.
+
+1300
+00:54:33,633 --> 00:54:35,233
+杰克: 我们得从健身开始。
+Jake: We need to start with fitness.
+
+1301
+00:54:33,733 --> 00:54:34,566
+爱丽丝: 你跳给谁看？
+Alice: Who are you dancing for?
+
+1302
+00:54:35,366 --> 00:54:37,133
+杰克: 呃，呃，呃……
+Jake: Uh, uh, uh...
+
+1303
+00:54:35,466 --> 00:54:37,433
+露西亚: 呃，我们。
+Lucia: Uh, us.
+
+1304
+00:54:36,933 --> 00:54:38,133
+卡特里娜: 那还行，对吧？
+Katrina: That's okay, right?
+
+1305
+00:54:37,166 --> 00:54:37,833
+杰克: 镜头，嘿。
+Jake: The camera, hey.
+
+1306
+00:54:37,433 --> 00:54:39,733
+露西亚: 但我们还有九刃救无限。
+Lucia: But we still have the Nine Blades to save the infinite.
+
+1307
+00:54:39,233 --> 00:54:40,033
+卡特里娜: 虫子。
+Katrina: Bugs.
+
+1308
+00:54:39,700 --> 00:54:40,466
+杰克: 哈哈，对。
+Jake: Haha, yeah.
+
+1309
+00:54:39,800 --> 00:54:41,800
+露西亚: 哈哈哈。
+Lucia: Hahaha.
+
+1310
+00:54:40,466 --> 00:54:41,233
+杰克: 九到无限。
+Jake: Nine to infinity.
+
+1311
+00:54:41,200 --> 00:54:42,500
+塔莎: 哦，太可怕了。
+Tasha: Oh, that's so scary.
+
+1312
+00:54:41,966 --> 00:54:42,800
+露西亚: 太可怕了。
+Lucia: So scary.
+
+1313
+00:54:42,633 --> 00:54:43,800
+杰克: 全国14亿人。
+Jake: 1.4 billion people in the country.
+
+1314
+00:54:43,800 --> 00:54:46,166
+杰克: 哈哈，不是。
+Jake: Haha, no.
+
+1315
+00:54:45,800 --> 00:54:47,133
+爱丽丝: 会不会是全世界？
+Alice: Could it be the whole world?
+
+1316
+00:54:46,200 --> 00:54:47,433
+杰克: 全球70亿人。
+Jake: 7 billion people worldwide.
+
+1317
+00:54:46,733 --> 00:54:47,533
+卡特里娜: 人。
+Katrina: People.
+
+1318
+00:54:47,433 --> 00:54:47,800
+杰克: 对，对。
+Jake: Yeah, yeah.
+
+1319
+00:54:47,566 --> 00:54:48,500
+爱丽丝: 哈哈哈。
+Alice: Hahaha.
+
+1320
+00:54:47,733 --> 00:54:48,533
+塔莎: 哈哈。
+Tasha: Haha.
+
+1321
+00:54:47,800 --> 00:54:49,733
+杰克: 全球70亿人，哈哈。
+Jake: 7 billion people worldwide, haha.
+
+1322
+00:54:50,566 --> 00:54:51,733
+卡特里娜: 帮我拿一下手机。
+Katrina: Help me get my phone.
+
+1323
+00:54:52,233 --> 00:54:53,033
+爱丽丝: 这个？
+Alice: This one?
+
+1324
+00:54:53,033 --> 00:54:53,500
+卡特里娜: 对。
+Katrina: Yeah.
+
+1325
+00:54:53,100 --> 00:54:54,466
+塔莎: 按那个舞蹈平台。
+Tasha: Press that dance platform.
+
+1326
+00:55:01,866 --> 00:55:04,200
+塔莎: yes you see you say 塔莎: 对，你看，你说。
+Tasha: yes you see you say
+Tasha: Yes, you see, you say.
+
+1327
+00:55:05,733 --> 00:55:10,200
+杰克: 在这个领域，大约有100个团体。
+Jake: In this field, there are about 100 groups.
+
+1328
+00:55:10,800 --> 00:55:12,033
+杰克: 100个团体在做。
+Jake: 100 groups doing it.
+
+1329
+00:55:12,066 --> 00:55:15,366
+杰克: 如果他们都用你的数据。
+Jake: If they all use your data.
+
+1330
+00:55:15,566 --> 00:55:17,066
+杰克: 那至少有100个研究人员。
+Jake: That's at least 100 researchers.
+
+1331
+00:55:17,066 --> 00:55:18,233
+杰克: 他们需要看你跳舞。
+Jake: They need to watch you dance.
+
+1332
+00:55:18,233 --> 00:55:21,066
+杰克: 对，哈哈哈，对。
+Jake: Yes, hahaha, yes.
+
+1333
+00:55:19,666 --> 00:55:20,800
+卡特里娜: 哈哈哈哈哈哈
+Katrina: Hahahahaha
+
+1334
+00:55:19,733 --> 00:55:21,100
+露西亚: 哈哈哈
+Lucia: Hahaha
+
+1335
+00:55:21,600 --> 00:55:22,300
+露西亚: 处理一下
+Lucia: Handle it
+
+1336
+00:55:22,300 --> 00:55:25,800
+杰克: 对，对，但你会跳吗？
+Jake: Yeah, yeah, but can you dance?
+
+1337
+00:55:25,800 --> 00:55:26,233
+杰克: 对，没问题
+Jake: Yes, it's fine
+
+1338
+00:55:26,133 --> 00:55:27,800
+露西亚: 没问题，只要他不知道是我
+Lucia: It's fine, as long as he doesn't know it's me
+
+1339
+00:55:27,366 --> 00:55:29,866
+杰克: 对，对，没问题
+Jake: Right, right, no problem
+
+1340
+00:55:32,300 --> 00:55:33,400
+露西亚: 只要他不知道是我
+Lucia: As long as he doesn't know it's me
+
+1341
+00:55:33,433 --> 00:55:35,066
+露西亚: 其实我拍也没关系
+Lucia: Actually, it doesn't matter if I film it
+
+1342
+00:55:35,066 --> 00:55:37,733
+露西亚: 就算，就算是自拍，他也不知道怎么回事
+Lucia: Even if, even if it's self-shot, he won't know what's going on
+
+1343
+00:55:36,233 --> 00:55:37,033
+塔莎: 完了
+Tasha: It's over
+
+1344
+00:55:37,300 --> 00:55:38,833
+卡特里娜: 蜡烛小姐
+Katrina: Lady Candle
+
+1345
+00:55:38,066 --> 00:55:38,866
+杰克: 对
+Jake: Yes
+
+1346
+00:55:39,133 --> 00:55:40,900
+爱丽丝: 不敢相信，如果我跳这个
+Alice: I can't believe it, if I dance this
+
+1347
+00:55:40,866 --> 00:55:42,166
+爱丽丝: 那得多尴尬
+Alice: It would be so awkward
+
+1348
+00:55:40,966 --> 00:55:41,733
+塔莎: 天哪
+Tasha: Oh my god
+
+1349
+00:55:42,200 --> 00:55:43,566
+爱丽丝: 哈哈哈
+Alice: Hahaha
+
+1350
+00:55:42,733 --> 00:55:43,533
+塔莎: 你疯了吗？
+Tasha: Are you crazy?
+
+1351
+00:55:44,600 --> 00:55:46,666
+卡特里娜: 那个舞看起来简单，好像不费劲
+Katrina: That dance looks simple, like it doesn't take much effort
+
+1352
+00:55:46,666 --> 00:55:48,066
+卡特里娜: 但跳起来就难看
+Katrina: But when you dance it, it looks ugly
+
+1353
+00:55:48,066 --> 00:55:49,966
+卡特里娜: 你带不出张元英的感觉
+Katrina: You can't bring out the Zhang Yuanying vibe
+
+1354
+00:55:49,966 --> 00:55:51,666
+卡特里娜: 嗯，她们团的舞
+Katrina: Well, their group's dance
+
+1355
+00:55:51,666 --> 00:55:54,033
+卡特里娜: 我经常不知道怎么用力
+Katrina: I often don't know how to put in the effort
+
+1356
+00:55:54,133 --> 00:55:54,933
+塔莎: 那就yes, OK
+Tasha: Then yes, OK
+
+1357
+00:55:54,933 --> 00:55:56,166
+塔莎: 确实很简单
+Tasha: It is indeed very simple
+
+1358
+00:56:10,300 --> 00:56:11,500
+爱丽丝: 来我这儿玩
+Alice: Come play at my place
+
+1359
+00:56:16,366 --> 00:56:19,366
+塔莎: 看看能不能弄到医院的票
+Tasha: Let's see if we can get tickets to the hospital
+
+1360
+00:56:19,366 --> 00:56:21,666
+塔莎: 五一我可能得跟我妈去北京治疗
+Tasha: I might have to go to Beijing with my mom for her treatment during May Day
+
+1361
+00:56:25,600 --> 00:56:26,366
+塔莎: life 塔莎: 生活
+Tasha: life
+Tasha: Life
+
+1362
+00:56:28,100 --> 00:56:28,866
+爱丽丝: 厉害
+Alice: Impressive
+
+1363
+00:56:31,966 --> 00:56:33,566
+卡特里娜: 发到大群里，也许他们还有
+Katrina: Post it in the big group, maybe they still have some
+
+1364
+00:56:35,366 --> 00:56:37,366
+露西亚: 剧组会跟我们一起跳吗？
+Lucia: Will the crew dance with us?
+
+1365
+00:56:36,233 --> 00:56:39,466
+杰克: 他们会跳，他们会跳
+Jake: They can dance, they can dance
+
+1366
+00:56:42,233 --> 00:56:44,233
+爱丽丝: 剧组最后一天才来吧？
+Alice: The crew will only come on the last day, right?
+
+1367
+00:56:44,866 --> 00:56:47,100
+杰克: 呃，不是，周五，我想
+Jake: Uh, no, Friday, I think
+
+1368
+00:56:47,866 --> 00:56:49,800
+杰克: 他们周五有课
+Jake: They have classes on Friday
+
+1369
+00:56:48,200 --> 00:56:49,100
+爱丽丝: 今天星期几？
+Alice: What day is it today?
+
+1370
+00:56:49,800 --> 00:56:51,300
+杰克: 今天，他们来两个
+Jake: Today, two of them will come
+
+1371
+00:56:54,800 --> 00:56:55,866
+杰克: 上课签到
+Jake: Class check-in
+
+1372
+00:56:55,966 --> 00:56:59,066
+杰克: 呃，剧组唯一的女生，她得签到
+Jake: Uh, the only girl from the crew, she has to check in
+
+1373
+00:56:59,066 --> 00:57:00,166
+杰克: 他们实验室有打卡系统。
+Jake: Their lab has a punch-in system.
+
+1374
+00:57:00,466 --> 00:57:03,200
+杰克: 所以他们来不太方便。
+Jake: So it's not very convenient for them to come.
+
+1375
+00:57:03,700 --> 00:57:04,666
+杰克: 他们周末能来。
+Jake: They can come on weekends.
+
+1376
+00:57:05,100 --> 00:57:06,433
+杰克: 周五、周六、周日。
+Jake: Friday, Saturday, Sunday.
+
+1377
+00:57:05,233 --> 00:57:06,900
+卡特里娜: 我们需要分享《青春奔跑》吗？
+Katrina: Do we need to share "Running Youth"?
+
+1378
+00:57:07,866 --> 00:57:09,633
+露西亚: 分享出去让大家看看怎么样？
+Lucia: How about sharing it so everyone can see?
+
+1379
+00:57:09,666 --> 00:57:11,466
+露西亚: 如果他们觉得不好，
+Lucia: And if they think it's not good,
+
+1380
+00:57:11,466 --> 00:57:12,500
+露西亚: 就像现在这些里面，
+Lucia: Like among these now,
+
+1381
+00:57:12,500 --> 00:57:13,966
+露西亚: 这个应该算比较难的。
+Lucia: This one should be one of the harder ones.
+
+1382
+00:57:17,300 --> 00:57:18,866
+卡特里娜: 也有简单的。
+Katrina: There's also an easier one.
+
+1383
+00:57:19,433 --> 00:57:20,366
+杰克: 发到管家群里。
+Jake: Post it in the butler group.
+
+1384
+00:57:20,366 --> 00:57:22,966
+杰克: 如果管家们一起跳，你会得到一辆小车。
+Jake: If the butlers dance together, you'll get a small car.
+
+1385
+00:57:23,233 --> 00:57:24,433
+卡特里娜: 哈哈哈。
+Katrina: Hahaha.
+
+1386
+00:57:23,300 --> 00:57:24,766
+爱丽丝: 哈哈哈哈哈哈。
+Alice: Hahahahaha.
+
+1387
+00:57:23,866 --> 00:57:24,666
+塔莎: 哈哈。
+Tasha: Haha.
+
+1388
+00:57:24,666 --> 00:57:25,466
+露西亚: 那也有可能。
+Lucia: That's possible too.
+
+1389
+00:57:26,800 --> 00:57:27,600
+露西亚: 不客气。
+Lucia: You're welcome.
+
+1390
+00:57:27,966 --> 00:57:29,200
+杰克: 你们都做完了吗？
+Jake: Have you all done it already?
+
+1391
+00:57:29,466 --> 00:57:30,166
+杰克: 都做完了。
+Jake: All done.
+
+1392
+00:57:30,133 --> 00:57:30,933
+爱丽丝: 我还没。
+Alice: I haven't.
+
+1393
+00:57:30,166 --> 00:57:32,300
+杰克: 你还没做？
+Jake: You haven't done it yet?
+
+1394
+00:57:32,866 --> 00:57:33,800
+杰克: 你今天做。
+Jake: You'll do it today.
+
+1395
+00:57:33,800 --> 00:57:34,800
+杰克: 今天还有一个。
+Jake: There's still one more today.
+
+1396
+00:57:34,733 --> 00:57:35,733
+爱丽丝: 但我没有快递。
+Alice: But I don't have a courier.
+
+1397
+00:57:36,466 --> 00:57:38,600
+杰克: 别担心，今天我们反正要出去兜风。
+Jake: No worries, today we're going for a ride anyway.
+
+1398
+00:57:37,600 --> 00:57:39,200
+卡特里娜: 该买了，嗯。
+Katrina: Time to buy, hmm.
+
+1399
+00:57:39,533 --> 00:57:41,233
+露西亚: 如果我们需要买什么，
+Lucia: If we need to buy something,
+
+1400
+00:57:41,866 --> 00:57:42,800
+杰克: 对，没错。
+Jake: Yes, that's right.
+
+1401
+00:57:44,000 --> 00:57:45,666
+卡特里娜: 好，从这四个里选。
+Katrina: OK, pick from these four.
+
+1402
+00:57:51,200 --> 00:57:53,866
+露西亚: P人的快乐就是让他帮忙决定。
+Lucia: The joy of P-people is letting him help decide.
+
+1403
+00:57:52,300 --> 00:57:55,300
+杰克: 哈哈哈哈。
+Jake: Hahahaha.
+
+1404
+00:57:54,866 --> 00:57:55,666
+卡特里娜: 我们投票吧。
+Katrina: Let's vote.
+
+1405
+00:57:56,466 --> 00:57:59,600
+露西亚: 而且因为近几年，我，我……
+Lucia: And because in recent years, I, I...
+
+1406
+00:57:59,600 --> 00:58:01,466
+露西亚: 我几年前开始……
+Lucia: I started a couple of years ago...
+
+1407
+00:58:02,066 --> 00:58:04,066
+杰克: 哦对，就是那个。
+Jake: Oh right, that's the one.
+
+1408
+00:58:04,033 --> 00:58:06,133
+露西亚: 这是我们的。
+Lucia: This is ours.
+
+1409
+00:58:04,500 --> 00:58:05,966
+杰克: 这个不能一起选。
+Jake: This one can't be chosen together.
+
+1410
+00:58:06,000 --> 00:58:06,666
+卡特里娜: 什么风格？
+Katrina: What style?
+
+1411
+00:58:06,000 --> 00:58:07,166
+杰克: 对，没错。
+Jake: Yes, right.
+
+1412
+00:58:06,666 --> 00:58:07,466
+卡特里娜: 让我看看。
+Katrina: Let me see.
+
+1413
+00:58:09,733 --> 00:58:11,533
+露西亚: 这是两年前的。
+Lucia: This is from two years ago.
+
+1414
+00:58:11,233 --> 00:58:13,066
+卡特里娜: 啊，我就知道你有肉。
+Katrina: Ah, I knew you had some fat.
+
+1415
+00:58:13,100 --> 00:58:14,733
+卡特里娜: 你很有感觉。
+Katrina: You have a great vibe.
+
+1416
+00:58:15,800 --> 00:58:17,566
+露西亚: 然后我之前学了一段时间跳舞。
+Lucia: And then I learned dancing for a while before.
+
+1417
+00:58:17,566 --> 00:58:19,033
+露西亚: 但近几年没怎么跳。
+Lucia: But I haven't danced much in recent years.
+
+1418
+00:58:19,300 --> 00:58:21,000
+卡特里娜: 嗯，我平时跳爵士。
+Katrina: Hmm, I usually dance jazz.
+
+1419
+00:58:21,700 --> 00:58:23,733
+卡特里娜: 有点像现代民族舞。
+Katrina: It's a bit more like modern ethnic.
+
+1420
+00:58:24,133 --> 00:58:26,400
+露西亚: 对，对，可能更现代舞。
+Lucia: Yeah, yeah, maybe more modern dance.
+
+1421
+00:58:26,366 --> 00:58:28,166
+露西亚: 因为我从没上过民族舞课。
+Lucia: Because I never took ethnic dance classes.
+
+1422
+00:58:28,200 --> 00:58:29,800
+露西亚: 我们那时候学的是现代舞。
+Lucia: We were taught modern dance at that time.
+
+1423
+00:58:30,200 --> 00:58:32,066
+露西亚: 所以我就直接躺下了。
+Lucia: So I just lay down directly.
+
+1424
+00:58:32,066 --> 00:58:34,566
+露西亚: 老师让我们快点学，我就躺下了。
+Lucia: The teacher told us to learn quickly, so I lay down.
+
+1425
+00:58:34,566 --> 00:58:35,400
+露西亚: 然后我就躺下了。
+Lucia: Then I just lay down.
+
+1426
+00:58:35,466 --> 00:58:36,966
+卡特里娜: 你感觉真好。
+Katrina: You have such a good vibe.
+
+1427
+00:58:37,066 --> 00:58:37,600
+卡特里娜: 这个，这个。
+Katrina: This, this.
+
+1428
+00:58:37,600 --> 00:58:38,966
+卡特里娜: 我真做不了。
+Katrina: I can't really do it.
+
+1429
+00:58:39,533 --> 00:58:41,100
+卡特里娜: 因为我觉得没那么灵活。
+Katrina: Because I don't feel that flexible.
+
+1430
+00:58:39,800 --> 00:58:40,600
+露西亚: 这个。
+Lucia: This.
+
+1431
+00:58:41,700 --> 00:58:44,433
+露西亚: 而且这个不适合我们的场地。
+Lucia: And this isn't suitable for our venue.
+
+1432
+00:58:44,566 --> 00:58:47,000
+露西亚: 对，对。
+Lucia: Yeah, yeah.
+
+1433
+00:58:45,600 --> 00:58:47,366
+卡特里娜: 我们学校办金秋舞蹈节的时候，
+Katrina: When our school holds the Golden Autumn Dance Festival,
+
+1434
+00:58:47,366 --> 00:58:48,733
+卡特里娜: 大家跳的都是这种舞。
+Katrina: everyone dances this kind of dance.
+
+1435
+00:58:47,966 --> 00:58:49,333
+爱丽丝: 我能坐你旁边吗？
+Alice: Can I sit next to you?
+
+1436
+00:58:49,600 --> 00:58:53,233
+卡特里娜: 跳那些历史主题的舞蹈。
+Katrina: Dancing those historical-themed dances.
+
+1437
+00:58:50,233 --> 00:58:51,333
+爱丽丝: 我喜欢和你在一起。
+Alice: I like being with you.
+
+1438
+00:58:51,533 --> 00:58:53,000
+爱丽丝: 哈哈哈。
+Alice: Hahaha.
+
+1439
+00:58:51,800 --> 00:58:54,200
+杰克: 哈哈哈，当然，当然。
+Jake: Hahaha, sure, sure.
+
+1440
+00:58:54,433 --> 00:58:55,233
+露西亚: 我忘了编这段舞了。
+Lucia: I forgot to choreograph this.
+
+1441
+00:58:55,233 --> 00:58:57,666
+露西亚: 我们老师让每个学生自己决定。
+Lucia: Our teacher asked each student to decide.
+
+1442
+00:58:56,366 --> 00:58:58,066
+卡特里娜: 哦，你自己编的舞？
+Katrina: Oh, you choreographed it yourself?
+
+1443
+00:58:58,033 --> 00:58:58,433
+露西亚: 是的。
+Lucia: Yes.
+
+1444
+00:58:58,433 --> 00:59:00,400
+露西亚: 我们老师让每个学生选一段音乐。
+Lucia: Our teacher asked each student to choose a piece of music.
+
+1445
+00:59:00,366 --> 00:59:01,333
+露西亚: 然后编一段舞。
+Lucia: And then choreograph a segment.
+
+1446
+00:59:01,800 --> 00:59:03,933
+露西亚: 但其实我只编了前面一分半钟。
+Lucia: But I actually only choreographed the first minute and a half.
+
+1447
+00:59:03,966 --> 00:59:07,833
+露西亚: 后面一分半钟我就即兴发挥了，哈哈。
+Lucia: The following minute and a half I just improvised, haha.
+
+1448
+00:59:06,166 --> 00:59:07,566
+卡特里娜: 哈哈哈。
+Katrina: Hahaha.
+
+1449
+00:59:08,100 --> 00:59:09,366
+卡特里娜: 心理素质真强！
+Katrina: Strong mentality!
+
+1450
+00:59:09,366 --> 00:59:10,900
+卡特里娜: 你居然在大家面前即兴发挥。
+Katrina: You actually improvised in front of people.
+
+1451
+00:59:09,366 --> 00:59:12,800
+露西亚: 哈哈，有点像推荐卡拉OK。
+Lucia: Haha, it's a bit like recommending karaoke.
+
+1452
+00:59:13,233 --> 00:59:14,800
+杰克: 哦。
+Jake: Oh.
+
+1453
+00:59:13,300 --> 00:59:14,633
+露西亚: 之后我就开始自由发挥了。
+Lucia: After that, I just started to freestyle.
+
+1454
+00:59:14,666 --> 00:59:16,200
+露西亚: 又把开头的东西重复了一遍。
+Lucia: And copied the stuff from the beginning again.
+
+1455
+00:59:14,800 --> 00:59:16,100
+杰克: 你还能自由发挥。
+Jake: You can freestyle.
+
+1456
+00:59:17,533 --> 00:59:19,433
+露西亚: 不然没人知道原来是什么样。
+Lucia: Otherwise, no one would know what it originally looked like.
+
+1457
+00:59:20,533 --> 00:59:23,300
+卡特里娜: 你看，如果这只有一分多钟……
+Katrina: Look, if this is only a little over a minute...
+
+1458
+00:59:23,733 --> 00:59:24,600
+爱丽丝: 跳这套动作……
+Alice: To dance this routine...
+
+1459
+00:59:24,600 --> 00:59:26,800
+爱丽丝: 不知道会多难看，哈哈哈。
+Alice: I don't know how ugly it would look, hahaha.
+
+1460
+00:59:51,000 --> 00:59:53,633
+露西亚: 因为疫情期间，我回中国了。
+Lucia: Because during the pandemic, I went back to China.
+
+1461
+00:59:53,633 --> 00:59:55,466
+露西亚: 有一段时间……
+Lucia: And there was a period of time when...
+
+1462
+00:59:55,300 --> 00:59:56,000
+杰克: 嗯。
+Jake: Hmm.
+
+1463
+00:59:55,666 --> 00:59:57,666
+露西亚: 快结束了。
+Lucia: It was about to end.
+
+1464
+00:59:57,566 --> 00:59:57,800
+杰克: 嗯。
+Jake: Hmm.
+
+1465
+00:59:57,866 --> 00:59:59,066
+露西亚: 但还没结束。
+Lucia: But it hadn't yet.
+
+1466
+00:59:59,066 --> 01:00:00,000
+露西亚: 那时候……
+Lucia: At that time...
+
+1467
+01:00:00,000 --> 01:00:01,000
+露西亚: 还没……
+Lucia: It hadn't...

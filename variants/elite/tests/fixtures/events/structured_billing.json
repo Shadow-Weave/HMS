@@ -1,0 +1,16 @@
+{
+  "scope": {"user_id": "alice", "agent_id": "coder", "run_id": "run-billing"},
+  "constraint": {"role": "user", "content": "Do not modify the subscription state machine.", "timestamp": "2026-06-15T09:00:00Z"},
+  "events_fail": [
+    {"object_type": "file_diff", "role": "tool", "actor_id": "coder", "timestamp": "2026-06-15T10:00:00Z",
+     "payload": {"path": "src/billing/retry.ts", "patch": "+ backoff = 2 ** attempt", "summary": "add exponential backoff", "intent": "fix checkout webhook retry"}},
+    {"object_type": "test_log", "role": "tool", "actor_id": "coder", "timestamp": "2026-06-15T10:04:00Z",
+     "payload": {"suite": "billing_e2e", "passed": 11, "failed": 3, "failures": [{"name": "subscription_state_regression", "message": "state machine changed"}]}}
+  ],
+  "events_fix": [
+    {"object_type": "file_diff", "role": "tool", "actor_id": "coder", "timestamp": "2026-06-15T10:10:00Z",
+     "payload": {"path": "src/billing/idempotency.ts", "patch": "+ idempotencyKey", "summary": "add idempotency key", "intent": "fix checkout webhook retry"}},
+    {"object_type": "test_log", "role": "tool", "actor_id": "coder", "timestamp": "2026-06-15T10:14:00Z",
+     "payload": {"suite": "billing_e2e", "passed": 14, "failed": 0, "failures": []}}
+  ]
+}

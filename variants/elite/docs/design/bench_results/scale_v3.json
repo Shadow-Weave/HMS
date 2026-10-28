@@ -1,0 +1,864 @@
+{
+ "python": "3.14.6",
+ "machine": "arm64",
+ "top_k": 20,
+ "threshold": 0.1,
+ "repeat": 20,
+ "arms": {
+  "mem0": {
+   "arm": "mem0",
+   "sizes": {
+    "300": {
+     "add": {
+      "first10_ms": 0.419,
+      "mid10_ms": 0.845,
+      "last10_ms": 1.437,
+      "all_median_ms": 0.264,
+      "total_s": 0.102
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 0.197,
+       "p90_ms": 0.206,
+       "rows": 20,
+       "overlap_top20": 0.95,
+       "oracle_rows": 20
+      },
+      "identifier": {
+       "median_ms": 0.204,
+       "p90_ms": 0.205,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      },
+      "month": {
+       "median_ms": 0.205,
+       "p90_ms": 0.209,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      },
+      "preference": {
+       "median_ms": 0.209,
+       "p90_ms": 0.214,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      },
+      "cjk": {
+       "median_ms": 0.195,
+       "p90_ms": 0.201,
+       "rows": 20,
+       "overlap_top20": 0.95,
+       "oracle_rows": 20
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 0.204,
+      "median_all_runs_ms": 0.204,
+      "p90_all_runs_ms": 0.21,
+      "overlap_mean": 0.98,
+      "overlap_min": 0.95,
+      "oracle": "brute-force cosine over the FAISS vectors (same metric as IndexFlat), not the elite fused score"
+     }
+    },
+    "3000": {
+     "add": {
+      "first10_ms": 0.383,
+      "mid10_ms": 5.205,
+      "last10_ms": 9.971,
+      "all_median_ms": 0.275,
+      "total_s": 1.033
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 0.221,
+       "p90_ms": 0.224,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      },
+      "identifier": {
+       "median_ms": 0.227,
+       "p90_ms": 0.23,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      },
+      "month": {
+       "median_ms": 0.225,
+       "p90_ms": 0.227,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      },
+      "preference": {
+       "median_ms": 0.227,
+       "p90_ms": 0.231,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      },
+      "cjk": {
+       "median_ms": 0.216,
+       "p90_ms": 0.222,
+       "rows": 20,
+       "overlap_top20": 0.95,
+       "oracle_rows": 20
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 0.225,
+      "median_all_runs_ms": 0.225,
+      "p90_all_runs_ms": 0.23,
+      "overlap_mean": 0.99,
+      "overlap_min": 0.95,
+      "oracle": "brute-force cosine over the FAISS vectors (same metric as IndexFlat), not the elite fused score"
+     }
+    },
+    "30000": {
+     "add": {
+      "first10_ms": 0.335,
+      "mid10_ms": 47.887,
+      "last10_ms": 95.615,
+      "all_median_ms": 0.267,
+      "total_s": 10.327
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 0.323,
+       "p90_ms": 0.343,
+       "rows": 20,
+       "overlap_top20": 0.95,
+       "oracle_rows": 20
+      },
+      "identifier": {
+       "median_ms": 0.323,
+       "p90_ms": 0.332,
+       "rows": 20,
+       "overlap_top20": 0.95,
+       "oracle_rows": 20
+      },
+      "month": {
+       "median_ms": 0.324,
+       "p90_ms": 0.333,
+       "rows": 20,
+       "overlap_top20": 0.9,
+       "oracle_rows": 20
+      },
+      "preference": {
+       "median_ms": 0.322,
+       "p90_ms": 0.334,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      },
+      "cjk": {
+       "median_ms": 0.307,
+       "p90_ms": 0.317,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 0.323,
+      "median_all_runs_ms": 0.321,
+      "p90_all_runs_ms": 0.334,
+      "overlap_mean": 0.96,
+      "overlap_min": 0.9,
+      "oracle": "brute-force cosine over the FAISS vectors (same metric as IndexFlat), not the elite fused score"
+     }
+    }
+   },
+   "note": "FAISS._save (O(N) pickle per add) ran only during the three timed add segments and once at the end; other adds skipped it.",
+   "python": "3.12.14"
+  },
+  "elite_sqlite": {
+   "arm": "elite_sqlite",
+   "sizes": {
+    "300": {
+     "add": {
+      "first10_ms": 0.926,
+      "mid10_ms": 0.691,
+      "last10_ms": 0.758,
+      "all_median_ms": 0.721,
+      "total_s": 0.229
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 0.904,
+       "p90_ms": 2.111,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 1.5,
+       "missed": [],
+       "pool_size": 30,
+       "channel_sizes": {
+        "gate": 30
+       },
+       "primary_axis": "entity"
+      },
+      "identifier": {
+       "median_ms": 4.09,
+       "p90_ms": 6.713,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 7.2,
+       "missed": [],
+       "pool_size": 292,
+       "channel_sizes": {
+        "gate": 292
+       },
+       "primary_axis": "semantic"
+      },
+      "month": {
+       "median_ms": 0.871,
+       "p90_ms": 0.936,
+       "rows": 6,
+       "overlap_top20": 1.0,
+       "oracle_rows": 6,
+       "oracle_ms": 0.6,
+       "missed": [],
+       "pool_size": 16,
+       "channel_sizes": {
+        "gate": 16
+       },
+       "primary_axis": "time"
+      },
+      "preference": {
+       "median_ms": 4.118,
+       "p90_ms": 6.477,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 6.8,
+       "missed": [],
+       "pool_size": 292,
+       "channel_sizes": {
+        "gate": 292
+       },
+       "primary_axis": "fallback"
+      },
+      "cjk": {
+       "median_ms": 2.71,
+       "p90_ms": 2.787,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 13.9,
+       "missed": [],
+       "pool_size": 292,
+       "channel_sizes": {
+        "gate": 292
+       },
+       "primary_axis": "semantic"
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 2.71,
+      "median_all_runs_ms": 2.71,
+      "p90_all_runs_ms": 5.92,
+      "overlap_mean": 1.0,
+      "overlap_min": 1.0
+     }
+    },
+    "3000": {
+     "add": {
+      "first10_ms": 0.914,
+      "mid10_ms": 0.789,
+      "last10_ms": 0.825,
+      "all_median_ms": 0.766,
+      "total_s": 2.691
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 3.412,
+       "p90_ms": 3.532,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 7.9,
+       "missed": [],
+       "pool_size": 300,
+       "channel_sizes": {
+        "gate": 300
+       },
+       "primary_axis": "entity"
+      },
+      "identifier": {
+       "median_ms": 2.055,
+       "p90_ms": 2.149,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 93.5,
+       "missed": [],
+       "pool_size": 94,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40,
+        "entity": 40
+       },
+       "primary_axis": "semantic"
+      },
+      "month": {
+       "median_ms": 1.831,
+       "p90_ms": 1.904,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 4.4,
+       "missed": [],
+       "pool_size": 166,
+       "channel_sizes": {
+        "gate": 166
+       },
+       "primary_axis": "time"
+      },
+      "preference": {
+       "median_ms": 2.011,
+       "p90_ms": 2.08,
+       "rows": 20,
+       "overlap_top20": 0.55,
+       "oracle_rows": 20,
+       "oracle_ms": 71.7,
+       "missed": [
+        "atm_7ddc4e2cb62a",
+        "atm_709c8db584a1",
+        "atm_0ed29ca29e03",
+        "atm_039cb01c3ef6",
+        "atm_2459352e3cbc",
+        "atm_dc12f5740a11",
+        "atm_efa6b9370c74",
+        "atm_600950b9bbff",
+        "atm_9f6da84adaf6"
+       ],
+       "pool_size": 117,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40
+       },
+       "primary_axis": "fallback"
+      },
+      "cjk": {
+       "median_ms": 2.064,
+       "p90_ms": 2.141,
+       "rows": 20,
+       "overlap_top20": 0.45,
+       "oracle_rows": 20,
+       "oracle_ms": 68.4,
+       "missed": [
+        "atm_090052641422",
+        "atm_b581c1a7803a",
+        "atm_943f6736b6c1",
+        "atm_c4dd2d79a77b",
+        "atm_6d5c9ffa7df6",
+        "atm_2cfa34e4417f",
+        "atm_ed7cbd833f26",
+        "atm_bcb285c09678",
+        "atm_9f13749b8969",
+        "atm_5f6049277d8c",
+        "atm_883460e73aa6"
+       ],
+       "pool_size": 120,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40
+       },
+       "primary_axis": "semantic"
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 2.055,
+      "median_all_runs_ms": 2.044,
+      "p90_all_runs_ms": 3.401,
+      "overlap_mean": 0.8,
+      "overlap_min": 0.45
+     }
+    },
+    "30000": {
+     "add": {
+      "first10_ms": 0.942,
+      "mid10_ms": 0.819,
+      "last10_ms": 0.803,
+      "all_median_ms": 0.81,
+      "total_s": 36.033
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 6.651,
+       "p90_ms": 7.084,
+       "rows": 20,
+       "overlap_top20": 0.55,
+       "oracle_rows": 20,
+       "oracle_ms": 128.5,
+       "missed": [
+        "atm_b8f35b5a6fbf",
+        "atm_efcb90056b33",
+        "atm_b75aa5a85d0a",
+        "atm_6ce5bdf1073b",
+        "atm_d1acba9d4340",
+        "atm_1836364eaca5",
+        "atm_ef34bb7bfed2",
+        "atm_e6972389d710",
+        "atm_de29ab9b3004"
+       ],
+       "pool_size": 149,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40,
+        "entity": 40
+       },
+       "primary_axis": "entity"
+      },
+      "identifier": {
+       "median_ms": 7.127,
+       "p90_ms": 9.185,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 1415.3,
+       "missed": [],
+       "pool_size": 155,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40,
+        "entity": 40
+       },
+       "primary_axis": "semantic"
+      },
+      "month": {
+       "median_ms": 2.066,
+       "p90_ms": 2.405,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 45.9,
+       "missed": [],
+       "pool_size": 118,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 0,
+        "recency": 40
+       },
+       "primary_axis": "time"
+      },
+      "preference": {
+       "median_ms": 2.728,
+       "p90_ms": 6.242,
+       "rows": 20,
+       "overlap_top20": 0.2,
+       "oracle_rows": 20,
+       "oracle_ms": 1245.1,
+       "missed": [
+        "atm_0bd30caa7d94",
+        "atm_61eb384214a8",
+        "atm_8eda4b6b1910",
+        "atm_b3d23f28b08e",
+        "atm_1907acd8a4da",
+        "atm_99a8f73f586d",
+        "atm_e1e288d398e2",
+        "atm_26882456a4f1",
+        "atm_9ea6d3ed13c2",
+        "atm_cc4682b1cea8",
+        "atm_d019eb4927cf",
+        "atm_3db76cddb0a3",
+        "atm_8c10f7244ffc",
+        "atm_ae0d008e91f0",
+        "atm_436457e0a112",
+        "atm_a9405b675bac"
+       ],
+       "pool_size": 120,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40
+       },
+       "primary_axis": "fallback"
+      },
+      "cjk": {
+       "median_ms": 3.406,
+       "p90_ms": 5.711,
+       "rows": 20,
+       "overlap_top20": 0.35,
+       "oracle_rows": 20,
+       "oracle_ms": 1183.4,
+       "missed": [
+        "atm_c6a6d1c680cb",
+        "atm_688b68ecd9fe",
+        "atm_0a63a57b2fa6",
+        "atm_05c99d442406",
+        "atm_7c411ecf0392",
+        "atm_2cec05a89217",
+        "atm_5122da3de654",
+        "atm_c88a7f28ec95",
+        "atm_b052f6a07c96",
+        "atm_0649176c9e25",
+        "atm_0f3b08436828",
+        "atm_2bb7f6e80a3c",
+        "atm_dc669ac77212"
+       ],
+       "pool_size": 120,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40
+       },
+       "primary_axis": "semantic"
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 3.406,
+      "median_all_runs_ms": 4.39,
+      "p90_all_runs_ms": 7.856,
+      "overlap_mean": 0.62,
+      "overlap_min": 0.2
+     }
+    }
+   },
+   "python": "3.14.6"
+  },
+  "elite_milvus": {
+   "arm": "elite_milvus",
+   "sizes": {
+    "300": {
+     "add": {
+      "first10_ms": 2.387,
+      "mid10_ms": 0.993,
+      "last10_ms": 1.078,
+      "all_median_ms": 1.072,
+      "total_s": 0.368
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 2.037,
+       "p90_ms": 2.077,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 2.2,
+       "missed": [],
+       "pool_size": 30,
+       "channel_sizes": {
+        "gate": 30
+       },
+       "primary_axis": "entity"
+      },
+      "identifier": {
+       "median_ms": 11.748,
+       "p90_ms": 11.867,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 16.0,
+       "missed": [],
+       "pool_size": 292,
+       "channel_sizes": {
+        "gate": 292
+       },
+       "primary_axis": "semantic"
+      },
+      "month": {
+       "median_ms": 1.154,
+       "p90_ms": 1.198,
+       "rows": 6,
+       "overlap_top20": 1.0,
+       "oracle_rows": 6,
+       "oracle_ms": 1.4,
+       "missed": [],
+       "pool_size": 16,
+       "channel_sizes": {
+        "gate": 16
+       },
+       "primary_axis": "time"
+      },
+      "preference": {
+       "median_ms": 11.666,
+       "p90_ms": 11.872,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 15.8,
+       "missed": [],
+       "pool_size": 292,
+       "channel_sizes": {
+        "gate": 292
+       },
+       "primary_axis": "fallback"
+      },
+      "cjk": {
+       "median_ms": 11.617,
+       "p90_ms": 11.689,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 15.3,
+       "missed": [],
+       "pool_size": 292,
+       "channel_sizes": {
+        "gate": 292
+       },
+       "primary_axis": "semantic"
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 11.617,
+      "median_all_runs_ms": 11.586,
+      "p90_all_runs_ms": 11.807,
+      "overlap_mean": 1.0,
+      "overlap_min": 1.0
+     }
+    },
+    "3000": {
+     "add": {
+      "first10_ms": 2.542,
+      "mid10_ms": 1.151,
+      "last10_ms": 1.129,
+      "all_median_ms": 1.139,
+      "total_s": 3.895
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 13.375,
+       "p90_ms": 13.621,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 18.2,
+       "missed": [],
+       "pool_size": 300,
+       "channel_sizes": {
+        "gate": 300
+       },
+       "primary_axis": "entity"
+      },
+      "identifier": {
+       "median_ms": 49.202,
+       "p90_ms": 50.675,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 194.9,
+       "missed": [],
+       "pool_size": 94,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40,
+        "entity": 40
+       },
+       "primary_axis": "semantic"
+      },
+      "month": {
+       "median_ms": 7.554,
+       "p90_ms": 8.171,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 10.5,
+       "missed": [],
+       "pool_size": 166,
+       "channel_sizes": {
+        "gate": 166
+       },
+       "primary_axis": "time"
+      },
+      "preference": {
+       "median_ms": 49.388,
+       "p90_ms": 54.49,
+       "rows": 20,
+       "overlap_top20": 0.55,
+       "oracle_rows": 20,
+       "oracle_ms": 206.4,
+       "missed": [
+        "atm_e7568e0fde9a",
+        "atm_45666f8ba9df",
+        "atm_f005c0651672",
+        "atm_e0ecb40e7fc3",
+        "atm_a9299cb5e159",
+        "atm_0332e36444c8",
+        "atm_ca7fa587145a",
+        "atm_01b7b920144e",
+        "atm_8efa18f78e70"
+       ],
+       "pool_size": 117,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40
+       },
+       "primary_axis": "fallback"
+      },
+      "cjk": {
+       "median_ms": 49.409,
+       "p90_ms": 49.916,
+       "rows": 20,
+       "overlap_top20": 0.5,
+       "oracle_rows": 20,
+       "oracle_ms": 168.1,
+       "missed": [
+        "atm_3455b84bcde3",
+        "atm_1cc058df7932",
+        "atm_7e07f834090a",
+        "atm_a3c787771227",
+        "atm_12c7360990b6",
+        "atm_76ce6905f7e1",
+        "atm_adc42ff3e771",
+        "atm_7aaf6b5bf773",
+        "atm_990e0586a46d",
+        "atm_fedd13d5a265"
+       ],
+       "pool_size": 120,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40
+       },
+       "primary_axis": "semantic"
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 49.202,
+      "median_all_runs_ms": 48.802,
+      "p90_all_runs_ms": 50.261,
+      "overlap_mean": 0.81,
+      "overlap_min": 0.5
+     }
+    },
+    "30000": {
+     "add": {
+      "first10_ms": 1.666,
+      "mid10_ms": 1.233,
+      "last10_ms": 1.237,
+      "all_median_ms": 1.197,
+      "total_s": 48.908
+     },
+     "queries": {
+      "entity": {
+       "median_ms": 53.177,
+       "p90_ms": 54.148,
+       "rows": 20,
+       "overlap_top20": 0.7,
+       "oracle_rows": 20,
+       "oracle_ms": 215.5,
+       "missed": [
+        "atm_9caf644bd669",
+        "atm_aec3ccf7dcaf",
+        "atm_d34ba10308c2",
+        "atm_4f2c2cd79995",
+        "atm_46cc181bee4b",
+        "atm_b7ea7b0f0f81"
+       ],
+       "pool_size": 148,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40,
+        "entity": 40
+       },
+       "primary_axis": "entity"
+      },
+      "identifier": {
+       "median_ms": 16.961,
+       "p90_ms": 17.937,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 2118.4,
+       "missed": [],
+       "pool_size": 153,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40,
+        "entity": 40
+       },
+       "primary_axis": "semantic"
+      },
+      "month": {
+       "median_ms": 13.197,
+       "p90_ms": 13.894,
+       "rows": 20,
+       "overlap_top20": 1.0,
+       "oracle_rows": 20,
+       "oracle_ms": 101.2,
+       "missed": [],
+       "pool_size": 118,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 0,
+        "recency": 40
+       },
+       "primary_axis": "time"
+      },
+      "preference": {
+       "median_ms": 13.942,
+       "p90_ms": 14.785,
+       "rows": 20,
+       "overlap_top20": 0.2,
+       "oracle_rows": 20,
+       "oracle_ms": 1997.0,
+       "missed": [
+        "atm_faa20e504fad",
+        "atm_f6eb0994dbd1",
+        "atm_e5b17fd26c7b",
+        "atm_d4e344c377ed",
+        "atm_05243bbc1da9",
+        "atm_5bfc9f82fb98",
+        "atm_55309100e73c",
+        "atm_fd3f74739acf",
+        "atm_3b9bbca0124f",
+        "atm_abecd89edacb",
+        "atm_fca566f77dce",
+        "atm_a1187f6eb45d",
+        "atm_593dfefc5537",
+        "atm_2c581e808b64",
+        "atm_c8e630006080",
+        "atm_ce1746db2ae6"
+       ],
+       "pool_size": 120,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40
+       },
+       "primary_axis": "fallback"
+      },
+      "cjk": {
+       "median_ms": 14.38,
+       "p90_ms": 15.057,
+       "rows": 20,
+       "overlap_top20": 0.35,
+       "oracle_rows": 20,
+       "oracle_ms": 1949.3,
+       "missed": [
+        "atm_9e521f3c8945",
+        "atm_6ad16b1f53e4",
+        "atm_8c0fd8ffc486",
+        "atm_1c353480daa1",
+        "atm_98897ff18dcc",
+        "atm_ddaf4a43aee6",
+        "atm_c976d0bc4a6a",
+        "atm_1424966208d9",
+        "atm_ee60a24777f4",
+        "atm_df89697ba2a3",
+        "atm_ce4dfc68684f",
+        "atm_d3c1a3ceff23",
+        "atm_6f948515d91d"
+       ],
+       "pool_size": 120,
+       "channel_sizes": {
+        "semantic": 80,
+        "keyword": 40
+       },
+       "primary_axis": "semantic"
+      }
+     },
+     "search": {
+      "median_of_query_medians_ms": 14.38,
+      "median_all_runs_ms": 14.594,
+      "p90_all_runs_ms": 53.175,
+      "overlap_mean": 0.65,
+      "overlap_min": 0.2
+     }
+    }
+   },
+   "python": "3.14.6"
+  }
+ }
+}

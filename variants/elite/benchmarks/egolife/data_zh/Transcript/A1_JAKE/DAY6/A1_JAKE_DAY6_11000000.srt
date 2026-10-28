@@ -1,0 +1,6405 @@
+1
+00:00:01,200 --> 00:00:02,000
+塔莎: 付钱
+Tasha: Pay
+
+2
+00:00:02,033 --> 00:00:02,833
+Others: 手续费
+Others: Transaction fee
+
+3
+00:00:02,633 --> 00:00:03,800
+塔莎: 哦，我知道
+Tasha: Oh, I know
+
+4
+00:00:06,466 --> 00:00:07,266
+塔莎: 好吧
+Tasha: Alright
+
+5
+00:00:07,866 --> 00:00:09,500
+塔莎: 这对空气有些意义
+Tasha: This has some significance for the air
+
+6
+00:00:10,400 --> 00:00:11,800
+塔莎: 是的，有意义
+Tasha: Yeah, meaningful
+
+7
+00:00:15,400 --> 00:00:16,466
+塔莎: 每个两元
+Tasha: Two yuan each
+
+8
+00:00:18,000 --> 00:00:19,166
+塔莎: 哈哈
+Tasha: Haha
+
+9
+00:00:20,433 --> 00:00:21,233
+Others: 你要多少？
+Others: How many do you want?
+
+10
+00:00:21,333 --> 00:00:22,766
+Others: 一个就行，没问题
+Others: Just one, no problem
+
+11
+00:00:21,500 --> 00:00:22,300
+塔莎: 我要一个
+Tasha: I want one
+
+12
+00:00:23,500 --> 00:00:24,600
+塔莎: 可以
+Tasha: That's fine
+
+13
+00:00:24,633 --> 00:00:25,033
+Others: 我告诉你
+Others: Let me tell you
+
+14
+00:00:25,033 --> 00:00:26,000
+Others: 你现在花两元买
+Others: You are buying for two yuan now
+
+15
+00:00:26,000 --> 00:00:27,400
+Others: 不用找零就能转账
+Others: You can transfer without change
+
+16
+00:00:27,033 --> 00:00:28,600
+塔莎: 是的，好的
+Tasha: Yes, okay
+
+17
+00:00:29,400 --> 00:00:30,200
+塔莎: 真的吗
+Tasha: Really
+
+18
+00:00:31,900 --> 00:00:34,000
+Others: 你连两元都找不到
+Others: You can't even find two yuan
+
+19
+00:00:34,200 --> 00:00:36,066
+塔莎: 哈哈哈，不会吧
+Tasha: Hahaha, no
+
+20
+00:00:36,066 --> 00:00:37,800
+塔莎: 如果没人买怎么办？
+Tasha: What if no one buys it?
+
+21
+00:00:42,366 --> 00:00:43,600
+塔莎: 这不是
+Tasha: Isn't this
+
+22
+00:00:43,633 --> 00:00:44,433
+塔莎: 这有什么意义？
+Tasha: What's the point of this?
+
+23
+00:00:44,433 --> 00:00:45,666
+塔莎: 这有什么用？
+Tasha: What's the use of this?
+
+24
+00:00:46,266 --> 00:00:47,066
+塔莎: 谁
+Tasha: Who
+
+25
+00:00:51,066 --> 00:00:53,400
+塔莎: 像个推广组织
+Tasha: Like a promotional organization
+
+26
+00:01:02,066 --> 00:01:04,400
+塔莎: 那虚拟货币到底有什么用？
+Tasha: So what's the use of virtual currency in the end?
+
+27
+00:01:04,400 --> 00:01:05,266
+塔莎: 比如比特币
+Tasha: Like Bitcoin
+
+28
+00:01:05,266 --> 00:01:07,200
+塔莎: 你就当真的钱花吗？
+Tasha: Do you just spend it like real money?
+
+29
+00:01:07,700 --> 00:01:10,433
+塔莎: 嗯，那我花两元买一个
+Tasha: Hmm, so if I spend two yuan to buy one
+
+30
+00:01:10,433 --> 00:01:11,700
+塔莎: 我可以用自我币
+Tasha: Can I use an ego coin
+
+31
+00:01:11,700 --> 00:01:13,833
+塔莎: 买一瓶矿泉水吗？
+Tasha: to buy a bottle of mineral water?
+
+32
+00:01:13,833 --> 00:01:16,066
+Others: 可以，只要矿泉水的主人
+Others: Yes, as long as the owner of the mineral water
+
+33
+00:01:16,066 --> 00:01:17,366
+Others: 接受你的币。
+Others: accepts your coin.
+
+34
+00:01:20,100 --> 00:01:21,000
+塔莎: 哦，我明白了。
+Tasha: Oh, I see.
+
+35
+00:01:21,100 --> 00:01:24,733
+Others: 一切都基于相互共识机制。
+Others: Everything is based on a mutual consensus mechanism.
+
+36
+00:01:24,966 --> 00:01:26,833
+塔莎: 啊，我懂了。
+Tasha: Ah, I get it.
+
+37
+00:01:26,866 --> 00:01:27,666
+塔莎: 明白了。
+Tasha: Understood.
+
+38
+00:01:28,233 --> 00:01:29,300
+塔莎: 我相信你。
+Tasha: I believe you.
+
+39
+00:01:36,366 --> 00:01:37,800
+塔莎: 哈哈。
+Tasha: Haha.
+
+40
+00:01:38,933 --> 00:01:41,000
+Others: 不不不。
+Others: No, no, no.
+
+41
+00:01:41,033 --> 00:01:42,833
+Others: 是另一个女人。
+Others: It's another woman.
+
+42
+00:01:42,966 --> 00:01:45,033
+Others: 我们把150个币都藏起来了。
+Others: We hid all 150 coins.
+
+43
+00:01:45,433 --> 00:01:47,033
+杰克: 不不不，藏20个币。
+Jake: No, no, no, hide 20 coins.
+
+44
+00:01:47,033 --> 00:01:49,566
+塔莎: 那150个自我币。
+Tasha: Those 150 ego coins.
+
+45
+00:01:49,733 --> 00:01:52,300
+Others: 你让他们挣扎，只找到20个币。
+Others: You make them struggle and only find 20 coins.
+
+46
+00:01:52,566 --> 00:01:53,966
+塔莎: 那比特币呢？
+Tasha: What about Bitcoin?
+
+47
+00:01:53,966 --> 00:01:56,233
+塔莎: 最后...
+Tasha: In the end...
+
+48
+00:01:55,200 --> 00:01:56,033
+杰克: 不不不，剩下的，
+Jake: No, no, no, the rest,
+
+49
+00:01:56,033 --> 00:01:56,766
+杰克: 他们需要赚钱。
+Jake: they need to earn money.
+
+50
+00:01:56,766 --> 00:01:58,233
+杰克: 他们需要工作来赚钱。
+Jake: They need to work to earn money.
+
+51
+00:01:58,066 --> 00:02:02,766
+塔莎: 那最初是谁推广并让它们流行起来的？
+Tasha: So who promoted and made them popular at the beginning?
+
+52
+00:01:58,300 --> 00:01:59,800
+杰克: 所以150差不多。
+Jake: So 150 is about right.
+
+53
+00:02:03,400 --> 00:02:04,300
+塔莎: 我不知道。
+Tasha: I have no idea.
+
+54
+00:02:06,166 --> 00:02:08,966
+塔莎: 创始人和我们的创始人不同。
+Tasha: The founders are different from our founders.
+
+55
+00:02:08,966 --> 00:02:09,766
+塔莎: 所以...
+Tasha: So...
+
+56
+00:02:09,533 --> 00:02:11,200
+Others: 比特币很棒。
+Others: Bitcoin is awesome.
+
+57
+00:02:11,033 --> 00:02:12,700
+塔莎: 增值也不同，对吧？
+Tasha: The value increase is different too, right?
+
+58
+00:02:17,433 --> 00:02:18,700
+塔莎: 虚拟货币的人...
+Tasha: People in virtual currency...
+
+59
+00:02:20,000 --> 00:02:22,566
+塔莎: 虚拟货币未来可能在元宇宙中用得更多。
+Tasha: Virtual currency might be used more in the metaverse in the future.
+
+60
+00:02:22,566 --> 00:02:23,366
+塔莎: 对吧？
+Tasha: Right?
+
+61
+00:02:27,033 --> 00:02:28,966
+塔莎: 只是为了建立那个经济体系。
+Tasha: Just to establish that economic system.
+
+62
+00:02:28,966 --> 00:02:30,300
+塔莎: 使用虚拟货币。
+Tasha: Using virtual currency.
+
+63
+00:02:35,800 --> 00:02:37,166
+塔莎: 那未来会有更多币吗？
+Tasha: So will there be more coins in the future?
+
+64
+00:02:37,166 --> 00:02:38,866
+塔莎: 创建一个自我镇。
+Tasha: Create an ego town.
+
+65
+00:02:39,000 --> 00:02:42,066
+塔莎: 然后和比特币镇建立联盟。
+Tasha: Then establish an alliance with Bitcoin town.
+
+66
+00:02:42,066 --> 00:02:45,966
+塔莎: 哈哈哈，那就会有一个统一的货币银行。
+Tasha: Hahaha, then there will be a unified currency bank.
+
+67
+00:02:45,966 --> 00:02:47,633
+塔莎: 来处理货币汇率。
+Tasha: To handle currency exchange rates.
+
+68
+00:02:47,566 --> 00:02:48,333
+Others: 不，不。
+Others: No, no.
+
+69
+00:02:48,333 --> 00:02:49,133
+Others: 那个...
+Others: That...
+
+70
+00:02:49,833 --> 00:02:53,833
+Other: 虚拟货币的核心目标是消除银行。
+Other: The core goal of virtual currency is to eliminate banks.
+
+71
+00:02:54,766 --> 00:02:57,800
+Other: 这意味着每当我们在网上购买任何货币，
+Other: That means whenever we buy any currency online,
+
+72
+00:02:57,066 --> 00:03:00,100
+Other: 都是PUP。
+Other: it's all PUP.
+
+73
+00:03:00,366 --> 00:03:01,566
+Other: 这就是中国消除它的原因。
+Other: That's why China eliminated it.
+
+74
+00:03:01,566 --> 00:03:04,433
+塔莎: 哈哈哈
+Tasha: Hahaha
+
+75
+00:03:04,900 --> 00:03:08,300
+塔莎: 确实，中国有很多实体经济。
+Tasha: Indeed, and China has a lot of real economy.
+
+76
+00:03:08,900 --> 00:03:10,700
+塔莎: 所以不允许元云舟的出现。
+Tasha: So it doesn't allow the emergence of Yuan Yunzhou.
+
+77
+00:03:11,200 --> 00:03:12,100
+塔莎: 他们严厉打击。
+Tasha: They're cracking down hard.
+
+78
+00:03:12,500 --> 00:03:13,466
+塔莎: 严厉打击。
+Tasha: Cracking down hard.
+
+79
+00:03:16,700 --> 00:03:18,666
+塔莎: 他们只想要实体经济。
+Tasha: They just want a real economy.
+
+80
+00:03:20,533 --> 00:03:21,733
+Other: 只要未来太先进，
+Other: As long as the future is too advanced,
+
+81
+00:03:21,733 --> 00:03:23,600
+Other: 每个人都能一秒传送。
+Other: everyone could teleport in a second.
+
+82
+00:03:23,600 --> 00:03:25,033
+Other: 自由基会很棒。
+Other: Free radicals would be great.
+
+83
+00:03:26,000 --> 00:03:28,433
+Other: 现在，互联网上的自由基很可怕。
+Other: Now, free radicals on the internet are terrifying.
+
+84
+00:03:29,366 --> 00:03:31,233
+Other: 因为他们通常先给货币。
+Other: Because they usually give the currency first.
+
+85
+00:03:32,133 --> 00:03:33,566
+Other: 然后把钱转入银行账户。
+Other: Then transfer money into the bank account.
+
+86
+00:03:36,166 --> 00:03:38,666
+塔莎: 不错，我看好你的项目。
+Tasha: Not bad, I'm optimistic about your project.
+
+87
+00:03:38,666 --> 00:03:42,266
+塔莎: 我投两块钱，哈哈哈。
+Tasha: I'll invest two bucks, hahaha.
+
+88
+00:03:40,366 --> 00:03:41,733
+杰克: 哈哈哈哈哈
+Jake: Hahahaha
+
+89
+00:03:43,933 --> 00:03:45,433
+杰克: 给它五年。
+Jake: Give it five years.
+
+90
+00:03:45,433 --> 00:03:46,966
+Other: 三年后，你就买不起了。
+Other: In three years, you won't be able to buy it.
+
+91
+00:03:47,233 --> 00:03:48,400
+塔莎: 真的吗？好的。
+Tasha: Really? Okay.
+
+92
+00:03:48,400 --> 00:03:49,633
+塔莎: 那我再加五块钱。
+Tasha: Then I'll add five more bucks.
+
+93
+00:03:49,233 --> 00:03:51,000
+Other: 从第一个发现第一种货币的人开始，
+Other: From the first person who found the first currency,
+
+94
+00:03:51,000 --> 00:03:52,366
+Other: 它已经改变了。
+Other: it has already changed.
+
+95
+00:03:53,100 --> 00:03:54,233
+杰克: 哦，哦，哦。
+Jake: Oh, oh, oh.
+
+96
+00:03:53,200 --> 00:03:54,000
+塔莎: 哦。
+Tasha: Oh.
+
+97
+00:03:55,200 --> 00:03:56,566
+塔莎: 好的，我投十块钱。
+Tasha: Okay, I'll invest ten bucks.
+
+98
+00:03:56,433 --> 00:03:58,400
+Other: 没问题，十块钱一个币。
+Other: No problem, ten bucks for one currency.
+
+99
+00:03:58,233 --> 00:03:59,966
+塔莎: 啊，我又花十块钱买了一个。
+Tasha: Ah, I bought another one for ten bucks.
+
+100
+00:03:59,966 --> 00:04:00,866
+塔莎: 为什么这么便宜？
+Tasha: Why is it so cheap?
+
+101
+00:04:00,866 --> 00:04:04,900
+塔莎: 为什么不是两块钱一个？那也行。
+Tasha: Why not two bucks for one? That works too.
+
+102
+00:04:01,800 --> 00:04:03,000
+Other: 十块钱五个币。
+Other: Ten bucks for five currencies.
+
+103
+00:04:03,700 --> 00:04:04,900
+杰克: 哈哈，买游戏币。
+Jake: Haha, buying game currency.
+
+104
+00:04:06,200 --> 00:04:07,000
+杰克: 就像游戏一样。
+Jake: Just like a game.
+
+105
+00:04:07,733 --> 00:04:11,800
+杰克: 往那边走。
+Jake: Move over there.
+
+106
+00:04:14,200 --> 00:04:16,300
+杰克: 嘿，这是什么神奇的操作？
+Jake: Hey, what kind of magical move is this?
+
+107
+00:04:28,433 --> 00:04:29,566
+杰克: 走错了，走错了。
+Jake: Went the wrong way, went the wrong way.
+
+108
+00:04:30,400 --> 00:04:31,300
+杰克: 你在干什么？
+Jake: What are you doing?
+
+109
+00:04:31,633 --> 00:04:34,400
+杰克: 你需要买东西。
+Jake: You need to buy things.
+
+110
+00:04:37,133 --> 00:04:38,000
+杰克: 踩进去了。
+Jake: Stepped in.
+
+111
+00:04:40,200 --> 00:04:41,200
+塔莎: 好多包裹。
+Tasha: So many packages.
+
+112
+00:04:44,466 --> 00:04:45,566
+塔莎: 彩票店在哪里？
+Tasha: Where's the lottery shop?
+
+113
+00:04:46,600 --> 00:04:47,366
+杰克: 嗯，彩票。
+Jake: Hmm, lottery.
+
+114
+00:04:47,233 --> 00:04:48,233
+塔莎: 彩票店在哪里？
+Tasha: Where's the lottery shop?
+
+115
+00:04:47,366 --> 00:04:48,966
+杰克: 彩票店在那边。
+Jake: The lottery shop is over there.
+
+116
+00:04:49,500 --> 00:04:50,600
+杰克: 不急，不急。
+Jake: No rush, no rush.
+
+117
+00:04:50,600 --> 00:04:51,300
+杰克: 我们先拿包裹。
+Jake: Let's get the packages first.
+
+118
+00:04:51,300 --> 00:04:52,800
+杰克: 它们在哪里？
+Jake: Where are they?
+
+119
+00:04:51,800 --> 00:04:52,800
+塔莎: 我们先拿包裹。
+Tasha: Let's get the packages first.
+
+120
+00:04:53,700 --> 00:04:54,966
+杰克: 然后我们去刮彩票。
+Jake: Then we'll scratch the lottery tickets.
+
+121
+00:04:55,600 --> 00:04:59,133
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+122
+00:04:55,666 --> 00:04:57,466
+塔莎: 哈哈。
+Tasha: Haha.
+
+123
+00:05:03,433 --> 00:05:04,500
+塔莎: 我拿我的。
+Tasha: I'll get mine.
+
+124
+00:05:04,500 --> 00:05:06,766
+塔莎: 你从群里拿其他人的，对吧？
+Tasha: You get the others' from the group, right?
+
+125
+00:05:06,633 --> 00:05:09,200
+杰克: 呃，不完全是。
+Jake: Uh, not exactly.
+
+126
+00:05:10,100 --> 00:05:11,633
+杰克: 不，你在这里拿20个。
+Jake: No, you pick up 20 here.
+
+127
+00:05:11,633 --> 00:05:12,566
+杰克: 其他人拿4个。
+Jake: Others pick up 4.
+
+128
+00:05:12,566 --> 00:05:13,700
+杰克: 你拿20个。
+Jake: You get 20.
+
+129
+00:05:13,800 --> 00:05:14,633
+杰克: 我们拿4个。
+Jake: We get 4.
+
+130
+00:05:14,633 --> 00:05:15,733
+杰克: 我们每人拿两个。
+Jake: We each get two.
+
+131
+00:05:15,933 --> 00:05:16,966
+Others: 好的，你有20个。
+Others: Okay, you have 20.
+
+132
+00:05:17,133 --> 00:05:17,966
+杰克: 他有20个。
+Jake: He's got 20.
+
+133
+00:05:19,233 --> 00:05:19,900
+杰克: 他太厉害了。
+Jake: He's amazing.
+
+134
+00:05:20,000 --> 00:05:21,866
+塔莎: 没人帮我拿吗？
+Tasha: No one is picking up for me?
+
+135
+00:05:22,233 --> 00:05:23,233
+杰克: 我们，我们...
+Jake: We, we...
+
+136
+00:05:23,233 --> 00:05:23,900
+杰克: 我们帮你拿。
+Jake: We'll pick up for you.
+
+137
+00:05:23,900 --> 00:05:25,366
+杰克: 我觉得我们昨天没能全部拿完。
+Jake: I feel like we couldn't pick them all up yesterday.
+
+138
+00:05:25,800 --> 00:05:27,633
+杰克: 但今天，我们三个需要打车。
+Jake: But today, the three of us need to take a taxi.
+
+139
+00:05:27,633 --> 00:05:28,433
+杰克: 我猜。
+Jake: I guess.
+
+140
+00:05:29,733 --> 00:05:32,400
+杰克: 不，不，我们看看。
+Jake: No, no, let's see.
+
+141
+00:05:34,566 --> 00:05:36,033
+塔莎: 我买的东西价值很大。
+Tasha: What I bought has great value.
+
+142
+00:05:36,033 --> 00:05:36,433
+塔莎: 你知道吗？
+Tasha: You know?
+
+143
+00:05:36,433 --> 00:05:37,300
+塔莎: 500元。
+Tasha: 500 yuan.
+
+144
+00:05:38,000 --> 00:05:39,033
+塔莎: 9707 塔莎: 9707。
+Tasha: 9707
+Tasha: 9707.
+
+145
+00:05:39,766 --> 00:05:40,600
+塔莎: 找不到。
+Tasha: Couldn't find it.
+
+146
+00:05:41,766 --> 00:05:43,266
+塔莎: 我们要去养老院？
+Tasha: We're going to the nursing home?
+
+147
+00:05:45,633 --> 00:05:47,166
+杰克: 养老院？那是什么？
+Jake: Nursing home? What's that?
+
+148
+00:05:47,533 --> 00:05:48,533
+杰克: 这不是养老院。
+Jake: This isn't a nursing home.
+
+149
+00:05:49,400 --> 00:05:50,233
+杰克: 养老院在哪里？
+Jake: Where's the nursing home?
+
+150
+00:05:51,700 --> 00:05:52,400
+Others: 那个，哦。
+Others: That one, oh.
+
+151
+00:05:52,400 --> 00:05:55,233
+杰克: 就这些吗？
+Jake: Is that all there?
+
+152
+00:05:55,600 --> 00:05:56,433
+Others: 没有了。
+Others: There's none.
+
+153
+00:05:57,800 --> 00:05:59,500
+杰克: 社区站是那个。
+Jake: The neighborhood station is that one.
+
+154
+00:05:57,866 --> 00:05:58,366
+Others: 那个。
+Others: That one.
+
+155
+00:05:59,933 --> 00:06:00,733
+杰克: 哦。
+Jake: Oh.
+
+156
+00:06:01,733 --> 00:06:02,533
+杰克: 原来如此。
+Jake: So that's how it is.
+
+157
+00:06:04,233 --> 00:06:05,366
+杰克: 他所有的东西都在这里。
+Jake: All of his stuff is here.
+
+158
+00:06:05,366 --> 00:06:06,966
+杰克: 你们都在这里。
+Jake: You're all here.
+
+159
+00:06:06,400 --> 00:06:07,466
+塔莎: 都在养老院
+
+160
+00:06:06,966 --> 00:06:08,733
+杰克: 该死，再见了我。
+Jake: Damn, goodbye me.
+
+161
+00:06:08,700 --> 00:06:11,033
+塔莎: 你真的认识路吗？
+Tasha: Do you really know the way?
+
+162
+00:06:10,100 --> 00:06:11,300
+杰克: 我知道，我知道。
+Jake: I know, I know.
+
+163
+00:06:11,300 --> 00:06:14,033
+杰克: 我知道。
+Jake: I know.
+
+164
+00:06:11,700 --> 00:06:12,866
+塔莎: 你真的知道。
+Tasha: I really know.
+
+165
+00:06:13,000 --> 00:06:14,266
+塔莎: 你确定不会迷路？
+Tasha: Are you sure you won't get lost?
+
+166
+00:06:14,266 --> 00:06:15,800
+塔莎: 我绝对不会迷路。
+Tasha: I definitely won't get lost.
+
+167
+00:06:15,366 --> 00:06:16,233
+杰克: 这是正确的路。
+Jake: This is the right way.
+
+168
+00:06:16,233 --> 00:06:17,766
+杰克: 通常，我们先在这里练习。
+Jake: Usually, we practice here first.
+
+169
+00:06:17,766 --> 00:06:19,333
+杰克: 我怎么会知道你们都在这里？
+Jake: How would I know you're all here?
+
+170
+00:06:20,300 --> 00:06:22,300
+杰克: 这里连个新手都没有。
+Jake: There's not even a newbie here.
+
+171
+00:06:22,900 --> 00:06:23,700
+杰克: 对吧？
+Jake: Right?
+
+172
+00:06:24,300 --> 00:06:25,533
+杰克: 一个新手都没有。
+Jake: Not a single newbie.
+
+173
+00:06:26,133 --> 00:06:27,300
+杰克: 检查还剩多少电。
+Jake: Check how much battery is left.
+
+174
+00:06:42,766 --> 00:06:44,166
+杰克: 该死，我没充电。
+Jake: Damn, I didn't charge it.
+
+175
+00:06:45,733 --> 00:06:47,633
+杰克: 还剩多少？
+Jake: How much is left?
+
+176
+00:06:46,966 --> 00:06:48,000
+塔莎: 我看不到。
+Tasha: I can't see it.
+
+177
+00:06:54,100 --> 00:06:55,400
+塔莎: 还剩多少？
+Tasha: How much is left?
+
+178
+00:06:58,400 --> 00:06:59,266
+塔莎: 35 塔莎: 35。
+Tasha: 35
+Tasha: 35.
+
+179
+00:07:03,000 --> 00:07:03,700
+杰克:35 杰克: 35。
+Jake:35
+Jake: 35.
+
+180
+00:07:03,266 --> 00:07:04,666
+塔莎: 三十五 塔莎: 三十五。
+Tasha: thirty five
+Tasha: Thirty-five.
+
+181
+00:07:05,633 --> 00:07:06,600
+塔莎: 35 塔莎: 35。
+Tasha: 35
+Tasha: 35.
+
+182
+00:07:09,166 --> 00:07:10,133
+杰克: 那很好。
+Jake: That's good.
+
+183
+00:07:09,233 --> 00:07:12,700
+塔莎: 太好了，我在辅导二年级学生，哈哈。
+Tasha: That's great, I'm tutoring second graders, haha.
+
+184
+00:07:11,966 --> 00:07:12,633
+杰克: 那很厉害。
+Jake: That's impressive.
+
+185
+00:07:12,633 --> 00:07:13,433
+杰克: 多少钱？
+Jake: How much?
+
+186
+00:07:14,200 --> 00:07:15,700
+塔莎: 每小时200元。
+Tasha: 200 RMB per hour.
+
+187
+00:07:15,833 --> 00:07:16,333
+杰克: 该死。
+Jake: Damn.
+
+188
+00:07:17,800 --> 00:07:19,833
+杰克: 我觉得我也能做。
+Jake: I think I can do it too.
+
+189
+00:07:19,900 --> 00:07:21,933
+杰克: 哈哈。
+Jake: Haha.
+
+190
+00:07:20,100 --> 00:07:20,900
+塔莎: 是的。
+Tasha: Yeah.
+
+191
+00:07:22,333 --> 00:07:24,500
+杰克: 我应该还能应付二年级学生。
+Jake: I should still be able to handle second graders.
+
+192
+00:07:25,000 --> 00:07:25,800
+塔莎: 是的。
+Tasha: Yes.
+
+193
+00:07:27,033 --> 00:07:30,433
+杰克: 哈哈哈，中学生...
+Jake: Hahaha, middle schoolers...
+
+194
+00:07:27,233 --> 00:07:29,466
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+195
+00:07:30,433 --> 00:07:31,533
+杰克: 为什么我应付不了他们？
+Jake: Why can't I handle them?
+
+196
+00:07:31,466 --> 00:07:32,266
+Others: 有点难。
+Others: It's a bit hard.
+
+197
+00:07:32,233 --> 00:07:33,033
+杰克: 嗯。
+Jake: Hmm.
+
+198
+00:07:33,333 --> 00:07:34,233
+杰克: 小学，小学。
+Jake: Elementary school, elementary school.
+
+199
+00:07:34,233 --> 00:07:34,766
+杰克: 你教什么？
+Jake: What do you teach?
+
+200
+00:07:34,766 --> 00:07:36,566
+杰克: 你好，你是新加坡人吗？
+Jake: Hello, are you from Singapore?
+
+201
+00:07:37,233 --> 00:07:40,700
+塔莎: 教书上的东西，哈哈哈。
+Tasha: Teaching the stuff in the books, hahaha.
+
+202
+00:07:40,233 --> 00:07:41,233
+杰克: 200块。
+Jake: 200 bucks.
+
+203
+00:07:42,900 --> 00:07:44,366
+杰克: 为什么他们的父母这么有钱？
+Jake: Why are their parents so rich?
+
+204
+00:07:45,033 --> 00:07:46,466
+塔莎: 这是北京，你不懂。
+Tasha: It's Beijing, you wouldn't understand.
+
+205
+00:07:47,300 --> 00:07:50,033
+塔莎: 如果我是名师，我会收每小时1000块。
+Tasha: If I were a famous teacher, I'd charge 1,000 bucks an hour.
+
+206
+00:07:50,633 --> 00:07:51,433
+杰克: 咳。
+Jake: Cough.
+
+207
+00:07:53,800 --> 00:07:54,600
+杰克: 咳。
+Jake: Cough.
+
+208
+00:07:54,900 --> 00:07:56,933
+杰克: 二年级每小时1000块？
+Jake: 1,000 bucks an hour for second grade?
+
+209
+00:07:55,900 --> 00:07:59,500
+塔莎: 小学大概200多。
+Tasha: Elementary school is more like 200 something.
+
+210
+00:07:59,900 --> 00:08:00,500
+杰克: 中学。
+Jake: Middle school.
+
+211
+00:08:00,066 --> 00:08:01,600
+塔莎: 中学大概400-500。
+Tasha: Middle school is about 400-500.
+
+212
+00:08:02,933 --> 00:08:04,000
+杰克: 每小时400-500？
+Jake: 400-500 an hour?
+
+213
+00:08:04,066 --> 00:08:06,900
+塔莎: 是的，名校高中一次课3000。
+Tasha: Yeah, high school at a prestigious school is 3,000 a session.
+
+214
+00:08:07,700 --> 00:08:08,800
+杰克: 一次课多长时间？
+Jake: How long is a session?
+
+215
+00:08:08,800 --> 00:08:11,900
+杰克: 45分钟到一小时，3000块？
+Jake: 45 minutes to an hour, 3,000 bucks?
+
+216
+00:08:10,233 --> 00:08:11,300
+塔莎: 大约一小时。
+Tasha: About an hour.
+
+217
+00:08:12,066 --> 00:08:12,900
+塔莎: 1.5小时。
+Tasha: 1.5 hours.
+
+218
+00:08:12,900 --> 00:08:15,900
+塔莎: 当然，是一对一。
+Tasha: Of course, it's one-on-one.
+
+219
+00:08:13,233 --> 00:08:13,933
+杰克: 一个人，对吧？
+Jake: One person, right?
+
+220
+00:08:19,400 --> 00:08:20,200
+杰克: 一对一。
+Jake: One-on-one.
+
+221
+00:08:26,133 --> 00:08:27,133
+杰克: 每小时3000。
+Jake: 3,000 an hour.
+
+222
+00:08:27,733 --> 00:08:29,566
+塔莎: 如果你是名师，可以。
+Tasha: If you're a famous teacher, okay.
+
+223
+00:08:30,933 --> 00:08:32,433
+杰克: 要多有名？
+Jake: How famous do you have to be?
+
+224
+00:08:32,833 --> 00:08:33,766
+塔莎: 我不知道。
+Tasha: I don't know.
+
+225
+00:08:33,766 --> 00:08:34,700
+塔莎: 我不是。
+Tasha: I'm not one.
+
+226
+00:08:35,466 --> 00:08:36,466
+塔莎: 我不教高中。
+Tasha: I don't teach high school.
+
+227
+00:08:36,466 --> 00:08:37,166
+塔莎: 我教不了高中。
+Tasha: I can't teach high school.
+
+228
+00:08:37,166 --> 00:08:38,600
+塔莎: 我没研究过那个。
+Tasha: I haven't looked into that.
+
+229
+00:08:38,233 --> 00:08:38,933
+杰克: 哦，高中。
+Jake: Oh, high school.
+
+230
+00:08:38,933 --> 00:08:40,133
+杰克: 太难了，我撑不住了。
+Jake: It's too hard, I can't hold on anymore.
+
+231
+00:08:43,800 --> 00:08:47,600
+塔莎: 我之前看到一条消息说，嗯...
+Tasha: I saw a message before that said, um...
+
+232
+00:08:47,700 --> 00:08:49,000
+塔莎: 在过年的十天里...
+Tasha: During the ten days of the New Year...
+
+233
+00:08:49,000 --> 00:08:52,300
+塔莎: 从农历初三到十三。
+Tasha: From the third to the thirteenth day of the lunar new year.
+
+234
+00:08:52,200 --> 00:08:52,766
+杰克: 农历初三？
+Jake: The third day of the lunar new year?
+
+235
+00:08:52,766 --> 00:08:53,966
+杰克: 你在说什么？
+Jake: What are you talking about?
+
+236
+00:08:54,866 --> 00:08:58,300
+塔莎: 找一个清华或北大的学生，之类的...
+Tasha: Find a Tsinghua or Peking University student, something like that...
+
+237
+00:08:58,300 --> 00:09:01,000
+塔莎: 和他们住十天，那要花几万？
+Tasha: And live with them for ten days, how many tens of thousands would that cost?
+
+238
+00:09:02,433 --> 00:09:03,233
+塔莎: 真的。
+Tasha: Really.
+
+239
+00:09:05,100 --> 00:09:06,433
+塔莎: 当我看到那条消息时...
+Tasha: When I saw that message...
+
+240
+00:09:06,866 --> 00:09:08,633
+塔莎: 我就恨自己不是清华或北大的。
+Tasha: I just hated that I wasn't from Tsinghua or Peking University.
+
+241
+00:09:08,633 --> 00:09:10,600
+塔莎: 否则，我就去别人家住十天。
+Tasha: Otherwise, I'd go live at someone's house for ten days.
+
+242
+00:09:15,633 --> 00:09:17,366
+杰克: 那可行。
+Jake: That works.
+
+243
+00:09:27,033 --> 00:09:28,000
+塔莎: 哦，在这里。
+Tasha: Oh, here it is.
+
+244
+00:09:31,666 --> 00:09:33,300
+Others: 包吃包住，十天两万。
+Others: All-inclusive for food and stay, 20,000 for ten days.
+
+245
+00:09:33,633 --> 00:09:35,700
+塔莎: 包吃包住，十天两万。
+Tasha: All-inclusive for food and stay, 20,000 for ten days.
+
+246
+00:09:35,533 --> 00:09:36,433
+杰克: 十天两万。
+Jake: 20,000 for ten days.
+
+247
+00:09:38,433 --> 00:09:39,833
+杰克: 那不错。
+Jake: That's not bad.
+
+248
+00:09:39,833 --> 00:09:44,100
+杰克: 哈哈哈哈哈哈
+Jake: Hahahahahahaha
+
+249
+00:09:44,633 --> 00:09:45,933
+杰克: 非常不错。
+Jake: Not bad at all.
+
+250
+00:09:44,766 --> 00:09:46,566
+塔莎: 又不是要你一天教24小时。
+Tasha: It's not like you have to teach them 24 hours a day.
+
+251
+00:09:46,566 --> 00:09:48,366
+塔莎: 每天教几个小时就行。
+Tasha: Just teach a few hours a day.
+
+252
+00:09:52,300 --> 00:09:55,900
+塔莎: 语文、数学、英语，早上一个科目，中午一个，晚上一个。
+Tasha: Chinese, Math, English, one subject in the morning, one at noon, and one at night.
+
+253
+00:09:55,900 --> 00:09:57,000
+塔莎: 然后就完了。
+Tasha: Then it's done.
+
+254
+00:10:25,900 --> 00:10:26,833
+塔莎: 哈哈哈
+Tasha: Hahaha
+
+255
+00:10:26,100 --> 00:10:28,900
+杰克: 是的，我们只能应付小学和大学水平。
+Jake: Yeah, we can only handle elementary and university levels.
+
+256
+00:10:28,966 --> 00:10:34,600
+塔莎: 哈哈哈哈
+Tasha: Hahahaha
+
+257
+00:10:29,133 --> 00:10:37,733
+杰克: 哈哈哈哈哈哈
+Jake: Hahahahahahaha
+
+258
+00:10:35,766 --> 00:10:36,633
+塔莎: 我也这么认为。
+Tasha: I think so too.
+
+259
+00:10:38,066 --> 00:10:40,800
+塔莎: 我现在做的就是这两件事。
+Tasha: That's what I'm doing right now, those two things.
+
+260
+00:10:39,900 --> 00:10:49,200
+杰克: 哈哈哈哈哈哈
+Jake: Hahahahahahaha
+
+261
+00:10:43,100 --> 00:10:45,166
+塔莎: 哈。
+Tasha: Ha.
+
+262
+00:11:25,266 --> 00:11:26,466
+塔莎: 这只鸡怎么这么懒？
+Tasha: Why is this chicken so lazy?
+
+263
+00:11:27,366 --> 00:11:28,166
+杰克: 懒。
+Jake: Lazy.
+
+264
+00:11:28,466 --> 00:11:30,600
+塔莎: 它现在才开始吃米。
+Tasha: It's only now starting to eat rice.
+
+265
+00:11:29,200 --> 00:11:32,166
+杰克: 哈哈哈哈
+Jake: Hahahaha
+
+266
+00:11:31,000 --> 00:11:32,066
+塔莎: 都几点了？
+Tasha: What time is it already?
+
+267
+00:11:51,933 --> 00:11:53,933
+杰克: 这怎么变成养老院了？
+Jake: How did this turn into a retirement home?
+
+268
+00:11:56,166 --> 00:11:59,033
+塔莎: 你好，9707。
+Tasha: Hello, 9707.
+
+269
+00:12:03,966 --> 00:12:04,766
+塔莎: 是的。
+Tasha: Yes.
+
+270
+00:12:04,833 --> 00:12:07,700
+杰克: 你是一个一个报还是一次性报？
+Jake: Are you reporting one by one or all at once?
+
+271
+00:12:11,233 --> 00:12:13,400
+杰克: 我们不是...
+Jake: Are we not...
+
+272
+00:12:15,133 --> 00:12:16,500
+杰克: 我们不是住在这里吗？
+Jake: Are we not living here?
+
+273
+00:12:33,400 --> 00:12:35,666
+塔莎: 他们不是刚没有菜鸟物流吗？
+Tasha: Didn't they just have no Cainiao logistics?
+
+274
+00:12:35,300 --> 00:12:35,900
+杰克: 没有。
+Jake: No.
+
+275
+00:12:49,000 --> 00:12:50,066
+塔莎: 是的，没错。
+Tasha: Yes, that's right.
+
+276
+00:12:53,233 --> 00:12:55,433
+杰克: 给点，给点，给点。
+Jake: Give some, give some, give some.
+
+277
+00:12:55,633 --> 00:12:57,166
+杰克: 不给，不给。
+Jake: Not giving, not giving.
+
+278
+00:12:57,166 --> 00:12:58,100
+杰克: 不给就不给。
+Jake: If not giving, then not giving.
+
+279
+00:13:05,800 --> 00:13:07,200
+塔莎: 等等，还有更多。
+Tasha: Wait, there's more.
+
+280
+00:13:07,166 --> 00:13:08,366
+Others: 你买了什么？
+Others: What did you buy?
+
+281
+00:13:08,500 --> 00:13:09,666
+塔莎: 你看看。
+Tasha: Just look.
+
+282
+00:13:09,200 --> 00:13:11,633
+杰克: 你要花一整天整理这个，对吧？
+Jake: You're going to spend a whole day sorting this out, right?
+
+283
+00:13:12,466 --> 00:13:13,666
+塔莎: 这就是我着急的原因。
+Tasha: That's why I'm in a hurry.
+
+284
+00:13:14,533 --> 00:13:15,333
+杰克: 确实。
+Jake: True.
+
+285
+00:13:16,366 --> 00:13:18,033
+塔莎: 我昨晚哭了。
+Tasha: I cried last night.
+
+286
+00:13:18,300 --> 00:13:19,366
+塔莎: 没时间。
+Tasha: There's no time.
+
+287
+00:13:21,166 --> 00:13:22,633
+Others: 你为什么发货这么慢？
+Others: Why are you so slow in shipping?
+
+288
+00:13:22,633 --> 00:13:23,433
+Others: 你买得太慢了。
+Others: You buy too slowly.
+
+289
+00:13:24,900 --> 00:13:25,766
+杰克: 取货太慢。
+Jake: Picking up too slow.
+
+290
+00:13:27,366 --> 00:13:28,600
+塔莎: 买太多了。
+Tasha: Bought too much.
+
+291
+00:13:28,600 --> 00:13:31,566
+塔莎: 如果你只买J Cat，就直接解决了。
+Tasha: If you just bought J Cat, it would be solved directly.
+
+292
+00:13:34,366 --> 00:13:35,166
+杰克: 嗯。
+Jake: Hmm.
+
+293
+00:13:38,100 --> 00:13:39,233
+塔莎: 嘿，去哪里取包裹？
+Tasha: Hey, where to pick up the package?
+
+294
+00:13:39,233 --> 00:13:41,700
+塔莎: 看他们的12。
+Tasha: Look at their 12.
+
+295
+00:13:43,266 --> 00:13:44,066
+塔莎: 3 塔莎: 3。
+Tasha: 3
+Tasha: 3.
+
+296
+00:13:45,633 --> 00:13:46,433
+塔莎: 4 塔莎: 4。
+Tasha: 4
+Tasha: 4.
+
+297
+00:13:48,700 --> 00:13:50,100
+塔莎: 哦，他们只有4。
+Tasha: Oh, they just have 4.
+
+298
+00:13:50,233 --> 00:13:50,900
+杰克: 啊。
+Jake: Ah.
+
+299
+00:13:50,900 --> 00:13:51,733
+Others: 你取完了吗？
+Others: Have you finished picking up?
+
+300
+00:13:51,733 --> 00:13:52,433
+杰克: 你取完了吗？
+Jake: Have you finished picking up?
+
+301
+00:13:52,700 --> 00:13:53,600
+塔莎: 我不知道。
+Tasha: I don't know.
+
+302
+00:13:56,333 --> 00:13:58,100
+杰克: 没有，我还有两个。
+Jake: No, I still have two more.
+
+303
+00:13:58,300 --> 00:13:59,666
+塔莎: 海边奶茶店。
+Tasha: Beachside milk tea shop.
+
+304
+00:14:01,666 --> 00:14:02,466
+塔莎: 这是什么？
+Tasha: What is this?
+
+305
+00:14:03,266 --> 00:14:04,566
+塔莎: 奶油泡泡杯。
+Tasha: Cream bubble cup.
+
+306
+00:14:05,466 --> 00:14:06,400
+塔莎: 这是什么？
+Tasha: What is this?
+
+307
+00:14:07,233 --> 00:14:08,066
+塔莎: 第17代。
+Tasha: Generation 17.
+
+308
+00:14:07,800 --> 00:14:09,233
+杰克: 这是什么？
+Jake: What is it?
+
+309
+00:14:09,466 --> 00:14:10,400
+塔莎: 我不知道。
+Tasha: I don't know.
+
+310
+00:14:11,933 --> 00:14:12,966
+杰克: 这是你的吗？
+Jake: Is this yours?
+
+311
+00:14:15,700 --> 00:14:16,500
+杰克: 这是你的。
+Jake: It's yours.
+
+312
+00:14:17,733 --> 00:14:19,000
+杰克: 我不知道，真的很厉害。
+Jake: I don't know, it's really impressive.
+
+313
+00:14:20,700 --> 00:14:21,700
+杰克:放也放一下哈
+
+314
+00:14:23,166 --> 00:14:24,400
+杰克: 我觉得我做不到。
+Jake: I don't think I can do it.
+
+315
+00:14:31,966 --> 00:14:32,766
+Others: 哇！
+Others: Whoa!
+
+316
+00:14:35,200 --> 00:14:36,166
+杰克: 你，你可以做到。
+Jake: You, you can do it.
+
+317
+00:14:36,166 --> 00:14:37,166
+杰克: 我做不到。
+Jake: I can't do it.
+
+318
+00:14:39,600 --> 00:14:40,766
+杰克: 我们需要分几趟。
+Jake: We need to split it into several trips.
+
+319
+00:14:40,766 --> 00:14:41,800
+杰克: 可能得打车。
+Jake: Probably need to take a cab.
+
+320
+00:14:42,833 --> 00:14:43,633
+Others: 哇！
+Others: Whoa!
+
+321
+00:14:46,033 --> 00:14:48,033
+Others: 哇，你是我姐妹。
+Others: Whoa, you're my sister.
+
+322
+00:14:48,966 --> 00:14:50,033
+杰克: 你，你是我姐妹。
+Jake: You, you're my sister.
+
+323
+00:14:50,033 --> 00:14:51,700
+杰克: 孩子，你可以再待一天。
+Jake: Kid, you can stay another day.
+
+324
+00:14:51,700 --> 00:14:56,400
+杰克: 哈哈哈哈哈哈。
+Jake: Hahahahahaha.
+
+325
+00:14:58,533 --> 00:14:59,933
+Others: 哈哈。
+Others: Haha.
+
+326
+00:15:03,000 --> 00:15:06,700
+杰克: 哈哈哈哈哈哈。
+Jake: Hahahahahaha.
+
+327
+00:15:07,166 --> 00:15:08,000
+塔莎: 取消吧。
+Tasha: Just cancel it.
+
+328
+00:15:08,000 --> 00:15:08,900
+塔莎: 现在就取消。
+Tasha: Cancel it now.
+
+329
+00:15:08,833 --> 00:15:10,200
+杰克: 没全拿也没关系。
+Jake: It's fine if it's not all taken.
+
+330
+00:15:10,200 --> 00:15:11,166
+杰克: 需要什么就拿什么。
+Jake: Just take what you need.
+
+331
+00:15:11,166 --> 00:15:12,366
+杰克: 拿回宿舍。
+Jake: Take it back to the dorm.
+
+332
+00:15:12,900 --> 00:15:13,733
+杰克: 或者给我一点。
+Jake: Or give me a bit.
+
+333
+00:15:14,800 --> 00:15:16,100
+塔莎: 给你一点？
+Tasha: Give you a bit?
+
+334
+00:15:15,300 --> 00:15:15,933
+杰克: 给我一点？
+Jake: Give me a bit?
+
+335
+00:15:16,100 --> 00:15:16,966
+塔莎: 当然，我给你一些。
+Tasha: Sure, I'll give you some.
+
+336
+00:15:17,033 --> 00:15:18,833
+塔莎: 到时候你喜欢就拿。
+Tasha: Just take what you like when the time comes.
+
+337
+00:15:18,733 --> 00:15:19,100
+杰克: 好的。
+Jake: Okay.
+
+338
+00:15:23,466 --> 00:15:24,266
+塔莎: 还有吗？
+Tasha: Is there more?
+
+339
+00:15:26,000 --> 00:15:27,433
+杰克: 你自己的东西还没弄完呢。
+Jake: You haven't finished your own stuff yet.
+
+340
+00:15:28,966 --> 00:15:30,566
+杰克: 呵呵。
+Jake: Hehe.
+
+341
+00:15:34,633 --> 00:15:35,566
+杰克: 时机不对。
+Jake: Bad timing.
+
+342
+00:15:34,966 --> 00:15:36,633
+塔莎: 待会在群里报告。
+Tasha: Report it in the group later.
+
+343
+00:15:36,633 --> 00:15:37,866
+塔莎: 我好尴尬。
+Tasha: I'm embarrassed.
+
+344
+00:15:38,033 --> 00:15:39,966
+杰克: 我来打包，我来打包，我来打包。
+Jake: I'll pack, I'll pack, I'll pack.
+
+345
+00:15:40,300 --> 00:15:42,500
+杰克: 你不放下来一会儿吗？
+Jake: Aren't you gonna put it down for a bit?
+
+346
+00:15:42,533 --> 00:15:43,400
+杰克: 哦不。
+Jake: Oh no.
+
+347
+00:15:44,400 --> 00:15:47,266
+塔莎: 上面还有两个，哦哦。
+Tasha: There are still two on top, oh oh.
+
+348
+00:15:46,400 --> 00:15:48,133
+杰克: 哦不不不。
+Jake: Oh no no no.
+
+349
+00:15:48,333 --> 00:15:51,133
+杰克: 就这两个，然后Ginger和Wei。
+Jake: Just these two, then Ginger and Wei.
+
+350
+00:15:51,666 --> 00:15:52,766
+塔莎: 还有吗？
+Tasha: Are there any more?
+
+351
+00:15:53,766 --> 00:15:54,633
+塔莎: 还有多少？
+Tasha: How many more are there?
+
+352
+00:15:54,800 --> 00:15:57,600
+塔莎: 还有多少？哦，那很好。
+Tasha: How many more? Oh, that's good.
+
+353
+00:15:58,033 --> 00:15:58,833
+杰克: 好的。
+Jake: Okay.
+
+354
+00:16:02,366 --> 00:16:03,166
+塔莎: 这是什么？
+Tasha: What's this?
+
+355
+00:16:03,366 --> 00:16:06,300
+杰克: 这是什么？这是什么？指出来。
+Jake: What's this? What's this? Point it out.
+
+356
+00:16:12,666 --> 00:16:13,466
+塔莎: 这是什么？
+Tasha: What is this?
+
+357
+00:16:17,100 --> 00:16:19,366
+杰克: 好的，我又拿了一个。
+Jake: Alright, I got another one.
+
+358
+00:16:18,200 --> 00:16:20,400
+塔莎: 我不知道，洋甘菊。
+Tasha: I don't know, chamomile.
+
+359
+00:16:19,366 --> 00:16:24,600
+杰克: 7，这个735003235003。
+Jake: 7, this 735003235003.
+
+360
+00:16:42,166 --> 00:16:44,366
+塔莎: 看，我们清明节可以再用这个。
+Tasha: Look, we can use this again during Qingming Festival.
+
+361
+00:16:44,366 --> 00:16:45,666
+塔莎: 哦，明年的清明节。
+Tasha: Oh, next year's Qingming Festival.
+
+362
+00:16:45,433 --> 00:16:48,100
+杰克: 清明节。
+Jake: Qingming Festival.
+
+363
+00:16:45,500 --> 00:16:48,166
+Others: 你们这么早过清明节？
+Others: Are you celebrating Qingming Festival this early?
+
+364
+00:16:49,866 --> 00:16:51,066
+塔莎: 已经是明年的清明节了吗？
+Tasha: Is it already next year's Qingming Festival?
+
+365
+00:16:50,633 --> 00:16:51,733
+Others: 这么早过清明节？
+Others: Celebrating Qingming Festival this early?
+
+366
+00:16:52,100 --> 00:16:54,066
+塔莎: 看，正好适合。
+Tasha: Look, it's just perfect for it.
+
+367
+00:16:52,833 --> 00:16:53,633
+杰克: 哈哈。
+Jake: Haha.
+
+368
+00:16:54,366 --> 00:16:55,233
+杰克: 正好，是吧？
+Jake: Just perfect, huh?
+
+369
+00:16:55,233 --> 00:16:57,100
+杰克: 哈哈。
+Jake: Haha.
+
+370
+00:16:56,166 --> 00:16:57,300
+塔莎: 什么？
+Tasha: What?
+
+371
+00:16:57,100 --> 00:16:58,000
+杰克: 正好，是吧？
+Jake: Just perfect, huh?
+
+372
+00:16:58,000 --> 00:17:01,166
+杰克: 哈哈，还有更多。
+Jake: Haha, there’s more.
+
+373
+00:17:01,166 --> 00:17:05,333
+杰克: 132563和722563。
+Jake: 132563 and 722563.
+
+374
+00:17:05,400 --> 00:17:07,433
+塔莎: 真的吗？那我现在应该还回去。
+Tasha: Really? Then I should return it now.
+
+375
+00:17:08,700 --> 00:17:09,633
+杰克: 来吧，再拿两个。
+Jake: Come on, get two more.
+
+376
+00:17:16,700 --> 00:17:18,000
+杰克: 我们计划一下。
+Jake: Let's plan a bit.
+
+377
+00:17:18,000 --> 00:17:18,800
+杰克: 想个办法。
+Jake: Think of a way.
+
+378
+00:17:24,233 --> 00:17:25,433
+塔莎: 没想到我们弄完后，
+Tasha: Didn't expect that after we finished,
+
+379
+00:17:25,433 --> 00:17:27,200
+塔莎: 后面会有这么多人。
+Tasha: there would be so many people behind us.
+
+380
+00:17:27,200 --> 00:17:28,933
+杰克: 不是我们的，是吧？
+Jake: Not ours, huh?
+
+381
+00:17:29,100 --> 00:17:34,933
+杰克: 呃，72，呃，2563和132563，嗯。
+Jake: Uh, 72, uh, 2563 and 132563, hmm.
+
+382
+00:17:37,700 --> 00:17:38,500
+Others: 好的。
+Others: Okay.
+
+383
+00:17:40,033 --> 00:17:41,933
+杰克: 太棒了，一个等于五个。
+Jake: Awesome, one equals five.
+
+384
+00:17:43,933 --> 00:17:45,633
+杰克: 我们还没弄完。
+Jake: We haven't finished yet.
+
+385
+00:17:45,633 --> 00:17:47,000
+杰克: 我们真的可以买很多。
+Jake: We can really buy a lot.
+
+386
+00:18:02,533 --> 00:18:03,133
+杰克: 好了，就这样。
+Jake: Alright, that's it.
+
+387
+00:18:03,133 --> 00:18:03,933
+杰克: 谢谢。
+Jake: Thanks.
+
+388
+00:18:04,566 --> 00:18:07,300
+杰克: 这些是多少？
+Jake: How many are these?
+
+389
+00:18:07,300 --> 00:18:09,300
+杰克: 四个？我们不是刚拿了两个吗？
+Jake: Four? Didn't we just take two?
+
+390
+00:18:09,300 --> 00:18:10,100
+杰克: 这个，对吧？
+Jake: This, right?
+
+391
+00:18:10,566 --> 00:18:12,633
+杰克: 对，是的。
+Jake: Right, yeah.
+
+392
+00:18:10,600 --> 00:18:12,666
+塔莎: 对吧？
+Tasha: Right?
+
+393
+00:18:13,300 --> 00:18:14,100
+杰克: 你吓到我了。
+Jake: You scared me.
+
+394
+00:18:15,100 --> 00:18:15,933
+杰克: 拿张纸。
+Jake: Grab a piece of paper.
+
+395
+00:18:16,066 --> 00:18:17,033
+塔莎: 我们该怎么办？
+Tasha: What should we do?
+
+396
+00:18:18,066 --> 00:18:18,866
+塔莎: 怎么办？
+Tasha: What to do?
+
+397
+00:18:18,600 --> 00:18:19,933
+杰克:抱走还是打车啊
+
+398
+00:18:20,633 --> 00:18:21,433
+杰克:抱着走啊
+
+399
+00:18:21,833 --> 00:18:22,633
+塔莎: 打包走人。
+Tasha: Pack it up and go.
+
+400
+00:18:23,100 --> 00:18:24,100
+Others: 我来拿。
+Others: I'll grab it.
+
+401
+00:18:24,833 --> 00:18:26,933
+杰克: 完了，现在不能偷了。
+Jake: It's done, can't steal it now.
+
+402
+00:18:27,900 --> 00:18:28,800
+Others: 嘿，给我一个。
+Others: Hey, give me one.
+
+403
+00:18:30,833 --> 00:18:31,833
+塔莎: 你东西真多。
+Tasha: You have so much stuff.
+
+404
+00:18:31,833 --> 00:18:33,433
+塔莎: 你什么都不忘。
+Tasha: You don't forget anything.
+
+405
+00:18:33,633 --> 00:18:34,833
+Others: 小偷不偷。
+Others: Thieves don't steal.
+
+406
+00:18:35,200 --> 00:18:36,533
+杰克: 哈哈，学者。
+Jake: Haha, scholars.
+
+407
+00:18:36,233 --> 00:18:38,233
+塔莎: 学者拿东西算偷吗？
+Tasha: Do scholars taking things count as stealing?
+
+408
+00:18:37,633 --> 00:18:38,766
+杰克: 是的，学者。
+Jake: Yeah, scholars.
+
+409
+00:18:39,500 --> 00:18:41,300
+塔莎: 只是拿需要的。
+Tasha: Just taking what they need.
+
+410
+00:18:41,133 --> 00:18:41,933
+杰克: 这个可以捡起来。
+Jake: This can be picked up.
+
+411
+00:18:42,033 --> 00:18:43,600
+杰克: 这个可以放进去吗？
+Jake: Can this be put in?
+
+412
+00:18:45,133 --> 00:18:45,800
+杰克: 这个需要剪吗？
+Jake: Does this need to be cut?
+
+413
+00:18:45,800 --> 00:18:47,000
+杰克: 待会需要绑起来。
+Jake: It needs to be tied later.
+
+414
+00:18:48,100 --> 00:18:50,966
+杰克: 啊，哈哈哈。
+Jake: Ah, hahaha.
+
+415
+00:19:01,800 --> 00:19:03,800
+塔莎: 哈哈，走吧。
+Tasha: Haha, let's go.
+
+416
+00:19:10,966 --> 00:19:12,233
+塔莎: 给我，给我，给我。
+Tasha: Give me, give me, give me.
+
+417
+00:19:11,633 --> 00:19:12,433
+杰克: 哈哈。
+Jake: Haha.
+
+418
+00:19:15,466 --> 00:19:16,900
+塔莎: 还刮彩票吗
+
+419
+00:19:18,000 --> 00:19:18,833
+杰克:刮不了了
+
+420
+00:19:19,200 --> 00:19:21,666
+塔莎: 我告诉你，这意味着你会满载而归。
+Tasha: I'm telling you, it means you'll return with a full load.
+
+421
+00:19:21,666 --> 00:19:23,200
+塔莎: 如果你现在去彩票店。
+Tasha: If you go to the lottery store now.
+
+422
+00:19:23,200 --> 00:19:24,766
+塔莎: 就可以刮100万回家
+
+423
+00:19:25,000 --> 00:19:26,766
+杰克: 如果你刮不到100万，你就在那儿刮。
+Jake: If you can't scratch 1 million, you scratch there.
+
+424
+00:19:28,300 --> 00:19:30,233
+杰克: 如果你刮不到100万，你就在那儿刮。
+Jake: If you can't scratch 1 million, you scratch there.
+
+425
+00:19:30,400 --> 00:19:32,533
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+426
+00:19:30,500 --> 00:19:32,400
+塔莎: 哈哈。
+Tasha: Haha.
+
+427
+00:19:32,833 --> 00:19:35,566
+Others: 如果你觉得有百万，我就全拿了。
+Others: If you think there's millions, I'd take the full amount.
+
+428
+00:19:36,300 --> 00:19:37,900
+Others: 如果没有，你报销给我。
+Others: If there's none, you reimburse me.
+
+429
+00:19:38,000 --> 00:19:38,800
+塔莎: 哈。
+Tasha: Ha.
+
+430
+00:19:38,600 --> 00:19:40,200
+Other People: 如果有，我给你99万。
+Other People: If there is, I'll give you 990,000.
+
+431
+00:19:41,233 --> 00:19:42,566
+Other People: 我就拿1万。
+Other People: I'll just take 10,000.
+
+432
+00:19:46,633 --> 00:19:47,633
+塔莎: 今天星期几？
+Tasha: What day is it today?
+
+433
+00:19:48,333 --> 00:19:49,166
+杰克: 星期天。
+Jake: It's Sunday.
+
+434
+00:19:50,600 --> 00:19:51,466
+塔莎: 今天是星期天。
+Tasha: Today is Sunday.
+
+435
+00:19:51,700 --> 00:19:52,500
+杰克: 是的。
+Jake: Yep.
+
+436
+00:19:55,300 --> 00:19:56,633
+塔莎: 怎么了，怎么了，怎么了？
+Tasha: What's going on, what's going on, what's going on?
+
+437
+00:19:57,600 --> 00:19:58,700
+塔莎: 再扔一个上来。
+Tasha: Throw another one up here.
+
+438
+00:20:05,900 --> 00:20:07,100
+杰克: 小事容易做。
+Jake: Small things are easy to do.
+
+439
+00:20:11,133 --> 00:20:14,233
+杰克: 哦，你怎么偷的？
+Jake: Oh, how do you steal it?
+
+440
+00:20:11,266 --> 00:20:14,000
+塔莎: 偷了个打火机，好漂亮。
+Tasha: Stole a lighter, it's so pretty.
+
+441
+00:20:15,833 --> 00:20:18,633
+杰克: 哦，这部分我们怎么处理？
+Jake: Oh, how do we handle this part?
+
+442
+00:20:19,333 --> 00:20:24,933
+杰克: 哈哈哈，就像以前一样，舒尔说就胡说八道。
+Jake: Hahaha, just like before, Shure said just talk trash.
+
+443
+00:20:25,100 --> 00:20:28,633
+杰克: 这次我们是认真的，哈哈哈。
+Jake: This time we're serious, hahaha.
+
+444
+00:20:28,633 --> 00:20:30,433
+杰克: 你为什么不去见见这个东西？
+Jake: Why don't you go meet this thing?
+
+445
+00:20:30,433 --> 00:20:34,600
+杰克: 哈哈哈哈哈哈。
+Jake: Hahahahahaha.
+
+446
+00:20:34,600 --> 00:20:35,600
+杰克: 我们怎么处理这个东西？
+Jake: How do we deal with this thing?
+
+447
+00:20:40,300 --> 00:20:41,100
+杰克: 你好？
+Jake: Hello?
+
+448
+00:20:41,700 --> 00:20:42,633
+杰克: 这两副眼镜。
+Jake: These two pairs of glasses.
+
+449
+00:20:44,433 --> 00:20:47,233
+杰克: 比如，我们回去看到这个后，是别人的。
+Jake: For example, after we go back and see this, it's others.
+
+450
+00:20:55,833 --> 00:20:56,866
+Other People: 是黑色的那个。
+Other People: It's a black color one.
+
+451
+00:20:56,866 --> 00:20:58,300
+Other People: 一个信号。
+Other People: A signal.
+
+452
+00:20:58,500 --> 00:21:03,833
+Other People: 以上基本上都是和被偷的人商量好的。
+Other People: All of the above were basically agreed upon with the stolen person.
+
+453
+00:21:03,866 --> 00:21:04,900
+塔莎: 哈哈。
+Tasha: Haha.
+
+454
+00:21:06,133 --> 00:21:06,933
+杰克: 好的。
+Jake: Okay.
+
+455
+00:21:21,533 --> 00:21:23,433
+杰克: 当然，你说会有人自己看吗？
+Jake: Of course, you say will anyone watch it themselves?
+
+456
+00:21:23,800 --> 00:21:25,433
+杰克: 啊哈哈哈哈哈哈。
+Jake: Ahahahahahaha.
+
+457
+00:21:28,833 --> 00:21:31,133
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+458
+00:21:38,200 --> 00:21:40,200
+Other People: 不再惊讶了，嗯。
+Other People: Not surprising anymore, hmm.
+
+459
+00:22:03,500 --> 00:22:08,100
+塔莎: 哈哈哈，我看到你的包裹堆到脖子了。
+Tasha: Hahaha, I see your packages are piled up to your neck.
+
+460
+00:22:14,166 --> 00:22:15,200
+塔莎: 幸好只有三个。
+Tasha: Luckily, only three.
+
+461
+00:22:15,400 --> 00:22:19,566
+杰克: 嗯，如果你昨天让我们取的话。
+Jake: Hmm, if you had asked us to pick them up yesterday.
+
+462
+00:22:20,433 --> 00:22:22,200
+杰克: 我觉得你回去不会开心。
+Jake: I think you wouldn't have had a good time going back.
+
+463
+00:22:21,433 --> 00:22:24,433
+塔莎: 昨天只有12个人。
+Tasha: There were only 12 people yesterday.
+
+464
+00:22:22,200 --> 00:22:23,933
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+465
+00:22:28,033 --> 00:22:29,766
+塔莎: 你都不知道，在学校。
+Tasha: You don't even know, at school.
+
+466
+00:22:29,766 --> 00:22:31,666
+塔莎: 我买了80多个烘焙的东西。
+Tasha: I bought over 80 baking items.
+
+467
+00:22:31,666 --> 00:22:33,100
+塔莎: 都是我自己取的。
+Tasha: I picked them all up by myself.
+
+468
+00:22:33,133 --> 00:22:33,966
+杰克: 你怎么去的？
+Jake: How did you go?
+
+469
+00:22:34,566 --> 00:22:35,433
+杰克: 你跑了几趟？
+Jake: How many trips did you make?
+
+470
+00:22:35,433 --> 00:22:36,133
+Other: 这么小的学校
+Other: Such a small school
+
+471
+00:22:36,133 --> 00:22:39,133
+Other: 需要买辆电动车，哈哈哈
+Other: Need to buy an electric scooter, hahaha
+
+472
+00:22:42,000 --> 00:22:43,133
+杰克: 你跑了几趟？
+Jake: How many trips did you make?
+
+473
+00:22:43,600 --> 00:22:45,300
+塔莎: 我一天取20个包裹
+Tasha: I pick up 20 packages a day
+
+474
+00:22:45,400 --> 00:22:46,433
+杰克: 一天20个包裹
+Jake: 20 packages a day
+
+475
+00:22:46,433 --> 00:22:47,966
+杰克: 一个视频80个包裹，对吧？
+Jake: 80 packages for a video, right?
+
+476
+00:22:48,533 --> 00:22:50,500
+杰克: 哈哈，取包裹，做视频
+Jake: Haha, pick up packages, make videos
+
+477
+00:22:50,500 --> 00:22:52,100
+杰克: 哈哈哈
+Jake: Hahaha
+
+478
+00:22:52,300 --> 00:22:55,200
+塔莎: 我每天花一个小时取包裹和拆包裹
+Tasha: It takes me an hour every day to pick up and unpack packages
+
+479
+00:22:55,400 --> 00:22:56,866
+塔莎: 我真的受不了了
+Tasha: I really can't take it anymore
+
+480
+00:22:56,966 --> 00:22:58,233
+塔莎: 我们什么时候发工资？
+Tasha: When will we get paid?
+
+481
+00:22:58,233 --> 00:22:59,033
+塔莎: 老板
+Tasha: Boss
+
+482
+00:22:59,233 --> 00:23:02,366
+塔莎: 我听说他们活动前都停工了
+Tasha: I heard they all stopped working before the event
+
+483
+00:23:07,333 --> 00:23:09,100
+杰克: 什么，先付钱？
+Jake: What, pay first?
+
+484
+00:23:09,100 --> 00:23:10,033
+杰克: 然后工作，对吧？
+Jake: Then work, right?
+
+485
+00:23:11,433 --> 00:23:14,033
+塔莎: 现在付我钱，我就完成工作
+Tasha: Pay me now and I'll finish the work
+
+486
+00:23:20,066 --> 00:23:21,433
+塔莎: 这里的限速是5
+Tasha: The speed limit here is 5
+
+487
+00:23:23,933 --> 00:23:25,200
+杰克: 我们没有超速，对吧？
+Jake: We're not speeding, right?
+
+488
+00:23:25,500 --> 00:23:26,300
+塔莎: 我们
+Tasha: We
+
+489
+00:23:25,500 --> 00:23:28,566
+杰克: 哈哈哈哈哈哈
+Jake: Hahahahaha
+
+490
+00:23:28,600 --> 00:23:31,766
+塔莎: 首先你要有四个轮子再谈这些
+
+491
+00:23:30,233 --> 00:23:31,533
+杰克: 哈哈，不一定
+Jake: Haha, not necessarily
+
+492
+00:23:31,533 --> 00:23:32,633
+杰克: 一个人应该可以
+Jake: A person should be able to
+
+493
+00:23:33,600 --> 00:23:36,100
+杰克: 一个人一小时能跑5公里
+Jake: A person can run 5 km in an hour
+
+494
+00:23:37,033 --> 00:23:38,966
+杰克: 是的，一个人可以超速
+Jake: Yeah, a person can exceed the speed limit
+
+495
+00:23:39,100 --> 00:23:40,233
+杰克: 不需要四个轮子
+Jake: No need for four wheels
+
+496
+00:23:47,300 --> 00:23:49,033
+Other: 一早上发消息都不回我
+Other: Sending messages all morning and not replying to me
+
+497
+00:23:49,133 --> 00:23:50,500
+Other: 就问他为什么不回
+Other: Just ask him why he's not replying
+
+498
+00:23:50,500 --> 00:23:51,300
+Other: 刚看到手机
+Other: Just saw the phone
+
+499
+00:23:51,466 --> 00:23:52,566
+Other: 谁信啊
+Other: Who believes that
+
+500
+00:23:52,733 --> 00:23:54,666
+杰克: 谁信啊
+Jake: Who believes that
+
+501
+00:24:08,800 --> 00:24:09,900
+塔莎: 受不了了
+Tasha: Can't take it anymore
+
+502
+00:24:15,300 --> 00:24:16,500
+塔莎: 太晒了
+Tasha: It's so sunny
+
+503
+00:24:25,900 --> 00:24:27,466
+塔莎: 我说太晒了
+Tasha: I said it's so sunny
+
+504
+00:24:27,766 --> 00:24:32,900
+杰克: 看，左边不是INL
+Jake: Look, the left side isn't INL
+
+505
+00:24:28,466 --> 00:24:31,200
+塔莎: 没问题，彩票店在哪？
+Tasha: No problem, where's the lottery shop?
+
+506
+00:24:32,900 --> 00:24:33,933
+杰克: 你不是抱怨太阳吗？
+Jake: Aren't you complaining about the sun?
+
+507
+00:24:36,100 --> 00:24:36,900
+杰克: 对
+Jake: Right
+
+508
+00:24:40,766 --> 00:24:41,733
+杰克: 这个彩票店
+Jake: This lottery shop
+
+509
+00:24:41,733 --> 00:24:43,200
+杰克: 不晒还能赚钱
+Jake: It's not sunny and you can make money
+
+510
+00:24:43,700 --> 00:24:44,766
+杰克: 可能赚钱。
+Jake: It might make money.
+
+511
+00:24:44,833 --> 00:24:45,800
+杰克: 但基本上，是亏钱的。
+Jake: But basically, it loses money.
+
+512
+00:24:47,400 --> 00:24:48,033
+杰克: 你赚了多少？
+Jake: How much did you make?
+
+513
+00:24:48,033 --> 00:24:50,100
+杰克: 最多？
+Jake: At most?
+
+514
+00:24:49,366 --> 00:24:50,400
+塔莎: 100块。
+Tasha: 100 bucks.
+
+515
+00:24:50,500 --> 00:24:51,933
+杰克: 多少，100？
+Jake: How much, 100?
+
+516
+00:24:51,966 --> 00:24:53,900
+杰克: 100 杰克: 100。
+Jake:100
+Jake: 100.
+
+517
+00:24:53,900 --> 00:24:54,733
+杰克: 20变成100块？
+Jake: Turn 20 into 100 bucks?
+
+518
+00:24:55,466 --> 00:24:57,000
+塔莎: 是的，大概20或30。
+Tasha: Yeah, around 20 or 30.
+
+519
+00:24:57,000 --> 00:24:58,800
+塔莎: 那是我最高纪录。
+Tasha: That's my highest record.
+
+520
+00:24:58,533 --> 00:24:59,533
+杰克: 哇，厉害。
+Jake: Wow, impressive.
+
+521
+00:25:00,233 --> 00:25:01,300
+杰克: 你刮了多少次？
+Jake: How many times have you scratched?
+
+522
+00:25:01,866 --> 00:25:03,000
+塔莎: 刮多少次
+
+523
+00:25:02,400 --> 00:25:03,733
+杰克: 总共多少次？
+Jake: How many times in total?
+
+524
+00:25:03,900 --> 00:25:04,833
+杰克: 100次？
+Jake: 100 times?
+
+525
+00:25:05,500 --> 00:25:08,300
+杰克: 不可能，50次？20次？
+Jake: No way, 50 times? 20 times?
+
+526
+00:25:05,600 --> 00:25:06,433
+塔莎: 不可能。
+Tasha: No way.
+
+527
+00:25:09,100 --> 00:25:10,566
+塔莎: 大概20次左右？
+Tasha: Maybe around 20 times?
+
+528
+00:25:10,100 --> 00:25:10,900
+杰克: 20次。
+Jake: 20 times.
+
+529
+00:25:11,000 --> 00:25:13,066
+塔莎: 每当我出门走在街上，
+Tasha: Whenever I go out and walk on the street,
+
+530
+00:25:13,100 --> 00:25:15,066
+塔莎: 如果没事做，我就再刮一张。
+Tasha: If I have nothing to do, I just scratch another one.
+
+531
+00:25:15,200 --> 00:25:16,500
+塔莎: 我就一直刮。
+Tasha: I just keep scratching.
+
+532
+00:25:16,633 --> 00:25:21,100
+杰克: 哦，这样，这样。
+Jake: Oh, like this, like this.
+
+533
+00:25:18,566 --> 00:25:19,966
+塔莎: 这里不是有彩票吗？
+Tasha: Isn't there a lottery here?
+
+534
+00:25:21,100 --> 00:25:22,233
+塔莎: 这不是彩票吗？
+Tasha: Isn't this the lottery?
+
+535
+00:25:21,900 --> 00:25:23,366
+杰克: 是的，是的，就是这个。
+Jake: Yes, yes, this is it.
+
+536
+00:25:29,200 --> 00:25:30,333
+杰克: 不工作。
+Jake: Not working properly.
+
+537
+00:25:30,566 --> 00:25:31,566
+塔莎: 是在这里面吗？
+Tasha: Is it inside here?
+
+538
+00:25:32,900 --> 00:25:35,233
+杰克: 你试试。
+Jake: You try it.
+
+539
+00:25:33,066 --> 00:25:34,266
+塔莎: 哦，关门了。
+Tasha: Oh, it's closed.
+
+540
+00:25:39,466 --> 00:25:40,600
+杰克: 走吧。
+Jake: Let's go.
+
+541
+00:25:40,833 --> 00:25:42,166
+杰克: 走吧，省10块。
+Jake: Let's go, save 10 bucks.
+
+542
+00:25:42,500 --> 00:25:43,433
+杰克: 省20块。
+Jake: Save 20 bucks.
+
+543
+00:25:47,233 --> 00:25:48,633
+杰克: 亏80块，行吗？
+Jake: Lose 80 bucks, okay?
+
+544
+00:25:50,533 --> 00:25:51,333
+杰克: 行吗？
+Jake: Is that okay?
+
+545
+00:25:55,366 --> 00:25:57,500
+杰克: 好吧，好吧。
+Jake: Alright, alright.
+
+546
+00:25:55,400 --> 00:25:57,166
+塔莎: 好的，眼镜戴上了。
+Tasha: Okay, the glasses are on.
+
+547
+00:25:59,033 --> 00:26:00,500
+杰克: 你可能需要充电。
+Jake: You might need to charge.
+
+548
+00:26:01,566 --> 00:26:02,366
+塔莎: 充电？
+Tasha: Charge?
+
+549
+00:26:01,700 --> 00:26:02,633
+杰克: 但我们三个人...
+Jake: But the three of us...
+
+550
+00:26:02,633 --> 00:26:04,700
+杰克: 我腾不出一只手给你的手机充电。
+Jake: I can't spare a single hand to charge your phone.
+
+551
+00:26:04,666 --> 00:26:06,066
+塔莎: 哈哈哈
+Tasha: Hahaha
+
+552
+00:26:09,966 --> 00:26:11,333
+杰克: 我们还是人手不够。
+Jake: We're still short-handed.
+
+553
+00:26:12,866 --> 00:26:14,100
+塔莎: 用脚代替走路。
+Tasha: Use your feet instead of walking.
+
+554
+00:26:15,233 --> 00:26:16,633
+杰克: 暂时用它们也行。
+Jake: Temporarily using them is fine too.
+
+555
+00:26:46,466 --> 00:26:47,566
+塔莎: 还有一个行业。
+Tasha: There's another industry.
+
+556
+00:26:49,200 --> 00:26:51,400
+塔莎: 你知道KFC食物替代服务吗？
+Tasha: Do you know about KFC food replacement service?
+
+557
+00:26:51,500 --> 00:26:52,433
+塔莎: 这个行业...
+Tasha: This industry...
+
+558
+00:26:52,200 --> 00:26:53,600
+杰克: 那是什么鬼？
+Jake: What the heck is that?
+
+559
+00:26:53,400 --> 00:26:54,800
+塔莎: KFC食物替代。
+Tasha: KFC food replacement.
+
+560
+00:26:54,233 --> 00:26:55,000
+杰克: 没听说过。
+Jake: Never heard of it.
+
+561
+00:26:55,000 --> 00:26:57,000
+杰克: 跟我说说，我没听说过。
+Jake: Tell me about it, I've never heard of it.
+
+562
+00:26:55,566 --> 00:26:56,600
+塔莎: 没听说过。
+Tasha: Never heard of it.
+
+563
+00:26:58,966 --> 00:27:00,266
+塔莎: 你吃KFC...
+Tasha: You eat the KFC...
+
+564
+00:27:01,666 --> 00:27:02,466
+塔莎: 啊...
+Tasha: Ah...
+
+565
+00:27:02,233 --> 00:27:03,366
+杰克: 吃KFC...
+Jake: Eat the KFC...
+
+566
+00:27:04,133 --> 00:27:06,133
+杰克: 然后你把玩具送给别人。
+Jake: And then you send the toys to others.
+
+567
+00:27:04,900 --> 00:27:07,166
+塔莎: 你通过把玩具送给别人来赚钱。
+Tasha: You make money by sending the toys to others.
+
+568
+00:27:11,500 --> 00:27:12,466
+塔莎: 你不知道吗？
+Tasha: Didn't you know that?
+
+569
+00:27:13,566 --> 00:27:15,800
+杰克: 他们专门卖那些玩具。
+Jake: They specifically sell those toys.
+
+570
+00:27:19,366 --> 00:27:20,500
+塔莎: 稳定的手艺。
+Tasha: Stable craftsmanship.
+
+571
+00:27:21,066 --> 00:27:22,366
+塔莎: 我的天，我的天。
+Tasha: Oh my god, oh my god.
+
+572
+00:27:22,366 --> 00:27:23,166
+塔莎: 我们完了，我们完了。
+Tasha: We're done, we're done.
+
+573
+00:27:22,566 --> 00:27:23,900
+杰克: 我们重新开始，我们重新开始。
+Jake: Let's start over, let's start over.
+
+574
+00:27:25,166 --> 00:27:27,033
+杰克: 重启并重新分配资源。
+Jake: Restart and redistribute resources.
+
+575
+00:27:25,900 --> 00:27:27,233
+塔莎: 重新分配资源。
+Tasha: Redistribute resources.
+
+576
+00:27:27,133 --> 00:27:28,566
+杰克: 给我重启。
+Jake: Restart for me.
+
+577
+00:27:28,566 --> 00:27:29,666
+Others: 那就给你的手机充电吧。
+Others: Just charge your phone then.
+
+578
+00:27:29,900 --> 00:27:30,733
+杰克: 是的，当然。
+Jake: Yeah, sure.
+
+579
+00:27:30,733 --> 00:27:32,366
+杰克: 拿那个去充电。
+Jake: Take that and charge it.
+
+580
+00:27:35,033 --> 00:27:35,833
+杰克: 快点，快点。
+Jake: Hurry, hurry.
+
+581
+00:27:45,466 --> 00:27:46,500
+塔莎: 累死了。
+Tasha: Exhausted.
+
+582
+00:27:54,966 --> 00:27:56,966
+Others: 你每天都来还是不来？
+Others: Do you come every day or not?
+
+583
+00:27:58,033 --> 00:27:59,233
+塔莎: 每次有活动。
+Tasha: Every time there's an event.
+
+584
+00:27:59,600 --> 00:28:00,933
+杰克: 所以你必须参加活动。
+Jake: So you have to attend events.
+
+585
+00:28:01,566 --> 00:28:02,800
+塔莎: 活动不是很快吗？
+Tasha: Aren't the events very quick?
+
+586
+00:28:02,800 --> 00:28:04,066
+塔莎: 每个节日都有活动。
+Tasha: Every holiday has an event.
+
+587
+00:28:05,100 --> 00:28:06,400
+Others: 也许你一天吃不了多少。
+Others: Maybe you won't eat much in a day.
+
+588
+00:28:06,966 --> 00:28:08,633
+塔莎: 你想吃多少就吃多少。
+Tasha: You can eat as much as you want.
+
+589
+00:28:08,400 --> 00:28:09,933
+Others: 那我就买了不吃。
+Others: Then I just buy it and not eat it.
+
+590
+00:28:10,766 --> 00:28:13,433
+塔莎: 你怎么可能买了所有东西都不吃？
+Tasha: How could you buy everything and not eat it?
+
+591
+00:28:13,300 --> 00:28:14,033
+杰克: 有可能。
+Jake: It's possible.
+
+592
+00:28:14,033 --> 00:28:15,600
+塔莎: 他买套餐是为了得到玩具。
+Tasha: He buys the set meal to get the toy.
+
+593
+00:28:15,966 --> 00:28:17,700
+杰克: 那我就买套餐然后送人。
+Jake: Then I'll just buy the meal and give it away.
+
+594
+00:28:18,366 --> 00:28:20,033
+杰克: 我送给无家可归的人。
+Jake: I'll give it to homeless people.
+
+595
+00:28:20,033 --> 00:28:21,933
+塔莎: 聪明人买套餐，
+Tasha: Smart people buy the meal,
+
+596
+00:28:21,933 --> 00:28:22,633
+塔莎: 然后分发玩具。
+Tasha: and then distribute the toys.
+
+597
+00:28:22,633 --> 00:28:25,233
+塔莎: 然后把套餐卖给大学生。
+Tasha: And then sell the meal to college students.
+
+598
+00:28:26,233 --> 00:28:27,400
+杰克: 哦，那也行。
+Jake: Oh, that works too.
+
+599
+00:28:33,633 --> 00:28:35,133
+杰克: 大学生很棒。
+Jake: College students are great.
+
+600
+00:28:35,433 --> 00:28:41,100
+杰克: 哈哈哈哈哈哈
+Jake: Hahahahahaha
+
+601
+00:28:49,133 --> 00:28:49,966
+塔莎: 即使在农村，
+Tasha: Even in rural areas,
+
+602
+00:28:49,966 --> 00:28:50,766
+塔莎: 也有自助服务。
+Tasha: there's self-service.
+
+603
+00:28:51,700 --> 00:28:52,766
+杰克: 买三瓶可乐。
+Jake: Buy three bottles of Coke.
+
+604
+00:28:52,833 --> 00:28:55,633
+杰克: 嘿，我们走这条路吗？
+Jake: Hey, are we going this way?
+
+605
+00:28:56,600 --> 00:28:57,900
+杰克: 这感觉不对。
+Jake: This doesn't feel right.
+
+606
+00:28:57,900 --> 00:28:59,300
+杰克: 我们走错路了。
+Jake: We're going the wrong way.
+
+607
+00:29:00,566 --> 00:29:03,000
+杰克: 快递员给我们指错方向了。
+Jake: The courier gave us the wrong direction.
+
+608
+00:29:05,600 --> 00:29:06,633
+杰克: 快递员的方向。
+Jake: The courier's direction.
+
+609
+00:29:06,633 --> 00:29:09,533
+杰克: 这个还有电吗？
+Jake: Is this still charged or not?
+
+610
+00:29:11,033 --> 00:29:13,500
+杰克: 篮球，哦，我有点粗鲁。
+Jake: The basketball, oh, I'm a bit rough.
+
+611
+00:29:13,500 --> 00:29:15,500
+杰克: 该死的你，你，你。
+Jake: Damn you, you, you.
+
+612
+00:29:15,500 --> 00:29:16,233
+杰克: 没电了。
+Jake: It's out of battery.
+
+613
+00:29:16,233 --> 00:29:17,766
+塔莎: 哦，现在我有空手了。
+Tasha: Oh, now I have a free hand.
+
+614
+00:29:18,566 --> 00:29:19,733
+杰克: 他现在有空手了。
+Jake: He has a free hand now.
+
+615
+00:29:21,000 --> 00:29:24,100
+杰克: 哈哈哈哈
+Jake: Hahahahaha
+
+616
+00:29:24,200 --> 00:29:26,133
+杰克: 你是……
+Jake: Are you...
+
+617
+00:29:26,200 --> 00:29:27,100
+杰克: 你是我妹妹吗？
+Jake: Are you my sister?
+
+618
+00:29:28,833 --> 00:29:30,000
+杰克: 你怎么腾出手的？
+Jake: How did you free up?
+
+619
+00:29:30,733 --> 00:29:33,000
+杰克: 哈哈哈，我们受不了了。
+Jake: Hahaha, we can't handle it anymore.
+
+620
+00:29:33,033 --> 00:29:36,400
+杰克: 这是一次性的吗？对，对。
+Jake: Is this a one-time thing? Yeah, yeah.
+
+621
+00:29:43,833 --> 00:29:44,733
+杰克: 怎么了？
+Jake: What's the matter?
+
+622
+00:29:44,800 --> 00:29:46,633
+杰克: 没电了？
+Jake: Out of battery?
+
+623
+00:29:46,633 --> 00:29:47,633
+塔莎: 创建一个新的。
+Tasha: Create a new one.
+
+624
+00:29:48,333 --> 00:29:49,366
+杰克: 你没电了吗？
+Jake: Are you out of battery?
+
+625
+00:29:49,500 --> 00:29:50,966
+塔莎: 是的，只有7%了。
+Tasha: Yes, it's at 7%.
+
+626
+00:29:50,966 --> 00:29:52,033
+塔莎: 它刚刚关机了吗？
+Tasha: Did it just turn off?
+
+627
+00:29:53,000 --> 00:29:53,800
+杰克: 好吧。
+Jake: Alright.
+
+628
+00:30:03,366 --> 00:30:04,466
+塔莎: 开始了。
+Tasha: It's starting.
+
+629
+00:30:05,500 --> 00:30:08,266
+塔莎: 五十六个民族，五十六朵花。
+Tasha: Fifty-six ethnic groups, fifty-six flowers.
+
+630
+00:30:09,700 --> 00:30:12,166
+塔莎: 中国五十六个民族是一家。
+Tasha: Fifty-six ethnic groups in China are one family.
+
+631
+00:30:14,366 --> 00:30:15,400
+杰克: 这好像不太对。
+Jake: That doesn't seem quite right.
+
+632
+00:30:16,433 --> 00:30:17,333
+杰克: 你是回族，对吧？
+Jake: You're Hui, right?
+
+633
+00:30:17,900 --> 00:30:20,066
+塔莎: 真的吗？你能加多少分？
+Tasha: Really? How many points do you get?
+
+634
+00:30:17,966 --> 00:30:19,700
+杰克:那你吃吗
+
+635
+00:30:21,833 --> 00:30:23,166
+杰克:那你怎么吃啊
+
+636
+00:30:23,800 --> 00:30:25,000
+杰克: 你是什么回族？
+Jake: What kind of Hui are you?
+
+637
+00:30:25,533 --> 00:30:26,500
+杰克: 你身份证上写的是回族？
+Jake: Your ID says Hui?
+
+638
+00:30:27,900 --> 00:30:28,700
+杰克: 你能加多少分？
+Jake: How many points do you get?
+
+639
+00:30:29,233 --> 00:30:30,766
+Others: 正好5分。
+Others: Just exactly 5 points.
+
+640
+00:30:30,866 --> 00:30:32,100
+塔莎: 那不是很好吗？
+Tasha: Isn't that good?
+
+641
+00:30:32,000 --> 00:30:32,700
+Others: 有什么用？
+Others: What's the use?
+
+642
+00:30:32,700 --> 00:30:34,333
+杰克: 为什么？
+Jake: Why?
+
+643
+00:30:32,733 --> 00:30:33,566
+塔莎: 我们这么努力。
+Tasha: We worked so hard.
+
+644
+00:30:33,566 --> 00:30:35,266
+塔莎: 我们考试连5分都拿不到。
+Tasha: We can't even get 5 points in our exams.
+
+645
+00:30:35,433 --> 00:30:36,300
+塔莎: 我们得考四门。
+Tasha: We have to take four subjects.
+
+646
+00:30:37,300 --> 00:30:38,433
+杰克: 为什么你们高考不加分？
+Jake: Why don't you get extra points for the college entrance exam?
+
+647
+00:30:39,100 --> 00:30:43,566
+Others: 我们得住在少数民族地区。
+Others: We have to live in an ethnic minority area.
+
+648
+00:30:44,566 --> 00:30:45,366
+塔莎: 哦。
+Tasha: Oh.
+
+649
+00:30:44,566 --> 00:30:45,700
+杰克: 哦，我明白了。
+Jake: Oh, I see.
+
+650
+00:30:47,800 --> 00:30:49,966
+杰克: 你来自哪里？
+Jake: Where are you from?
+
+651
+00:30:51,500 --> 00:30:52,800
+杰克: 哦，哦。
+Jake: Oh, oh.
+
+652
+00:30:51,533 --> 00:30:52,733
+塔莎: 哦，哦。
+Tasha: Oh, oh.
+
+653
+00:30:53,200 --> 00:30:56,366
+Others: 我爸爸是回族，因为高考能加5分。
+Others: My dad is Hui because he could get 5 extra points for the college entrance exam.
+
+654
+00:30:56,766 --> 00:30:58,366
+塔莎: 你能分吗？
+Tasha: Can you split it?
+
+655
+00:30:58,566 --> 00:30:59,333
+杰克: 我能，我能。
+Jake: I can, I can.
+
+656
+00:30:59,333 --> 00:31:01,300
+杰克: 不，现在我能分了。
+Jake: No, now I can split it.
+
+657
+00:31:01,900 --> 00:31:04,400
+杰克: 但是，我还能用一只手。
+Jake: But still, I can use one hand.
+
+658
+00:31:04,400 --> 00:31:06,800
+Others: 我爸爸，我爸爸只是……
+Others: My dad, my dad just...
+
+659
+00:31:07,366 --> 00:31:10,033
+Others: 不吃猪肉。
+Others: Doesn't eat pork.
+
+660
+00:31:10,033 --> 00:31:12,600
+Others: 你爸爸也是？
+Others: Your dad too?
+
+661
+00:31:13,533 --> 00:31:16,300
+Others: 从我奶奶那一代开始，他们就开始吃猪肉了。
+Others: From my grandma's generation, they started eating pork.
+
+662
+00:31:16,333 --> 00:31:17,766
+塔莎: 所以你有一个……
+Tasha: So you have a...
+
+663
+00:31:18,733 --> 00:31:19,533
+杰克: 所以你有一个好……
+Jake: So you have a good...
+
+664
+00:31:19,133 --> 00:31:21,300
+塔莎: 叛逆的奶奶。
+Tasha: Rebellious grandma.
+
+665
+00:31:19,600 --> 00:31:21,500
+杰克: 是的，你有一个好奶奶。
+Jake: Yeah, you have a good grandma.
+
+666
+00:31:21,500 --> 00:31:22,300
+杰克: 确实。
+Jake: Indeed.
+
+667
+00:31:23,133 --> 00:31:25,300
+杰克: 哈哈哈哈。
+Jake: Hahahaha.
+
+668
+00:31:25,300 --> 00:31:28,133
+塔莎: 不吃的话你可能比现在更瘦了
+
+669
+00:31:34,566 --> 00:31:39,200
+杰克: 哈哈哈哈，这有点好笑。
+Jake: Hahahaha, that's kind of funny.
+
+670
+00:31:40,766 --> 00:31:42,933
+杰克: 在国家和全球公司里有很多人。
+Jake: There are quite a lot of people in national and global companies.
+
+671
+00:31:47,200 --> 00:31:50,533
+杰克: 哈哈哈
+Jake: Hahaha
+
+672
+00:31:47,500 --> 00:31:48,300
+塔莎: 我的天
+Tasha: Oh my god
+
+673
+00:31:50,433 --> 00:31:52,366
+塔莎: 也许我们根本不该播出这部分。
+Tasha: Maybe we shouldn't air this part at all.
+
+674
+00:31:53,966 --> 00:31:54,933
+杰克: 这有点好笑。
+Jake: It's kinda funny.
+
+675
+00:31:58,166 --> 00:32:00,033
+塔莎: 柳絮飞舞。
+Tasha: Willow catkins flying.
+
+676
+00:32:03,000 --> 00:32:08,200
+杰克: 到那时，我想最终我们应该只是……
+Jake: By then, I think ultimately we should just...
+
+677
+00:32:07,466 --> 00:32:08,500
+塔莎: 澄清一下。
+Tasha: Clarify it.
+
+678
+00:32:08,200 --> 00:32:12,133
+杰克: 哔哔哔，哈哈哈。
+Jake: Beep beep beep, hahaha.
+
+679
+00:32:12,800 --> 00:32:19,133
+杰克: 这根数据线真厉害，哈哈哈。
+Jake: This data cable is really impressive, hahaha.
+
+680
+00:32:20,300 --> 00:32:22,933
+杰克: 97%的哔率，哈哈。
+Jake: 97% BB rate, haha.
+
+681
+00:32:24,233 --> 00:32:25,233
+杰克: 哈。
+Jake: Ha.
+
+682
+00:32:30,166 --> 00:32:33,000
+杰克: 哔哔哔哔哔哔。
+Jake: Beep beep beep beep beep beep.
+
+683
+00:32:33,033 --> 00:32:34,400
+Others: 我是回族，我哔。
+Others: I'm Hui and I beep.
+
+684
+00:32:34,400 --> 00:32:37,233
+杰克: 哈哈哈哈。
+Jake: Hahahaha.
+
+685
+00:32:37,300 --> 00:32:38,933
+杰克: 我，我吃哔。
+Jake: I, I eat beep.
+
+686
+00:32:38,933 --> 00:32:45,133
+杰克: 哈哈哈哈哈哈哈哈哈哈。
+Jake: Hahahahahahahahahahahaha.
+
+687
+00:33:00,500 --> 00:33:01,300
+杰克: 给我一个。
+Jake: Give me one.
+
+688
+00:33:01,833 --> 00:33:02,933
+杰克: 你需要帮忙吗？
+Jake: Do you need help?
+
+689
+00:33:07,833 --> 00:33:09,266
+塔莎: 嗯，我什么时候掉的？
+Tasha: Hmm, when did I drop this?
+
+690
+00:33:09,266 --> 00:33:10,766
+塔莎: 哦，在重新分配的时候。
+Tasha: Oh, during the redistribution.
+
+691
+00:33:19,000 --> 00:33:19,800
+杰克: 哦。
+Jake: Oh.
+
+692
+00:33:20,600 --> 00:33:21,966
+杰克: 羊肉也挺好吃的，对吧？
+Jake: Lamb is also quite tasty, right?
+
+693
+00:33:22,633 --> 00:33:23,433
+杰克: 牛肉和羊肉。
+Jake: Beef and lamb.
+
+694
+00:33:27,333 --> 00:33:32,333
+杰克: 你们在港口有基金会吗，像回族那样？
+Jake: Do you guys have a foundation in the harbor, like the Hui?
+
+695
+00:33:32,966 --> 00:33:34,400
+杰克: 还有，哦我的天。
+Jake: Also, oh my god.
+
+696
+00:33:39,400 --> 00:33:40,200
+杰克: 嗯。
+Jake: Hmm.
+
+697
+00:33:42,600 --> 00:33:45,400
+杰克: 哦，你还需要去那个……叫什么来着？
+Jake: Oh, you still need to go to that... what's it called?
+
+698
+00:33:46,766 --> 00:33:50,200
+杰克: 丝绸，只是为了留下一些痕迹，哦。
+Jake: Silk, just to keep some traces, oh.
+
+699
+00:33:51,900 --> 00:33:53,333
+杰克: 不要去那种寺庙，对吧？
+Jake: Don't go to that kind of temple, right?
+
+700
+00:33:53,966 --> 00:33:54,600
+杰克: 叫回族寺。
+Jake: Called Hui Temple.
+
+701
+00:33:54,600 --> 00:33:55,400
+杰克: 叫什么？
+Jake: Called what?
+
+702
+00:33:55,933 --> 00:33:58,133
+杰克: 叫回族清真寺。
+Jake: Called Hui Mosque.
+
+703
+00:34:03,466 --> 00:34:08,266
+Others: 但是尽管他们仍然受到婚姻的影响。
+Others: But although they're still affected by marriage.
+
+704
+00:34:08,533 --> 00:34:11,266
+Others: 他们大多数人也喝酒。
+Others: Most of them also drink.
+
+705
+00:34:11,633 --> 00:34:12,833
+杰克: 婚姻怎么了？
+Jake: What's with marriage?
+
+706
+00:34:13,033 --> 00:34:14,033
+杰克: 婚姻，婚姻。
+Jake: Marriage, marriage.
+
+707
+00:34:14,333 --> 00:34:16,366
+Others: 回族实际上必须和回族结婚。
+Others: Hui people actually have to marry Hui people.
+
+708
+00:34:16,500 --> 00:34:17,433
+杰克: 哦。
+Jake: Oh.
+
+709
+00:34:16,733 --> 00:34:19,033
+塔莎: 啊，好像不允许和外人通婚。
+Tasha: Ah, it seems like intermarriage with outsiders is not allowed.
+
+710
+00:34:19,133 --> 00:34:19,933
+杰克: 哦 杰克: 哦。
+Jake:oh
+Jake: Oh.
+
+711
+00:34:50,166 --> 00:34:51,100
+Others: 一对一挑战我。
+Others: Challenge me one-on-one.
+
+712
+00:35:08,233 --> 00:35:10,700
+杰克: 他怎么知道的？
+Jake: How did he know?
+
+713
+00:35:17,733 --> 00:35:19,166
+塔莎: 你真的认识路吗？
+Tasha: Do you really know the way?
+
+714
+00:35:19,833 --> 00:35:20,633
+塔莎: 杰克。
+Tasha: Jake.
+
+715
+00:35:21,000 --> 00:35:22,100
+杰克: 走了一半了。
+Jake: It's halfway there.
+
+716
+00:35:22,166 --> 00:35:23,033
+杰克: 不是超过一半了吗？
+Jake: Isn't it more than halfway?
+
+717
+00:35:23,033 --> 00:35:25,500
+杰克: 哈哈，超过一半了。
+Jake: Haha, it's more than halfway.
+
+718
+00:35:27,500 --> 00:35:28,633
+杰克: 对吧？认识大部分路。
+Jake: Right? Know most of the way.
+
+719
+00:35:33,633 --> 00:35:35,900
+塔莎: 和你们在一起，我被迫学会了路。
+Tasha: Being with you guys, I was forced to learn the way.
+
+720
+00:35:36,833 --> 00:35:39,533
+Others: 不可能，我百分之万知道路线。
+Others: No way, I know the routes 10,000%.
+
+721
+00:35:42,400 --> 00:35:43,600
+杰克: 我知道大约50%。
+Jake: I know about 50%.
+
+722
+00:35:43,600 --> 00:35:45,966
+Others: 有一次，之前，我……
+Others: Once, before, I...
+
+723
+00:35:46,233 --> 00:35:49,333
+Others: 嗯，我和一位老师约了午餐。
+Others: Um, I made a lunch date with one of my teachers.
+
+724
+00:35:49,433 --> 00:35:50,733
+Others: 我不知道……
+Others: And I didn't know...
+
+725
+00:35:50,733 --> 00:35:53,600
+Others: 他在学校，所以我就坐了公交车。
+Others: He was at school, so I just took the bus.
+
+726
+00:35:56,100 --> 00:35:58,800
+杰克: 我们稍后应该测试每个人的换乘率。
+Jake: We should test each person's switch rate later.
+
+727
+00:35:59,766 --> 00:36:03,566
+杰克: 哈哈哈哈，换乘率。
+Jake: Hahahaha, switch rate.
+
+728
+00:36:03,566 --> 00:36:04,766
+杰克: 换乘率，然后……
+Jake: Switch rate, and then...
+
+729
+00:36:04,933 --> 00:36:07,200
+Others: 嗯，我坐了十分钟公交车。
+Others: Um, I took the bus for ten minutes.
+
+730
+00:36:07,433 --> 00:36:08,833
+Others: 嗯，总共20分钟。
+Others: Um, it was a total of 20 minutes.
+
+731
+00:36:08,833 --> 00:36:10,033
+Others: 嗯，我坐了十分钟。
+Others: Um, I took it for ten minutes.
+
+732
+00:36:10,033 --> 00:36:11,200
+Others: 老师问：“你在厨房吗？”
+Others: Teacher asked, "Are you in the kitchen?"
+
+733
+00:36:11,200 --> 00:36:13,333
+Others: 我说：“什么鬼，我在公交车上。”
+Others: I said, "What the heck, I'm on the bus."
+
+734
+00:36:13,333 --> 00:36:15,700
+Others: 他说：“那我挂了，你这个混蛋。”
+Others: He said, "Then I'll hang up, you bastard."
+
+735
+00:36:13,866 --> 00:36:14,666
+塔莎: 走错路了。
+Tasha: Took the wrong way.
+
+736
+00:36:16,833 --> 00:36:19,800
+Others: 然后他说：“我们拼车吧。”
+Others: And then he said, "Let's share a cab."
+
+737
+00:36:19,833 --> 00:36:21,233
+Others: 哦，我说：“我在那里等你。”
+Others: Oh, I said, "I'll wait for you there."
+
+738
+00:36:21,233 --> 00:36:23,966
+Others: 打车好还是骑车好？
+Others: Is it better to take a cab or bike?
+
+739
+00:36:23,966 --> 00:36:25,533
+Others: 我说：“我帮你查一下。”
+Others: I said, "Let me check for you."
+
+740
+00:36:25,533 --> 00:36:27,000
+Others: 嗯，我完全搞砸了。
+Others: Um, I was totally messed up.
+
+741
+00:36:27,000 --> 00:36:29,900
+Others: 20分钟怎么变成30分钟的？
+Others: How did 20 minutes become 30 minutes?
+
+742
+00:36:29,900 --> 00:36:31,733
+Others: 哈哈哈。
+Others: Hahaha.
+
+743
+00:36:32,133 --> 00:36:34,433
+Others: 然后我告诉他：“在学校门口等我。”
+Others: Then I told him, "Wait for me at the school gate."
+
+744
+00:36:34,433 --> 00:36:36,366
+Others: “我马上打车。”
+Others: "I'll catch a cab right away."
+
+745
+00:36:39,700 --> 00:36:40,500
+杰克: 好的。
+Jake: Okay.
+
+746
+00:36:42,433 --> 00:36:44,966
+杰克: 我们做点吃的吧。
+Jake: Let's cook some food.
+
+747
+00:36:46,366 --> 00:36:47,866
+塔莎: 我经常坐错公交车。
+Tasha: I often take the bus the wrong way.
+
+748
+00:36:48,166 --> 00:36:51,700
+杰克: 你也，你，你，你也坐错车了。
+Jake: You also, you, you, you also got on the wrong bus.
+
+749
+00:36:51,466 --> 00:36:52,266
+塔莎: 是的。
+Tasha: Yeah.
+
+750
+00:36:52,166 --> 00:36:52,900
+杰克: 你就像我妹妹。
+Jake: You are like my sister.
+
+751
+00:36:52,900 --> 00:36:53,700
+杰克:你也做反
+
+752
+00:36:53,966 --> 00:36:54,966
+塔莎: 那我没做反过
+
+753
+00:36:54,966 --> 00:36:57,166
+塔莎: 我做反那一次是我自己一个人
+
+754
+00:36:57,433 --> 00:36:58,866
+塔莎: 我10岁的时候，去南京玩。
+Tasha: When I was 10, I went to Nanjing for fun.
+
+755
+00:36:57,433 --> 00:36:59,566
+杰克: 嗯嗯。
+Jake: Hmm hmm.
+
+756
+00:37:00,700 --> 00:37:02,033
+杰克:你10岁挺猛啊
+
+757
+00:37:03,966 --> 00:37:05,833
+塔莎: 我坐错了公交车，一直坐到晚上。
+Tasha: I got on the wrong bus and ended up riding it until the evening.
+
+758
+00:37:05,366 --> 00:37:09,433
+杰克: 哈哈哈，不，你，你，你坐错车了。
+Jake: Hahaha, no, you, you, you got on the wrong bus.
+
+759
+00:37:05,833 --> 00:37:06,833
+塔莎: 我最后到了山里。
+Tasha: I ended up in the mountains.
+
+760
+00:37:06,833 --> 00:37:07,166
+塔莎: 你知道吗？
+Tasha: Do you know?
+
+761
+00:37:07,166 --> 00:37:08,333
+塔莎: 我在那辆公交车上。
+Tasha: I was on that bus.
+
+762
+00:37:09,433 --> 00:37:10,200
+杰克: 你去了山东？
+Jake: You went to Shandong?
+
+763
+00:37:11,566 --> 00:37:13,433
+塔莎: 那时候，好像有什么活动。
+Tasha: At that time, it seemed like there was some event.
+
+764
+00:37:13,433 --> 00:37:15,233
+塔莎: 在北京举办的活动。
+Tasha: Some event hosted in Beijing.
+
+765
+00:37:15,333 --> 00:37:16,366
+塔莎: 很多志愿者。
+Tasha: Lots of volunteers.
+
+766
+00:37:16,366 --> 00:37:18,366
+塔莎: 我问他们怎么回去。
+Tasha: I asked them how to get back.
+
+767
+00:37:18,466 --> 00:37:19,966
+塔莎: 然后他们带我回去了。
+Tasha: Then they took me back.
+
+768
+00:37:21,333 --> 00:37:22,133
+杰克: 啊。
+Jake: Ah.
+
+769
+00:37:22,866 --> 00:37:26,933
+塔莎: 嗯，我忘了10岁时举办的是什么活动。
+Tasha: Hmm, I forgot what event was held when I was 10.
+
+770
+00:37:26,333 --> 00:37:30,166
+杰克: 你，你，你10岁去了南京。
+Jake: You, you, you went to Nanjing at 10.
+
+771
+00:37:29,566 --> 00:37:30,766
+塔莎: 是的。
+Tasha: Yeah.
+
+772
+00:37:30,366 --> 00:37:32,800
+杰克: 然后北京举办了什么活动。
+Jake: And then Beijing hosted some event.
+
+773
+00:37:32,766 --> 00:37:34,333
+塔莎: 南京举办了活动。
+Tasha: Nanjing hosted an event.
+
+774
+00:37:32,933 --> 00:37:35,166
+杰克: 南京，南京举办了活动，嗯？
+Jake: Nanjing, Nanjing hosted an event, huh?
+
+775
+00:37:35,133 --> 00:37:36,233
+塔莎: 我一路都坐错了公交车。
+Tasha: I was on the wrong bus all the way.
+
+776
+00:37:36,233 --> 00:37:37,500
+塔莎: 最后到了山里。
+Tasha: Ended up in the mountains.
+
+777
+00:37:36,600 --> 00:37:41,833
+杰克: 青奥会，青奥会，青奥会志愿者。
+Jake: The Youth Olympic Games, Youth Olympic Games, Youth Olympic Games volunteers.
+
+778
+00:37:38,100 --> 00:37:39,033
+塔莎: 最后到了山里。
+Tasha: Ended up in the mountains.
+
+779
+00:37:39,033 --> 00:37:41,833
+塔莎: 然后最终志愿者们……
+Tasha: Then eventually the volunteers...
+
+780
+00:37:41,833 --> 00:37:43,433
+塔莎: 在公交车站……
+Tasha: At the bus stop...
+
+781
+00:37:43,900 --> 00:37:45,366
+塔莎: 然后他们带我回去了。
+Tasha: Then they took me back.
+
+782
+00:37:45,533 --> 00:37:46,333
+杰克: 嗯。
+Jake: Hmm.
+
+783
+00:37:51,366 --> 00:37:52,566
+杰克: 太搞笑了。
+Jake: So funny.
+
+784
+00:37:52,566 --> 00:37:54,800
+杰克: 不，让我再看看手机。
+Jake: No, let me check my phone again.
+
+785
+00:37:54,900 --> 00:37:56,433
+杰克: 否则，很快就会有人打电话给我。
+Jake: Otherwise, someone will call me soon.
+
+786
+00:37:56,433 --> 00:37:57,366
+杰克: 又骂我。
+Jake: And scold me again.
+
+787
+00:38:01,100 --> 00:38:03,133
+杰克: 不，因为昨天……
+Jake: No, because yesterday...
+
+788
+00:38:04,200 --> 00:38:06,333
+杰克: 昨天，我在拿东西的时候没接他的电话。
+Jake: Yesterday, I didn't pick up his call while I was getting something.
+
+789
+00:38:06,833 --> 00:38:08,000
+杰克: 他后来为此骂了我。
+Jake: He scolded me for it later.
+
+790
+00:38:08,666 --> 00:38:10,166
+Others: 她
+Others: She
+
+791
+00:38:08,900 --> 00:38:10,400
+杰克: 啊，我妹妹。
+Jake: Ah, my sister.
+
+792
+00:38:10,800 --> 00:38:13,500
+杰克: 哈哈哈哈哈哈
+Jake: Hahahahahaha
+
+793
+00:38:38,633 --> 00:38:39,433
+塔莎: 哇，我们真坚韧。
+Tasha: Wow, we're really resilient.
+
+794
+00:38:39,433 --> 00:38:41,033
+塔莎: 我们居然一路走下来了。
+Tasha: We actually made it all the way down.
+
+795
+00:38:41,700 --> 00:38:42,500
+杰克: 太棒了。
+Jake: Awesome.
+
+796
+00:38:41,733 --> 00:38:44,033
+塔莎: 杰克，你能把剩下的钱分给我们吗？
+Tasha: Jake, can you split the remaining money between us?
+
+797
+00:38:44,233 --> 00:38:45,033
+塔莎: 哈哈
+Tasha: Haha
+
+798
+00:38:45,100 --> 00:38:45,900
+杰克: 太棒了。
+Jake: Awesome.
+
+799
+00:39:03,766 --> 00:39:04,966
+塔莎: 我们应该把这个清理掉吗？
+Tasha: Should we clear this away?
+
+800
+00:39:08,400 --> 00:39:10,200
+杰克: 如果他的技术不是那么好，
+Jake: If his skills aren't that great,
+
+801
+00:39:10,200 --> 00:39:11,000
+杰克:确实有可能
+
+802
+00:39:12,333 --> 00:39:13,933
+杰克: 会爆炸的。
+Jake: It's gonna blow.
+
+803
+00:39:13,833 --> 00:39:14,666
+塔莎: 你会开推土机吗？
+Tasha: Can you drive a bulldozer?
+
+804
+00:39:15,100 --> 00:39:17,433
+杰克: 我不会，我出局了。
+Jake: I can't, I'm out.
+
+805
+00:39:17,033 --> 00:39:21,666
+塔莎: 哈哈，我们家有一台。
+Tasha: Haha, we have one at home.
+
+806
+00:39:17,433 --> 00:39:20,766
+杰克: 哈哈哈哈
+Jake: Hahahaha
+
+807
+00:39:24,300 --> 00:39:27,100
+杰克: 你真是……
+Jake: You really are...
+
+808
+00:39:25,833 --> 00:39:27,866
+塔莎: 我们家有吗？
+Tasha: Do we have one at home?
+
+809
+00:39:27,866 --> 00:39:28,900
+塔莎: 我们真的有。
+Tasha: We really do.
+
+810
+00:39:29,033 --> 00:39:30,633
+塔莎: 就停在我家外面。
+Tasha: It's parked right outside my house.
+
+811
+00:39:30,566 --> 00:39:33,533
+杰克: 哈，有一天……
+Jake: Hah, one day...
+
+812
+00:39:32,300 --> 00:39:33,433
+塔莎: 我们可以每天开它。
+Tasha: We can drive it every day.
+
+813
+00:39:33,566 --> 00:39:34,600
+杰克: 有一天，我会去你家看看。
+Jake: One day, I'll visit your place.
+
+814
+00:39:34,466 --> 00:39:35,833
+塔莎: 当然，我们还有一艘船。
+Tasha: Sure, we also have a boat.
+
+815
+00:39:35,766 --> 00:39:37,100
+杰克: 我们组队去吧。
+Jake: Let's team up and go.
+
+816
+00:39:39,166 --> 00:39:40,700
+杰克: 你还有船？
+Jake: You have a boat too?
+
+817
+00:39:40,333 --> 00:39:40,733
+塔莎: 是的。
+Tasha: Yeah.
+
+818
+00:39:40,700 --> 00:39:43,400
+杰克: 哈哈哈哈
+Jake: Hahahaha
+
+819
+00:39:45,433 --> 00:39:46,866
+塔莎: 在大运河附近？
+Tasha: Near the Grand Canal?
+
+820
+00:39:46,866 --> 00:39:48,166
+塔莎: 我们靠船生活。
+Tasha: We live off the boat.
+
+821
+00:39:53,366 --> 00:39:54,233
+杰克: 你家是做什么的？
+Jake: What's your family?
+
+822
+00:39:54,666 --> 00:39:56,566
+塔莎: 我们家是从船运生意开始的。
+Tasha: Our family started from the boat business.
+
+823
+00:39:56,433 --> 00:39:56,933
+杰克: 不，不。
+Jake: No, no.
+
+824
+00:39:56,933 --> 00:39:59,133
+杰克: 你之前开的是什么？
+Jake: What were you driving earlier?
+
+825
+00:39:59,133 --> 00:40:00,100
+杰克: 什么类型的车辆？
+Jake: What kind of vehicle?
+
+826
+00:40:00,166 --> 00:40:01,766
+塔莎: 叉车和推土机。
+Tasha: Forklift and bulldozer.
+
+827
+00:40:01,766 --> 00:40:03,500
+杰克: 推土机，对吧，这种类型？
+Jake: Bulldozer, right, this type?
+
+828
+00:40:01,766 --> 00:40:04,100
+塔莎: 啊
+Tasha: Ah
+
+829
+00:40:03,500 --> 00:40:05,166
+杰克: 啊，挖掘机
+Jake: Ah, an excavator
+
+830
+00:40:05,466 --> 00:40:06,700
+塔莎: 我家外面就有一台
+Tasha: There's one right outside my house
+
+831
+00:40:08,966 --> 00:40:10,900
+塔莎: 你猜我们做什么生意
+Tasha: And guess what business we do
+
+832
+00:40:13,966 --> 00:40:14,766
+杰克: 运输
+Jake: Transporting
+
+833
+00:40:15,933 --> 00:40:17,100
+杰克: 你家卖盐
+Jake: Your family sells salt
+
+834
+00:40:17,133 --> 00:40:18,500
+塔莎: 我们卖这个沙子
+Tasha: We sell this sand
+
+835
+00:40:19,900 --> 00:40:20,700
+杰克: 哦
+Jake: Oh
+
+836
+00:40:21,366 --> 00:40:23,900
+塔莎: 那艘船是用来运沙子的
+Tasha: And that boat is used to transport the sand
+
+837
+00:40:21,500 --> 00:40:23,533
+杰克: 你们怎么卖沙子？
+Jake: How do you sell the sand?
+
+838
+00:40:24,733 --> 00:40:25,533
+杰克: 你们怎么卖这个沙子？
+Jake: How do you sell this sand?
+
+839
+00:40:25,700 --> 00:40:26,500
+塔莎: 沙子
+Tasha: The sand
+
+840
+00:40:26,000 --> 00:40:27,300
+杰克: 你们怎么处理沙子？
+Jake: How do you handle the sand?
+
+841
+00:40:27,300 --> 00:40:28,500
+Other: 你们自己加工吗？
+Other: Do you process it yourself?
+
+842
+00:40:28,766 --> 00:40:30,633
+塔莎: 沙子是用船运输的
+Tasha: The sand is transported by boat
+
+843
+00:40:30,633 --> 00:40:31,900
+塔莎: 我猜就是
+Tasha: I guess it's just
+
+844
+00:40:30,700 --> 00:40:32,900
+Other: 你们运输然后卖掉
+Other: You transport it and then sell it
+
+845
+00:40:32,900 --> 00:40:33,900
+Other: 你们是中间商
+Other: You're a middleman
+
+846
+00:40:34,166 --> 00:40:36,300
+杰克: 你们加工什么？
+Jake: What do you process?
+
+847
+00:40:34,166 --> 00:40:37,966
+塔莎: 是的，我爸爸说只要每船差价50美分
+Tasha: Yeah, my dad says as long as the price difference is 50 cents per boat
+
+848
+00:40:37,966 --> 00:40:40,466
+塔莎: 一船沙子能卖20万
+Tasha: One boat of sand can sell for 200,000
+
+849
+00:40:40,766 --> 00:40:42,833
+塔莎: 哈哈，就靠那50美分的差价
+Tasha: Haha, just with that 50 cents difference
+
+850
+00:40:44,300 --> 00:40:45,800
+杰克: 所以你们只是转卖，对吧？
+Jake: So you guys just resell, right?
+
+851
+00:40:45,800 --> 00:40:46,600
+杰克: 还是什么？
+Jake: Or what?
+
+852
+00:40:46,466 --> 00:40:48,466
+塔莎: 是的，我们只是转卖
+Tasha: Yeah, we just resell it
+
+853
+00:40:48,200 --> 00:40:50,033
+杰克: 哈哈，那有可能
+Jake: Haha, that's possible
+
+854
+00:40:50,666 --> 00:40:52,766
+塔莎: 50美分的差价能赚20万
+Tasha: A 50 cent difference can earn 200,000
+
+855
+00:40:53,300 --> 00:40:54,933
+杰克: 那可行
+Jake: That works
+
+856
+00:40:53,366 --> 00:40:55,000
+Other: 现在有多少人在赚这个差价？
+Other: How many people are making that difference now?
+
+857
+00:40:54,966 --> 00:40:56,766
+塔莎: 我不知道，我爸爸说生意不如以前好了
+Tasha: I don't know, my dad says business isn't as good as before
+
+858
+00:40:56,766 --> 00:40:59,333
+塔莎: 我们以前一个月卖一船
+Tasha: We used to sell one boat a month
+
+859
+00:41:00,466 --> 00:41:02,533
+塔莎: 现在，我不知道，可能几个月一船
+Tasha: Now, I don't know, maybe one boat every few months
+
+860
+00:41:04,833 --> 00:41:06,766
+杰克: 是的，以前是个好生意
+Jake: Yeah, it used to be a good business
+
+861
+00:41:06,266 --> 00:41:08,500
+塔莎: 房地产市场繁荣的时候很好
+Tasha: It was good when the real estate market was booming
+
+862
+00:41:07,766 --> 00:41:09,400
+杰克: 哦，建摩天大楼
+Jake: Oh, building skyscrapers
+
+863
+00:41:08,633 --> 00:41:10,466
+塔莎: 一个月一船
+Tasha: One boat a month
+
+864
+00:41:09,400 --> 00:41:10,566
+杰克: 现在没有摩天大楼在建了
+Jake: Now there are no skyscrapers being built
+
+865
+00:41:10,466 --> 00:41:12,900
+塔莎: 而且我们家旁边停着几艘船
+Tasha: And several boats are parked next to our house
+
+866
+00:41:10,566 --> 00:41:11,533
+杰克: 它们就停在那里，是吧？
+Jake: And they're just sitting there, huh?
+
+867
+00:41:12,900 --> 00:41:15,133
+塔莎: 然后每天都在铲哈哈
+
+868
+00:41:14,366 --> 00:41:16,000
+杰克: 哈哈，我们发行一些货币吧。
+Jake: Haha, let's issue some currency.
+
+869
+00:41:17,833 --> 00:41:19,500
+塔莎: 偶尔我也会帮忙铲铲
+
+870
+00:41:19,633 --> 00:41:22,566
+杰克: 偶尔，我也操作挖掘机。
+Jake: Occasionally, I also operate the excavator.
+
+871
+00:41:24,733 --> 00:41:25,933
+杰克: 对，是的。
+Jake: Right, yeah.
+
+872
+00:41:26,733 --> 00:41:27,633
+塔莎: 我会操作。
+Tasha: I can operate it.
+
+873
+00:41:29,533 --> 00:41:30,533
+杰克: 那真的很厉害。
+Jake: That's really impressive.
+
+874
+00:41:35,033 --> 00:41:36,166
+杰克: 那需要执照吗？
+Jake: Do you need a license for that?
+
+875
+00:41:36,766 --> 00:41:38,133
+塔莎: 这个，这个……
+Tasha: This, this...
+
+876
+00:41:38,133 --> 00:41:39,333
+塔莎: 我在家里操作。
+Tasha: I operate it at home.
+
+877
+00:41:39,333 --> 00:41:40,466
+塔莎: 不需要执照，对吧？
+Tasha: No need for a license, right?
+
+878
+00:41:40,500 --> 00:41:41,300
+杰克: 哦。
+Jake: Oh.
+
+879
+00:41:41,733 --> 00:41:44,066
+塔莎: 我们家有一个沙场。
+Tasha: We have a sand yard at home.
+
+880
+00:41:41,800 --> 00:41:42,733
+杰克: 你不会把它开上路，对吧？
+Jake: You don't take it on the road, right?
+
+881
+00:41:44,366 --> 00:41:45,500
+杰克: 你不会把它开上路，对吧？
+Jake: You wouldn't take it on the road, right?
+
+882
+00:41:45,500 --> 00:41:46,633
+Others: 这里还有一个沙场。
+Others: There's another sand yard here.
+
+883
+00:41:46,933 --> 00:41:49,366
+塔莎: 只是一个运沙子的地方。
+Tasha: It's just a place for hauling sand.
+
+884
+00:41:49,333 --> 00:41:50,333
+杰克: 这个，这个……
+Jake: This, this...
+
+885
+00:41:50,433 --> 00:41:51,700
+杰克: 你的地方有多大？
+Jake: How big is your place?
+
+886
+00:41:51,866 --> 00:41:52,900
+塔莎: 我的地方有多大？
+Tasha: How big is my place?
+
+887
+00:41:52,933 --> 00:41:54,433
+杰克: 是的。
+Jake: Yeah.
+
+888
+00:41:53,566 --> 00:41:54,466
+塔莎: 我不知道。
+Tasha: I don't know.
+
+889
+00:41:54,633 --> 00:41:55,500
+杰克: 你不知道？
+Jake: You don't know?
+
+890
+00:41:55,600 --> 00:41:56,733
+杰克: 它那么大。
+Jake: It's so vast.
+
+891
+00:41:59,366 --> 00:42:00,300
+塔莎: 那是一个无人区。
+Tasha: It's an uninhabited area.
+
+892
+00:42:00,300 --> 00:42:01,900
+塔莎: 所有的沙子都堆在我们那里。
+Tasha: All the sand is piled up in our place.
+
+893
+00:42:02,933 --> 00:42:03,933
+杰克: 哦，我明白了。
+Jake: Oh, I see.
+
+894
+00:42:03,933 --> 00:42:05,100
+杰克: 那是真的，我想。
+Jake: That's true, I think.
+
+895
+00:42:08,233 --> 00:42:09,833
+塔莎: 有多少人能住在海边？
+Tasha: How many people can live by the sea?
+
+896
+00:42:09,866 --> 00:42:10,466
+塔莎: 不是海边。
+Tasha: Not by the sea.
+
+897
+00:42:10,466 --> 00:42:11,500
+塔莎: 在湖边或河边。
+Tasha: By the lake or river.
+
+898
+00:42:12,000 --> 00:42:12,800
+Others: 在哪里？
+Others: Where is it?
+
+899
+00:42:12,933 --> 00:42:13,933
+塔莎: 在大运河边。
+Tasha: By the Grand Canal.
+
+900
+00:42:14,800 --> 00:42:15,766
+杰克: 京杭大运河。
+Jake: The Beijing-Hangzhou Grand Canal.
+
+901
+00:42:15,766 --> 00:42:16,500
+杰克: 我知道那个。
+Jake: I know that.
+
+902
+00:42:16,500 --> 00:42:17,333
+Others: 哪个城市？
+Others: Which city?
+
+903
+00:42:17,533 --> 00:42:18,800
+杰克: 扬州。
+Jake: Yangzhou.
+
+904
+00:42:17,900 --> 00:42:19,166
+Others: 扬州。
+Others: Yangzhou.
+
+905
+00:42:30,566 --> 00:42:32,000
+杰克: 没有江苏人这回事。
+Jake: There's no such thing as a Jiangsu person.
+
+906
+00:42:32,333 --> 00:42:34,333
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+907
+00:42:32,966 --> 00:42:34,266
+塔莎: 你家做生意吗？
+Tasha: Does your family do business?
+
+908
+00:42:34,400 --> 00:42:35,633
+杰克: 我家不做生意。
+Jake: My family doesn't do business.
+
+909
+00:42:35,466 --> 00:42:36,700
+塔莎: 你家做什么的？
+Tasha: What does your family do?
+
+910
+00:42:36,600 --> 00:42:38,300
+杰克: 我家……
+Jake: My family...
+
+911
+00:42:36,700 --> 00:42:38,233
+塔莎: 难怪，难怪。
+Tasha: No wonder, no wonder.
+
+912
+00:42:38,233 --> 00:42:39,633
+塔莎: 因为我家全是做生意的。
+Tasha: Because my family is all in business.
+
+913
+00:42:39,966 --> 00:42:40,433
+杰克: 哦。
+Jake: Oh.
+
+914
+00:42:42,633 --> 00:42:43,633
+杰克: 我家做什么的？
+Jake: What does my family do?
+
+915
+00:42:43,566 --> 00:42:44,633
+塔莎: 你家做什么的？
+Tasha: What does your family do?
+
+916
+00:42:44,533 --> 00:42:45,833
+杰克: 我家在办公室工作。
+Jake: My family works in offices.
+
+917
+00:42:45,833 --> 00:42:50,100
+塔莎: 每个人都在办公室工作？那太好了。
+Tasha: Everyone works in offices? That's great.
+
+918
+00:42:46,766 --> 00:42:49,000
+杰克: 是啊，每个人都在办公室工作。
+Jake: Yeah, everyone works in offices.
+
+919
+00:42:51,133 --> 00:42:52,366
+杰克: 那不无聊吗？
+Jake: Isn't that boring?
+
+920
+00:42:52,366 --> 00:42:53,766
+杰克: 不需要叉车。
+Jake: No forklifts needed.
+
+921
+00:42:53,633 --> 00:42:54,900
+塔莎: 叉车有什么好的？
+Tasha: What's so good about forklifts?
+
+922
+00:42:54,833 --> 00:42:57,533
+杰克:没叉车坐啊
+
+923
+00:42:57,533 --> 00:42:58,633
+杰克:没有叉车坐
+
+924
+00:42:58,533 --> 00:43:00,066
+塔莎: 你要叉车座位干什么？
+Tasha: What do you need forklift seats for?
+
+925
+00:43:00,033 --> 00:43:01,300
+杰克: 那不酷吗？
+Jake: Isn't that cool?
+
+926
+00:43:05,433 --> 00:43:07,866
+舒尔: 哦，你们回来了。
+Shure: Oh, you guys are back.
+
+927
+00:43:06,000 --> 00:43:07,766
+杰克: 你们有电吗？
+Jake: Do you guys have power?
+
+928
+00:43:07,766 --> 00:43:08,833
+杰克: 你们有电吗？
+Jake: Do you have power?
+
+929
+00:43:10,000 --> 00:43:11,500
+舒尔: 你们没电了？
+Shure: You ran out of power?
+
+930
+00:43:11,100 --> 00:43:11,900
+卡特里娜: 啊？
+Katrina: Huh?
+
+931
+00:43:16,100 --> 00:43:18,866
+舒尔: 你这么勤奋地偷懒还没被发现，厉害。
+Shure: You're slacking off so diligently without getting caught, amazing.
+
+932
+00:43:21,066 --> 00:43:22,600
+舒尔: 哦，别提了。
+Shure: Oh, don't mention it.
+
+933
+00:43:22,600 --> 00:43:25,966
+舒尔: 杰克，我在这儿努力编辫子呢。
+Shure: Jake, I'm here working hard on braids.
+
+934
+00:43:22,733 --> 00:43:24,433
+杰克: 哦，没事。
+Jake: Oh, it's fine.
+
+935
+00:43:25,966 --> 00:43:27,833
+舒尔: 就坐在这儿偷懒。
+Shure: Just sitting here slacking off.
+
+936
+00:43:27,733 --> 00:43:30,000
+杰克: 嘿嘿嘿。
+Jake: Hehehe.
+
+937
+00:43:29,366 --> 00:43:30,833
+爱丽丝: 包裹到了吗？
+Alice: Has the package arrived?
+
+938
+00:43:30,766 --> 00:43:31,933
+杰克: 包裹到了。
+Jake: The package has arrived.
+
+939
+00:43:35,933 --> 00:43:37,800
+爱丽丝: 这是我的什么？
+Alice: What is this of mine?
+
+940
+00:43:38,800 --> 00:43:39,833
+杰克: 这是什么？
+Jake: What is this?
+
+941
+00:43:40,933 --> 00:43:42,066
+爱丽丝: 雏菊。
+Alice: Daisies.
+
+942
+00:43:42,233 --> 00:43:47,066
+舒尔: daisy 舒尔: Daisy。
+Shure: daisy
+Shure: Daisy.
+
+943
+00:43:47,800 --> 00:43:50,300
+卡特里娜: 嘿嘿，很花哨。
+Katrina: Hehe, very fancy.
+
+944
+00:43:47,833 --> 00:43:49,133
+爱丽丝: 哈。
+Alice: Ha.
+
+945
+00:43:50,566 --> 00:43:52,433
+杰克: 5块钱是什么？
+Jake: What's 5 bucks?
+
+946
+00:43:52,733 --> 00:43:54,933
+Others: 猕猴桃现在5块钱。
+Others: Kiwis are 5 bucks now.
+
+947
+00:43:54,833 --> 00:43:55,833
+舒尔: 是这么大一瓶。
+Shure: It's this big bottle.
+
+948
+00:43:56,266 --> 00:43:58,766
+舒尔: 以前500毫升3块钱。
+Shure: It used to be 3 yuan for 500 milliliters.
+
+949
+00:43:57,500 --> 00:43:58,700
+塔莎: 4块钱。
+Tasha: 4 yuan.
+
+950
+00:43:58,766 --> 00:44:00,700
+舒尔: 然后一升4块钱。
+Shure: And then 4 yuan for a liter.
+
+951
+00:44:00,866 --> 00:44:01,366
+舒尔: 所以……
+Shure: So...
+
+952
+00:44:01,366 --> 00:44:03,866
+舒尔: 人们把这4块钱的饮料叫低端饮料。
+Shure: People called this 4 yuan drink a low-end drink.
+
+953
+00:44:04,233 --> 00:44:05,700
+杰克: 哦，4块钱还算低端？
+Jake: Oh, 4 yuan is still considered low-end?
+
+954
+00:44:05,800 --> 00:44:06,700
+杰克: 那两枚EO币。
+Jake: Two EO coins then.
+
+955
+00:44:06,700 --> 00:44:08,800
+杰克: 哦天，哈哈。
+Jake: Oh man, haha.
+
+956
+00:44:08,633 --> 00:44:11,200
+舒尔: 现在涨到5块钱了。
+Shure: And now it has increased to 5 yuan.
+
+957
+00:44:11,200 --> 00:44:13,500
+舒尔: 大家都说买不起了。
+Shure: Everyone is saying they can't afford it anymore.
+
+958
+00:44:13,133 --> 00:44:14,833
+杰克: 哈哈，真是低端。
+Jake: Haha, truly low-end.
+
+959
+00:44:20,466 --> 00:44:23,200
+舒尔: （唱）有人跟着风……
+Shure: (singing) Someone follows the wind...
+
+960
+00:44:21,800 --> 00:44:25,000
+爱丽丝: 好了，我弄完了，谢谢。
+Alice: OK, I'm done, thank you.
+
+961
+00:44:24,200 --> 00:44:26,200
+杰克: 谢谢，太好了，谢谢。
+Jake: Thanks, great, thanks.
+
+962
+00:44:25,400 --> 00:44:26,966
+舒尔: 这些不都是我做的吗？
+Shure: Didn't I do all of this?
+
+963
+00:44:27,566 --> 00:44:29,066
+爱丽丝: 我要把这个拆开吗？
+Alice: Should I take this apart?
+
+964
+00:44:29,900 --> 00:44:31,000
+Others: 哇，太酷了。
+Others: Wow, so cool.
+
+965
+00:44:32,833 --> 00:44:33,933
+Others: 我做得棒不棒？
+Others: Did I do great or what?
+
+966
+00:44:33,933 --> 00:44:34,566
+杰克: 我来帮你。
+Jake: Let me help you.
+
+967
+00:44:34,566 --> 00:44:35,400
+爱丽丝: 没事，没事。
+Alice: It's okay, it's okay.
+
+968
+00:44:34,566 --> 00:44:35,733
+杰克: 厉害。
+Jake: Impressive.
+
+969
+00:44:40,900 --> 00:44:41,766
+杰克: 让我看看。
+Jake: Let me take a look.
+
+970
+00:44:43,133 --> 00:44:44,333
+杰克: 哇，太棒了！
+Jake: Wow, so awesome!
+
+971
+00:44:44,900 --> 00:44:47,933
+卡特里娜: 哈哈，他的表情太有限了。
+Katrina: Haha, his expressions are so limited.
+
+972
+00:44:47,933 --> 00:44:52,433
+杰克: 哈哈，爱自己是终身浪漫的开始。
+Jake: Haha, loving oneself is the beginning of a lifelong romance.
+
+973
+00:44:49,600 --> 00:44:52,366
+舒尔: 爱自己是终身浪漫的开始。
+Shure: Loving oneself is the beginning of a lifelong romance.
+
+974
+00:44:52,366 --> 00:44:53,433
+舒尔: 这个看起来很棒。
+Shure: This looks great.
+
+975
+00:44:53,500 --> 00:44:54,566
+舒尔: 我要这个。
+Shure: I want this one.
+
+976
+00:45:00,966 --> 00:45:02,900
+舒尔: 哇，这些太酷了。
+Shure: Wow, these are so cool.
+
+977
+00:45:03,566 --> 00:45:04,800
+其他人：0.5个EGO
+Others: 0.5 EGO.
+
+978
+00:45:08,900 --> 00:45:11,233
+舒尔: 别急着赶路，享受它。哇。
+Shure: Don't rush the journey, enjoy it. Wow.
+
+979
+00:45:16,700 --> 00:45:17,766
+塔莎: 还剩几天？
+Tasha: How many days are left?
+
+980
+00:45:18,933 --> 00:45:20,333
+塔莎: 不就剩两天了吗？
+Tasha: Isn't it just two days left?
+
+981
+00:45:20,366 --> 00:45:20,766
+杰克: 是的。
+Jake: Yes.
+
+982
+00:45:22,833 --> 00:45:23,766
+杰克: 大家都没电了。
+Jake: Out of power for everyone.
+
+983
+00:45:23,900 --> 00:45:26,633
+杰克: 那好，没电了？
+Jake: That's good, no power left?
+
+984
+00:45:26,633 --> 00:45:29,933
+露西亚: 嗯，好像我接得太晚了。
+Lucia: Hmm, looks like I connected it too late.
+
+985
+00:45:29,933 --> 00:45:31,333
+露西亚: 接得太晚了，是吧？
+Lucia: Connected it too late, huh?
+
+986
+00:45:31,366 --> 00:45:33,700
+杰克: 没事。
+Jake: No worries.
+
+987
+00:45:31,433 --> 00:45:33,766
+露西亚: 刚下来，要发消息。
+Lucia: Just came down, need to send a message.
+
+988
+00:45:35,700 --> 00:45:37,033
+杰克: 没事，没事。
+Jake: It's okay, it's okay.
+
+989
+00:45:41,366 --> 00:45:42,100
+露西亚: 既然没电了，
+Lucia: Since it's out of power,
+
+990
+00:45:42,100 --> 00:45:43,500
+露西亚: 我们要不要开另一个？
+Lucia: Should we turn on another one?
+
+991
+00:45:45,200 --> 00:45:47,100
+杰克: 开另一个，对，开吧。
+Jake: Turn on another one, yes, turn it on.
+
+992
+00:45:47,133 --> 00:45:48,633
+杰克: 谢谢，开什么？
+Jake: Thank you, turn on what?
+
+993
+00:45:49,500 --> 00:45:52,533
+露西亚: 开一个新的。
+Lucia: Turn on a new one.
+
+994
+00:45:52,033 --> 00:45:52,566
+杰克: 开吧，好的。
+Jake: Turn it on, okay.
+
+995
+00:45:55,600 --> 00:45:56,400
+杰克: 好的。
+Jake: Alright.
+
+996
+00:46:01,366 --> 00:46:02,166
+塔莎: 开箱。
+Tasha: Unboxing.
+
+997
+00:46:05,500 --> 00:46:06,766
+杰克: 徒手开箱表演。
+Jake: Unboxing performance with bare hands.
+
+998
+00:46:06,766 --> 00:46:08,133
+杰克:一个徒手拆快递
+
+999
+00:46:07,466 --> 00:46:08,766
+塔莎: 我去拿剪刀。
+Tasha: I'm getting the scissors.
+
+1000
+00:46:08,600 --> 00:46:09,700
+杰克: 嘿，你的线呢？
+Jake: Hey, where's your cable?
+
+1001
+00:46:09,700 --> 00:46:12,000
+杰克: 你知道你的线在哪儿吗？
+Jake: Do you know where your cable is?
+
+1002
+00:46:12,666 --> 00:46:13,933
+塔莎: 现在在我包里。
+Tasha: It's in my bag now.
+
+1003
+00:46:13,933 --> 00:46:17,333
+塔莎: 我的包，在我包里。
+Tasha: My bag, it's in my bag.
+
+1004
+00:46:18,133 --> 00:46:20,166
+杰克: 你的包在楼上吗？
+Jake: Is your bag upstairs?
+
+1005
+00:46:19,300 --> 00:46:20,100
+塔莎: 在楼上。
+Tasha: Upstairs.
+
+1006
+00:46:20,200 --> 00:46:21,533
+杰克: 好，那去拿吧。
+Jake: Okay, then go get it.
+
+1007
+00:46:25,333 --> 00:46:26,233
+杰克: 你先去哪儿？
+Jake: Where are you going first?
+
+1008
+00:46:54,300 --> 00:46:55,100
+卡特里娜: 拍卖。
+Katrina: Auction.
+
+1009
+00:46:55,766 --> 00:46:58,233
+卡特里娜: 舒尔的签名物品拍卖。
+Katrina: Shure's autographed item up for auction.
+
+1010
+00:46:58,233 --> 00:46:59,333
+卡特里娜: 起拍价10亿币。
+Katrina: Starting at 1 billion coins.
+
+1011
+00:46:59,333 --> 00:47:02,500
+杰克: 舒尔，舒尔，舒尔。
+Jake: Shure, Shure, Shure.
+
+1012
+00:47:02,700 --> 00:47:06,000
+杰克: 哈哈，让我看看，让我看看。
+Jake: Haha, let me see, let me see.
+
+1013
+00:47:04,533 --> 00:47:06,633
+塔莎: 哦，我的剪刀呢？
+Tasha: Oh, where are my scissors?
+
+1014
+00:47:09,500 --> 00:47:10,300
+杰克: 这是什么？
+Jake: What's this?
+
+1015
+00:47:10,300 --> 00:47:12,700
+杰克: 白鸟词典。
+Jake: White Bird Dictionary.
+
+1016
+00:47:11,566 --> 00:47:12,800
+舒尔: 鸟词典。
+Shure: Bird Dictionary.
+
+1017
+00:47:11,933 --> 00:47:14,033
+塔莎: 是的，我放在行李箱里带来的。
+Tasha: Yes, I brought it in my suitcase.
+
+1018
+00:47:12,700 --> 00:47:13,500
+杰克: 鸟在哪儿？
+Jake: Where's the bird?
+
+1019
+00:47:14,400 --> 00:47:15,200
+舒尔: 鸟。
+Shure: Bird.
+
+1020
+00:47:18,100 --> 00:47:20,433
+舒尔: 然后这是带言字旁的传统字。
+Shure: And then this is the traditional character with the speech radical.
+
+1021
+00:47:20,433 --> 00:47:22,600
+舒尔: 然后这部分是词。
+Shure: And then this part is the word.
+
+1022
+00:47:20,533 --> 00:47:23,033
+杰克: 哦，哦，哦。
+Jake: Oh, oh, oh.
+
+1023
+00:47:22,433 --> 00:47:23,233
+塔莎: 哦。
+Tasha: Oh.
+
+1024
+00:47:22,833 --> 00:47:24,100
+舒尔: 然后把这些都盖上。
+Shure: And then cover all this.
+
+1025
+00:47:24,100 --> 00:47:25,100
+舒尔: 这是一个点。
+Shure: This is a dot.
+
+1026
+00:47:24,900 --> 00:47:25,700
+塔莎: 哦，哦。
+Tasha: Oh, oh.
+
+1027
+00:47:25,833 --> 00:47:27,633
+杰克: 这样可以吗？
+Jake: Is that okay?
+
+1028
+00:47:27,100 --> 00:47:28,266
+舒尔: 对，这个……
+Shure: Right, this...
+
+1029
+00:47:28,266 --> 00:47:30,200
+舒尔: 我绞尽脑汁想了很久。
+Shure: I've been racking my brains for a long time.
+
+1030
+00:47:29,500 --> 00:47:30,333
+杰克: 这个花了多少钱？
+Jake: How much did this cost?
+
+1031
+00:47:30,400 --> 00:47:31,866
+舒尔: 这是我自己写的。
+Shure: I wrote this myself.
+
+1032
+00:47:31,766 --> 00:47:33,500
+杰克: 哦，那不值多少钱？
+Jake: Oh, it's not worth much then?
+
+1033
+00:47:33,566 --> 00:47:37,100
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1034
+00:47:35,600 --> 00:47:37,466
+舒尔: 更值钱，不是吗？
+Shure: It's worth even more, isn't it?
+
+1035
+00:47:37,100 --> 00:47:38,100
+杰克: 好吧，好吧，更值钱。
+Jake: Okay, okay, it's worth more.
+
+1036
+00:47:38,100 --> 00:47:38,966
+杰克: 很值钱。
+Jake: It's worth a lot.
+
+1037
+00:47:57,466 --> 00:47:58,266
+杰克: 也许吧。
+Jake: Maybe.
+
+1038
+00:47:57,633 --> 00:48:01,300
+塔莎: 56只是一家。
+Tasha: 56 is just one family.
+
+1039
+00:48:02,500 --> 00:48:03,800
+杰克: 你知道他的名字吗？
+Jake: Do you know his name?
+
+1040
+00:48:03,833 --> 00:48:04,633
+杰克: 他的英文名。
+Jake: His English name.
+
+1041
+00:48:05,066 --> 00:48:05,866
+舒尔: 他的？
+Shure: His?
+
+1042
+00:48:05,700 --> 00:48:06,500
+杰克: 是的。
+Jake: Yeah.
+
+1043
+00:48:08,800 --> 00:48:10,233
+杰克: 他的名字叫古希腊。
+Jake: His name is Ancient Greece.
+
+1044
+00:48:10,500 --> 00:48:11,300
+舒尔: 真的吗？
+Shure: Really?
+
+1045
+00:48:10,700 --> 00:48:12,333
+杰克: 真的，他的名字叫古希腊，对吧。
+Jake: Really, his name is Ancient Greece, right.
+
+1046
+00:48:14,166 --> 00:48:14,966
+杰克: 这个……
+Jake: This...
+
+1047
+00:48:16,800 --> 00:48:17,800
+杰克: 叫古希腊。
+Jake: Called Ancient Greece.
+
+1048
+00:48:23,433 --> 00:48:24,766
+Others: 你觉得是没油了还是打火石？
+Others: Do you think it's out of fuel or the flint?
+
+1049
+00:48:24,766 --> 00:48:25,766
+Others: 还是没油了？
+Others: Or is it out of fuel?
+
+1050
+00:48:26,200 --> 00:48:28,400
+Others: 肯定是没油了，没油了。
+Others: It must be out of fuel, out of fuel.
+
+1051
+00:48:33,333 --> 00:48:34,500
+杰克: 嘿，你把线拿下来了。
+Jake: Hey, you took the wire down.
+
+1052
+00:48:35,366 --> 00:48:38,266
+舒尔: 加点酒精，也许，哈哈。
+Shure: Add some alcohol, maybe, haha.
+
+1053
+00:48:36,566 --> 00:48:37,600
+露西亚: 哇，太可爱了。
+Lucia: Wow, so cute.
+
+1054
+00:48:40,000 --> 00:48:41,666
+舒尔: 哈哈，不行。
+Shure: Haha, no way.
+
+1055
+00:48:42,800 --> 00:48:44,433
+舒尔: 会把整个都烧了。
+Shure: It'll just burn the whole thing.
+
+1056
+00:48:45,966 --> 00:48:48,400
+杰克: 不错，阳光明媚又温暖，很暖和。
+Jake: It's nice, sunny and warm, very warm.
+
+1057
+00:48:48,933 --> 00:48:50,166
+杰克: 让我看看。
+Jake: Let me take a look.
+
+1058
+00:48:50,233 --> 00:48:51,033
+杰克: 我是个……
+Jake: I'm a...
+
+1059
+00:48:51,966 --> 00:48:53,633
+杰克: 让我看看，我是什么？
+Jake: Let me see, what am I?
+
+1060
+00:48:56,066 --> 00:48:56,866
+塔莎: 超级丑。
+Tasha: Super ugly.
+
+1061
+00:49:15,600 --> 00:49:16,500
+杰克: 其实看起来挺不错的。
+Jake: It actually looks pretty good.
+
+1062
+00:49:16,366 --> 00:49:17,166
+塔莎: 对吧？
+Tasha: Right?
+
+1063
+00:49:16,566 --> 00:49:18,600
+杰克: 对吧？挺潮的，真的。
+Jake: Right? It's pretty trendy, really.
+
+1064
+00:49:17,000 --> 00:49:18,400
+舒尔: 超级潮，真的。
+Shure: Super trendy, really.
+
+1065
+00:49:18,466 --> 00:49:19,633
+舒尔: 你今天就这样去吗？
+Shure: Are you going like this today?
+
+1066
+00:49:19,566 --> 00:49:20,766
+杰克: 是的，我今天就这样去。
+Jake: Yeah, I'm going like this today.
+
+1067
+00:49:20,800 --> 00:49:21,966
+杰克: 这是个大奖牌，对吧？
+Jake: This is a big medal, right?
+
+1068
+00:49:21,966 --> 00:49:23,533
+杰克: 这是，这是
+Jake: This is, this is
+
+1069
+00:49:22,666 --> 00:49:27,900
+舒尔: 你可以叫这个超新星
+Shure: You can call this supernova
+
+1070
+00:49:37,133 --> 00:49:38,433
+塔莎: 还有一个短腿的
+Tasha: There's also a short-legged one
+
+1071
+00:49:38,600 --> 00:49:40,000
+杰克: 这个在哪儿？
+Jake: Where is this one?
+
+1072
+00:49:40,000 --> 00:49:41,133
+杰克: 这是短腿的
+Jake: This is the short-legged one
+
+1073
+00:49:41,733 --> 00:49:42,766
+杰克: 哦，这是长腿的
+Jake: Oh, this is the long-legged one
+
+1074
+00:49:44,833 --> 00:49:45,633
+舒尔: 摔倒了
+Shure: Fell down
+
+1075
+00:49:47,866 --> 00:49:48,833
+舒尔: 北邮现在上热搜了
+Shure: Beiyou is trending now
+
+1076
+00:49:48,833 --> 00:49:50,233
+舒尔: 为什么上热搜？
+Shure: Why is it trending?
+
+1077
+00:49:51,300 --> 00:49:52,766
+杰克: 这个是长腿的
+Jake: This one is long-legged
+
+1078
+00:49:56,000 --> 00:49:58,466
+舒尔: 有人在阳台上抽烟把衣服点着了
+Shure: Someone was smoking on the balcony and set the clothes on fire
+
+1079
+00:49:58,333 --> 00:49:59,333
+杰克: 我的天
+Jake: Oh my god
+
+1080
+00:50:02,000 --> 00:50:04,000
+杰克: 这是哪儿？沙河？
+Jake: Where is this place? Shahe?
+
+1081
+00:50:06,200 --> 00:50:08,100
+杰克: 哈哈哈
+Jake: Hahaha
+
+1082
+00:50:10,133 --> 00:50:11,400
+杰克: 面包大学是什么？
+Jake: What is Bread University?
+
+1083
+00:50:12,566 --> 00:50:14,700
+舒尔: 你不知道面包大学是什么？
+Shure: You don't know what Bread University is?
+
+1084
+00:50:17,400 --> 00:50:18,366
+杰克: 我发给你看看
+Jake: Let me send it up to you
+
+1085
+00:50:17,500 --> 00:50:20,100
+舒尔: 连老校友都不懂这个梗，对吧？
+Shure: Even the senior alumni don't understand this joke, right?
+
+1086
+00:50:20,533 --> 00:50:21,500
+杰克: 我真的不懂
+Jake: I really don't get it
+
+1087
+00:50:21,833 --> 00:50:22,700
+杰克: 你知道吗？
+Jake: Do you know?
+
+1088
+00:50:22,600 --> 00:50:23,600
+舒尔: 我也不知道
+Shure: I don't know either
+
+1089
+00:50:23,333 --> 00:50:24,833
+杰克:那你们也老学长
+
+1090
+00:50:24,233 --> 00:50:25,666
+舒尔: 我也是老校友
+Shure: I'm also a senior alumni
+
+1091
+00:50:27,033 --> 00:50:28,433
+杰克: 不懂这些沙河梗
+Jake: Don't get these Shahe jokes
+
+1092
+00:50:51,200 --> 00:50:52,000
+杰克: 收获
+Jake: Harvest
+
+1093
+00:50:55,500 --> 00:50:56,366
+杰克: 我的天
+Jake: Oh my gosh
+
+1094
+00:51:04,400 --> 00:51:05,733
+杰克: 哦哈哈
+Jake: Oh haha
+
+1095
+00:51:05,733 --> 00:51:06,433
+杰克: 哦靠
+Jake: Oh shit
+
+1096
+00:51:06,433 --> 00:51:08,233
+杰克: 哈哈，绝了
+Jake: Haha, brilliant
+
+1097
+00:51:08,233 --> 00:51:12,700
+杰克: 哈哈，这是缘分，这是命运
+Jake: Haha, this is fate, this is destiny
+
+1098
+00:51:14,433 --> 00:51:17,733
+露西亚: 哦然后大门是这样的
+Lucia: Oh and then the big door was like this
+
+1099
+00:51:17,733 --> 00:51:18,766
+露西亚: 还有这个
+Lucia: And there's this one too
+
+1100
+00:51:18,766 --> 00:51:21,500
+露西亚: 嗯嗯，然后我背着背包
+Lucia: Mm-hmm, and then I had a backpack on
+
+1101
+00:51:21,500 --> 00:51:23,500
+露西亚: 就挂在背包带上
+Lucia: It was just hanging on the backpack strap
+
+1102
+00:51:23,533 --> 00:51:24,500
+露西亚: 我先穿过门
+Lucia: I went through the door first
+
+1103
+00:51:24,500 --> 00:51:26,233
+露西亚: 他一边跟我说话一边走进去
+Lucia: He was talking to me and walking in
+
+1104
+00:51:26,233 --> 00:51:27,433
+杰克: 其实，它就挂在那儿
+Jake: Actually, it was hanging there
+
+1105
+00:51:27,433 --> 00:51:32,300
+露西亚: 哈哈，走着走着，哈哈
+Lucia: Haha, walking and walking, haha
+
+1106
+00:51:32,500 --> 00:51:34,766
+杰克: 如果设计得更好，它可以自动解开包
+Jake: If it was designed better, it could automatically unhook the bag
+
+1107
+00:51:34,766 --> 00:51:36,233
+露西亚: 那真的很好笑
+Lucia: That's really funny
+
+1108
+00:51:37,766 --> 00:51:38,433
+露西亚: 因为你……
+Lucia: Because you are...
+
+1109
+00:51:38,433 --> 00:51:40,833
+露西亚: 当你不知道的时候，你整体是在向前移动。
+Lucia: When you don't know, you're overall moving forward.
+
+1110
+00:51:40,833 --> 00:51:42,200
+杰克: 是的，是的。
+Jake: Yes, yes.
+
+1111
+00:51:40,933 --> 00:51:42,300
+露西亚: 向后仰。
+Lucia: Leaning back.
+
+1112
+00:51:42,200 --> 00:51:44,300
+露西亚: 就像你正常在地上走。
+Lucia: It's like you're walking normally on the ground.
+
+1113
+00:51:44,300 --> 00:51:46,233
+露西亚: 突然有人把你拉回来。
+Lucia: And suddenly someone pulls you back.
+
+1114
+00:51:47,533 --> 00:51:49,500
+杰克: 就像那样。
+Jake: Just like that.
+
+1115
+00:51:50,233 --> 00:51:51,733
+露西亚: 是的，是的，是的，哈哈哈。
+Lucia: Yes, yes, yes, hahaha.
+
+1116
+00:51:51,733 --> 00:51:53,800
+露西亚: 不，不，因为你学的时候，你像个新手。
+Lucia: No, no, because when you were learning, you were like a rookie.
+
+1117
+00:51:53,800 --> 00:51:56,500
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1118
+00:51:56,900 --> 00:51:59,300
+露西亚: 你似乎有一些很神奇的技能。
+Lucia: You seem to have some really magical skills.
+
+1119
+00:51:59,400 --> 00:52:00,200
+杰克: 哦，真的吗？
+Jake: Oh, really?
+
+1120
+00:52:00,333 --> 00:52:01,133
+露西亚: 是的。
+Lucia: Yes.
+
+1121
+00:52:01,733 --> 00:52:02,533
+杰克: 你好。
+Jake: Hello.
+
+1122
+00:52:03,600 --> 00:52:06,733
+杰克: 我妹妹今天又生气了。
+Jake: My sister got upset again today.
+
+1123
+00:52:06,733 --> 00:52:09,033
+杰克: 她又让我们都生气了。
+Jake: She made us all upset again.
+
+1124
+00:52:09,366 --> 00:52:11,133
+露西亚: 怎么了？跟我们说说。
+Lucia: What happened? Tell us.
+
+1125
+00:52:10,966 --> 00:52:11,966
+Others: 我爱听。
+Others: I love to listen.
+
+1126
+00:52:11,966 --> 00:52:13,733
+Others: 爱听别人的故事。
+Others: Love to hear other people's stories.
+
+1127
+00:52:13,733 --> 00:52:17,200
+杰克: 哈哈哈，这是什么？
+Jake: Hahaha, what's this?
+
+1128
+00:52:17,200 --> 00:52:17,933
+杰克: 哦我的。
+Jake: Oh my.
+
+1129
+00:52:17,933 --> 00:52:20,400
+杰克: 首先，我们在路上看到一台挖掘机。
+Jake: First, we saw an excavator on the road.
+
+1130
+00:52:20,766 --> 00:52:22,433
+杰克: 然后她问我有没有开过。
+Jake: Then she asked me if I had ever driven one.
+
+1131
+00:52:22,700 --> 00:52:24,000
+露西亚: 你开过吗？我没开过。
+Lucia: Have you? I haven't.
+
+1132
+00:52:24,000 --> 00:52:25,400
+露西亚: 他开过，哈哈。
+Lucia: He has, haha.
+
+1133
+00:52:25,400 --> 00:52:26,966
+露西亚: 哇，为什么？
+Lucia: Wow, why?
+
+1134
+00:52:28,200 --> 00:52:29,033
+露西亚: 太厉害了。
+Lucia: So amazing.
+
+1135
+00:52:29,966 --> 00:52:30,933
+杰克: 开挖掘机。
+Jake: Driving an excavator.
+
+1136
+00:52:31,966 --> 00:52:34,500
+杰克: 各种东西，还有什么？
+Jake: Various things, what else was there?
+
+1137
+00:52:37,933 --> 00:52:39,366
+露西亚: 我觉得开挖掘机很酷。
+Lucia: I think driving an excavator is cool.
+
+1138
+00:52:39,500 --> 00:52:40,333
+杰克: 我也这么觉得。
+Jake: I think so too.
+
+1139
+00:52:40,433 --> 00:52:41,500
+杰克: 我从来没试过。
+Jake: I've never tried it.
+
+1140
+00:52:42,200 --> 00:52:43,333
+杰克: 我想开挖掘机。
+Jake: I want to drive an excavator.
+
+1141
+00:52:43,333 --> 00:52:44,900
+露西亚: 我家有一台乐高挖掘机。
+Lucia: I have a LEGO excavator at home.
+
+1142
+00:52:44,900 --> 00:52:46,300
+杰克: 哈哈，你也开过。
+Jake: Haha, you drove it too.
+
+1143
+00:52:46,300 --> 00:52:47,000
+杰克: 你也开过。
+Jake: You drove it too.
+
+1144
+00:52:47,000 --> 00:52:48,100
+塔莎: 我们家有一台挖掘机。
+Tasha: We have an excavator at home.
+
+1145
+00:52:48,100 --> 00:52:48,900
+塔莎: 来我家开。
+Tasha: Come to my house and drive it.
+
+1146
+00:52:48,900 --> 00:52:50,566
+杰克: 哈哈，我不仅开过。
+Jake: Haha, not only did I drive it.
+
+1147
+00:52:48,900 --> 00:52:50,566
+杰克: 哈哈，我不仅开过。
+Jake: Haha, not only did I drive it.
+
+1148
+00:52:50,566 --> 00:52:51,500
+露西亚: 我还自己做过。
+Lucia: I've even made it myself.
+
+1149
+00:52:51,833 --> 00:52:52,733
+杰克: 你做过，是吧？
+Jake: You've made it, huh?
+
+1150
+00:52:52,733 --> 00:52:54,500
+露西亚: 我亲手一块一块拼的。
+Lucia: I made it piece by piece with my own hands.
+
+1151
+00:52:54,500 --> 00:52:56,166
+杰克: 哦，好的。
+Jake: Oh, okay.
+
+1152
+00:52:57,333 --> 00:52:58,200
+露西亚: 挺难的吧？
+Lucia: It's pretty tricky, right?
+
+1153
+00:52:58,200 --> 00:53:01,100
+露西亚: 就像我本科时丢了两辆车一样。
+Lucia: Just like when I lost two cars during my undergrad years.
+
+1154
+00:53:46,433 --> 00:53:48,133
+塔莎: 等等，我在装饰房间。
+Tasha: Wait, I'm decorating the room.
+
+1155
+00:53:48,766 --> 00:53:51,033
+杰克: 我该怎么办？
+Jake: What should I do?
+
+1156
+00:53:51,666 --> 00:53:53,166
+塔莎: 怎么办 塔莎: 怎么办？
+Tasha: what to do
+Tasha: What to do?
+
+1157
+00:53:52,800 --> 00:53:55,366
+杰克: 我该怎么办 杰克: 我该怎么办？
+Jake:what should i do
+Jake: What should I do?
+
+1158
+00:53:55,566 --> 00:53:56,766
+塔莎: 先把所有包裹拆开。
+Tasha: Unpack all the packages first.
+
+1159
+00:53:56,766 --> 00:53:57,966
+塔莎: 然后拿上来。
+Tasha: Then bring them up.
+
+1160
+00:53:57,166 --> 00:53:58,400
+杰克: 好的，好的。
+Jake: Alright, alright.
+
+1161
+00:53:58,033 --> 00:54:00,433
+塔莎: 然后我们可以开始装饰。
+Tasha: Then we can start decorating.
+
+1162
+00:54:00,533 --> 00:54:01,900
+杰克: 好的，好的。
+Jake: Okay, okay.
+
+1163
+00:54:06,300 --> 00:54:08,433
+杰克: 你插的是你的线还是我的？
+Jake: Are you plugging in your cable or mine?
+
+1164
+00:54:08,933 --> 00:54:09,866
+塔莎: 我插的是……
+Tasha: I'm plugging in...
+
+1165
+00:54:10,166 --> 00:54:12,233
+杰克: 啊？
+Jake: Huh?
+
+1166
+00:54:10,933 --> 00:54:12,166
+塔莎: 我插的是我的生命线。
+Tasha: I'm plugging in my lifeline.
+
+1167
+00:54:12,166 --> 00:54:13,366
+塔莎: 你的生命线。
+Tasha: Your lifeline.
+
+1168
+00:54:13,333 --> 00:54:14,633
+杰克: 我的生命线。
+Jake: My lifeline.
+
+1169
+00:54:14,433 --> 00:54:17,066
+塔莎: 是的，我的生命线在楼下。
+Tasha: Yeah, my lifeline is downstairs.
+
+1170
+00:54:15,633 --> 00:54:17,966
+杰克: 明白了。
+Jake: Got it.
+
+1171
+00:54:19,233 --> 00:54:20,566
+杰克: 我没生命线了。
+Jake: I'm out of lifelines.
+
+1172
+00:54:21,133 --> 00:54:22,133
+塔莎: 那你就完了。
+Tasha: Then you're done for.
+
+1173
+00:54:55,833 --> 00:54:57,033
+杰克: 古希腊怎么拼？
+Jake: How do you spell Ancient Greece?
+
+1174
+00:55:03,666 --> 00:55:05,433
+卡特里娜: 确实，在哪儿？
+Katrina: Indeed, where is it?
+
+1175
+00:55:05,433 --> 00:55:06,600
+卡特里娜: 刚开始。
+Katrina: Just started.
+
+1176
+00:55:07,366 --> 00:55:11,433
+杰克: Kawaka，卡特里娜。
+Jake: Kawaka, Katrina.
+
+1177
+00:55:12,366 --> 00:55:13,933
+杰克: 好的 cartrina 杰克: 好的，卡特里娜。
+Jake:okay cartrina
+Jake: Okay, Katrina.
+
+1178
+00:55:26,533 --> 00:55:27,766
+塔莎: 你知道这是什么吗？
+Tasha: Do you know what this is?
+
+1179
+00:55:28,066 --> 00:55:30,066
+杰克: 这个纸眼睛。
+Jake: This paper eye.
+
+1180
+00:55:28,166 --> 00:55:29,966
+塔莎: 这个。
+Tasha: This.
+
+1181
+00:55:30,166 --> 00:55:31,666
+塔莎: 你知道这些眼睛怎么用吗？
+Tasha: Do you know how to use these eyes?
+
+1182
+00:55:31,600 --> 00:55:32,533
+杰克: 贴在眼睛上。
+Jake: Stick it on the eye.
+
+1183
+00:55:31,666 --> 00:55:34,700
+塔莎: 贴在任何地方，都会很有灵魂。
+Tasha: Stick it anywhere, it will be soulful.
+
+1184
+00:55:33,000 --> 00:55:34,766
+杰克: 贴在任何地方，都会很有灵魂。
+Jake: Stick it anywhere, it will be soulful.
+
+1185
+00:55:34,800 --> 00:55:35,600
+杰克: 好的。
+Jake: Okay.
+
+1186
+00:55:36,233 --> 00:55:37,333
+杰克: 贴在眼睛上。
+Jake: Stick it on the eye.
+
+1187
+00:55:38,000 --> 00:55:39,933
+杰克: 拿出你的手机，好的。
+Jake: Take out your phone, alright.
+
+1188
+00:55:52,866 --> 00:55:54,266
+杰克: 这是谁的线？
+Jake: Whose cable is this?
+
+1189
+00:55:54,866 --> 00:55:55,666
+舒尔: 是我的。
+Shure: It's mine.
+
+1190
+00:55:54,866 --> 00:55:56,066
+杰克: 哦。
+Jake: Oh.
+
+1191
+00:55:56,500 --> 00:55:57,300
+舒尔: 怎么了？
+Shure: What's up?
+
+1192
+00:55:57,800 --> 00:55:59,066
+杰克: 那这是谁的线？
+Jake: Then whose cable is this?
+
+1193
+00:55:58,966 --> 00:56:01,133
+塔莎: 是我的。那你的线是谁的？
+Tasha: It's mine. Then whose cable is yours?
+
+1194
+00:55:59,066 --> 00:56:01,233
+杰克: 是我的。那你的线是谁的？
+Jake: It's mine. Then whose cable is yours?
+
+1195
+00:56:01,233 --> 00:56:04,666
+杰克: 你的。那这是谁的线？靠。
+Jake: Yours. Then whose cable is this? Damn.
+
+1196
+00:56:03,466 --> 00:56:04,666
+塔莎: 靠。
+Tasha: Damn.
+
+1197
+00:56:06,466 --> 00:56:08,200
+杰克: 让我看看，靠。
+Jake: Let me see, damn.
+
+1198
+00:56:08,466 --> 00:56:10,933
+杰克: 太可爱了。让我看看你有什么线。
+Jake: So cute. Let me see what kind of cable you have.
+
+1199
+00:56:11,833 --> 00:56:13,366
+杰克: 你的线就是我的线。
+Jake: Your cable is my cable.
+
+1200
+00:56:15,633 --> 00:56:17,433
+塔莎: 可爱吧？你想要什么？
+Tasha: Cute, right? What do you want?
+
+1201
+00:56:17,433 --> 00:56:18,966
+塔莎: 你想要什么，几百个都有。
+Tasha: Anything you want, hundreds of them.
+
+1202
+00:56:22,533 --> 00:56:23,633
+塔莎: 你可以把它们贴在任何地方。
+Tasha: You can stick them anywhere.
+
+1203
+00:56:22,600 --> 00:56:23,466
+杰克: 你可以在任何地方吃它们。
+Jake: You can eat them anywhere.
+
+1204
+00:56:24,100 --> 00:56:25,666
+塔莎: 把它们贴上去，它们就有灵魂了。
+Tasha: Stick them on and they have a soul.
+
+1205
+00:56:26,300 --> 00:56:27,566
+塔莎: 我给你两个大眼睛。
+Tasha: I'll give you two big eyes.
+
+1206
+00:56:28,966 --> 00:56:30,566
+杰克: 我的线就是你的线。
+Jake: My cable is your cable.
+
+1207
+00:56:30,566 --> 00:56:33,666
+舒尔: 该死，我们还有安格斯厚牛肉汉堡没吃呢。
+Shure: Damn, we still have Angus thick beef burgers we haven't eaten.
+
+1208
+00:56:33,666 --> 00:56:35,566
+舒尔: 是啊，太浪费了。
+Shure: Yeah, that's so wasteful.
+
+1209
+00:56:33,666 --> 00:56:35,633
+杰克: 是啊。
+Jake: Yeah.
+
+1210
+00:56:35,566 --> 00:56:36,700
+舒尔: 这整个团队。
+Shure: This whole group.
+
+1211
+00:56:35,766 --> 00:56:36,566
+爱丽丝: 这堆垃圾。
+Alice: This bunch of trash.
+
+1212
+00:56:37,166 --> 00:56:38,366
+杰克: 还有两个。
+Jake: There are still two.
+
+1213
+00:56:38,766 --> 00:56:40,366
+杰克: 两个。
+Jake: Two.
+
+1214
+00:56:39,166 --> 00:56:41,500
+舒尔: 两个？该死。
+Shure: Two? Damn it.
+
+1215
+00:56:42,200 --> 00:56:44,800
+舒尔: 太多了。
+Shure: That's way too much.
+
+1216
+00:56:44,800 --> 00:56:47,600
+舒尔: 这么好的东西，不吃，我的天。
+Shure: Such good stuff, not eating it, my gosh.
+
+1217
+00:56:47,166 --> 00:56:48,133
+杰克: 我们该怎么办，炸一下？
+Jake: What should we do, fry it?
+
+1218
+00:56:48,133 --> 00:56:49,400
+杰克: 还是什么，炸一下？
+Jake: Or what, fry it?
+
+1219
+00:56:48,966 --> 00:56:49,666
+舒尔: 炸什么？
+Shure: Fry what?
+
+1220
+00:56:49,400 --> 00:56:51,433
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1221
+00:56:49,666 --> 00:56:52,200
+舒尔: 用微波炉加热就行，不用炸。
+Shure: Just microwave it, no need to fry.
+
+1222
+00:56:51,433 --> 00:56:53,566
+卡特里娜: 我可以这样直接充电吗？
+Katrina: Can I charge it directly like this?
+
+1223
+00:56:54,000 --> 00:56:54,800
+舒尔: 可以。
+Shure: Yes.
+
+1224
+00:56:54,066 --> 00:56:56,633
+杰克: 可以，呃可以，可以。
+Jake: Yes, uh yes, yes.
+
+1225
+00:56:56,633 --> 00:56:58,533
+杰克: 绝对，绝对可以。
+Jake: Definitely, definitely can.
+
+1226
+00:57:01,533 --> 00:57:02,333
+杰克: 嗯。
+Jake: Hmm.
+
+1227
+00:57:08,500 --> 00:57:09,900
+舒尔: 这个怎么清洗？
+Shure: How to clean this?
+
+1228
+00:57:16,766 --> 00:57:20,366
+舒尔: 杰克，你可以在这里设置一个固定摄像头。
+Shure: Jake, you can set up a fixed camera here.
+
+1229
+00:57:18,133 --> 00:57:18,933
+杰克: 嗯？
+Jake: Eh?
+
+1230
+00:57:20,366 --> 00:57:21,366
+舒尔: 拍一个延时视频。
+Shure: To shoot a time-lapse video.
+
+1231
+00:57:21,366 --> 00:57:23,400
+舒尔: 我们在这酷酷收拾那什么
+
+1232
+00:57:23,600 --> 00:57:25,366
+杰克: 哦，我们这里都有这些？
+Jake: Oh, we have all this here?
+
+1233
+00:57:25,366 --> 00:57:26,633
+杰克: 你可以在这里到处拍。
+Jake: You can shoot all around here.
+
+1234
+00:57:26,233 --> 00:57:27,866
+舒尔: 是的，没错。
+Shure: Yeah, that's right.
+
+1235
+00:57:27,433 --> 00:57:29,166
+杰克: 对。
+Jake: Right.
+
+1236
+00:57:31,333 --> 00:57:36,766
+塔莎: 是啊，哈哈哈，他甚至想要你下面的东西。
+Tasha: Yeah, hahaha, he even wants the stuff below you.
+
+1237
+00:57:37,766 --> 00:57:40,166
+杰克: 你大概还能买到下面的东西。
+Jake: You can probably still buy the stuff below.
+
+1238
+00:57:40,600 --> 00:57:42,800
+杰克: 是啊，那时候我觉得能买到它挺酷的。
+Jake: Yeah, back then I thought it was pretty cool to be able to buy it.
+
+1239
+00:57:42,733 --> 00:57:45,366
+塔莎: 在你眼镜上贴两个小的怎么样？
+Tasha: How about putting two tiny ones on your glasses?
+
+1240
+00:57:46,266 --> 00:57:47,066
+杰克: 你怎么贴它们？
+Jake: How do you stick them?
+
+1241
+00:57:49,266 --> 00:57:50,833
+杰克: 哇，这是一条比目鱼。
+Jake: Whoa, this is a flounder.
+
+1242
+00:57:51,200 --> 00:57:52,033
+杰克: 这是什么鱼？
+Jake: What kind of fish is this?
+
+1243
+00:57:52,766 --> 00:57:55,200
+杰克: 两边的那些是什么鱼？
+Jake: What kind of fish are the ones on both sides?
+
+1244
+00:57:58,166 --> 00:57:59,466
+Others: 别墅感觉挺不错的。
+Others: The villa feels pretty nice.
+
+1245
+00:58:04,433 --> 00:58:05,733
+塔莎: 现在我给你一个命令。
+Tasha: Now I'm giving you a command.
+
+1246
+00:58:06,166 --> 00:58:07,900
+塔莎: 给房子里的所有东西都戴上眼镜。
+Tasha: Put glasses on everything in the house.
+
+1247
+00:58:07,900 --> 00:58:09,033
+塔莎: 并给它们都赋予灵魂。
+Tasha: And give them all souls.
+
+1248
+00:58:08,833 --> 00:58:10,033
+杰克: 哇。
+Jake: Whoa.
+
+1249
+00:58:09,766 --> 00:58:12,366
+塔莎: 现在在你手上贴两个，放在门口。
+Tasha: Now stick two on your hands and place them at the door.
+
+1250
+00:58:11,566 --> 00:58:13,000
+杰克: 等一下，在这里放两个。
+Jake: Wait a sec, put two here.
+
+1251
+00:58:13,000 --> 00:58:15,000
+杰克: 为了欢迎客人，哈哈。
+Jake: To welcome the guests, haha.
+
+1252
+00:58:14,033 --> 00:58:15,233
+塔莎: 哈哈。
+Tasha: Haha.
+
+1253
+00:58:16,433 --> 00:58:17,666
+杰克: 在门上贴两个。
+Jake: Stick two on the door.
+
+1254
+00:58:18,800 --> 00:58:20,166
+杰克:修硕眼睛上贴两个
+
+1255
+00:58:22,800 --> 00:58:23,666
+塔莎: 这些不是我的。
+Tasha: These aren't mine.
+
+1256
+00:58:23,666 --> 00:58:24,933
+塔莎: 哦，这些是我的。
+Tasha: Oh, these are mine.
+
+1257
+00:58:26,633 --> 00:58:27,433
+杰克: 那么...
+Jake: Then...
+
+1258
+00:58:28,666 --> 00:58:31,566
+杰克:开玩笑我们走了一路全是泪
+
+1259
+00:58:33,133 --> 00:58:34,000
+Others: 这是什么？
+Others: What is this?
+
+1260
+00:58:34,266 --> 00:58:36,033
+塔莎: 不知道，但很可爱。
+Tasha: No idea, it's cute though.
+
+1261
+00:58:40,333 --> 00:58:41,533
+塔莎: 不知道是什么。
+Tasha: No idea what it is.
+
+1262
+00:58:44,733 --> 00:58:48,000
+杰克:餐布野餐野餐用的早
+
+1263
+00:58:48,000 --> 00:58:49,533
+杰克: 我们带它去野餐吧。
+Jake: Let's take it for a picnic.
+
+1264
+00:58:51,400 --> 00:58:53,833
+杰克: 浴袍，床单。
+Jake: Bathrobe, bedsheets.
+
+1265
+00:58:57,300 --> 00:58:58,933
+塔莎: 它们看起来确实挺不错的。
+Tasha: They do look pretty nice.
+
+1266
+00:58:58,733 --> 00:58:59,466
+杰克: 确实。
+Jake: Indeed.
+
+1267
+00:59:01,000 --> 00:59:02,566
+杰克: 这是哪个民族的？
+Jake: Which ethnic group is this from?
+
+1268
+00:59:03,800 --> 00:59:04,800
+杰克: 甜点国
+Jake: Dessert nation
+
+1269
+00:59:05,800 --> 00:59:06,600
+杰克: 甜点部落
+Jake: Dessert tribe
+
+1270
+00:59:08,933 --> 00:59:09,966
+杰克: 我觉得挺好的
+Jake: I think it's pretty good
+
+1271
+00:59:11,233 --> 00:59:12,633
+杰克: 这顿饭完美
+Jake: This meal is perfect
+
+1272
+00:59:13,166 --> 00:59:15,366
+Others: 这背后有什么故事？
+Others: What's the story behind this?
+
+1273
+00:59:14,533 --> 00:59:15,333
+塔莎: 不知道
+Tasha: No idea
+
+1274
+00:59:17,000 --> 00:59:18,000
+杰克: 这个钟这么小
+Jake: This clock is so small
+
+1275
+00:59:19,166 --> 00:59:20,333
+杰克: 看起来很棒
+Jake: It looks amazing
+
+1276
+00:59:21,533 --> 00:59:22,333
+杰克: 看起来不错
+Jake: Looks great
+
+1277
+00:59:24,133 --> 00:59:25,200
+杰克: 嗯
+Jake: Hmm
+
+1278
+00:59:24,233 --> 00:59:25,300
+塔莎: AA电池
+Tasha: AA battery
+
+1279
+00:59:27,400 --> 00:59:28,233
+Others: 都是你
+Others: It's all you
+
+1280
+00:59:28,066 --> 00:59:29,833
+塔莎: 哈哈哈
+Tasha: Hahaha
+
+1281
+00:59:28,566 --> 00:59:30,266
+杰克: 都是你
+Jake: It's all you
+
+1282
+00:59:30,266 --> 00:59:32,066
+杰克: 一个不足以公正地对待你
+Jake: One isn't enough to do you justice
+
+1283
+00:59:36,166 --> 00:59:38,633
+塔莎: 我们只是相信缘分
+Tasha: We just believe in serendipity
+
+1284
+00:59:53,333 --> 00:59:55,700
+塔莎: 这有什么好的？
+Tasha: What's so great about this?

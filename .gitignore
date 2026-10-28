@@ -86,3 +86,7 @@ longmemeval_data/
 
 # Local test scripts (not for upstream)
 scripts/test_lamar_longmemeval.py
+
+# Elite's committed architecture/evaluation evidence is part of its source snapshot.
+!/variants/elite/docs/design/artifacts/
+!/variants/elite/docs/design/artifacts/**

@@ -1,0 +1,58 @@
+[
+  [
+    {
+      "attributed_to": "user",
+      "confidence": 0.8,
+      "date_observed": "2026-04-02",
+      "entity_mentions": [],
+      "event_idx": 0,
+      "id": "0",
+      "objects": [
+        "oat-milk lattes in the morning"
+      ],
+      "predicate": "likes",
+      "relation": "single_fact",
+      "sentiment": "positive",
+      "speaker": null,
+      "subject": "user",
+      "supersedes_hint_ids": [],
+      "text": "User likes oat-milk lattes in the morning.",
+      "topic_tags": [
+        "coffee",
+        "preference"
+      ],
+      "type": "preference_event",
+      "valid_from": null,
+      "valid_to": null
+    }
+  ],
+  [
+    {
+      "attributed_to": "user",
+      "confidence": 0.9,
+      "date_observed": "2026-04-20",
+      "entity_mentions": [],
+      "event_idx": 0,
+      "id": "0",
+      "objects": [
+        "black coffee"
+      ],
+      "predicate": "likes",
+      "relation": "supersession",
+      "sentiment": "positive",
+      "speaker": null,
+      "subject": "user",
+      "supersedes_hint_ids": [
+        "0"
+      ],
+      "text": "User likes black coffee.",
+      "topic_tags": [
+        "coffee",
+        "preference"
+      ],
+      "type": "preference_event",
+      "valid_from": null,
+      "valid_to": null
+    }
+  ]
+]

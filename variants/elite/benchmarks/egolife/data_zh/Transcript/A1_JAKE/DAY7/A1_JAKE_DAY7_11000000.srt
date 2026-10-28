@@ -1,0 +1,304 @@
+1
+00:56:10,766 --> 00:56:11,566
+杰克: 嘿
+Jake: Hey
+
+2
+00:56:15,266 --> 00:56:17,466
+舒尔: 对我给你们
+
+3
+00:56:15,366 --> 00:56:18,533
+爱丽丝: 是的，你只需要导入那个链接
+Alice: Yeah, you just need to import that link
+
+4
+00:56:19,233 --> 00:56:24,633
+杰克: 呃，舒尔在群里发了东西，我们去看看吧
+Jake: Uh, Shure posted something in the group, let's go check it out
+
+5
+00:56:27,433 --> 00:56:29,700
+Others: 你的微信一直弹消息，你不看看吗？
+Others: Your WeChat keeps popping up messages, don't you want to check it?
+
+6
+00:56:28,966 --> 00:56:29,933
+杰克: 帮我看看
+Jake: Help me check it
+
+7
+00:56:30,900 --> 00:56:31,700
+杰克: 哦不
+Jake: Oh no
+
+8
+00:56:33,333 --> 00:56:36,600
+杰克: 允许粘贴，再加一个
+Jake: Allow paste and add one more
+
+9
+00:56:37,400 --> 00:56:39,400
+塔莎: 其实，我不知道粘贴到哪里
+Tasha: Actually, I don't know where to paste it
+
+10
+00:56:39,533 --> 00:56:40,600
+塔莎: 粘贴到
+Tasha: Paste it to
+
+11
+00:56:40,533 --> 00:56:42,366
+杰克:是的 杰克: 是的
+Jake:yes
+Jake: Yes
+
+12
+00:56:52,633 --> 00:56:54,466
+塔莎: 完成了吗？
+Tasha: Is it done?
+
+13
+00:56:55,100 --> 00:56:55,900
+杰克: 试试看
+Jake: Try it out
+
+14
+00:56:59,066 --> 00:57:01,500
+舒尔: 我真是个白痴
+Shure: I'm such an idiot
+
+15
+00:57:02,433 --> 00:57:04,900
+杰克: 你在说什么，哈哈哈
+Jake: What are you talking about, hahaha
+
+16
+00:57:03,233 --> 00:57:04,833
+舒尔: 哈哈
+Shure: Haha
+
+17
+00:57:06,166 --> 00:57:07,333
+舒尔: 哈哈，你告诉AI
+Shure: Haha, you tell the AI
+
+18
+00:57:07,333 --> 00:57:09,166
+舒尔: 一些人类记住密码的方法
+Shure: some ways humans remember passwords
+
+19
+00:57:10,033 --> 00:57:12,366
+塔莎: 你打开了吗？哦哦哦
+Tasha: Did you open it? Oh oh oh
+
+20
+00:57:15,566 --> 00:57:16,633
+舒尔: 它叫什么？
+Shure: What's it called?
+
+21
+00:57:20,566 --> 00:57:23,566
+杰克: 登录Google看看
+Jake: Log into Google and check it out
+
+22
+00:57:20,966 --> 00:57:21,933
+舒尔: 也许
+Shure: Maybe
+
+23
+00:57:24,366 --> 00:57:25,533
+爱丽丝: 好的，好的
+Alice: Alright, alright
+
+24
+00:57:25,533 --> 00:57:27,233
+爱丽丝: 我？我？
+Alice: Me? Me?
+
+25
+00:57:26,900 --> 00:57:29,266
+舒尔: 哈哈，我能变成女孩吗？
+Shure: Haha, can I become a girl?
+
+26
+00:57:29,166 --> 00:57:30,500
+杰克: 哦，是我吗？
+Jake: Oh, is it me?
+
+27
+00:57:29,233 --> 00:57:30,566
+爱丽丝: 是我吗？
+Alice: Is it me?
+
+28
+00:57:30,300 --> 00:57:31,900
+舒尔: 我先转换
+Shure: I'll trans first
+
+29
+00:57:31,800 --> 00:57:36,100
+爱丽丝: 让我登录Google看看，是的
+Alice: Let me log into Google and check, yes
+
+30
+00:57:31,900 --> 00:57:33,566
+舒尔: 然后让我
+Shure: And then let me
+
+31
+00:57:32,000 --> 00:57:36,266
+杰克: 是的，就是
+Jake: Yes, it is
+
+32
+00:57:33,933 --> 00:57:37,166
+舒尔: 我的观点和未转换的观点有什么区别？
+Shure: What's the difference between my opinion and non-trans opinion?
+
+33
+00:57:46,300 --> 00:57:47,366
+舒尔: 哦，我明白了
+Shure: Oh, I get it
+
+34
+00:57:47,366 --> 00:57:49,933
+舒尔: 你在设置卡片，对吧？
+Shure: You're setting up a card, right?
+
+35
+00:57:47,500 --> 00:57:50,066
+Others: 不不不
+Others: No no no
+
+36
+00:58:25,766 --> 00:58:26,566
+杰克: 是的
+Jake: Yeah
+
+37
+00:58:28,566 --> 00:58:30,433
+杰克: 因为里面太乱了
+Jake: Because it's too messy inside
+
+38
+00:58:33,800 --> 00:58:35,600
+杰克: 其实，可以很干净。
+Jake: Actually, it can be pretty clean.
+
+39
+00:58:35,600 --> 00:58:39,733
+杰克: 但看电视时，你得戴眼镜，所以...
+Jake: But when watching TV, you have to wear glasses, so...
+
+40
+00:58:42,700 --> 00:58:43,766
+杰克: 它延迟了一会儿。
+Jake: It got delayed for a bit.
+
+41
+00:58:56,333 --> 00:59:00,266
+舒尔: 今天，按照你的要求，我点了两份炒鸡蛋。
+Shure: Today, as per your request, I ordered two servings of scrambled eggs.
+
+42
+00:59:01,900 --> 00:59:06,500
+露西亚: 啊哈哈，笑了。
+Lucia: Ahaha, laughed.
+
+43
+00:59:14,133 --> 00:59:15,966
+露西亚: 我觉得我的好像...
+Lucia: I think mine seems like...
+
+44
+00:59:15,966 --> 00:59:17,633
+杰克: 是的，呃...
+Jake: Yes, it is, uh...
+
+45
+00:59:17,633 --> 00:59:21,566
+杰克:你要先打开新民主的那个小
+
+46
+00:59:23,166 --> 00:59:26,166
+杰克: 火箭完成后，请坐下。
+Jake: After the rocket is done, please take a seat.
+
+47
+00:59:26,066 --> 00:59:27,566
+舒尔: 就像在自我审查。
+Shure: It's like censoring yourself.
+
+48
+00:59:26,833 --> 00:59:28,900
+露西亚: 打开他的打开他的
+
+49
+00:59:29,233 --> 00:59:31,400
+爱丽丝:把他的换成别人的
+
+50
+00:59:31,600 --> 00:59:32,966
+杰克:就是这个
+
+51
+00:59:33,166 --> 00:59:36,533
+杰克:之后这边加哎就上来
+
+52
+00:59:36,133 --> 00:59:37,766
+舒尔: 使用名称和密码是...
+Shure: Using the name and password is...
+
+53
+00:59:36,833 --> 00:59:42,366
+杰克: 是的，呃，你刚复制了那个东西吗？
+Jake: Yes, uh, did you just copy that thing?
+
+54
+00:59:36,866 --> 00:59:37,633
+露西亚: 然后...
+Lucia: And then...
+
+55
+00:59:42,366 --> 00:59:43,800
+杰克: 然后替换这个。
+Jake: Then replace this.
+
+56
+00:59:45,400 --> 00:59:47,133
+露西亚: 嗯，过期了吗？
+Lucia: Hmm, is it expired?
+
+57
+00:59:47,166 --> 00:59:49,966
+杰克: 是的，七天过去了。
+Jake: Yes, seven days have passed.
+
+58
+00:59:50,933 --> 00:59:53,366
+舒尔: 啊，你是说登录过期了？
+Shure: Ah, you mean the login expired?
+
+59
+00:59:54,166 --> 00:59:55,433
+杰克: 呃，是的，对吧？
+Jake: Uh, yes, right?
+
+60
+00:59:55,433 --> 00:59:57,366
+杰克: 是的，是的，他缺了两个人，对吧？
+Jake: Yes, yes, he is missing two people, right?
+
+61
+00:59:55,566 --> 00:59:57,500
+爱丽丝: 他缺了两个人？
+Alice: He's missing two people?
+
+62
+00:59:57,366 --> 00:59:58,833
+爱丽丝: 你去叫他们，去吧。
+Alice: You go call them, go ahead.

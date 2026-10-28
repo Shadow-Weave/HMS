@@ -1,0 +1,350 @@
+1
+00:48:37,600 --> 00:48:40,200
+Alice: 那个开始新记录的按钮怎么没了
+Alice: Why is the button to start a new record gone?
+
+2
+00:48:40,400 --> 00:48:41,666
+Alice: 我失忆了吗
+Alice: Am I losing my memory?
+
+3
+00:48:42,366 --> 00:48:43,666
+Shure:  你们都没啊
+Shure: None of you have it either?
+
+4
+00:48:43,666 --> 00:48:44,733
+Shure:  好了
+Shure: Alright.
+
+5
+00:48:44,733 --> 00:48:45,933
+Jake:你重启一下
+Jake: Restart it.
+
+6
+00:48:46,466 --> 00:48:47,500
+Shure:  是不是没删
+Shure: Maybe it wasn't deleted?
+
+7
+00:48:48,166 --> 00:48:50,200
+Shure:  没删就把眼镜关了
+Shure: If it wasn't deleted, just turn off the glasses.
+
+8
+00:48:50,200 --> 00:48:51,533
+Shure:  重启一下就好了
+Shure: Restart and it should be fine.
+
+9
+00:48:53,266 --> 00:48:55,066
+Shure:  2024
+Shure: 2024
+
+10
+00:49:51,533 --> 00:49:52,333
+Jake:喂
+Jake: Hello?
+
+11
+00:49:53,466 --> 00:49:54,266
+Jake:喂
+Jake: Hello?
+
+12
+00:49:58,066 --> 00:50:00,500
+Jake:您您在哪号啊
+Jake: Where are you exactly?
+
+13
+00:50:04,666 --> 00:50:07,533
+Jake:呃您您您能找到53号吗
+Jake: Uh, can you find number 53?
+
+14
+00:50:07,733 --> 00:50:12,333
+Jake:5一一般来说我们都是让快递们找53
+Jake: Usually, we tell the couriers to find 53 first.
+
+15
+00:50:12,333 --> 00:50:14,166
+Jake:然后他们就能找到31
+Jake: Then they can find 31.
+
+16
+00:50:19,200 --> 00:50:21,300
+Jake:五五五五十三了
+Jake: Fifty-three, got it?
+
+17
+00:50:21,300 --> 00:50:22,566
+Jake:您您先到53吧
+Jake: You go to 53 first.
+
+18
+00:50:22,566 --> 00:50:25,800
+Jake:别的快递员都能找到53然后就找到31了
+Jake: Other couriers can find 53 and then 31.
+
+19
+00:50:32,966 --> 00:50:38,800
+Jake:是是是您您您对您您53您您您先找53吧
+Jake: Yes, yes, yes. You, you, you find 53 first.
+
+20
+00:50:38,800 --> 00:50:40,066
+Jake:别人都能找到
+Jake: Others can find it.
+
+21
+00:50:46,300 --> 00:50:50,100
+Jake:噢噢是是是是唉
+Jake: Oh, oh yes, yes, yes.
+
+22
+00:50:50,166 --> 00:50:53,466
+Jake:您您到您您您到53再给我打电话吧
+Jake: You get to 53 and then call me.
+
+23
+00:50:53,466 --> 00:50:54,866
+Jake:要不行吧
+Jake: Otherwise, it won't work.
+
+24
+00:50:57,066 --> 00:51:00,133
+Jake:哎御河区53号别人都能找着
+Jake: Yes, Yuhe District, number 53. Others can find it.
+
+25
+00:51:03,400 --> 00:51:05,966
+Jake:对挨着挨着挨着
+Jake: Right, right next to it.
+
+26
+00:51:09,133 --> 00:51:09,933
+Jake:嗯
+Jake: Uh-huh.
+
+27
+00:51:14,700 --> 00:51:15,800
+Jake:对宁宁找53号
+Jake: Yes, find number 53.
+
+28
+00:51:15,800 --> 00:51:17,900
+Jake:53号好找53号好找
+Jake: Number 53 is easy to find.
+
+29
+00:51:23,766 --> 00:51:24,866
+Jake:那您找找呗
+Jake: Just try to find it.
+
+30
+00:51:35,366 --> 00:51:36,166
+Jake:哦
+Jake: Oh.
+
+31
+00:51:42,166 --> 00:51:43,366
+Jake:我好像看见你了
+Jake: I think I see you.
+
+32
+00:51:43,366 --> 00:51:45,733
+Jake:我从巷子往外走哎
+Jake: I'm walking out from the alley.
+
+33
+00:51:52,566 --> 00:51:53,566
+Jake:辛苦辛苦
+Jake: Thanks, thanks.
+
+34
+00:51:53,733 --> 00:51:55,666
+Jake:这实在是无语了是
+Jake: This is really frustrating.
+
+35
+00:51:58,333 --> 00:51:59,133
+Jake:啊
+Jake: Ah.
+
+36
+00:51:59,266 --> 00:52:05,100
+Jake:5152确实您这个还还算什么点
+Jake: 5152, indeed, this is still quite a spot.
+
+37
+00:52:05,133 --> 00:52:07,900
+Jake:你看到我往前走又是个70多又是个80多
+Jake: You see me walking forward, there's another 70, another 80.
+
+38
+00:52:07,900 --> 00:52:09,400
+Jake:我又上走那边去了
+Jake: I walked up to that side.
+
+39
+00:52:10,500 --> 00:52:11,666
+Jake:辛苦啊拜拜
+Jake: Thanks, bye.
+
+40
+00:53:00,966 --> 00:53:01,866
+Jake:成果如何
+Jake: How did it go?
+
+41
+00:53:02,800 --> 00:53:04,033
+Shure:  叫醒了
+Shure: Woke up
+
+42
+00:53:03,933 --> 00:53:04,733
+Jake:牛啊
+Jake: Awesome
+
+43
+00:53:08,200 --> 00:53:10,333
+Shure:  哦我还没我还没洗漱
+Shure: Oh, I haven't washed up yet
+
+44
+00:53:10,333 --> 00:53:11,500
+Shure:  我想起来了
+Shure: I just remembered
+
+45
+00:53:11,366 --> 00:53:12,166
+Jake:卧槽
+Jake: Oh crap
+
+46
+00:53:12,733 --> 00:53:14,500
+Jake:行你直播洗漱吧要不
+Jake: How about you do a live wash-up?
+
+47
+00:54:14,766 --> 00:54:15,700
+Jake:哈哈
+Jake: Haha
+
+48
+00:54:27,066 --> 00:54:27,866
+Jake:早啊
+Jake: Morning
+
+49
+00:56:19,733 --> 00:56:21,700
+Jake:长痘了嗯
+Jake: Got pimples, huh?
+
+50
+00:56:20,933 --> 00:56:21,733
+Alice: 嗯
+Alice: Yeah
+
+51
+00:56:23,666 --> 00:56:24,766
+Alice: 你会煎吗
+Alice: Can you fry it?
+
+52
+00:56:24,166 --> 00:56:25,266
+Jake:好像还没挂
+Jake: Seems like it's not hung up yet
+
+53
+00:56:26,000 --> 00:56:28,166
+Jake:又忘了对不起
+Jake: Forgot again, sorry
+
+54
+00:56:28,800 --> 00:56:30,066
+Jake:我去搞一下
+Jake: Let me handle it
+
+55
+00:58:27,266 --> 00:58:29,066
+Shure:  就是怕有撞车
+Shure: Just afraid of a crash
+
+56
+00:58:34,566 --> 00:58:35,366
+Shure:  哎
+Shure: Hey
+
+57
+00:58:35,600 --> 00:58:37,133
+Shure:  面包是在楼上吗
+Shure: Is the bread upstairs?
+
+58
+00:58:38,066 --> 00:58:39,666
+Jake:嗯不知道啊
+Jake: Hmm, no idea
+
+59
+00:58:39,533 --> 00:58:41,366
+Shure:  我记得不是买了两袋面包吗
+Shure: Didn't we buy two bags of bread?
+
+60
+00:58:41,333 --> 00:58:42,133
+Jake:是
+Jake: Yes
+
+61
+00:58:43,366 --> 00:58:44,766
+Shure:  怎么剩一袋了呢
+Shure: Why is there only one left?
+
+62
+00:58:44,133 --> 00:58:44,933
+Jake:啊
+Jake: Ah
+
+63
+00:58:44,766 --> 00:58:46,500
+Shure:  你昨天晚上偷偷吃了
+Shure: Did you sneak some last night?
+
+64
+00:58:49,466 --> 00:58:50,266
+Jake: 嗯
+Jake: Yep
+
+65
+00:58:51,866 --> 00:58:52,666
+Shure:  我爹
+Shure: Oh my
+
+66
+00:58:54,533 --> 00:58:55,733
+Shure:  真没吃呢
+Shure: Really didn't eat it?
+
+67
+00:58:55,966 --> 00:58:57,500
+Lucia: 楼下我昨天那个
+Lucia: Downstairs, yesterday I...
+
+68
+00:58:57,933 --> 00:59:01,333
+Lucia: 昨天昨天放那个蛋清空间不够
+Lucia: Yesterday, I put the egg whites there, not enough space
+
+69
+00:59:01,500 --> 00:59:03,566
+Lucia: 我就把其中一袋放楼下了
+Lucia: So I put one bag downstairs
+
+70
+00:59:03,333 --> 00:59:04,566
+Shure:  啊
+Shure: Ah
+

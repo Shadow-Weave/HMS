@@ -1,0 +1,28 @@
+.git
+# Never ship local credentials or local state into the build context. The local
+# data/ holds a ~447MB test database AND data/local.config.json, which carries a
+# plaintext API key — excluding it keeps both the bytes and the secret off the
+# builder. (README.md is deliberately NOT excluded: pyproject's readme field
+# makes hatchling read it during the wheel build.)
+.env
+.env.*
+**/.env
+!.env.example
+data
+results
+deploy
+tests
+docs
+benchmarks
+.venv
+__pycache__
+*.py[cod]
+*.egg-info
+.pytest_cache
+.ruff_cache
+.mypy_cache
+dist
+build
+*.log
+.DS_Store
+**/.DS_Store

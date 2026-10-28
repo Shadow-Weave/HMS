@@ -22,6 +22,27 @@
 
 ---
 
+## News / 项目动态
+
+- **2026-10-28** — HMS Pro 与 HMS Elite 整合到本仓库，通过
+  `--variant pro|elite` 选择版本。两个版本保留各自的原始实现、配置、提示词和
+  评测代码；版本注册表支持后续接入 PMM 等实现。详见[多版本使用说明](docs/variants.md)。
+
+## 选择版本
+
+HMS Pro 保留现有目录；HMS Elite 原样收录在 [`variants/elite`](variants/elite)。
+分别按各自文档配置环境与依赖后，只需改变一个参数即可选择启动版本：
+
+```bash
+python hmsctl.py --variant pro compose up -d --build
+python hmsctl.py --variant elite compose up -d --build
+```
+
+已有 Python 环境时，使用 `python hmsctl.py --variant pro serve` 或
+`python hmsctl.py --variant elite serve`。默认选择 Pro，也支持用 `HMS_VARIANT`
+环境变量选择。切换的是实现版本，各版本继续使用自己的 API 和存储格式。
+安装、原生评测入口与后续扩展方式见[多版本使用说明](docs/variants.md)。
+
 ## 项目简介
 
 **Holographic Memory System（HMS）** 是面向 AI 应用的结构化长期记忆层。

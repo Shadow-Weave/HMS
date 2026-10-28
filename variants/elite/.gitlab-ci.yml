@@ -1,0 +1,99 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+stages: [verify, build, deploy]
+
+variables:
+  DEV_DEPLOY_DIR: "/home/dingjiangxu/deploy/hms_elite"
+  COMPOSE_BASE: "docker-compose.yml"
+  COMPOSE_OVERRIDE: "docker-compose.prod.yml"
+  HMS_SMOKE_BASE_URL: "http://127.0.0.1:18090"
+  GIT_STRATEGY: fetch
+  PIP_INDEX_URL: "https://pypi.tuna.tsinghua.edu.cn/simple/"
+  PIP_TRUSTED_HOST: "pypi.tuna.tsinghua.edu.cn"
+
+default:
+  tags: [dev, deploy]
+
+verify:
+  stage: verify
+  tags: [dev, deploy]
+  timeout: 30m
+  script:
+    # No `python3 -m venv`: the runner host never had python3-venv installed, so
+    # `python3 -m venv` dies instantly on a missing ensurepip (exit 1 in ~0.9s),
+    # and uv is not on that host either. `pip --target` gives the same isolation —
+    # deps land inside the build workspace, never in the system environment and
+    # never in the shared ~/.local — and needs no root. PYTHONPATH is what makes
+    # the installed packages importable by the console scripts below.
+    - rm -rf .ci-pkgs
+    - python3 -m pip install --break-system-packages -q --target .ci-pkgs --index-url "$PIP_INDEX_URL" --trusted-host "$PIP_TRUSTED_HOST" ".[server,fastembed,openai,numpy,test,dev]"
+    - export PYTHONPATH="$PWD/.ci-pkgs"
+    - .ci-pkgs/bin/ruff check .
+    # `ruff format --check` and `isort --check-only` are deliberately absent: the
+    # repository is not clean under either today (88 files, including 24 under
+    # hms_elite/, and ruff also reformats Python code blocks inside README.md).
+    # A gate that is red on its first run gets ignored or bypassed, which is
+    # worse than not having it — add these back together with the reformat.
+    # The suite is offline by construction (tests/conftest.py blocks sockets), so
+    # it needs neither network nor credentials.
+    - .ci-pkgs/bin/pytest -q
+    # Seatbelt for the "committed config carries no secret" decision: deploy/
+    # config.dev.json is in the repository, so nothing tracked may look like a
+    # provider key. (The pattern cannot match its own literal here.)
+    - if git grep -qE 'sk-[A-Za-z0-9]{24,}' -- .; then echo "secret-like token found in tracked files" >&2; exit 1; fi
+    - HMS_SERVER_TOKEN=ci-token DEEPSEEK_API_KEY=ci-key docker compose -f "$COMPOSE_BASE" -f "$COMPOSE_OVERRIDE" config --quiet
+
+build:
+  stage: build
+  tags: [dev, deploy]
+  timeout: 60m
+  script:
+    - echo "pwd=$(pwd)"; docker compose version 2>&1 | head -1
+    - bash -c 'set -o pipefail; docker compose build --pull 2>&1 | tee /tmp/hms_elite_build.log'
+
+# Only a dev deployment exists; there is no production host to deploy to. When
+# one appears, add a `deploy` job mirroring deploy:dev with the prod override
+# file and DEPLOY_DIR — its `:?` guards already fail fast on missing secrets.
+deploy:dev:
+  stage: deploy
+  tags: [dev, deploy]
+  timeout: 60m
+  resource_group: hms-elite-dev
+  variables:
+    # deploy:dev runs the stack base-only (no prod override); clear the global
+    # COMPOSE_OVERRIDE so deploy_smoke.sh's restart/logs also use base-only
+    # compose instead of interpolating prod-only :? vars against the dev .env.
+    COMPOSE_OVERRIDE: ""
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+  script:
+    # The deploy directory is a long-lived checkout owned by CI. `reset --hard`
+    # leaves .env alone (it is untracked and gitignored), which is the reason for
+    # maintaining our own checkout instead of using the CI clone.
+    - mkdir -p "$DEV_DEPLOY_DIR"
+    - cd "$DEV_DEPLOY_DIR"
+    - if [ ! -d .git ]; then git init --initial-branch=dev --object-format=sha1; fi
+    - git remote remove origin 2>/dev/null || true
+    - git remote add origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.resonance-shadoweave.com/jiangxu/hms-elite.git"
+    - git fetch --prune origin dev
+    - git reset --hard origin/dev
+    # HMS_ELITE_DEV_ENV is a File-type CI variable holding the populated .env.
+    # A hand-provisioned .env is accepted as a fallback.
+    - if [ -n "${HMS_ELITE_DEV_ENV:-}" ]; then install -m 600 "$HMS_ELITE_DEV_ENV" "$DEV_DEPLOY_DIR/.env"; fi
+    - test -f "$DEV_DEPLOY_DIR/.env"
+    - docker compose -f "$COMPOSE_BASE" config --quiet
+    - docker compose -f "$COMPOSE_BASE" up -d --build --remove-orphans
+    # Source the .env so the smoke script sees HMS_SERVER_TOKEN.
+    - set -a; . "$DEV_DEPLOY_DIR/.env"; set +a
+    - bash scripts/deploy_smoke.sh
+  after_script:
+    - |
+      cd "$DEV_DEPLOY_DIR" 2>/dev/null || exit 0
+      docker compose -f "$COMPOSE_BASE" ps || true
+      if [ "$CI_JOB_STATUS" != "success" ]; then
+        docker compose -f "$COMPOSE_BASE" logs --no-color --tail=200 2>&1 \
+          | sed -E 's/(api[_-]?key|authorization|token|password)([=: ]+)[^ ]+/\1\2[redacted]/Ig'
+      fi

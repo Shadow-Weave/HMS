@@ -1,0 +1,3424 @@
+{
+  "provider": "sqlite",
+  "python": "3.14.6",
+  "repeat": 20,
+  "top_k": 20,
+  "max_candidates": 2000,
+  "as_of": "2026-06-15T09:00:00Z",
+  "runs": [
+    {
+      "query": "who is Sarah",
+      "rows_out": 20,
+      "candidates_hydrated": 30,
+      "axis_selects": 1,
+      "total_ms_median": 1.649,
+      "total_ms_min": 1.595,
+      "buckets_ms": {
+        "plan": 0.02,
+        "axis_sql": 0.239,
+        "hydrate": 0.454,
+        "embed": 0.016,
+        "index_search": 0.129,
+        "semantic_scores_total": 0.133,
+        "entity_lookup": 0.01,
+        "sig_keyword_tokens": 0.382,
+        "sig_keyword_overlap": 0.029,
+        "sig_entity": 0.015,
+        "sig_recency": 0.036,
+        "sig_support": 0.003,
+        "signals_total": 0.543,
+        "fuse": 0.019,
+        "score_details": 0.026,
+        "execute_total": 1.559,
+        "row_format": 0.03
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 30,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "entity_lookup": 2,
+        "sig_keyword_tokens": 30,
+        "sig_keyword_overlap": 30,
+        "sig_entity": 30,
+        "sig_recency": 30,
+        "sig_support": 30,
+        "signals_total": 30,
+        "fuse": 30,
+        "score_details": 30,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.032,
+          "cumtime_ms": 6.388
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.014,
+          "cumtime_ms": 6.328
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 267,
+          "tottime_ms": 0.332,
+          "cumtime_ms": 6.307
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.191,
+          "cumtime_ms": 6.05
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 30,
+          "tottime_ms": 0.239,
+          "cumtime_ms": 3.533
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 30,
+          "tottime_ms": 0.108,
+          "cumtime_ms": 2.131
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 31,
+          "tottime_ms": 0.122,
+          "cumtime_ms": 1.763
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 1.172
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 1.167
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.007,
+          "cumtime_ms": 1.15
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.159,
+          "cumtime_ms": 0.91
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 271,
+          "tottime_ms": 0.237,
+          "cumtime_ms": 0.906
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 61,
+          "tottime_ms": 0.318,
+          "cumtime_ms": 0.882
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 86,
+          "tottime_ms": 0.02,
+          "cumtime_ms": 0.606
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 301,
+          "tottime_ms": 0.3,
+          "cumtime_ms": 0.604
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 86,
+          "tottime_ms": 0.237,
+          "cumtime_ms": 0.586
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 61,
+          "tottime_ms": 0.3,
+          "cumtime_ms": 0.526
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 184,
+          "tottime_ms": 0.172,
+          "cumtime_ms": 0.342
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 5,
+          "tottime_ms": 0.013,
+          "cumtime_ms": 0.336
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 30,
+          "tottime_ms": 0.03,
+          "cumtime_ms": 0.31
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 694,
+          "tottime_ms": 0.262,
+          "cumtime_ms": 0.262
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 30,
+          "tottime_ms": 0.032,
+          "cumtime_ms": 0.259
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:103(add)",
+          "ncalls": 269,
+          "tottime_ms": 0.117,
+          "cumtime_ms": 0.221
+        },
+        {
+          "func": "~:0(<built-in method builtins.isinstance>)",
+          "ncalls": 1239,
+          "tottime_ms": 0.135,
+          "cumtime_ms": 0.211
+        },
+        {
+          "func": "hms_elite/timeutil.py:122(parse_iso)",
+          "ncalls": 60,
+          "tottime_ms": 0.027,
+          "cumtime_ms": 0.21
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:355(score_details)",
+          "ncalls": 30,
+          "tottime_ms": 0.084,
+          "cumtime_ms": 0.209
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:49(_plan_field)",
+          "ncalls": 180,
+          "tottime_ms": 0.06,
+          "cumtime_ms": 0.201
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.007,
+          "cumtime_ms": 0.196
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 5,
+          "tottime_ms": 0.187,
+          "cumtime_ms": 0.187
+        },
+        {
+          "func": "~:0(<method 'get' of 'dict' objects>)",
+          "ncalls": 1201,
+          "tottime_ms": 0.185,
+          "cumtime_ms": 0.185
+        }
+      ],
+      "label": "entity",
+      "n": 300
+    },
+    {
+      "query": "retry.ts backoff patch",
+      "rows_out": 20,
+      "candidates_hydrated": 292,
+      "axis_selects": 1,
+      "total_ms_median": 12.929,
+      "total_ms_min": 12.196,
+      "buckets_ms": {
+        "plan": 0.031,
+        "axis_sql": 0.87,
+        "hydrate": 4.49,
+        "embed": 0.029,
+        "index_search": 1.165,
+        "semantic_scores_total": 1.196,
+        "entity_lookup": 0.014,
+        "sig_keyword_tokens": 3.192,
+        "sig_keyword_overlap": 0.487,
+        "sig_entity": 0.068,
+        "sig_recency": 0.342,
+        "sig_support": 0.03,
+        "signals_total": 4.852,
+        "fuse": 0.18,
+        "score_details": 0.236,
+        "execute_total": 12.783,
+        "row_format": 0.032
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 292,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "entity_lookup": 2,
+        "sig_keyword_tokens": 292,
+        "sig_keyword_overlap": 292,
+        "sig_entity": 292,
+        "sig_recency": 292,
+        "sig_support": 292,
+        "signals_total": 292,
+        "fuse": 292,
+        "score_details": 292,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.02,
+          "cumtime_ms": 28.945
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 28.892
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 2363,
+          "tottime_ms": 1.414,
+          "cumtime_ms": 28.851
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.578,
+          "cumtime_ms": 28.502
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 292,
+          "tottime_ms": 0.824,
+          "cumtime_ms": 14.636
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 8.915
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.027,
+          "cumtime_ms": 8.909
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.022,
+          "cumtime_ms": 8.871
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 292,
+          "tottime_ms": 0.478,
+          "cumtime_ms": 8.819
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 1.447,
+          "cumtime_ms": 8.018
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 293,
+          "tottime_ms": 0.376,
+          "cumtime_ms": 7.107
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 2398,
+          "tottime_ms": 1.052,
+          "cumtime_ms": 3.799
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 609,
+          "tottime_ms": 0.092,
+          "cumtime_ms": 3.736
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 643,
+          "tottime_ms": 1.238,
+          "cumtime_ms": 3.705
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 609,
+          "tottime_ms": 1.262,
+          "cumtime_ms": 3.644
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 3274,
+          "tottime_ms": 1.38,
+          "cumtime_ms": 2.821
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 760,
+          "tottime_ms": 1.274,
+          "cumtime_ms": 2.261
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 1756,
+          "tottime_ms": 1.144,
+          "cumtime_ms": 2.209
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.045,
+          "cumtime_ms": 1.633
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 5,
+          "tottime_ms": 0.015,
+          "cumtime_ms": 1.553
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 1.5
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 876,
+          "tottime_ms": 0.14,
+          "cumtime_ms": 1.401
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 292,
+          "tottime_ms": 0.122,
+          "cumtime_ms": 1.396
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 876,
+          "tottime_ms": 0.249,
+          "cumtime_ms": 1.261
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 292,
+          "tottime_ms": 0.138,
+          "cumtime_ms": 1.226
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 292,
+          "tottime_ms": 0.349,
+          "cumtime_ms": 1.217
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 0.436,
+          "cumtime_ms": 1.2
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 6169,
+          "tottime_ms": 1.103,
+          "cumtime_ms": 1.103
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 5,
+          "tottime_ms": 1.094,
+          "cumtime_ms": 1.094
+        },
+        {
+          "func": "~:0(<built-in method builtins.isinstance>)",
+          "ncalls": 11716,
+          "tottime_ms": 0.749,
+          "cumtime_ms": 1.076
+        }
+      ],
+      "label": "identifier",
+      "n": 300
+    },
+    {
+      "query": "what happened in March",
+      "rows_out": 16,
+      "candidates_hydrated": 16,
+      "axis_selects": 1,
+      "total_ms_median": 0.862,
+      "total_ms_min": 0.851,
+      "buckets_ms": {
+        "plan": 0.026,
+        "axis_sql": 0.102,
+        "hydrate": 0.237,
+        "embed": 0.022,
+        "index_search": 0.069,
+        "semantic_scores_total": 0.072,
+        "sig_keyword_tokens": 0.179,
+        "sig_keyword_overlap": 0.023,
+        "sig_recency": 0.02,
+        "sig_support": 0.002,
+        "signals_total": 0.26,
+        "fuse": 0.01,
+        "score_details": 0.014,
+        "execute_total": 0.786,
+        "row_format": 0.023
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 16,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 16,
+        "sig_keyword_overlap": 16,
+        "sig_recency": 16,
+        "sig_support": 16,
+        "signals_total": 16,
+        "fuse": 16,
+        "score_details": 16,
+        "execute_total": 1,
+        "row_format": 16
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.013,
+          "cumtime_ms": 2.065
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.007,
+          "cumtime_ms": 2.025
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 133,
+          "tottime_ms": 0.094,
+          "cumtime_ms": 2.012
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.057,
+          "cumtime_ms": 1.872
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 16,
+          "tottime_ms": 0.041,
+          "cumtime_ms": 0.802
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 0.62
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.007,
+          "cumtime_ms": 0.615
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 0.601
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 16,
+          "tottime_ms": 0.029,
+          "cumtime_ms": 0.504
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.085,
+          "cumtime_ms": 0.485
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 17,
+          "tottime_ms": 0.024,
+          "cumtime_ms": 0.42
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 53,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 0.262
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 53,
+          "tottime_ms": 0.096,
+          "cumtime_ms": 0.252
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 36,
+          "tottime_ms": 0.074,
+          "cumtime_ms": 0.221
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 132,
+          "tottime_ms": 0.064,
+          "cumtime_ms": 0.219
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 3,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 0.159
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 164,
+          "tottime_ms": 0.076,
+          "cumtime_ms": 0.153
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 104,
+          "tottime_ms": 0.079,
+          "cumtime_ms": 0.151
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 42,
+          "tottime_ms": 0.076,
+          "cumtime_ms": 0.136
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 0.116
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 0.105
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 48,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 0.088
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 16,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 0.081
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 0.028,
+          "cumtime_ms": 0.081
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 3,
+          "tottime_ms": 0.08,
+          "cumtime_ms": 0.08
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 48,
+          "tottime_ms": 0.016,
+          "cumtime_ms": 0.078
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 16,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 0.07
+        },
+        {
+          "func": "hms_elite/mvmi/planner.py:97(plan_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 0.07
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 3,
+          "tottime_ms": 0.065,
+          "cumtime_ms": 0.065
+        },
+        {
+          "func": "~:0(<built-in method builtins.isinstance>)",
+          "ncalls": 679,
+          "tottime_ms": 0.045,
+          "cumtime_ms": 0.063
+        }
+      ],
+      "label": "month",
+      "n": 300
+    },
+    {
+      "query": "what coffee does alice like",
+      "rows_out": 20,
+      "candidates_hydrated": 292,
+      "axis_selects": 4,
+      "total_ms_median": 12.392,
+      "total_ms_min": 12.167,
+      "buckets_ms": {
+        "plan": 0.029,
+        "axis_sql": 0.995,
+        "hydrate": 4.271,
+        "embed": 0.031,
+        "index_search": 1.123,
+        "semantic_scores_total": 1.152,
+        "sig_keyword_tokens": 3.132,
+        "sig_keyword_overlap": 0.515,
+        "sig_recency": 0.335,
+        "sig_support": 0.03,
+        "signals_total": 4.618,
+        "fuse": 0.158,
+        "score_details": 0.234,
+        "execute_total": 12.289,
+        "row_format": 0.031
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 4,
+        "hydrate": 292,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 292,
+        "sig_keyword_overlap": 292,
+        "sig_recency": 292,
+        "sig_support": 292,
+        "signals_total": 292,
+        "fuse": 292,
+        "score_details": 292,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.02,
+          "cumtime_ms": 28.411
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 28.361
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 2069,
+          "tottime_ms": 1.24,
+          "cumtime_ms": 28.345
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.626,
+          "cumtime_ms": 28.029
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 292,
+          "tottime_ms": 0.678,
+          "cumtime_ms": 14.027
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 4,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 9.219
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 4,
+          "tottime_ms": 0.034,
+          "cumtime_ms": 9.208
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 4,
+          "tottime_ms": 0.028,
+          "cumtime_ms": 9.148
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 292,
+          "tottime_ms": 0.476,
+          "cumtime_ms": 8.782
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 4,
+          "tottime_ms": 1.443,
+          "cumtime_ms": 8.133
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 293,
+          "tottime_ms": 0.374,
+          "cumtime_ms": 7.087
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 609,
+          "tottime_ms": 0.089,
+          "cumtime_ms": 3.819
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 2398,
+          "tottime_ms": 1.06,
+          "cumtime_ms": 3.755
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 609,
+          "tottime_ms": 1.286,
+          "cumtime_ms": 3.731
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 643,
+          "tottime_ms": 1.245,
+          "cumtime_ms": 3.727
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 3274,
+          "tottime_ms": 1.438,
+          "cumtime_ms": 2.926
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 759,
+          "tottime_ms": 1.289,
+          "cumtime_ms": 2.281
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 1759,
+          "tottime_ms": 1.151,
+          "cumtime_ms": 2.23
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 6,
+          "tottime_ms": 0.015,
+          "cumtime_ms": 1.686
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.041,
+          "cumtime_ms": 1.571
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 1.446
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 876,
+          "tottime_ms": 0.143,
+          "cumtime_ms": 1.422
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 292,
+          "tottime_ms": 0.123,
+          "cumtime_ms": 1.388
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 292,
+          "tottime_ms": 0.329,
+          "cumtime_ms": 1.324
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 876,
+          "tottime_ms": 0.255,
+          "cumtime_ms": 1.279
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 292,
+          "tottime_ms": 0.134,
+          "cumtime_ms": 1.22
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 0.436,
+          "cumtime_ms": 1.195
+        },
+        {
+          "func": "hms_elite/memory/storage.py:200(_scope_of)",
+          "ncalls": 292,
+          "tottime_ms": 0.207,
+          "cumtime_ms": 1.118
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 6,
+          "tottime_ms": 1.099,
+          "cumtime_ms": 1.099
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 6172,
+          "tottime_ms": 1.098,
+          "cumtime_ms": 1.098
+        }
+      ],
+      "label": "preference",
+      "n": 300
+    },
+    {
+      "query": "部署 回滚 测试",
+      "rows_out": 20,
+      "candidates_hydrated": 292,
+      "axis_selects": 1,
+      "total_ms_median": 11.994,
+      "total_ms_min": 11.808,
+      "buckets_ms": {
+        "plan": 0.022,
+        "axis_sql": 0.814,
+        "hydrate": 4.269,
+        "embed": 0.016,
+        "index_search": 1.127,
+        "semantic_scores_total": 1.155,
+        "sig_keyword_tokens": 3.12,
+        "sig_keyword_overlap": 0.455,
+        "sig_recency": 0.334,
+        "sig_support": 0.03,
+        "signals_total": 4.536,
+        "fuse": 0.159,
+        "score_details": 0.228,
+        "execute_total": 11.897,
+        "row_format": 0.03
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 292,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 292,
+        "sig_keyword_overlap": 292,
+        "sig_recency": 292,
+        "sig_support": 292,
+        "signals_total": 292,
+        "fuse": 292,
+        "score_details": 292,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.019,
+          "cumtime_ms": 27.885
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 27.833
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 2069,
+          "tottime_ms": 1.256,
+          "cumtime_ms": 27.817
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.503,
+          "cumtime_ms": 27.503
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 292,
+          "tottime_ms": 0.683,
+          "cumtime_ms": 13.919
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 9.042
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.028,
+          "cumtime_ms": 9.037
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.021,
+          "cumtime_ms": 9.0
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 292,
+          "tottime_ms": 0.477,
+          "cumtime_ms": 8.774
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 1.445,
+          "cumtime_ms": 8.133
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 293,
+          "tottime_ms": 0.372,
+          "cumtime_ms": 7.06
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 609,
+          "tottime_ms": 0.088,
+          "cumtime_ms": 3.779
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 643,
+          "tottime_ms": 1.276,
+          "cumtime_ms": 3.773
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 2398,
+          "tottime_ms": 1.04,
+          "cumtime_ms": 3.703
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 609,
+          "tottime_ms": 1.267,
+          "cumtime_ms": 3.691
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 3274,
+          "tottime_ms": 1.415,
+          "cumtime_ms": 2.826
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 759,
+          "tottime_ms": 1.301,
+          "cumtime_ms": 2.296
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 1756,
+          "tottime_ms": 1.159,
+          "cumtime_ms": 2.227
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 3,
+          "tottime_ms": 0.011,
+          "cumtime_ms": 1.562
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.041,
+          "cumtime_ms": 1.538
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 876,
+          "tottime_ms": 0.143,
+          "cumtime_ms": 1.438
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 1.414
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 292,
+          "tottime_ms": 0.12,
+          "cumtime_ms": 1.378
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 876,
+          "tottime_ms": 0.252,
+          "cumtime_ms": 1.295
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 292,
+          "tottime_ms": 0.336,
+          "cumtime_ms": 1.25
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 0.443,
+          "cumtime_ms": 1.218
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 292,
+          "tottime_ms": 0.136,
+          "cumtime_ms": 1.211
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 3,
+          "tottime_ms": 1.118,
+          "cumtime_ms": 1.118
+        },
+        {
+          "func": "hms_elite/memory/storage.py:200(_scope_of)",
+          "ncalls": 292,
+          "tottime_ms": 0.208,
+          "cumtime_ms": 1.075
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 6170,
+          "tottime_ms": 1.039,
+          "cumtime_ms": 1.039
+        }
+      ],
+      "label": "cjk",
+      "n": 300
+    },
+    {
+      "query": "who is Sarah",
+      "rows_out": 20,
+      "candidates_hydrated": 300,
+      "axis_selects": 1,
+      "total_ms_median": 14.95,
+      "total_ms_min": 14.77,
+      "buckets_ms": {
+        "plan": 0.026,
+        "axis_sql": 2.288,
+        "hydrate": 4.635,
+        "embed": 0.02,
+        "index_search": 1.331,
+        "semantic_scores_total": 1.36,
+        "entity_lookup": 0.02,
+        "sig_keyword_tokens": 3.714,
+        "sig_keyword_overlap": 0.272,
+        "sig_entity": 0.136,
+        "sig_recency": 0.34,
+        "sig_support": 0.031,
+        "signals_total": 5.184,
+        "fuse": 0.178,
+        "score_details": 0.364,
+        "execute_total": 14.844,
+        "row_format": 0.031
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 300,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "entity_lookup": 2,
+        "sig_keyword_tokens": 300,
+        "sig_keyword_overlap": 300,
+        "sig_entity": 300,
+        "sig_recency": 300,
+        "sig_support": 300,
+        "signals_total": 300,
+        "fuse": 300,
+        "score_details": 300,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 32.808
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.009,
+          "cumtime_ms": 32.744
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 2427,
+          "tottime_ms": 1.457,
+          "cumtime_ms": 32.725
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.567,
+          "cumtime_ms": 32.385
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 300,
+          "tottime_ms": 0.812,
+          "cumtime_ms": 15.748
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 11.318
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.029,
+          "cumtime_ms": 11.312
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 11.274
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 300,
+          "tottime_ms": 0.463,
+          "cumtime_ms": 9.883
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 1.531,
+          "cumtime_ms": 8.785
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 301,
+          "tottime_ms": 0.399,
+          "cumtime_ms": 8.232
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 2701,
+          "tottime_ms": 1.193,
+          "cumtime_ms": 4.35
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 601,
+          "tottime_ms": 1.435,
+          "cumtime_ms": 4.108
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 626,
+          "tottime_ms": 0.092,
+          "cumtime_ms": 3.93
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 626,
+          "tottime_ms": 1.349,
+          "cumtime_ms": 3.838
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 5,
+          "tottime_ms": 0.123,
+          "cumtime_ms": 3.751
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 3001,
+          "tottime_ms": 1.357,
+          "cumtime_ms": 2.837
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 601,
+          "tottime_ms": 1.474,
+          "cumtime_ms": 2.53
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 1804,
+          "tottime_ms": 1.187,
+          "cumtime_ms": 2.295
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 5,
+          "tottime_ms": 2.076,
+          "cumtime_ms": 2.076
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.043,
+          "cumtime_ms": 1.866
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.006,
+          "cumtime_ms": 1.737
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 0.418,
+          "cumtime_ms": 1.571
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 5,
+          "tottime_ms": 1.541,
+          "cumtime_ms": 1.541
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 900,
+          "tottime_ms": 0.147,
+          "cumtime_ms": 1.481
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 300,
+          "tottime_ms": 0.128,
+          "cumtime_ms": 1.442
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 900,
+          "tottime_ms": 0.261,
+          "cumtime_ms": 1.334
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 300,
+          "tottime_ms": 0.146,
+          "cumtime_ms": 1.266
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 6904,
+          "tottime_ms": 1.232,
+          "cumtime_ms": 1.232
+        },
+        {
+          "func": "hms_elite/memory/storage.py:200(_scope_of)",
+          "ncalls": 300,
+          "tottime_ms": 0.222,
+          "cumtime_ms": 1.118
+        }
+      ],
+      "label": "entity",
+      "n": 3000
+    },
+    {
+      "query": "retry.ts backoff patch",
+      "rows_out": 20,
+      "candidates_hydrated": 2000,
+      "axis_selects": 1,
+      "total_ms_median": 89.466,
+      "total_ms_min": 88.975,
+      "buckets_ms": {
+        "plan": 0.039,
+        "axis_sql": 7.266,
+        "hydrate": 30.821,
+        "embed": 0.038,
+        "index_search": 8.779,
+        "semantic_scores_total": 8.996,
+        "entity_lookup": 0.027,
+        "sig_keyword_tokens": 21.467,
+        "sig_keyword_overlap": 3.347,
+        "sig_entity": 0.437,
+        "sig_recency": 2.26,
+        "sig_support": 0.203,
+        "signals_total": 32.538,
+        "fuse": 1.176,
+        "score_details": 1.693,
+        "execute_total": 89.291,
+        "row_format": 0.038
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 2000,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "entity_lookup": 2,
+        "sig_keyword_tokens": 2000,
+        "sig_keyword_overlap": 2000,
+        "sig_entity": 2000,
+        "sig_recency": 2000,
+        "sig_support": 2000,
+        "signals_total": 2000,
+        "fuse": 2000,
+        "score_details": 2000,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.025,
+          "cumtime_ms": 205.841
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 205.754
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 16027,
+          "tottime_ms": 9.581,
+          "cumtime_ms": 205.731
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 3.998,
+          "cumtime_ms": 204.04
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2000,
+          "tottime_ms": 5.48,
+          "cumtime_ms": 98.802
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 64.658
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.206,
+          "cumtime_ms": 64.652
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.134,
+          "cumtime_ms": 64.435
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 2000,
+          "tottime_ms": 3.284,
+          "cumtime_ms": 59.581
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 10.032,
+          "cumtime_ms": 57.105
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 2001,
+          "tottime_ms": 2.496,
+          "cumtime_ms": 47.847
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 4025,
+          "tottime_ms": 0.555,
+          "cumtime_ms": 26.454
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 4025,
+          "tottime_ms": 9.786,
+          "cumtime_ms": 25.9
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 16402,
+          "tottime_ms": 7.035,
+          "cumtime_ms": 25.373
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 4400,
+          "tottime_ms": 8.482,
+          "cumtime_ms": 25.192
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 22402,
+          "tottime_ms": 9.314,
+          "cumtime_ms": 19.068
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.296,
+          "cumtime_ms": 18.962
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.016,
+          "cumtime_ms": 18.011
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 5199,
+          "tottime_ms": 8.677,
+          "cumtime_ms": 15.342
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 12004,
+          "tottime_ms": 8.031,
+          "cumtime_ms": 15.194
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 11,
+          "tottime_ms": 0.603,
+          "cumtime_ms": 13.252
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2926(load_vectors)",
+          "ncalls": 1,
+          "tottime_ms": 0.063,
+          "cumtime_ms": 11.392
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 6000,
+          "tottime_ms": 0.949,
+          "cumtime_ms": 9.673
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 2000,
+          "tottime_ms": 0.826,
+          "cumtime_ms": 9.376
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2944(_collect)",
+          "ncalls": 4,
+          "tottime_ms": 8.026,
+          "cumtime_ms": 9.116
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 6000,
+          "tottime_ms": 1.703,
+          "cumtime_ms": 8.724
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 2.824,
+          "cumtime_ms": 8.712
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 2000,
+          "tottime_ms": 2.363,
+          "cumtime_ms": 8.347
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 11,
+          "tottime_ms": 8.312,
+          "cumtime_ms": 8.312
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 2000,
+          "tottime_ms": 0.918,
+          "cumtime_ms": 8.248
+        }
+      ],
+      "label": "identifier",
+      "n": 3000
+    },
+    {
+      "query": "what happened in March",
+      "rows_out": 20,
+      "candidates_hydrated": 166,
+      "axis_selects": 1,
+      "total_ms_median": 7.695,
+      "total_ms_min": 7.408,
+      "buckets_ms": {
+        "plan": 0.037,
+        "axis_sql": 0.974,
+        "hydrate": 2.553,
+        "embed": 0.028,
+        "index_search": 0.739,
+        "semantic_scores_total": 0.756,
+        "sig_keyword_tokens": 1.799,
+        "sig_keyword_overlap": 0.226,
+        "sig_recency": 0.192,
+        "sig_support": 0.017,
+        "signals_total": 2.573,
+        "fuse": 0.089,
+        "score_details": 0.14,
+        "execute_total": 7.575,
+        "row_format": 0.032
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 166,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 166,
+        "sig_keyword_overlap": 166,
+        "sig_recency": 166,
+        "sig_support": 166,
+        "signals_total": 166,
+        "fuse": 166,
+        "score_details": 166,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.019,
+          "cumtime_ms": 16.782
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 16.731
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 1187,
+          "tottime_ms": 0.739,
+          "cumtime_ms": 16.716
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 0.314,
+          "cumtime_ms": 16.446
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 166,
+          "tottime_ms": 0.387,
+          "cumtime_ms": 7.898
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.003,
+          "cumtime_ms": 5.725
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.018,
+          "cumtime_ms": 5.72
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.014,
+          "cumtime_ms": 5.693
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 166,
+          "tottime_ms": 0.267,
+          "cumtime_ms": 5.071
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.828,
+          "cumtime_ms": 4.713
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 167,
+          "tottime_ms": 0.216,
+          "cumtime_ms": 4.101
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 1362,
+          "tottime_ms": 0.609,
+          "cumtime_ms": 2.179
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 366,
+          "tottime_ms": 0.731,
+          "cumtime_ms": 2.158
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 357,
+          "tottime_ms": 0.052,
+          "cumtime_ms": 2.116
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 357,
+          "tottime_ms": 0.725,
+          "cumtime_ms": 2.064
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 1694,
+          "tottime_ms": 0.766,
+          "cumtime_ms": 1.558
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 3,
+          "tottime_ms": 0.011,
+          "cumtime_ms": 1.556
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 432,
+          "tottime_ms": 0.74,
+          "cumtime_ms": 1.306
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 1004,
+          "tottime_ms": 0.673,
+          "cumtime_ms": 1.298
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.024,
+          "cumtime_ms": 0.976
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 498,
+          "tottime_ms": 0.081,
+          "cumtime_ms": 0.903
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.005,
+          "cumtime_ms": 0.903
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 498,
+          "tottime_ms": 0.145,
+          "cumtime_ms": 0.822
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 3,
+          "tottime_ms": 0.815,
+          "cumtime_ms": 0.815
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 166,
+          "tottime_ms": 0.072,
+          "cumtime_ms": 0.802
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 0.196,
+          "cumtime_ms": 0.749
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 3,
+          "tottime_ms": 0.724,
+          "cumtime_ms": 0.724
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 166,
+          "tottime_ms": 0.081,
+          "cumtime_ms": 0.705
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/decoder.py:340(decode)",
+          "ncalls": 498,
+          "tottime_ms": 0.334,
+          "cumtime_ms": 0.627
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 3347,
+          "tottime_ms": 0.602,
+          "cumtime_ms": 0.602
+        }
+      ],
+      "label": "month",
+      "n": 3000
+    },
+    {
+      "query": "what coffee does alice like",
+      "rows_out": 20,
+      "candidates_hydrated": 2000,
+      "axis_selects": 4,
+      "total_ms_median": 89.519,
+      "total_ms_min": 88.473,
+      "buckets_ms": {
+        "plan": 0.038,
+        "axis_sql": 7.929,
+        "hydrate": 30.863,
+        "embed": 0.041,
+        "index_search": 8.864,
+        "semantic_scores_total": 9.092,
+        "sig_keyword_tokens": 21.699,
+        "sig_keyword_overlap": 3.503,
+        "sig_recency": 2.289,
+        "sig_support": 0.207,
+        "signals_total": 31.81,
+        "fuse": 1.077,
+        "score_details": 1.779,
+        "execute_total": 89.355,
+        "row_format": 0.038
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 4,
+        "hydrate": 2000,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 2000,
+        "sig_keyword_overlap": 2000,
+        "sig_recency": 2000,
+        "sig_support": 2000,
+        "signals_total": 2000,
+        "fuse": 2000,
+        "score_details": 2000,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 194.024
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 193.936
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 14025,
+          "tottime_ms": 8.543,
+          "cumtime_ms": 193.914
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 3.929,
+          "cumtime_ms": 192.203
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2000,
+          "tottime_ms": 4.665,
+          "cumtime_ms": 95.43
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 4,
+          "tottime_ms": 0.008,
+          "cumtime_ms": 64.255
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 4,
+          "tottime_ms": 0.263,
+          "cumtime_ms": 64.235
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 4,
+          "tottime_ms": 0.161,
+          "cumtime_ms": 63.943
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 2000,
+          "tottime_ms": 3.314,
+          "cumtime_ms": 59.091
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 4,
+          "tottime_ms": 9.994,
+          "cumtime_ms": 55.9
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 2001,
+          "tottime_ms": 2.467,
+          "cumtime_ms": 47.374
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 4025,
+          "tottime_ms": 0.565,
+          "cumtime_ms": 25.496
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 16402,
+          "tottime_ms": 6.951,
+          "cumtime_ms": 25.067
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 4400,
+          "tottime_ms": 8.492,
+          "cumtime_ms": 25.05
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 4025,
+          "tottime_ms": 8.761,
+          "cumtime_ms": 24.931
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 22402,
+          "tottime_ms": 10.804,
+          "cumtime_ms": 20.901
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 5198,
+          "tottime_ms": 8.63,
+          "cumtime_ms": 15.251
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 12007,
+          "tottime_ms": 8.101,
+          "cumtime_ms": 15.179
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 12,
+          "tottime_ms": 0.632,
+          "cumtime_ms": 14.006
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.289,
+          "cumtime_ms": 11.486
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.012,
+          "cumtime_ms": 10.625
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 2000,
+          "tottime_ms": 2.253,
+          "cumtime_ms": 10.156
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 6000,
+          "tottime_ms": 0.942,
+          "cumtime_ms": 9.613
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 2000,
+          "tottime_ms": 0.803,
+          "cumtime_ms": 9.142
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 6000,
+          "tottime_ms": 1.687,
+          "cumtime_ms": 8.67
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 2.483,
+          "cumtime_ms": 8.577
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 12,
+          "tottime_ms": 8.43,
+          "cumtime_ms": 8.43
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 2000,
+          "tottime_ms": 0.889,
+          "cumtime_ms": 8.04
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 42246,
+          "tottime_ms": 7.538,
+          "cumtime_ms": 7.538
+        },
+        {
+          "func": "hms_elite/memory/storage.py:200(_scope_of)",
+          "ncalls": 2000,
+          "tottime_ms": 1.462,
+          "cumtime_ms": 6.949
+        }
+      ],
+      "label": "preference",
+      "n": 3000
+    },
+    {
+      "query": "部署 回滚 测试",
+      "rows_out": 20,
+      "candidates_hydrated": 2000,
+      "axis_selects": 1,
+      "total_ms_median": 88.323,
+      "total_ms_min": 87.038,
+      "buckets_ms": {
+        "plan": 0.031,
+        "axis_sql": 7.339,
+        "hydrate": 30.969,
+        "embed": 0.027,
+        "index_search": 8.774,
+        "semantic_scores_total": 8.993,
+        "sig_keyword_tokens": 21.634,
+        "sig_keyword_overlap": 3.118,
+        "sig_recency": 2.281,
+        "sig_support": 0.204,
+        "signals_total": 31.378,
+        "fuse": 1.074,
+        "score_details": 1.723,
+        "execute_total": 88.175,
+        "row_format": 0.037
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 2000,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 2000,
+        "sig_keyword_overlap": 2000,
+        "sig_recency": 2000,
+        "sig_support": 2000,
+        "signals_total": 2000,
+        "fuse": 2000,
+        "score_details": 2000,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.021,
+          "cumtime_ms": 199.305
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 199.241
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 14025,
+          "tottime_ms": 8.491,
+          "cumtime_ms": 199.221
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 4.57,
+          "cumtime_ms": 197.719
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2000,
+          "tottime_ms": 4.617,
+          "cumtime_ms": 93.749
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 70.798
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.221,
+          "cumtime_ms": 70.792
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.133,
+          "cumtime_ms": 70.56
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 10.226,
+          "cumtime_ms": 63.211
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 2000,
+          "tottime_ms": 3.296,
+          "cumtime_ms": 59.076
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 2001,
+          "tottime_ms": 2.444,
+          "cumtime_ms": 47.378
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 4025,
+          "tottime_ms": 0.551,
+          "cumtime_ms": 26.505
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 4025,
+          "tottime_ms": 9.796,
+          "cumtime_ms": 25.954
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 16402,
+          "tottime_ms": 7.005,
+          "cumtime_ms": 25.155
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 4400,
+          "tottime_ms": 8.407,
+          "cumtime_ms": 24.94
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 22402,
+          "tottime_ms": 9.699,
+          "cumtime_ms": 19.356
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 9,
+          "tottime_ms": 6.127,
+          "cumtime_ms": 18.817
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 5198,
+          "tottime_ms": 8.591,
+          "cumtime_ms": 15.196
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 12004,
+          "tottime_ms": 7.96,
+          "cumtime_ms": 15.101
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 2.743,
+          "cumtime_ms": 14.414
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.294,
+          "cumtime_ms": 11.64
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.013,
+          "cumtime_ms": 10.759
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 6000,
+          "tottime_ms": 0.96,
+          "cumtime_ms": 9.796
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 2000,
+          "tottime_ms": 0.802,
+          "cumtime_ms": 9.242
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 6000,
+          "tottime_ms": 1.702,
+          "cumtime_ms": 8.836
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 2000,
+          "tottime_ms": 2.241,
+          "cumtime_ms": 8.493
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 9,
+          "tottime_ms": 8.482,
+          "cumtime_ms": 8.482
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 2000,
+          "tottime_ms": 0.887,
+          "cumtime_ms": 8.137
+        },
+        {
+          "func": "hms_elite/memory/storage.py:200(_scope_of)",
+          "ncalls": 2000,
+          "tottime_ms": 1.445,
+          "cumtime_ms": 7.086
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 42244,
+          "tottime_ms": 7.06,
+          "cumtime_ms": 7.06
+        }
+      ],
+      "label": "cjk",
+      "n": 3000
+    },
+    {
+      "query": "who is Sarah",
+      "rows_out": 20,
+      "candidates_hydrated": 2000,
+      "axis_selects": 1,
+      "total_ms_median": 119.852,
+      "total_ms_min": 117.857,
+      "buckets_ms": {
+        "plan": 0.037,
+        "axis_sql": 26.858,
+        "hydrate": 35.937,
+        "embed": 0.03,
+        "index_search": 11.013,
+        "semantic_scores_total": 11.237,
+        "entity_lookup": 0.093,
+        "sig_keyword_tokens": 25.227,
+        "sig_keyword_overlap": 1.982,
+        "sig_entity": 0.888,
+        "sig_recency": 2.278,
+        "sig_support": 0.205,
+        "signals_total": 35.391,
+        "fuse": 1.191,
+        "score_details": 1.808,
+        "execute_total": 119.693,
+        "row_format": 0.037
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 2000,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "entity_lookup": 2,
+        "sig_keyword_tokens": 2000,
+        "sig_keyword_overlap": 2000,
+        "sig_entity": 2000,
+        "sig_recency": 2000,
+        "sig_support": 2000,
+        "signals_total": 2000,
+        "fuse": 2000,
+        "score_details": 2000,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 231.006
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 230.931
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 16027,
+          "tottime_ms": 9.65,
+          "cumtime_ms": 230.909
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 4.051,
+          "cumtime_ms": 229.181
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2000,
+          "tottime_ms": 5.285,
+          "cumtime_ms": 102.865
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.005,
+          "cumtime_ms": 90.797
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.225,
+          "cumtime_ms": 90.79
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.147,
+          "cumtime_ms": 90.554
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 2000,
+          "tottime_ms": 3.168,
+          "cumtime_ms": 64.841
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 10.229,
+          "cumtime_ms": 63.221
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 2001,
+          "tottime_ms": 2.605,
+          "cumtime_ms": 53.899
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 11,
+          "tottime_ms": 0.834,
+          "cumtime_ms": 39.55
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 18001,
+          "tottime_ms": 7.612,
+          "cumtime_ms": 28.384
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 4001,
+          "tottime_ms": 9.584,
+          "cumtime_ms": 26.957
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 4026,
+          "tottime_ms": 0.557,
+          "cumtime_ms": 26.85
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 4026,
+          "tottime_ms": 9.03,
+          "cumtime_ms": 26.293
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 11,
+          "tottime_ms": 23.848,
+          "cumtime_ms": 23.848
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 20001,
+          "tottime_ms": 9.077,
+          "cumtime_ms": 18.821
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 4001,
+          "tottime_ms": 9.602,
+          "cumtime_ms": 16.444
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 12004,
+          "tottime_ms": 7.968,
+          "cumtime_ms": 15.158
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 11,
+          "tottime_ms": 14.839,
+          "cumtime_ms": 14.839
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 3.472,
+          "cumtime_ms": 14.142
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.294,
+          "cumtime_ms": 13.482
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.014,
+          "cumtime_ms": 12.589
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 6000,
+          "tottime_ms": 0.978,
+          "cumtime_ms": 9.681
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 2000,
+          "tottime_ms": 0.803,
+          "cumtime_ms": 9.24
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 6000,
+          "tottime_ms": 1.7,
+          "cumtime_ms": 8.703
+        },
+        {
+          "func": "hms_elite/memory/storage.py:200(_scope_of)",
+          "ncalls": 2000,
+          "tottime_ms": 1.469,
+          "cumtime_ms": 8.158
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 2000,
+          "tottime_ms": 0.893,
+          "cumtime_ms": 8.126
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 46004,
+          "tottime_ms": 8.011,
+          "cumtime_ms": 8.011
+        }
+      ],
+      "label": "entity",
+      "n": 30000
+    },
+    {
+      "query": "retry.ts backoff patch",
+      "rows_out": 20,
+      "candidates_hydrated": 2000,
+      "axis_selects": 1,
+      "total_ms_median": 110.016,
+      "total_ms_min": 108.277,
+      "buckets_ms": {
+        "plan": 0.04,
+        "axis_sql": 20.964,
+        "hydrate": 35.03,
+        "embed": 0.038,
+        "index_search": 10.662,
+        "semantic_scores_total": 10.879,
+        "entity_lookup": 0.057,
+        "sig_keyword_tokens": 21.847,
+        "sig_keyword_overlap": 3.273,
+        "sig_entity": 0.445,
+        "sig_recency": 2.263,
+        "sig_support": 0.204,
+        "signals_total": 32.908,
+        "fuse": 1.193,
+        "score_details": 1.733,
+        "execute_total": 109.853,
+        "row_format": 0.038
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 2000,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "entity_lookup": 2,
+        "sig_keyword_tokens": 2000,
+        "sig_keyword_overlap": 2000,
+        "sig_entity": 2000,
+        "sig_recency": 2000,
+        "sig_support": 2000,
+        "signals_total": 2000,
+        "fuse": 2000,
+        "score_details": 2000,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 218.819
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.011,
+          "cumtime_ms": 218.751
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 16027,
+          "tottime_ms": 9.758,
+          "cumtime_ms": 218.728
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 3.949,
+          "cumtime_ms": 216.868
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2000,
+          "tottime_ms": 5.385,
+          "cumtime_ms": 100.069
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 81.936
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.231,
+          "cumtime_ms": 81.93
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.164,
+          "cumtime_ms": 81.688
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 10.261,
+          "cumtime_ms": 60.589
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 2000,
+          "tottime_ms": 3.211,
+          "cumtime_ms": 59.854
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 2001,
+          "tottime_ms": 2.487,
+          "cumtime_ms": 48.168
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 11,
+          "tottime_ms": 0.859,
+          "cumtime_ms": 32.343
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 4025,
+          "tottime_ms": 0.546,
+          "cumtime_ms": 26.056
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 4025,
+          "tottime_ms": 9.006,
+          "cumtime_ms": 25.51
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 4401,
+          "tottime_ms": 8.579,
+          "cumtime_ms": 25.474
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 16404,
+          "tottime_ms": 6.99,
+          "cumtime_ms": 25.392
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 22404,
+          "tottime_ms": 10.481,
+          "cumtime_ms": 20.265
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 11,
+          "tottime_ms": 17.005,
+          "cumtime_ms": 17.005
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 5202,
+          "tottime_ms": 8.844,
+          "cumtime_ms": 15.557
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 12004,
+          "tottime_ms": 8.326,
+          "cumtime_ms": 15.537
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 11,
+          "tottime_ms": 14.451,
+          "cumtime_ms": 14.451
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.293,
+          "cumtime_ms": 13.313
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.017,
+          "cumtime_ms": 12.442
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 2.48,
+          "cumtime_ms": 12.185
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 6000,
+          "tottime_ms": 0.972,
+          "cumtime_ms": 9.8
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 2000,
+          "tottime_ms": 2.381,
+          "cumtime_ms": 9.506
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 2000,
+          "tottime_ms": 0.822,
+          "cumtime_ms": 9.322
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 6000,
+          "tottime_ms": 1.714,
+          "cumtime_ms": 8.828
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 2000,
+          "tottime_ms": 0.903,
+          "cumtime_ms": 8.196
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 42243,
+          "tottime_ms": 7.533,
+          "cumtime_ms": 7.533
+        }
+      ],
+      "label": "identifier",
+      "n": 30000
+    },
+    {
+      "query": "what happened in March",
+      "rows_out": 20,
+      "candidates_hydrated": 1666,
+      "axis_selects": 1,
+      "total_ms_median": 83.186,
+      "total_ms_min": 82.034,
+      "buckets_ms": {
+        "plan": 0.049,
+        "axis_sql": 10.544,
+        "hydrate": 29.274,
+        "embed": 0.037,
+        "index_search": 8.925,
+        "semantic_scores_total": 9.123,
+        "sig_keyword_tokens": 18.078,
+        "sig_keyword_overlap": 2.221,
+        "sig_recency": 1.904,
+        "sig_support": 0.17,
+        "signals_total": 25.78,
+        "fuse": 0.889,
+        "score_details": 1.732,
+        "execute_total": 83.004,
+        "row_format": 0.039
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 1666,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 1666,
+        "sig_keyword_overlap": 1666,
+        "sig_recency": 1666,
+        "sig_support": 1666,
+        "signals_total": 1666,
+        "fuse": 1666,
+        "score_details": 1666,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.026,
+          "cumtime_ms": 171.755
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 171.687
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 11687,
+          "tottime_ms": 7.179,
+          "cumtime_ms": 171.667
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 3.122,
+          "cumtime_ms": 170.317
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 1666,
+          "tottime_ms": 3.862,
+          "cumtime_ms": 79.043
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 61.273
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.191,
+          "cumtime_ms": 61.267
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.126,
+          "cumtime_ms": 61.067
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 1666,
+          "tottime_ms": 2.818,
+          "cumtime_ms": 50.808
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 8.561,
+          "cumtime_ms": 50.277
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 1667,
+          "tottime_ms": 2.131,
+          "cumtime_ms": 40.723
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 3357,
+          "tottime_ms": 0.475,
+          "cumtime_ms": 21.695
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 3666,
+          "tottime_ms": 7.409,
+          "cumtime_ms": 21.669
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 13662,
+          "tottime_ms": 5.882,
+          "cumtime_ms": 21.43
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 3357,
+          "tottime_ms": 7.779,
+          "cumtime_ms": 21.22
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 9,
+          "tottime_ms": 0.673,
+          "cumtime_ms": 19.97
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 16994,
+          "tottime_ms": 7.522,
+          "cumtime_ms": 15.555
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 4332,
+          "tottime_ms": 7.371,
+          "cumtime_ms": 13.103
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 10004,
+          "tottime_ms": 6.654,
+          "cumtime_ms": 12.684
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 9,
+          "tottime_ms": 11.434,
+          "cumtime_ms": 11.434
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.262,
+          "cumtime_ms": 10.971
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.012,
+          "cumtime_ms": 10.231
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 2.12,
+          "cumtime_ms": 10.008
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 4998,
+          "tottime_ms": 0.794,
+          "cumtime_ms": 8.149
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 1666,
+          "tottime_ms": 0.693,
+          "cumtime_ms": 7.862
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 9,
+          "tottime_ms": 7.84,
+          "cumtime_ms": 7.84
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 4998,
+          "tottime_ms": 1.427,
+          "cumtime_ms": 7.355
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 1666,
+          "tottime_ms": 0.756,
+          "cumtime_ms": 6.913
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 33527,
+          "tottime_ms": 6.128,
+          "cumtime_ms": 6.128
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 1666,
+          "tottime_ms": 1.745,
+          "cumtime_ms": 5.977
+        }
+      ],
+      "label": "month",
+      "n": 30000
+    },
+    {
+      "query": "what coffee does alice like",
+      "rows_out": 20,
+      "candidates_hydrated": 2000,
+      "axis_selects": 4,
+      "total_ms_median": 122.153,
+      "total_ms_min": 121.247,
+      "buckets_ms": {
+        "plan": 0.038,
+        "axis_sql": 34.334,
+        "hydrate": 34.976,
+        "embed": 0.041,
+        "index_search": 10.635,
+        "semantic_scores_total": 10.853,
+        "sig_keyword_tokens": 21.708,
+        "sig_keyword_overlap": 3.619,
+        "sig_recency": 2.291,
+        "sig_support": 0.204,
+        "signals_total": 31.977,
+        "fuse": 1.071,
+        "score_details": 1.778,
+        "execute_total": 121.999,
+        "row_format": 0.038
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 4,
+        "hydrate": 2000,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 2000,
+        "sig_keyword_overlap": 2000,
+        "sig_recency": 2000,
+        "sig_support": 2000,
+        "signals_total": 2000,
+        "fuse": 2000,
+        "score_details": 2000,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 227.056
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.01,
+          "cumtime_ms": 226.986
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 14025,
+          "tottime_ms": 8.56,
+          "cumtime_ms": 226.966
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 5.085,
+          "cumtime_ms": 225.317
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 4,
+          "tottime_ms": 0.012,
+          "cumtime_ms": 94.964
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 4,
+          "tottime_ms": 0.245,
+          "cumtime_ms": 94.941
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2000,
+          "tottime_ms": 4.593,
+          "cumtime_ms": 94.834
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 4,
+          "tottime_ms": 0.178,
+          "cumtime_ms": 94.648
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 4,
+          "tottime_ms": 10.29,
+          "cumtime_ms": 60.154
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 2000,
+          "tottime_ms": 3.349,
+          "cumtime_ms": 59.51
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 2001,
+          "tottime_ms": 2.484,
+          "cumtime_ms": 47.717
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 12,
+          "tottime_ms": 0.983,
+          "cumtime_ms": 45.775
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 12,
+          "tottime_ms": 30.411,
+          "cumtime_ms": 30.411
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 4025,
+          "tottime_ms": 0.552,
+          "cumtime_ms": 25.6
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 16404,
+          "tottime_ms": 7.02,
+          "cumtime_ms": 25.295
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 4401,
+          "tottime_ms": 8.566,
+          "cumtime_ms": 25.159
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 4025,
+          "tottime_ms": 8.839,
+          "cumtime_ms": 25.047
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 22404,
+          "tottime_ms": 9.807,
+          "cumtime_ms": 20.039
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 5201,
+          "tottime_ms": 8.585,
+          "cumtime_ms": 15.244
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 12007,
+          "tottime_ms": 7.884,
+          "cumtime_ms": 15.035
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 12,
+          "tottime_ms": 14.348,
+          "cumtime_ms": 14.348
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.297,
+          "cumtime_ms": 13.303
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.014,
+          "cumtime_ms": 12.432
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 2.515,
+          "cumtime_ms": 12.285
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 6000,
+          "tottime_ms": 0.966,
+          "cumtime_ms": 9.725
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 2000,
+          "tottime_ms": 0.812,
+          "cumtime_ms": 9.301
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 2000,
+          "tottime_ms": 2.22,
+          "cumtime_ms": 9.097
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 6000,
+          "tottime_ms": 1.722,
+          "cumtime_ms": 8.758
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 2000,
+          "tottime_ms": 0.899,
+          "cumtime_ms": 8.191
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 42246,
+          "tottime_ms": 7.538,
+          "cumtime_ms": 7.538
+        }
+      ],
+      "label": "preference",
+      "n": 30000
+    },
+    {
+      "query": "部署 回滚 测试",
+      "rows_out": 20,
+      "candidates_hydrated": 2000,
+      "axis_selects": 1,
+      "total_ms_median": 108.486,
+      "total_ms_min": 107.235,
+      "buckets_ms": {
+        "plan": 0.032,
+        "axis_sql": 21.033,
+        "hydrate": 34.745,
+        "embed": 0.028,
+        "index_search": 10.811,
+        "semantic_scores_total": 11.029,
+        "sig_keyword_tokens": 21.718,
+        "sig_keyword_overlap": 3.224,
+        "sig_recency": 2.288,
+        "sig_support": 0.206,
+        "signals_total": 31.548,
+        "fuse": 1.075,
+        "score_details": 1.747,
+        "execute_total": 108.32,
+        "row_format": 0.039
+      },
+      "bucket_calls": {
+        "plan": 1,
+        "axis_sql": 1,
+        "hydrate": 2000,
+        "embed": 1,
+        "index_search": 1,
+        "semantic_scores_total": 1,
+        "sig_keyword_tokens": 2000,
+        "sig_keyword_overlap": 2000,
+        "sig_recency": 2000,
+        "sig_support": 2000,
+        "signals_total": 2000,
+        "fuse": 2000,
+        "score_details": 2000,
+        "execute_total": 1,
+        "row_format": 20
+      },
+      "cprofile_top": [
+        {
+          "func": "hms_elite/memory/main.py:442(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.023,
+          "cumtime_ms": 212.485
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:496(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.011,
+          "cumtime_ms": 212.415
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:122(wrapper)",
+          "ncalls": 14025,
+          "tottime_ms": 8.756,
+          "cumtime_ms": 212.394
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:224(execute_axis_query)",
+          "ncalls": 1,
+          "tottime_ms": 3.775,
+          "cumtime_ms": 210.534
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:255(compute_signals)",
+          "ncalls": 2000,
+          "tottime_ms": 4.675,
+          "cumtime_ms": 94.452
+        },
+        {
+          "func": "hms_elite/mvmi/query.py:309(_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.004,
+          "cumtime_ms": 82.392
+        },
+        {
+          "func": "hms_elite/memory/storage.py:2331(axis_select)",
+          "ncalls": 1,
+          "tottime_ms": 0.223,
+          "cumtime_ms": 82.386
+        },
+        {
+          "func": "/private/tmp/claude-501/-Users-lazy-Documents-Claude-Code/7477fb8f-767d-43d5-86b8-b84b581078ff/scratchpad/bench/profile_search.py:142(select_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 0.158,
+          "cumtime_ms": 82.152
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1703(_hydrate_atoms)",
+          "ncalls": 1,
+          "tottime_ms": 10.289,
+          "cumtime_ms": 60.945
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:84(atom_keyword_tokens)",
+          "ncalls": 2000,
+          "tottime_ms": 3.327,
+          "cumtime_ms": 59.751
+        },
+        {
+          "func": "hms_elite/utils/text.py:453(content_tokens)",
+          "ncalls": 2001,
+          "tottime_ms": 2.456,
+          "cumtime_ms": 47.945
+        },
+        {
+          "func": "hms_elite/memory/storage.py:685(_execute)",
+          "ncalls": 9,
+          "tottime_ms": 1.092,
+          "cumtime_ms": 32.378
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/site-packages/pydantic/main.py:253(__init__)",
+          "ncalls": 4025,
+          "tottime_ms": 0.56,
+          "cumtime_ms": 26.228
+        },
+        {
+          "func": "~:0(<method 'validate_python' of 'pydantic_core._pydantic_core.SchemaValidator' objects>)",
+          "ncalls": 4025,
+          "tottime_ms": 9.619,
+          "cumtime_ms": 25.668
+        },
+        {
+          "func": "hms_elite/utils/text.py:397(tokenize)",
+          "ncalls": 4401,
+          "tottime_ms": 8.544,
+          "cumtime_ms": 25.403
+        },
+        {
+          "func": "hms_elite/utils/text.py:423(stem)",
+          "ncalls": 16404,
+          "tottime_ms": 6.999,
+          "cumtime_ms": 25.313
+        },
+        {
+          "func": "hms_elite/utils/text.py:472(is_identifier)",
+          "ncalls": 22404,
+          "tottime_ms": 9.601,
+          "cumtime_ms": 19.401
+        },
+        {
+          "func": "~:0(<method 'execute' of 'sqlite3.Connection' objects>)",
+          "ncalls": 9,
+          "tottime_ms": 17.182,
+          "cumtime_ms": 17.182
+        },
+        {
+          "func": "hms_elite/utils/text.py:267(_plain_tokens)",
+          "ncalls": 5201,
+          "tottime_ms": 8.844,
+          "cumtime_ms": 15.507
+        },
+        {
+          "func": "hms_elite/timeutil.py:59(to_utc_iso)",
+          "ncalls": 12004,
+          "tottime_ms": 7.862,
+          "cumtime_ms": 14.977
+        },
+        {
+          "func": "~:0(<method 'fetchall' of 'sqlite3.Cursor' objects>)",
+          "ncalls": 9,
+          "tottime_ms": 14.08,
+          "cumtime_ms": 14.08
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:112(semantic_scores)",
+          "ncalls": 1,
+          "tottime_ms": 0.308,
+          "cumtime_ms": 12.925
+        },
+        {
+          "func": "hms_elite/memory/storage.py:1649(_links_for)",
+          "ncalls": 1,
+          "tottime_ms": 2.573,
+          "cumtime_ms": 12.459
+        },
+        {
+          "func": "hms_elite/index/sqlite.py:161(search)",
+          "ncalls": 1,
+          "tottime_ms": 0.014,
+          "cumtime_ms": 12.04
+        },
+        {
+          "func": "hms_elite/memory/storage.py:191(_loads)",
+          "ncalls": 6000,
+          "tottime_ms": 0.949,
+          "cumtime_ms": 9.724
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:209(recency_score)",
+          "ncalls": 2000,
+          "tottime_ms": 0.801,
+          "cumtime_ms": 9.251
+        },
+        {
+          "func": "/opt/anaconda3/lib/python3.14/json/__init__.py:304(loads)",
+          "ncalls": 6000,
+          "tottime_ms": 1.709,
+          "cumtime_ms": 8.776
+        },
+        {
+          "func": "hms_elite/utils/scoring.py:144(keyword_score)",
+          "ncalls": 2000,
+          "tottime_ms": 2.288,
+          "cumtime_ms": 8.495
+        },
+        {
+          "func": "hms_elite/timeutil.py:160(age_days)",
+          "ncalls": 2000,
+          "tottime_ms": 0.886,
+          "cumtime_ms": 8.146
+        },
+        {
+          "func": "~:0(<method 'fullmatch' of 're.Pattern' objects>)",
+          "ncalls": 42244,
+          "tottime_ms": 7.181,
+          "cumtime_ms": 7.181
+        }
+      ],
+      "label": "cjk",
+      "n": 30000
+    }
+  ]
+}

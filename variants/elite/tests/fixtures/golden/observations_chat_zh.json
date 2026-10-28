@@ -1,0 +1,58 @@
+[
+  [
+    {
+      "attributed_to": "user",
+      "confidence": 0.8,
+      "date_observed": "2026-04-02",
+      "entity_mentions": [],
+      "event_idx": 0,
+      "id": "0",
+      "objects": [
+        "燕麦拿铁"
+      ],
+      "predicate": "likes",
+      "relation": "single_fact",
+      "sentiment": "positive",
+      "speaker": null,
+      "subject": "user",
+      "supersedes_hint_ids": [],
+      "text": "用户喜欢燕麦拿铁。",
+      "topic_tags": [
+        "coffee",
+        "preference"
+      ],
+      "type": "preference_event",
+      "valid_from": null,
+      "valid_to": null
+    }
+  ],
+  [
+    {
+      "attributed_to": "user",
+      "confidence": 0.9,
+      "date_observed": "2026-04-20",
+      "entity_mentions": [],
+      "event_idx": 0,
+      "id": "0",
+      "objects": [
+        "黑咖啡"
+      ],
+      "predicate": "likes",
+      "relation": "supersession",
+      "sentiment": "positive",
+      "speaker": null,
+      "subject": "user",
+      "supersedes_hint_ids": [
+        "0"
+      ],
+      "text": "用户喜欢黑咖啡。",
+      "topic_tags": [
+        "coffee",
+        "preference"
+      ],
+      "type": "preference_event",
+      "valid_from": null,
+      "valid_to": null
+    }
+  ]
+]

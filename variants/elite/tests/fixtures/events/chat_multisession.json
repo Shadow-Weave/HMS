@@ -1,0 +1,5 @@
+[
+  {"role": "user", "content": "Sarah joined the billing team in March.", "timestamp": "2026-03-02T09:00:00Z", "run_id": "run-a"},
+  {"role": "user", "content": "Sarah shipped the webhook retry design on May 6.", "timestamp": "2026-05-06T09:00:00Z", "run_id": "run-b"},
+  {"role": "user", "content": "Sarah is reviewing the checkout refactor this week.", "timestamp": "2026-06-11T09:00:00Z", "run_id": "run-c"}
+]

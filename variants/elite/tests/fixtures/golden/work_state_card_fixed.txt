@@ -1,0 +1,21 @@
+# Work State Card
+Scope: user_id=alice agent_id=coder run_id=run-billing | As of: 2026-06-15T12:00:00.000000+00:00 | Mode: auto
+## Current Goal
+fix checkout webhook retry
+## Valid Facts
+- patch src/billing/idempotency.ts: add idempotency key → billing_e2e passed [positive]
+## Invalidated Assumptions
+- (none)
+## Failed Paths
+- patch src/billing/retry.ts: add exponential backoff → billing_e2e failed: subscription_state_regression
+## Constraints
+- Do not modify the subscription state machine.
+- Do not re-apply 'patch src/billing/retry.ts: add exponential backoff': billing_e2e failed: subscription_state_regression
+## Next Action
+Continue from 'patch src/billing/idempotency.ts: add idempotency key' (last outcome: billing_e2e passed) while keeping constraints: Do not modify the subscription state machine.
+## Evidence
+- chat://agent_id=coder&run_id=run-billing&user_id=alice/0 sha256:3ed3645c1244 @2026-06-15T09:00:00.000000+00:00
+- file://src/billing/retry.ts sha256:a27b81718fae @2026-06-15T10:00:00.000000+00:00
+- test://billing_e2e sha256:e51db27bfdf9 @2026-06-15T10:04:00.000000+00:00
+- file://src/billing/idempotency.ts sha256:cae8b909c617 @2026-06-15T10:10:00.000000+00:00
+- test://billing_e2e sha256:ea5edcbd2c3f @2026-06-15T10:14:00.000000+00:00

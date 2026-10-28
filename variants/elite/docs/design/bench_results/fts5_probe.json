@@ -1,0 +1,194 @@
+{
+  "fts5_available": true,
+  "sqlite_version": "3.53.2",
+  "sizes": [
+    {
+      "n": 300,
+      "base_insert_s": 0.002,
+      "fts_build_s": 0.0,
+      "queries": [
+        {
+          "label": "entity",
+          "match": "\"who\" OR \"is\" OR \"sarah\"",
+          "matching_docs": 30,
+          "fts5_ms": 0.036,
+          "fts5_rows": 30,
+          "like_ms": 0.076,
+          "like_rows": 30
+        },
+        {
+          "label": "identifier",
+          "match": "\"retry.ts\" OR \"backoff\" OR \"patch\"",
+          "matching_docs": 120,
+          "fts5_ms": 0.086,
+          "fts5_rows": 30,
+          "like_ms": 0.025,
+          "like_rows": 30
+        },
+        {
+          "label": "month",
+          "match": "\"what\" OR \"happened\" OR \"in\" OR \"march\"",
+          "matching_docs": 60,
+          "fts5_ms": 0.054,
+          "fts5_rows": 30,
+          "like_ms": 0.024,
+          "like_rows": 30
+        },
+        {
+          "label": "preference",
+          "match": "\"what\" OR \"coffee\" OR \"does\" OR \"alice\" OR \"like\"",
+          "matching_docs": 60,
+          "fts5_ms": 0.059,
+          "fts5_rows": 30,
+          "like_ms": 0.059,
+          "like_rows": 30
+        },
+        {
+          "label": "cjk",
+          "match": "\"部署\" OR \"回滚\" OR \"测试\"",
+          "matching_docs": 36,
+          "fts5_ms": 0.04,
+          "fts5_rows": 30,
+          "like_ms": 0.067,
+          "like_rows": 30
+        }
+      ]
+    },
+    {
+      "n": 3000,
+      "base_insert_s": 0.018,
+      "fts_build_s": 0.002,
+      "queries": [
+        {
+          "label": "entity",
+          "match": "\"who\" OR \"is\" OR \"sarah\"",
+          "matching_docs": 300,
+          "fts5_ms": 0.202,
+          "fts5_rows": 30,
+          "like_ms": 0.132,
+          "like_rows": 30
+        },
+        {
+          "label": "identifier",
+          "match": "\"retry.ts\" OR \"backoff\" OR \"patch\"",
+          "matching_docs": 1200,
+          "fts5_ms": 0.741,
+          "fts5_rows": 30,
+          "like_ms": 0.028,
+          "like_rows": 30
+        },
+        {
+          "label": "month",
+          "match": "\"what\" OR \"happened\" OR \"in\" OR \"march\"",
+          "matching_docs": 600,
+          "fts5_ms": 0.401,
+          "fts5_rows": 30,
+          "like_ms": 0.033,
+          "like_rows": 30
+        },
+        {
+          "label": "preference",
+          "match": "\"what\" OR \"coffee\" OR \"does\" OR \"alice\" OR \"like\"",
+          "matching_docs": 600,
+          "fts5_ms": 0.415,
+          "fts5_rows": 30,
+          "like_ms": 0.066,
+          "like_rows": 30
+        },
+        {
+          "label": "cjk",
+          "match": "\"部署\" OR \"回滚\" OR \"测试\"",
+          "matching_docs": 360,
+          "fts5_ms": 0.254,
+          "fts5_rows": 30,
+          "like_ms": 0.073,
+          "like_rows": 30
+        }
+      ]
+    },
+    {
+      "n": 30000,
+      "base_insert_s": 0.184,
+      "fts_build_s": 0.027,
+      "queries": [
+        {
+          "label": "entity",
+          "match": "\"who\" OR \"is\" OR \"sarah\"",
+          "matching_docs": 3000,
+          "fts5_ms": 2.206,
+          "fts5_rows": 30,
+          "like_ms": 0.625,
+          "like_rows": 30
+        },
+        {
+          "label": "identifier",
+          "match": "\"retry.ts\" OR \"backoff\" OR \"patch\"",
+          "matching_docs": 12000,
+          "fts5_ms": 7.986,
+          "fts5_rows": 30,
+          "like_ms": 0.124,
+          "like_rows": 30
+        },
+        {
+          "label": "month",
+          "match": "\"what\" OR \"happened\" OR \"in\" OR \"march\"",
+          "matching_docs": 6000,
+          "fts5_ms": 4.223,
+          "fts5_rows": 30,
+          "like_ms": 0.145,
+          "like_rows": 30
+        },
+        {
+          "label": "preference",
+          "match": "\"what\" OR \"coffee\" OR \"does\" OR \"alice\" OR \"like\"",
+          "matching_docs": 6000,
+          "fts5_ms": 4.297,
+          "fts5_rows": 30,
+          "like_ms": 0.161,
+          "like_rows": 30
+        },
+        {
+          "label": "cjk",
+          "match": "\"部署\" OR \"回滚\" OR \"测试\"",
+          "matching_docs": 3600,
+          "fts5_ms": 2.697,
+          "fts5_rows": 30,
+          "like_ms": 0.127,
+          "like_rows": 30
+        }
+      ]
+    }
+  ],
+  "tokenizer_sample": {
+    "text": "Sarah patched src/billing/retry.ts 今天部署了支付服务",
+    "tokenize": [
+      "sarah",
+      "patched",
+      "src/billing/retry.ts",
+      "今天",
+      "天部",
+      "部署",
+      "署了",
+      "了支",
+      "支付",
+      "付服",
+      "服务"
+    ],
+    "content_tokens": [
+      "sarah",
+      "patch",
+      "src/billing/retry.ts",
+      "今天",
+      "天部",
+      "部署",
+      "署了",
+      "了支",
+      "支付",
+      "付服",
+      "服务"
+    ],
+    "identifier_tokens": [
+      "src/billing/retry.ts"
+    ]
+  }
+}

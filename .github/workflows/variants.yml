@@ -1,0 +1,28 @@
+name: HMS variant integration
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  variants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      - name: Verify original source snapshots and version dispatch
+        run: |
+          python scripts/verify_variants.py
+          python -m unittest discover -s tests -p 'test_variant_*.py' -v
+      - name: Install Elite's native test dependencies
+        run: python -m pip install './variants/elite[server,test,openai,numpy]'
+      - name: Run Elite's original offline suite
+        run: python hmsctl.py --variant elite test

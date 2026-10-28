@@ -1,0 +1,159 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>HMS Elite 总览</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root { --bg:#F2F4F7; --surface:#FFFFFF; --ink:#1D2230; --muted:#5C6376; --line:#D5DAE3; --accent:#1F7A72; --accent-soft:#DDEFEC; --paid:#B5701E; --paid-soft:#FBF1E1; --store:#4C5A8A; --store-soft:#E8EBF6; --mono-bg:#EEF1F5; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#14171E; --surface:#1C2029; --ink:#E6E9F0; --muted:#9AA2B3; --line:#303645; --accent:#57B9AE; --accent-soft:#1E3532; --paid:#E0A458; --paid-soft:#35291A; --store:#9AA8E0; --store-soft:#23283A; --mono-bg:#232835; } }
+  :root[data-theme="dark"] { --bg:#14171E; --surface:#1C2029; --ink:#E6E9F0; --muted:#9AA2B3; --line:#303645; --accent:#57B9AE; --accent-soft:#1E3532; --paid:#E0A458; --paid-soft:#35291A; --store:#9AA8E0; --store-soft:#23283A; --mono-bg:#232835; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; font-size:15px; line-height:1.7; }
+  .page { max-width:1100px; margin:0 auto; padding:40px 24px 72px; display:grid; gap:34px; }
+  h1,h2,h3 { font-family:"Noto Serif SC","Songti SC","SimSun",serif; text-wrap:balance; margin:0; }
+  h1 { font-size:34px; font-weight:700; line-height:1.25; } h2 { font-size:22px; font-weight:600; } h3 { font-size:16px; font-weight:600; }
+  .eyebrow { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:700; font-family:"JetBrains Mono",monospace; }
+  header { display:grid; gap:10px; padding-bottom:22px; border-bottom:1px solid var(--line); } header p { max-width:70ch; color:var(--muted); margin:0; }
+  section { display:grid; gap:14px; } p { max-width:72ch; margin:0; }
+  .num { font-family:"JetBrains Mono",monospace; font-variant-numeric:tabular-nums; }
+  .flow { display:grid; gap:0; }
+  .step { background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent); padding:10px 14px; display:grid; grid-template-columns:1fr auto; gap:6px 16px; align-items:baseline; }
+  .step.paid { border-left-color:var(--paid); background:var(--paid-soft); } .step.store { border:1px dashed var(--store); border-left:3px solid var(--store); background:var(--store-soft); }
+  .step .t { font-weight:700; font-size:14px; } .step .d { grid-column:1; color:var(--muted); font-size:13px; } .step .m { color:var(--ink); font-size:13px; white-space:nowrap; text-align:right; }
+  .arrow { height:18px; display:grid; place-items:center; position:relative; } .arrow::before { content:""; width:2px; height:100%; background:var(--line); }
+  .contracts { grid-column:1 / -1; display:grid; grid-template-columns:auto repeat(4, 1fr); gap:2px 12px; font-size:12.5px; margin-top:4px; }
+  .contracts div { padding:2px 0; } .contracts .h { color:var(--muted); font-weight:500; } .contracts .k { font-weight:700; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:16px; } @media (max-width:820px) { .two { grid-template-columns:1fr; } }
+  .tablewrap { overflow-x:auto; background:var(--surface); border:1px solid var(--line); }
+  table { border-collapse:collapse; width:100%; min-width:560px; font-size:13.5px; } th,td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { font-weight:500; color:var(--muted); font-size:12px; background:var(--mono-bg); } tr:last-child td { border-bottom:0; } td.num,th.num { text-align:right; }
+  .planes { display:grid; grid-template-columns:1fr 1fr; gap:14px; } @media (max-width:820px) { .planes { grid-template-columns:1fr; } }
+  .plane { background:var(--surface); border:1px solid var(--line); padding:14px 16px; display:grid; gap:6px; } .plane h3 { display:flex; justify-content:space-between; }
+  .plane.ax { border-top:3px solid var(--accent); } .plane.gr { border-top:3px solid var(--store); }
+  .plane ul { margin:0; padding-left:18px; font-size:14px; display:grid; gap:3px; }
+  .inv { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+  .inv div { background:var(--surface); border:1px solid var(--line); padding:10px 12px; font-size:13.5px; } .inv b { display:block; color:var(--accent); margin-bottom:2px; }
+  .insight { background:var(--surface); border:1px solid var(--line); padding:14px 18px; display:grid; gap:6px; }
+  .insight h3 { display:flex; gap:10px; align-items:baseline; } .insight h3 .idx { font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:13px; }
+  .insight .ev { color:var(--ink); } .insight .why { color:var(--muted); font-size:14px; } .insight .why::before { content:"为什么："; color:var(--paid); font-weight:700; }
+  .lede { font-size:17px; max-width:66ch; }
+  code { font-family:"JetBrains Mono",monospace; font-size:.92em; background:var(--mono-bg); padding:1px 5px; }
+  .src { font-size:12px; color:var(--muted); font-family:"JetBrains Mono",monospace; }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">HMS Elite · 2026-09-12 · 真实 deepseek-flash 运行，EgoLife 204 题 / 4,851 窗口</div>
+    <h1>HMS Elite 总览</h1>
+    <p class="lede">三部分：一条消息怎么变成记忆、一次提问怎么取回记忆（脉络图，标了三种抽取契约的实测数字）；系统由哪几块组成（设计结构）；这一版里到底哪些设计起了作用、为什么（高光洞察，说人话）。</p>
+  </header>
+
+  <section>
+    <h2>一、脉络图</h2>
+    <h3>写入 · <code>HMS.add(messages)</code></h3>
+    <div class="flow">
+      <div class="step"><div class="t">① 入口</div><div class="m num">本地 &lt;1 ms</div><div class="d">规范化消息、剥离保留键、校验时间戳</div></div><div class="arrow"></div>
+      <div class="step"><div class="t">② Txn A · 持锁</div><div class="m num">本地 1–2 ms</div><div class="d">原话与 sha256 见证锚点先落库并提交。从这一刻起原话不会丢，后面任何环节失败都能重放。</div></div><div class="arrow"></div>
+      <div class="step"><div class="t">③ 分段 + 邻域候选 · 锁外</div><div class="m num">本地，毫秒级</div><div class="d">按 ≤400 字符切抽取单元；取向量最近的 10 条已有记忆和最近 10 条事件，作为修订判定的候选。</div></div><div class="arrow"></div>
+      <div class="step paid"><div class="t">④ LLM 抽取 · 唯一付费环节，一次往返</div><div class="m num">见下</div><div class="d">同一段转写，三种契约让模型写不同的东西；写作规则相同，差别只在输出格式。</div>
+        <div class="contracts">
+          <div class="h">契约</div><div class="h">每窗口 入 / 出 token</div><div class="h">每批模型耗时</div><div class="h">204 题写入 + 回答（空闲价）</div><div class="h">每窗口存入</div>
+          <div class="k">full · JSON 17 字段</div><div class="num">561 / 495</div><div class="num">14.9 s</div><div class="num">¥11.56</div><div class="num">1.75 条</div>
+          <div class="k">compact · JSON 9 键</div><div class="num">336 / 157</div><div class="num">7.3 s</div><div class="num">¥4.35</div><div class="num">1.57 条</div>
+          <div class="k">lines · 文本行</div><div class="num">343 / 51</div><div class="num">3.8 s</div><div class="num">¥2.24</div><div class="num">2.68 条</div>
+          <div class="k" style="color:var(--muted)">mem0（对照）</div><div class="num">657 / 45</div><div class="num">3.5 s</div><div class="num">¥1.98</div><div class="num">0.89 条</div>
+        </div>
+      </div><div class="arrow"></div>
+      <div class="step"><div class="t">⑤ 规整而不拒绝 + 本地推导七轴</div><div class="m num">每条 &lt;0.1 ms</div><div class="d">枚举、置信度、日期全部归位不作废；主语、谓词、关系、情绪、主题、实体由文本推导，说话人落 actor_id。</div></div><div class="arrow"></div>
+      <div class="step"><div class="t">⑥ 判定守卫</div><div class="m num">每条 &lt;0.1 ms</div><div class="d">模型说「重复 / 修订」时，只有新旧文本确实相似才生效，否则当新记忆存。</div></div><div class="arrow"></div>
+      <div class="step"><div class="t">⑦ 嵌入 · fastembed 384 维</div><div class="m num">每批约 78 ms</div><div class="d">本地，无 API token。</div></div><div class="arrow"></div>
+      <div class="step"><div class="t">⑧ Txn B · 持锁</div><div class="m num">每批约 230 ms</div><div class="d">原子、七轴、修订 / 冲突 / 时间 / 使用边、FTS、向量索引一起落库；旧版本归档不删。</div></div><div class="arrow"></div>
+      <div class="step store"><div class="t">状态存储</div><div class="m num">≈6.5 KB / 原子</div><div class="d">SQLite 22 表 + FTS5 + 向量索引（可换 Milvus）。写完即可读。</div></div>
+    </div>
+    <p class="src">写入一条记忆（空闲价）：批量摊销 lines ¥0.00017 · compact ¥0.00056 · full ¥0.00136；单条即时写 2.4 s、¥0.0025，几乎全是模型往返。</p>
+
+    <h3>读取 · <code>HMS.search(query)</code> → 上下文 → 回答</h3>
+    <div class="flow">
+      <div class="step"><div class="t">① 查询嵌入</div><div class="m num">3.8 ms</div><div class="d">本地。</div></div><div class="arrow"></div>
+      <div class="step"><div class="t">② 有界多通道召回 + 池内打分</div><div class="m num">①+② 中位 10–11 ms · P95 28 ms · ¥0</div><div class="d">语义 ANN、FTS5 关键词、实体各取 K，近因按条件启用；用户、有效期、尺度作为硬门下推 SQL；池内按 1.0 / 0.5 / 0.5 / 0.25 / 0.25 加权，半衰期 30 天，取 top-20。</div></div><div class="arrow"></div>
+      <div class="step"><div class="t">③ 两种上下文</div><div class="m num">≈330 / ≈1,600 token</div><div class="d">记忆行：20 条 text 直接给阅读器。状态卡片：<code>compile()</code> 按「当前目标 / 有效事实 / 失效假设 / 约束 / 下一步 / 证据」重组后给阅读器。</div></div><div class="arrow"></div>
+      <div class="step paid"><div class="t">④ 回答 LLM · 可选，产品侧</div><div class="m num">0.6–0.8 s · ¥0.0003–0.0016 / 题</div><div class="d">评测里是四选一；产品里是自由回复。</div></div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>准确率（204 题）</th><th class="num">full</th><th class="num">compact</th><th class="num">lines</th><th class="num">mem0</th></tr></thead>
+      <tbody>
+        <tr><td>记忆行上下文</td><td class="num">61.3%</td><td class="num">56.4%</td><td class="num">54.9%</td><td class="num">56.9%</td></tr>
+        <tr><td>状态卡片上下文</td><td class="num">61.8%</td><td class="num">62.7%</td><td class="num"><b>63.2%</b></td><td class="num">—</td></tr>
+        <tr><td>hit@20（gold 批次进入 top-20）</td><td class="num">78.9%</td><td class="num">77.9%</td><td class="num"><b>84.3%</b></td><td class="num">79.4%</td></tr>
+        <tr><td>检索本地中位</td><td class="num">11 ms</td><td class="num">10 ms</td><td class="num">10 ms</td><td class="num">115 ms</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>二、设计结构</h2>
+    <p>一句话：对外是 Mem0 的皮（11 个同签名方法、同信封、同 filters、同 config dict），对内是 HMS 双平面。</p>
+    <div class="planes">
+      <div class="plane ax"><h3>State Index · 状态索引 <span class="src">search 只碰这一层</span></h3><ul><li>每条记忆一个原子，七个轴：时间、有效期、实体、主题、角色、情绪、尺度</li><li>原子里不存边；有效期是 SQL 条件，不是事后过滤</li><li>三路召回 + 硬门 + 池内打分</li></ul></div>
+      <div class="plane gr"><h3>Support Graph · 支持图 <span class="src">why / compile(deep) / 巩固碰这一层</span></h3><ul><li>六类边：temporal · causal · revision · conflict · use · distill，每条边至少一个见证锚点</li><li>InterfaceEP = 低层子图的接口（支撑、边界、不变量、残差）</li><li>coarsen / project / refine，后台巩固四阶段</li></ul></div>
+    </div>
+    <div class="inv">
+      <div><b>无见证无意义</b>原子、边都指向源事件锚点（类型、DDL、写入路径三层强制）</div>
+      <div><b>原子不存边</b>模块依赖上 mvmi/ 够不到 graph/，由 AST 扫描测试钉住</div>
+      <div><b>修订代替删除</b>BEFORE DELETE / UPDATE 触发器拒绝物理删改，旧版归档</div>
+      <div><b>高层是接口</b>InterfaceEP 必须有支撑节点，边界边带见证</div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>模块组（依赖无环）</th><th>目录</th><th>职责</th></tr></thead>
+      <tbody>
+        <tr><td>A 基础</td><td class="src">models · enums · configs · utils · memory.schema / storage</td><td>类型、22 表 DDL、StateStore、提示词契约</td></tr>
+        <tr><td>B 提供者</td><td class="src">llms · embeddings · index · entities · reranker</td><td>RuleLLM、deepseek、ollama、fastembed、哈希、sqlite、milvus、spaCy</td></tr>
+        <tr><td>C 摄取</td><td class="src">ingest/</td><td>事件、锚点、抽取（full / compact / lines）、推导、判定守卫、原子物化</td></tr>
+        <tr><td>D 索引</td><td class="src">mvmi/ · utils/scoring</td><td>过滤 DSL、查询规划、多通道召回、五信号融合</td></tr>
+        <tr><td>E 图</td><td class="src">graph/</td><td>节点边见证、coarsen / project / refine、溯因</td></tr>
+        <tr><td>F 编译</td><td class="src">compiler/</td><td>六槽 ContextIR、工作状态卡、覆盖度选择</td></tr>
+        <tr><td>G 运维</td><td class="src">ops/ · daemon · runtime</td><td>反馈、检查点、交接、巩固四阶段、守护线程</td></tr>
+        <tr><td>H 门面</td><td class="src">memory/main · async_main · server · cli · hms4eye</td><td>HMS 40 方法、AsyncHMS 镜像、FastAPI、hms4eye 7 方法适配</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>抽取契约（<code>ingest.extraction_output</code>，默认 full）</th><th>LLM 写什么</th><th>库端推导</th><th>适合</th></tr></thead>
+      <tbody>
+        <tr><td>full</td><td>17 字段 JSON</td><td>无</td><td>读侧直接喂记忆行、要最高准确率</td></tr>
+        <tr><td>compact</td><td>9 键 JSON</td><td>主谓宾、关系、情绪、主题、置信度</td><td>折中</td></tr>
+        <tr><td>lines</td><td>文本行；EP / 判定段仅在出现时写</td><td>同 compact</td><td>成本敏感、读侧走状态卡片</td></tr>
+      </tbody>
+    </table></div>
+    <p class="src">接口面：Mem0 兼容 11 个 · HMS 原生 17 个（compile、why、handoff、feedback、checkpoint、rollback、consolidate…）· StateAPI 12 个业务状态委托 · hms4eye 7 方法适配器（点亮对方 33 个 no-op 中的 13 个）。</p>
+  </section>
+
+  <section>
+    <h2>三、高光洞察：哪里起了作用，为什么</h2>
+    <div class="insight"><h3><span class="idx">1</span>多通道召回是准确率的地基，不是向量</h3>
+      <div class="ev">同一哈希嵌入下，纯语义 hit@20 只有 10.8%，加上关键词、实体、时间门后 31.4%；换真实嵌入后 78.9%，与 mem0 的 milvus 混合检索（79.4%）持平，lines 契约下 84.3%。</div>
+      <div class="why">这类问题都在问「谁、什么东西、什么时候」，答案是名字和实物，向量抓不住名字，关键词和实体通道抓得住。</div></div>
+    <div class="insight"><h3><span class="idx">2</span>见证锚点让系统能离线复盘，直接换来了两次修 bug</h3>
+      <div class="ev">每条记忆指向原话和记录下来的模型回复，所以能在零 API 费用下把三轮共 10,611 条真实抽取结果重放进库、逐项改动再看结果。compact 初版掉 7 个点的原因就是这么找到的：把模型的判定全改成 ADD，命中从 141 回到 154，其它改动全是零。</div>
+      <div class="why">记忆系统的错误通常发生在写入时，没有见证就只能猜。</div></div>
+    <div class="insight"><h3><span class="idx">3</span>「校验不过就整条作废」是首轮丢掉 31% 窗口的全部原因</h3>
+      <div class="ev">模型在 attributed_to 里写了说话人名字，pydantic 只认 user / assistant，一批 208 条观察被丢。改成「规整而不拒绝」后三轮回放 0 拒绝。</div>
+      <div class="why">LLM 面向的每个字段都会被填出意料之外的值，校验门应该把值归位，不该扔数据。</div></div>
+    <div class="insight"><h3><span class="idx">4</span>钱和时间都花在输出 token 上，换输出格式比换模型有效</h3>
+      <div class="ev">输出 ¥4 / 百万，缓存命中的输入 ¥0.02 / 百万，差 200 倍；JSON 信封的开销是内容的 2–4 倍。观察改成文本行后：¥11.56 → ¥2.24，每批 14.9 s → 3.8 s；模型不用为每条付格式开销，反而多写了陈述（1.75 → 2.68 条/窗口），召回率升到 84.3%。</div>
+      <div class="why">早期用 JSON 是照 Mem0 的工程做的，当时没有成本模型；检索只读文本，字段是白付的钱。</div></div>
+    <div class="insight"><h3><span class="idx">5</span>提示词里一句判定措辞，比 17 个字段加起来影响都大</h3>
+      <div class="ev">compact 初版让模型把第 i 条观察和第 i 条候选配对判「重复」，1,685 个 NONE，22% 的陈述没入库。重写措辞并加相似度守卫后 NONE 回到 15–20 个。</div>
+      <div class="why">模型照着示例的形状填：示例里观察 0 对候选 0，它就按位置配。</div></div>
+    <div class="insight"><h3><span class="idx">6</span>记忆碎了，读侧要重组，状态卡片就是干这个的</h3>
+      <div class="ev">full 契约下记忆行和状态卡片持平（61.3 / 61.8）；lines 契约下记忆行 54.9%、状态卡片 63.2%。</div>
+      <div class="why">lines 写出更多更短的陈述，20 条短句堆给阅读器会选错（有据答错 55 → 72）；compile 按「有效事实 / 约束 / 证据」重组后反而更准。这是双平面里编译层的价值第一次在数字上出现。</div></div>
+    <div class="insight"><h3><span class="idx">7</span>什么没起作用，同样重要</h3>
+      <div class="ev">实体字段、类型字段、when 字段、主题标签对检索命中的影响为零（回放逐项验证）；批次从 25 缩到 12 也没用。</div>
+      <div class="why">检索只读文本 token 和向量，这些字段只在编译和过滤时被用到。</div></div>
+    <div class="insight"><h3><span class="idx">8</span>还没解决的三件事</h3>
+      <div class="ev">记忆行上下文不带时间戳，10 道「几小时前」类的题答不了；英文入库、中文提问，「樱桃小丸子」变成 Chibi Maruko-chan 后三路都够不到；lines 契约下库体积 72.5 MB，是 mem0 的 5.6 倍。</div>
+      <div class="why">前两件是上下文形状和入库语言的问题，读侧回放就能做 A/B；第三件要在产品化前定归档策略。</div></div>
+    <p class="src">来源：EGOLIFE_REAL_LLM_MEM0_VS_ELITE_2026-09-11 · EGOLIFE_REAL_LLM_ELITE_2026-09-11 · COMPACT_EXTRACTION_2026-09-11 · EGOLIFE_BENCH_2026-09-10 · RETRIEVAL_BENCH_2026-09-10 · artifacts/HMS_Elite_错题集_2026-09-11 · results/replay_diag/summary.md · CONTRACT §5 / §6.5 / §6.6 / §12</p>
+  </section>
+</div>
+
+</body></html>

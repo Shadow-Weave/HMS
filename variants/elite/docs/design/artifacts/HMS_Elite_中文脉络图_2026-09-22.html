@@ -1,0 +1,267 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>HMS Elite 中文脉络图</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --bg: #F2F4F7; --surface: #FFFFFF; --ink: #1D2230; --muted: #5C6376; --line: #D5DAE3;
+    --accent: #1F7A72; --accent-soft: #DDEFEC;
+    --paid: #B5701E; --paid-soft: #FBF1E1; --paid-line: #E3B877;
+    --store: #4C5A8A; --store-soft: #E8EBF6;
+    --no: #A4443C; --no-soft: #F7E4E2;
+    --mono-bg: #EEF1F5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171E; --surface: #1C2029; --ink: #E6E9F0; --muted: #9AA2B3; --line: #303645;
+      --accent: #57B9AE; --accent-soft: #1E3532;
+      --paid: #E0A458; --paid-soft: #35291A; --paid-line: #7A5A2A;
+      --store: #9AA8E0; --store-soft: #23283A;
+      --no: #E08078; --no-soft: #3A2220;
+      --mono-bg: #232835;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171E; --surface: #1C2029; --ink: #E6E9F0; --muted: #9AA2B3; --line: #303645;
+    --accent: #57B9AE; --accent-soft: #1E3532;
+    --paid: #E0A458; --paid-soft: #35291A; --paid-line: #7A5A2A;
+    --store: #9AA8E0; --store-soft: #23283A;
+    --no: #E08078; --no-soft: #3A2220;
+    --mono-bg: #232835;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; font-size: 14px; line-height: 1.6; margin: 0; }
+  .page { max-width: 1240px; margin: 0 auto; padding: 36px 24px 72px; display: grid; gap: 28px; }
+  h1, h2, h3 { font-family: "Noto Serif SC", "Songti SC", "SimSun", serif; text-wrap: balance; margin: 0; }
+  h1 { font-size: 32px; font-weight: 700; line-height: 1.25; }
+  h2 { font-size: 18px; font-weight: 600; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 700; font-family: "JetBrains Mono", monospace; }
+  header { display: grid; gap: 10px; }
+  header p { max-width: 70ch; color: var(--muted); margin: 0; }
+  .num { font-family: "JetBrains Mono", "SF Mono", Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 12px; color: var(--muted); align-items: center; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--line); background: var(--surface); }
+  .legend .paid::before { background: var(--paid-soft); border-color: var(--paid-line); }
+  .legend .store::before { background: var(--store-soft); border-color: var(--store); border-style: dashed; }
+  .legend .local::before { background: var(--surface); border-color: var(--accent); }
+
+  .map { display: grid; grid-template-columns: 1fr 260px 1fr; gap: 20px; align-items: start; }
+  .lane { display: grid; gap: 0; }
+  .lane-title { display: grid; gap: 2px; padding: 0 0 12px; }
+  .lane-title h2 { color: var(--accent); }
+  .lane-title small { color: var(--muted); font-size: 12px; }
+  .block { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 12px 14px; display: grid; gap: 6px; position: relative; }
+  .block.paid { border-left-color: var(--paid); background: var(--paid-soft); }
+  .block.store { border: 1px dashed var(--store); border-left-width: 3px; border-left-style: solid; background: var(--store-soft); }
+  .block h3 { font-family: "Noto Sans SC", sans-serif; font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .block h3 .kind { font-size: 11px; font-weight: 500; color: var(--muted); font-family: "JetBrains Mono", monospace; letter-spacing: 0.04em; white-space: nowrap; }
+  .block.paid h3 .kind { color: var(--paid); }
+  .block .what { font-size: 13px; color: var(--muted); }
+  .metrics { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 13px; align-items: baseline; margin: 0; }
+  .metrics dt { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .metrics dd { margin: 0; }
+  .metrics dd b { font-weight: 600; }
+  .src { font-size: 11px; color: var(--muted); font-family: "JetBrains Mono", monospace; }
+  .arrow { height: 22px; display: grid; place-items: center; position: relative; }
+  .arrow::before { content: ""; width: 2px; height: 100%; background: var(--line); }
+  .arrow::after { content: ""; position: absolute; bottom: 0; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--line); }
+  .arrow.async::before { background: repeating-linear-gradient(to bottom, var(--paid) 0 4px, transparent 4px 8px); }
+  .arrow.async::after { border-top-color: var(--paid); }
+  .arrow-label { position: absolute; left: calc(50% + 10px); top: 2px; font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .center { display: grid; gap: 0; align-content: start; padding-top: 42px; }
+  .invariants { font-size: 12px; color: var(--muted); display: grid; gap: 3px; margin: 0; padding-left: 16px; }
+  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); padding: 12px 14px; display: grid; gap: 2px; }
+  .kpi .label { font-size: 12px; color: var(--muted); }
+  .kpi .value { font-size: 22px; font-weight: 600; line-height: 1.2; }
+  .kpi .sub { font-size: 12px; color: var(--muted); }
+  .tablewrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 500; color: var(--muted); font-size: 12px; background: var(--mono-bg); }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; }
+  .chip { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border: 1px solid var(--line); border-radius: 2px; white-space: nowrap; font-family: "JetBrains Mono", monospace; letter-spacing: 0.02em; }
+  .chip.rec { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .chip.def { color: var(--muted); }
+  .chip.no { color: var(--no); border-color: var(--no); background: var(--no-soft); }
+  .chip.zh { color: var(--store); border-color: var(--store); background: var(--store-soft); }
+  .chip.wait { color: var(--paid); border-color: var(--paid-line); background: var(--paid-soft); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .note { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 8px; }
+  .note p { margin: 0; font-size: 13px; }
+  .note p.lead { font-size: 14px; }
+  .sources { font-size: 12px; color: var(--muted); display: grid; gap: 3px; padding-left: 18px; margin: 0; }
+  code { font-family: "JetBrains Mono", monospace; font-size: 0.92em; background: var(--mono-bg); padding: 1px 5px; }
+  @media (max-width: 900px) { .map { grid-template-columns: 1fr; } .center { padding-top: 0; } .two { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">一条中文消息怎么变成记忆 · 一次中文提问怎么用上记忆 · 哪些环节为中文加了规则 · 中文版 EgoLife 204 题实测</div>
+    <h1>HMS Elite 中文脉络图</h1>
+    <p>结构和英文版一样：左边写、右边读、中间是库。标了 <span class="chip zh">中文规则</span> 的块是为中文专门加的处理，每块写清它做什么、起了什么作用。数字来自把 EgoLife 4,851 条消息译成中文后跑的两轮：一轮只换中文嵌入模型，一轮再把中文规则打开。</p>
+    <div class="legend"><span class="paid">要调大模型，按 token 付费</span><span class="local">本机计算，免费</span><span class="store">存储</span><span>虚线 = 不用等它做完</span></div>
+  </header>
+
+  <div class="strip">
+    <div class="kpi"><div class="label">中文，默认读法（规则开）</div><div class="value num">69.6%</div><div class="sub">142 / 204；英文同一读法 70.1%</div></div>
+    <div class="kpi"><div class="label">中文，只换嵌入模型（规则关）</div><div class="value num">68.1%</div><div class="sub">139 / 204；三者差距都在噪声内</div></div>
+    <div class="kpi"><div class="label">记忆的「谁说的」填对了多少</div><div class="value num">979 / 980</div><div class="sub">规则开时主语是人名；规则关时几乎全空</div></div>
+    <div class="kpi"><div class="label">每轮费用与耗时</div><div class="value num">$0.39 · 22 min</div><div class="sub">290 批写入 + 408 次答题，与英文相同</div></div>
+  </div>
+
+  <div class="map">
+    <!-- 写 -->
+    <div class="lane">
+      <div class="lane-title"><h2>写：一条中文消息变成记忆</h2><small>第 4、5、6、7 步有中文相关的处理</small></div>
+
+      <div class="block">
+        <h3>1 · 收消息 <span class="kind">本机</span></h3>
+        <div class="what">和英文一样：看清是谁的、什么时候的</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>2 · 先把原话存下来 <span class="kind">本机 · 锁库</span></h3>
+        <div class="what">原话入库并打指纹，后面任何一步失败都不丢；每条记忆都能追到原话</div>
+      </div>
+      <div class="arrow async"><span class="arrow-label">不锁库，直到第 7 步</span></div>
+
+      <div class="block">
+        <h3>3 · 切段，找出相关的旧记忆 <span class="kind">本机</span></h3>
+        <div class="what">按 400 字符切段，中文也按字符数；用中文指纹从库里找 10 条最像的旧记忆给模型做参照</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block paid">
+        <h3>4 · 大模型读消息、写出记忆 <span class="kind">deepseek-flash · 花钱</span></h3>
+        <div class="what">提示词多了一句：<b>陈述用原文的语言写，人名照原样</b>。不加这句模型会把中文对话翻成英文记忆。模型写出来的行例如：「杰克要求团队在讨论开始前标记一个时间戳。」「舒尔告诉露西亚如果需要充电宝可以从这里拿一个。」</div>
+        <dl class="metrics"><dt>每批</dt><dd>4.5 s，和英文一样；0 截断、0 丢失</dd></dl>
+        <div class="src">configs/prompts.py 第 620 行</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block" style="border-left-color: var(--store)">
+        <h3>5 · 整理：从中文句子里读出谁、做了什么、涉及谁 <span class="chip zh">中文规则</span></h3>
+        <div class="what"><b>谁</b>：句首的人名后面跟着「说 / 问 / 告诉 / 要求 / 计划 / 喜欢 / 在 / 去…」这 36 个动词之一，就认为它是主语；「我…」记为用户本人。主语同时记为「说话人」。</div>
+        <div class="what"><b>做了什么</b>：动词对到固定的动作类型——说→says、问→asks、计划 / 打算 / 要→plans、喜欢→likes、讨厌→dislikes、在→is_at、去 / 去了→went_to、买→buys……动词后面的短语记为宾语。</div>
+        <div class="what"><b>涉及谁</b>：你给的人名名单（8 个）直接匹配；再加句首人名规则和「和 / 跟 / 给」后面的名字。原来会把「要求团队」「硬盘假装」当成人名的旧兜底规则，在中文模式下已关掉。</div>
+        <div class="what"><b>情绪和话题</b>：中文词表——饭菜、购物、游戏、音乐、出行、家务、工作。<b>时间</b>：昨天 / 上周 / 3 天前 / 1 月 5 日，原来就支持。</div>
+        <dl class="metrics">
+          <dt>效果</dt><dd>冒烟库 980 条记忆里 979 条主语是人名（杰克 228、露西亚 179、卡特里娜 175…）；动作类型 说 803 / 问 114 / 计划 7 / 买 3</dd>
+          <dt>不开时</dt><dd>主语几乎全空，动作全是「陈述」</dd>
+        </dl>
+        <div class="src">开关 ingest.zh_rules · llms/rule.py VERB_LEXICON_ZH · utils/text.py ZH_STATEMENT_VERBS / TOPIC_TABLE_ZH</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>6 · 给每条记忆算数字指纹 <span class="kind">本机 · 换成中文模型</span></h3>
+        <div class="what">bge-small-zh-v1.5，512 维（英文用的是 bge-small-en，384 维）。这一步是中文能不掉分的主因</div>
+        <div class="src">embedder: fastembed BAAI/bge-small-zh-v1.5</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block" style="border-left-color: var(--store)">
+        <h3>7 · 落库，关键词索引按两字一组切 <span class="chip zh">中文规则</span></h3>
+        <div class="what">中文没有空格，不切的话整句是一个词，查「小丸子」找不到「樱桃小丸子今天来了」。切成两字一组：「杰克要求团队」→ 杰克 · 克要 · 要求 · 求团 · 团队，查询也同样切，两字的词就能对上</div>
+        <dl class="metrics"><dt>代价</dt><dd>索引变大；见读取第 2 步的副作用</dd></dl>
+        <div class="src">开关 text.cjk_tokens = bigram · utils/text.py content_tokens</div>
+      </div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- 库 -->
+    <div class="center">
+      <div class="block store">
+        <h3>记忆库 <span class="kind">一个 SQLite 文件</span></h3>
+        <dl class="metrics">
+          <dt>规模</dt><dd>4,851 条消息 → <b class="num">10,641</b> 条记忆（英文 12,963）</dd>
+          <dt>每条记忆</dt><dd>原话指纹、主语、动作、宾语、涉及的人、情绪、话题、时间，加一个 512 维指纹</dd>
+        </dl>
+        <ul class="invariants">
+          <li>每条记忆都能追到原话</li>
+          <li>改记忆不删旧的，只标替代</li>
+          <li>切换中文规则或分词方式时，关键词索引会重建一次</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 读 -->
+    <div class="lane">
+      <div class="lane-title"><h2>读：一句中文提问怎么用上记忆</h2><small>默认走 HMS.context()；第 2 步有中文相关的差别</small></div>
+
+      <div class="block">
+        <h3>1 · 给问题算数字指纹 <span class="kind">本机 · 中文模型</span></h3>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block" style="border-left-color: var(--store)">
+        <h3>2 · 三路找记忆 <span class="chip zh">中文差别</span></h3>
+        <div class="what"><b>按意思相近</b>：主力。只靠这一路（另外两路关着），正确答案所在的那批消息 <b class="num">84.8%</b> 进了前 20，和英文三路一起的 84.3% 一样。</div>
+        <div class="what"><b>按关键词（两字一组）</b>：打开后 204 题都有命中，但它的权重（0.5）和语义一路一样重，把一部分语义命中挤出了前 20，命中率反而降到 <b class="num">80.4%</b>。</div>
+        <div class="what"><b>按提到的人</b>：靠人名名单，107 题有命中。</div>
+        <dl class="metrics"><dt>耗时</dt><dd>本机，毫秒级，免费</dd></dl>
+        <div class="src">mvmi/query.py · RetrievalConfig.w_keyword = 0.5</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>3 · 拼记忆文字 <span class="kind">本机 · HMS.context()</span></h3>
+        <div class="what">和英文一样：会话卡 + 20 条标日期的相关记忆，放在问题前面。卡片的栏目标题（Valid Facts、Constraints…）还是英文，模型读得懂；要给用户看的话再换中文标题</div>
+      </div>
+      <div class="arrow async"><span class="arrow-label">产品侧</span></div>
+
+      <div class="block paid">
+        <h3>4 · 对话模型回答 <span class="kind">deepseek-flash · 花钱</span></h3>
+        <div class="what">中文题面，四选一。答题提示词本身仍是英文，模型不受影响</div>
+        <dl class="metrics"><dt>答对</dt><dd>规则开 <b class="num">69.6%</b> · 规则关 68.1% · 英文 70.1%</dd></dl>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>5 · 返回给程序 <span class="kind">本机</span></h3>
+        <div class="what">格式不变</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h2>三种配置，同一批题</h2>
+    <div class="tablewrap" style="margin-top:10px"><table>
+      <thead><tr><th>配置</th><th class="num">默认读法答对</th><th class="num">只给记忆行答对</th><th class="num">记忆行 hit@20</th><th>记忆的主语</th></tr></thead>
+      <tbody>
+        <tr><td>英文原文，英文嵌入</td><td class="num">70.1%（143）</td><td class="num">53.9%（110）</td><td class="num">84.3%</td><td>英文规则，人名清楚</td></tr>
+        <tr><td>中文，只换中文嵌入</td><td class="num">68.1%（139）</td><td class="num">55.4%（113）</td><td class="num">84.8%</td><td>几乎全空</td></tr>
+        <tr><td><b>中文，加中文规则</b></td><td class="num"><b>69.6%（142）</b></td><td class="num">54.4%（111）</td><td class="num">80.4%</td><td>979 / 980 是人名</td></tr>
+      </tbody>
+    </table></div>
+    <p style="max-width:80ch;color:var(--muted);margin:8px 0 0;font-size:13px">逐题配对：英文 → 中文只换嵌入，英文独对 28、中文独对 24（p=0.68）；只换嵌入 → 加规则，+3 题（p=0.74）。都是噪声级别。</p>
+  </div>
+
+  <div class="two">
+    <div class="note">
+      <p class="lead"><b>中文规则到底起了什么作用</b></p>
+      <p>不加分。四选一的成绩由「意思相近」这一路加上一个好的中文嵌入模型决定。规则的作用是把每条记忆的「谁、做了什么、涉及谁」填对：不开规则时主语几乎全空，开了之后 979 / 980 条是人名。这决定了状态卡能不能按人整理、能不能按人过滤，以及以后做「他上次说什么」这类功能有没有依据。</p>
+      <p>两字一组的关键词索引目前是负贡献：它让记忆行的命中率掉了 4 个点。要用的话把关键词权重从 0.5 降到 0.25 以内再测，或者只在语义那一路找不够时才启用。</p>
+    </div>
+    <div class="note">
+      <p class="lead"><b>给中文产品的配置</b></p>
+      <p><code>embedder = fastembed / BAAI/bge-small-zh-v1.5，512 维</code><br><code>ingest.zh_rules = True</code>（取主语、说话人、涉及的人）<br><code>ingest.entity_names = [你的用户和常提到的人]</code><br><code>retrieval.w_keyword</code> 先降到 0.25 再测，或暂不开两字一组索引</p>
+      <p>保留意见：这次的中文数据是机器翻译的通顺书面语，比真实口语转写干净；数据集自带的中文语音转写原句可以做下一轮，不用翻译费。每种配置只跑了一次。</p>
+    </div>
+  </div>
+
+  <div>
+    <h2>数字从哪来</h2>
+    <ul class="sources" style="margin-top:8px">
+      <li>中文两轮：<code>benchmarks/egolife/results/real/zh_full204_A</code>（只换嵌入，规则关）、<code>zh_full204_B</code>（规则开），2026-09-22，各 290 批 + 204 题 × 2 臂，$0.39。英文基线 <code>reader_ab_prefix_full204</code>。</li>
+      <li>「979 / 980」与动作分布来自 5 题冒烟库 <code>zh_smoke5_B</code> 的直接抽查（全量库没有留 db）。</li>
+      <li>翻译：<code>data_zh/translate_report.json</code>，4,848 / 4,851 条译成，¥4.00；人名按固定对照表替换。</li>
+      <li>代码：<code>utils/text.py</code>（中文分词、人名、话题）、<code>llms/rule.py</code>（动词表）、<code>configs/prompts.py</code>（语言一句）；开关说明 CONTRACT §9.6，变更日志 109–110；报告 <code>docs/design/EGOLIFE_ZH_2026-09-22.md</code>。</li>
+    </ul>
+  </div>
+</div>
+
+</body></html>

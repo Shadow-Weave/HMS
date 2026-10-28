@@ -1,0 +1,21 @@
+# Production override. Only one deployment exists today (dev), so this file's
+# job is to (a) keep the same base/override split hms-lite uses, and (b) give
+# the CI `verify` stage something to validate with `config --quiet`.
+#
+# The difference from the base file: secrets use `:?`, so a production deploy
+# fails fast instead of silently starting with authentication disabled.
+services:
+  hms-elite:
+    restart: unless-stopped
+    environment:
+      HMS_ELITE_ENVIRONMENT: production
+      HMS_SERVER_TOKEN: ${HMS_SERVER_TOKEN:?set HMS_SERVER_TOKEN in the production env file}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:?set DEEPSEEK_API_KEY in the production env file}
+
+  nginx:
+    restart: unless-stopped
+    ports:
+      - "${PUBLIC_HTTP_PORT:-18090}:8080"
+
+volumes:
+  hms_data:

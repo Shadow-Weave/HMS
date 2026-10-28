@@ -1,0 +1,24 @@
+{
+  "llm": {
+    "provider": "deepseek",
+    "config": {
+      "model": "deepseek-chat",
+      "deepseek_base_url": "https://api.deepseek.com",
+      "temperature": 0.1,
+      "max_tokens": 32768,
+      "top_p": 0.1,
+      "thinking": "disabled"
+    }
+  },
+  "embedder": {
+    "provider": "fastembed",
+    "config": {
+      "model": "BAAI/bge-small-en-v1.5",
+      "embedding_dims": 384,
+      "cache_dir": "/app/model-cache/fastembed"
+    }
+  },
+  "store": {
+    "path": "/data/hms.db"
+  }
+}

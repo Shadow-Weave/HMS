@@ -1,0 +1,78 @@
+name: hms-elite
+
+x-hms-environment: &hms-environment
+  # Empty or unset = authentication is entirely disabled (deps.py:114 returns
+  # early). docker-compose.prod.yml re-declares this with a `:?` guard so a
+  # production deploy cannot start unauthenticated by accident.
+  HMS_SERVER_TOKEN: ${HMS_SERVER_TOKEN:-}
+  # Read by DeepSeekLLM when the config JSON omits api_key — which is exactly
+  # what deploy/config.dev.json does, keeping the secret out of the repository.
+  DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+  # Fallback only; store.path in the config is the real source of truth.
+  HMS_DIR: /data
+  # Outbound proxy for genuine external egress (api.deepseek.com). The dev box
+  # has no direct route, so this must NOT be bypassed for that host.
+  HTTP_PROXY: ${HTTP_PROXY:-}
+  HTTPS_PROXY: ${HTTPS_PROXY:-}
+  http_proxy: ${HTTP_PROXY:-}
+  https_proxy: ${HTTPS_PROXY:-}
+  # ⚠️ A literal, NOT ${NO_PROXY:-...}. The dev runner's shell exports NO_PROXY,
+  #    and interpolating it here would splat the runner's value over this list —
+  #    routing the container healthcheck (127.0.0.1) and nginx -> app
+  #    (hms-elite) through the outbound proxy. The failure mode is a silent
+  #    timeout, not an error: the healthcheck never passes, so nginx never
+  #    starts (depends_on: service_healthy) and `up -d` hangs.
+  # ⚠️ Written in BOTH cases: Python's urllib prefers the lowercase no_proxy
+  #    when both are set, so uppercase-only would leave the healthcheck proxied.
+  # ⚠️ Hostnames only, no CIDRs: httpx/urllib match against the request
+  #    hostname and do not honour 172.16.0.0/12 at all.
+  NO_PROXY: "localhost,127.0.0.1,::1,hms-elite,nginx"
+  no_proxy: "localhost,127.0.0.1,::1,hms-elite,nginx"
+
+services:
+  hms-elite:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HTTP_PROXY: ${HTTP_PROXY:-}
+        HTTPS_PROXY: ${HTTPS_PROXY:-}
+        NO_PROXY: ${NO_PROXY:-}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple/}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST:-pypi.tuna.tsinghua.edu.cn}
+    environment: *hms-environment
+    volumes:
+      # hms.db + hms.db-wal + hms.db-shm must share one volume; WAL cannot live
+      # apart from its database.
+      - hms_data:/data
+      # The config is mounted, not baked: it holds no secret, so a config edit
+      # should not require an image rebuild. NOTE: changing this file alone does
+      # NOT recreate the container (compose hashes the config, not file
+      # contents) — use `docker compose up -d --force-recreate hms-elite`.
+      - ./deploy/config.dev.json:/app/config/hms.config.json:ro
+    # No published ports. The app is reachable only through nginx.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+      interval: 10s
+      timeout: 8s
+      retries: 30
+      start_period: 30s
+
+  nginx:
+    restart: unless-stopped
+    # See Dockerfile: base images go through the daocloud mirror FQN. Same
+    # digest as the image hms-lite already runs on this host, so with
+    # `pull_policy: missing` this is a no-op there.
+    image: docker.m.daocloud.io/library/nginx@sha256:30f1c0d78e0ad60901648be663a710bdadf19e4c10ac6782c235200619158284
+    pull_policy: missing
+    ports:
+      - "${PUBLIC_HTTP_PORT:-18090}:8080"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      hms-elite:
+        condition: service_healthy
+
+volumes:
+  hms_data:

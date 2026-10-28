@@ -1,0 +1,96 @@
+{
+  "dims": 64,
+  "numpy": "2.4.6",
+  "sizes": [
+    {
+      "n": 300,
+      "current_path_ms": 0.761,
+      "prototype_ms": {
+        "60": 0.123,
+        "80": 0.18,
+        "240": 0.155
+      },
+      "prototype_exact_rescore_ms": {
+        "60": 0.331,
+        "80": 0.918,
+        "240": 0.811
+      },
+      "prototype_scope_join_ms": {
+        "60": 0.118,
+        "80": 0.12,
+        "240": 0.155
+      },
+      "prototype_cached_matrix_ms": {
+        "60": 0.014,
+        "80": 0.017,
+        "240": 0.047
+      },
+      "matmul_vs_dot": {
+        "rows_differing": 81,
+        "max_abs_diff": 5.551115123125783e-17,
+        "order_differs": false
+      },
+      "exact_rescore_bit_equal": true
+    },
+    {
+      "n": 3000,
+      "current_path_ms": 8.56,
+      "prototype_ms": {
+        "60": 1.211,
+        "80": 1.207,
+        "240": 1.215
+      },
+      "prototype_exact_rescore_ms": {
+        "60": 1.368,
+        "80": 1.424,
+        "240": 1.98
+      },
+      "prototype_scope_join_ms": {
+        "60": 1.109,
+        "80": 1.139,
+        "240": 1.153
+      },
+      "prototype_cached_matrix_ms": {
+        "60": 0.039,
+        "80": 0.042,
+        "240": 0.069
+      },
+      "matmul_vs_dot": {
+        "rows_differing": 828,
+        "max_abs_diff": 6.938893903907228e-17,
+        "order_differs": false
+      },
+      "exact_rescore_bit_equal": true
+    },
+    {
+      "n": 30000,
+      "current_path_ms": 97.056,
+      "prototype_ms": {
+        "60": 27.433,
+        "80": 30.243,
+        "240": 29.018
+      },
+      "prototype_exact_rescore_ms": {
+        "60": 28.002,
+        "80": 26.827,
+        "240": 29.974
+      },
+      "prototype_scope_join_ms": {
+        "60": 28.164,
+        "80": 30.162,
+        "240": 28.644
+      },
+      "prototype_cached_matrix_ms": {
+        "60": 1.617,
+        "80": 1.144,
+        "240": 0.942
+      },
+      "matmul_vs_dot": {
+        "rows_differing": 8349,
+        "max_abs_diff": 1.1102230246251565e-16,
+        "order_differs": false
+      },
+      "exact_rescore_bit_equal": true
+    }
+  ]
+}

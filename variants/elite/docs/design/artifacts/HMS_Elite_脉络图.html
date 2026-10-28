@@ -1,0 +1,322 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>HMS Elite 脉络图</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --bg: #F2F4F7; --surface: #FFFFFF; --ink: #1D2230; --muted: #5C6376; --line: #D5DAE3;
+    --accent: #1F7A72; --accent-soft: #DDEFEC;
+    --paid: #B5701E; --paid-soft: #FBF1E1; --paid-line: #E3B877;
+    --store: #4C5A8A; --store-soft: #E8EBF6;
+    --no: #A4443C; --no-soft: #F7E4E2;
+    --mono-bg: #EEF1F5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171E; --surface: #1C2029; --ink: #E6E9F0; --muted: #9AA2B3; --line: #303645;
+      --accent: #57B9AE; --accent-soft: #1E3532;
+      --paid: #E0A458; --paid-soft: #35291A; --paid-line: #7A5A2A;
+      --store: #9AA8E0; --store-soft: #23283A;
+      --no: #E08078; --no-soft: #3A2220;
+      --mono-bg: #232835;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171E; --surface: #1C2029; --ink: #E6E9F0; --muted: #9AA2B3; --line: #303645;
+    --accent: #57B9AE; --accent-soft: #1E3532;
+    --paid: #E0A458; --paid-soft: #35291A; --paid-line: #7A5A2A;
+    --store: #9AA8E0; --store-soft: #23283A;
+    --no: #E08078; --no-soft: #3A2220;
+    --mono-bg: #232835;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; font-size: 14px; line-height: 1.6; margin: 0; }
+  .page { max-width: 1240px; margin: 0 auto; padding: 36px 24px 72px; display: grid; gap: 28px; }
+  h1, h2, h3 { font-family: "Noto Serif SC", "Songti SC", "SimSun", serif; text-wrap: balance; margin: 0; }
+  h1 { font-size: 32px; font-weight: 700; line-height: 1.25; }
+  h2 { font-size: 18px; font-weight: 600; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 700; font-family: "JetBrains Mono", monospace; }
+  header { display: grid; gap: 10px; }
+  header p { max-width: 70ch; color: var(--muted); margin: 0; }
+  .num { font-family: "JetBrains Mono", "SF Mono", Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 12px; color: var(--muted); align-items: center; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--line); background: var(--surface); }
+  .legend .paid::before { background: var(--paid-soft); border-color: var(--paid-line); }
+  .legend .store::before { background: var(--store-soft); border-color: var(--store); border-style: dashed; }
+  .legend .local::before { background: var(--surface); border-color: var(--accent); }
+
+  .map { display: grid; grid-template-columns: 1fr 260px 1fr; gap: 20px; align-items: start; }
+  .lane { display: grid; gap: 0; }
+  .lane-title { display: grid; gap: 2px; padding: 0 0 12px; }
+  .lane-title h2 { color: var(--accent); }
+  .lane-title small { color: var(--muted); font-size: 12px; }
+  .block { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 12px 14px; display: grid; gap: 6px; position: relative; }
+  .block.paid { border-left-color: var(--paid); background: var(--paid-soft); }
+  .block.store { border: 1px dashed var(--store); border-left-width: 3px; border-left-style: solid; background: var(--store-soft); }
+  .block h3 { font-family: "Noto Sans SC", sans-serif; font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .block h3 .kind { font-size: 11px; font-weight: 500; color: var(--muted); font-family: "JetBrains Mono", monospace; letter-spacing: 0.04em; white-space: nowrap; }
+  .block.paid h3 .kind { color: var(--paid); }
+  .block .what { font-size: 13px; color: var(--muted); }
+  .metrics { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 13px; align-items: baseline; margin: 0; }
+  .metrics dt { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .metrics dd { margin: 0; }
+  .metrics dd b { font-weight: 600; }
+  .src { font-size: 11px; color: var(--muted); font-family: "JetBrains Mono", monospace; }
+  .arrow { height: 22px; display: grid; place-items: center; position: relative; }
+  .arrow::before { content: ""; width: 2px; height: 100%; background: var(--line); }
+  .arrow::after { content: ""; position: absolute; bottom: 0; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--line); }
+  .arrow.async::before { background: repeating-linear-gradient(to bottom, var(--paid) 0 4px, transparent 4px 8px); }
+  .arrow.async::after { border-top-color: var(--paid); }
+  .arrow-label { position: absolute; left: calc(50% + 10px); top: 2px; font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .center { display: grid; gap: 0; align-content: start; padding-top: 42px; }
+  .invariants { font-size: 12px; color: var(--muted); display: grid; gap: 3px; margin: 0; padding-left: 16px; }
+  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); padding: 12px 14px; display: grid; gap: 2px; }
+  .kpi .label { font-size: 12px; color: var(--muted); }
+  .kpi .value { font-size: 22px; font-weight: 600; line-height: 1.2; }
+  .kpi .sub { font-size: 12px; color: var(--muted); }
+  .tablewrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 500; color: var(--muted); font-size: 12px; background: var(--mono-bg); }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; }
+  .chip { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border: 1px solid var(--line); border-radius: 2px; white-space: nowrap; font-family: "JetBrains Mono", monospace; letter-spacing: 0.02em; }
+  .chip.rec { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .chip.def { color: var(--muted); }
+  .chip.no { color: var(--no); border-color: var(--no); background: var(--no-soft); }
+  .chip.wait { color: var(--paid); border-color: var(--paid-line); background: var(--paid-soft); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .note { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 8px; }
+  .note p { margin: 0; font-size: 13px; }
+  .note p.lead { font-size: 14px; }
+  .sources { font-size: 12px; color: var(--muted); display: grid; gap: 3px; padding-left: 18px; margin: 0; }
+  code { font-family: "JetBrains Mono", monospace; font-size: 0.92em; background: var(--mono-bg); padding: 1px 5px; }
+  @media (max-width: 900px) { .map { grid-template-columns: 1fr; } .center { padding-top: 0; } .two { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">一条消息怎么变成记忆 · 一次提问怎么用上记忆 · 当前默认配置 · EgoLife 204 题实测</div>
+    <h1>HMS Elite 脉络图</h1>
+    <p>左边是写：一条消息进来，最后变成库里的几条记忆。右边是读：用户问一句话，系统拼出一段「记忆文字」交给对话模型。中间是两边共用的那个库。黄色块是要花钱调大模型的地方，其余都在本机瞬间完成。数字来自 204 道题、4,851 条消息的实测。</p>
+    <div class="legend"><span class="paid">要调大模型，按 token 付费</span><span class="local">本机计算，免费</span><span class="store">存储</span><span>虚线 = 不用等它做完</span></div>
+  </header>
+
+  <div class="strip">
+    <div class="kpi"><div class="label">记住一条消息（25 条一批送，摊到每条）</div><div class="value num">0.23 s · ¥0.00045</div><div class="sub">大模型 215 ms + 本机 15 ms；一条消息平均产生 2.7 条记忆</div></div>
+    <div class="kpi"><div class="label">找记忆（库里 12,963 条）</div><div class="value num">10 ms · 免费</div><div class="sub">最慢的 5% 也在 26 ms 内</div></div>
+    <div class="kpi"><div class="label">读记忆并回答（默认读法）</div><div class="value num">0.55 s · ¥0.00185</div><div class="sub">会话卡 + 20 条相关记忆，共 2,160 token；答对 70.1%</div></div>
+    <div class="kpi"><div class="label">同一张卡还没变时再问一句</div><div class="value num">¥0.00072</div><div class="sub">卡片开头没变，模型按缓存价收费</div></div>
+  </div>
+
+  <div class="map">
+    <!-- 写 -->
+    <div class="lane">
+      <div class="lane-title"><h2>写：一条消息变成记忆</h2><small>只有第 4 步要调大模型；第 2 步和第 7 步要锁库，中间不锁</small></div>
+
+      <div class="block">
+        <h3>1 · 收消息 <span class="kind">本机</span></h3>
+        <div class="what">看清是谁的（user_id）、什么时候说的，去掉不该带进来的内部字段</div>
+        <dl class="metrics"><dt>耗时</dt><dd>不到 1 ms</dd></dl>
+        <div class="src">memory/main.py HMS.add</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>2 · 先把原话存下来 <span class="kind">本机 · 锁库</span></h3>
+        <div class="what">原话先入库并打上指纹。之后哪一步失败，原话都不会丢；每条记忆都能追溯到是哪句话说的。也正因为原话和模型回复都留着，我们才能不花一分钱把整个库重建一遍来查错</div>
+        <dl class="metrics"><dt>耗时</dt><dd>1–2 ms</dd></dl>
+        <div class="src">ingest/events.py（见证锚点）</div>
+      </div>
+      <div class="arrow async"><span class="arrow-label">不锁库，直到第 7 步</span></div>
+
+      <div class="block">
+        <h3>3 · 切段，找出相关的旧记忆 <span class="kind">本机</span></h3>
+        <div class="what">超过 400 字的消息切成几段。再从库里挑 10 条最近的、10 条意思最像的旧记忆，一起交给模型，让它判断新消息是新事，还是在更新旧事</div>
+        <dl class="metrics"><dt>耗时</dt><dd>几毫秒</dd></dl>
+        <div class="src">ingest/pipeline.py · ingest/extraction.py</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block paid">
+        <h3>4 · 大模型读消息、写出记忆 <span class="kind">deepseek-flash · 花钱</span></h3>
+        <div class="what">模型读一批消息，每条记忆写成一行：「Jake 说烧烤是 5 点到 6 点」，行首标类型，行尾可以带日期。不用 JSON，所以写得短、花得少。它还会顺手标出「这条和旧记忆重复 / 是旧记忆的更新」</div>
+        <dl class="metrics">
+          <dt>一批（平均 17 条消息，最多 25）</dt><dd>读入 5,734 token · 写出 <b class="num">851</b> token · <b class="num">3.8 s</b> · ¥0.0075</dd>
+          <dt>摊到每条消息</dt><dd>读入 343 · 写出 51 · 215 ms · ¥0.00045</dd>
+          <dt>换成 JSON 格式会怎样</dt><dd>写出 495 token / 条，14.9 s / 批，费用 5 倍，还经常写超长被截断</dd>
+        </dl>
+        <div class="src">lines 契约 · elite_lines_full204</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>5 · 整理模型写的东西 <span class="kind">本机</span></h3>
+        <div class="what">把每一行拆开，补上：谁说的、主语是谁、语气、话题、提到了哪些人和物。模型写得不规范的地方尽量归位，不轻易扔掉。模型说「这条是重复」或「更新了旧记忆」时，只有新旧两句话确实相似才采纳，否则照样当新记忆存</div>
+        <dl class="metrics"><dt>耗时</dt><dd>每条不到 0.1 ms</dd><dt>本轮</dt><dd>模型 606 次说重复 / 更新，被改判为新记忆</dd></dl>
+        <div class="src">ingest/lines.py · ingest/derive.py · 判定守卫</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>6 · 给每条记忆算一个数字指纹 <span class="kind">本机 · fastembed</span></h3>
+        <div class="what">用来做「意思相近」的搜索。用的是英文模型，中文场景要换</div>
+        <dl class="metrics"><dt>耗时</dt><dd>一批约 68 ms</dd></dl>
+        <div class="src">BAAI/bge-small-en-v1.5，384 维</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>7 · 落库 <span class="kind">本机 · 锁库</span></h3>
+        <div class="what">写入记忆本体、几种索引（关键词、人和物、数字指纹）、和旧记忆的关系。被更新的旧记忆不删，标成「已被替代」留着</div>
+        <dl class="metrics"><dt>耗时</dt><dd>第 5–7 步加起来一批约 255 ms</dd></dl>
+        <div class="src">memory/storage.py（Txn B）</div>
+      </div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- 库 -->
+    <div class="center">
+      <div class="block store">
+        <h3>记忆库 <span class="kind">一个 SQLite 文件</span></h3>
+        <div class="what">写完立刻能读。可以换成 Milvus</div>
+        <dl class="metrics">
+          <dt>规模</dt><dd>4,851 条消息 → <b class="num">12,963</b> 条记忆</dd>
+          <dt>大小</dt><dd>72.5 MB，约 <b class="num">5.6 KB</b> 一条（含原话、指纹、索引）</dd>
+          <dt>可重建</dt><dd>用留存的原话和模型回复，零费用重建出一模一样的库</dd>
+        </dl>
+        <ul class="invariants">
+          <li>每条记忆都能追到原话</li>
+          <li>记忆之间的关系单独存，可以重算</li>
+          <li>改记忆不删旧的，只标替代</li>
+          <li>高层小结必须有低层记忆支撑</li>
+        </ul>
+        <div class="src">schema v3 · 22 张表</div>
+      </div>
+      <div class="arrow async" style="height:34px"><span class="arrow-label">后台</span></div>
+      <div class="block store">
+        <h3>后台整理 <span class="kind">可选 · 本轮没开</span></h3>
+        <div class="what">定期把碎记忆合并成更高层的小结、补关系、清理过期项。EgoLife 评测没有开它，所以卡片全部由一条条原始记忆拼成</div>
+        <div class="src">daemon.py · ops/consolidation.py</div>
+      </div>
+    </div>
+
+    <!-- 读 -->
+    <div class="lane">
+      <div class="lane-title"><h2>读：一句提问怎么用上记忆</h2><small>默认走 HMS.context()；只有第 4 步要调大模型</small></div>
+
+      <div class="block">
+        <h3>1 · 给问题算数字指纹 <span class="kind">本机</span></h3>
+        <dl class="metrics"><dt>耗时</dt><dd>2.9 ms</dd></dl>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>2 · 三路找记忆 <span class="kind">本机</span></h3>
+        <div class="what">按意思相近找一批，按关键词找一批，按提到的人和物找一批；合并后打分（越新的略加分），只在这个用户的、还有效的记忆里找，取前 20 条</div>
+        <dl class="metrics"><dt>耗时</dt><dd>第 1 + 2 步共 <b class="num">10 ms</b></dd><dt>找得准不准</dt><dd>正确答案所在的那批消息，<b class="num">84%</b> 的题进了前 20 条</dd></dl>
+        <div class="src">mvmi/query.py</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>3 · 拼记忆文字 <span class="kind">本机 · HMS.context() · 默认</span></h3>
+        <div class="what">拼成两块，放在用户问题前面交给对话模型：</div>
+        <div class="what"><b>① 会话卡</b>：一页小结——这个用户最近在聊什么、已确认的事实、被推翻的假设、约束、下一步、证据。它不针对这个问题，针对「这个人最近的状态」。只在有新记忆写入后才重算，两次写入之间所有提问共用同一张</div>
+        <div class="what"><b>② 相关记忆 20 条</b>：就是第 2 步找到的，每条一句话，前面标日期时间，按时间先后排</div>
+        <dl class="metrics">
+          <dt>大小</dt><dd>卡约 1,600 token + 记忆行约 570 token = <b class="num">2,160</b></dd>
+          <dt>耗时</dt><dd>卡重算 26 ms（复用时几乎为 0）</dd>
+          <dt>效果</dt><dd>答对 <b class="num">70.1%</b>；只给卡 43.6%，只给记忆行 53.9%——卡给背景，行给证据，缺一不可</dd>
+        </dl>
+        <div class="src">compiler/context.py · CONTRACT §6.7</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>3′ · 备选的两种拼法 <span class="kind">本机 · 默认不用</span></h3>
+        <div class="what"><b>只给 20 条记忆行</b>（search 的返回）：最便宜，334 token，答对 53.9%。<b>针对问题单独编一张卡</b>（compile）：每题重编、不能复用，1,609 token，64.7%。以前的默认是后者</div>
+        <div class="src">search() · compile()</div>
+      </div>
+      <div class="arrow async"><span class="arrow-label">产品侧</span></div>
+
+      <div class="block paid">
+        <h3>4 · 对话模型回答 <span class="kind">deepseek-flash · 花钱</span></h3>
+        <div class="what">记忆文字放在问题前面。放前面不影响答对率，好处是：卡片不变时，模型对相同的开头按 1/50 的价收费</div>
+        <dl class="metrics">
+          <dt>默认读法</dt><dd>读入 2,160 token · <b class="num">0.52 s</b> · ¥0.00185；卡没变时再问 ¥0.00072</dd>
+          <dt>只给记忆行</dt><dd>读入 334 · 0.56 s · ¥0.00033</dd>
+        </dl>
+        <div class="src">reader_ab_prefix_full204</div>
+      </div>
+      <div class="arrow"></div>
+
+      <div class="block">
+        <h3>5 · 返回给程序 <span class="kind">本机</span></h3>
+        <div class="what">格式和 mem0 一样，能直接换用</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h2>给模型什么记忆，答对多少</h2>
+    <p style="max-width:80ch;color:var(--muted);margin:6px 0 10px">同一个库、同样的 204 道题，只换交给模型的那段记忆文字。费用是每题的读取费（空闲时段价）。</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>给模型什么</th><th class="num">答对率</th><th class="num">token</th><th class="num">每题费用</th><th>结论</th></tr></thead>
+      <tbody>
+        <tr><td>20 条记忆行，按相关度排</td><td class="num">53.9%</td><td class="num">334</td><td class="num">¥0.00033</td><td><span class="chip def">备选</span></td></tr>
+        <tr><td>同 20 条，按时间排</td><td class="num">52.9%</td><td class="num">334</td><td class="num">¥0.00033</td><td><span class="chip no">排序没用</span></td></tr>
+        <tr><td>同 20 条，按时间排 + 标日期</td><td class="num">57.4%</td><td class="num">574</td><td class="num">¥0.00056</td><td><span class="chip wait">有帮助，还需复验</span></td></tr>
+        <tr><td>针对问题编一张卡</td><td class="num">64.7%</td><td class="num">1,609</td><td class="num">¥0.00156</td><td><span class="chip def">备选（旧默认）</span></td></tr>
+        <tr><td>同上，卡缩到 2/3</td><td class="num">60.8%</td><td class="num">1,178</td><td class="num">¥0.00115</td><td><span class="chip no">卡越小越差</span></td></tr>
+        <tr><td>同上，卡缩到 1/2 · 1/3</td><td class="num">58.3% · 53.9%</td><td class="num">933 · 755</td><td class="num">¥0.00091 · ¥0.00074</td><td><span class="chip no">缩到 1/3 和记忆行一样</span></td></tr>
+        <tr><td>针对问题编的卡，放问题前面</td><td class="num">66.2%</td><td class="num">1,609</td><td class="num">¥0.00161</td><td><span class="chip def">前后顺序不影响</span></td></tr>
+        <tr><td>只给会话卡</td><td class="num">43.6%</td><td class="num">1,655</td><td class="num">¥0.00160</td><td><span class="chip no">不行：它不知道你问什么</span></td></tr>
+        <tr><td>只给会话卡，放问题前面</td><td class="num">39.7%</td><td class="num">1,655</td><td class="num">¥0.00129</td><td><span class="chip no">不行</span></td></tr>
+        <tr><td><b>会话卡 + 20 条标日期的记忆行</b></td><td class="num"><b>70.1%</b></td><td class="num">2,160</td><td class="num">¥0.00185</td><td><span class="chip rec">默认</span></td></tr>
+      </tbody>
+    </table></div>
+    <p style="max-width:80ch;color:var(--muted);margin:8px 0 0;font-size:13px">默认读法比「只给记忆行」多答对 33 题、比「针对问题编卡」多 11 题。前者是确凿的差距，后者还在误差范围内，需要再测一轮才能坐实。</p>
+  </div>
+
+  <div class="two">
+    <div class="note">
+      <p class="lead"><b>为什么两块拼在一起最好</b></p>
+      <p>会话卡说的是「这个人是谁、平时怎样、现在在干什么」，记忆行说的是「你问的这件事，库里有哪几句相关的话，什么时候说的」。模型答题两样都要：没有背景会张冠李戴，没有针对问题的细节和时间就答不出「几点」「哪天」。</p>
+      <p>会话卡不能单独用，因为它不看问题。针对问题单独编卡效果也不错，但每题都要重编，成本和会话卡差不多，还不能享受缓存。</p>
+    </div>
+    <div class="note">
+      <p class="lead"><b>关于「缓存便宜」要说清楚的一点</b></p>
+      <p>大模型对和上一次完全相同的开头只收 1/50 的价。会话卡放在开头、且两次写入之间不变，这段就能命中。实测里同一张卡连着问 12 个不同问题，第 2 个起每次都命中，每次 ¥0.00039 对不缓存的 ¥0.00177。</p>
+      <p>但只要写进一条新记忆，卡就会重算，开头就变了。所以省钱只发生在「写入间隔内多次提问」这种情形；每次提问前都有新写入的产品，按 ¥0.00185 一次算。</p>
+    </div>
+  </div>
+
+  <div>
+    <h2>一条消息的账（空闲时段价）</h2>
+    <div class="tablewrap" style="margin-top:10px"><table>
+      <thead><tr><th>做什么</th><th class="num">耗时</th><th class="num">token 读入 / 写出</th><th class="num">费用</th></tr></thead>
+      <tbody>
+        <tr><td>记住一条消息（批量摊到每条）</td><td class="num">0.23 s</td><td class="num">343 / 51</td><td class="num">¥0.00045（高峰 ¥0.0009）</td></tr>
+        <tr><td>找记忆</td><td class="num">10 ms</td><td class="num">0</td><td class="num">免费</td></tr>
+        <tr><td><b>读记忆并回答（默认）</b></td><td class="num"><b>0.55 s</b></td><td class="num"><b>2,160 / 1</b></td><td class="num"><b>¥0.00185（高峰 ¥0.0037）；卡没变时 ¥0.00072</b></td></tr>
+        <tr><td>读记忆并回答（只给记忆行）</td><td class="num">0.56 s</td><td class="num">334 / 1</td><td class="num">¥0.00033</td></tr>
+      </tbody>
+    </table></div>
+    <p style="max-width:80ch;color:var(--muted);margin:8px 0 0;font-size:13px">一问一答各一次的话，默认组合每轮约 ¥0.0023；一天聊 200 轮约 ¥0.46。写入用逐条即时模式而不是攒批的话，每条约 2.4 s、¥0.0025（早期单条探针数字）。</p>
+  </div>
+
+  <div>
+    <h2>数字从哪来</h2>
+    <ul class="sources" style="margin-top:8px">
+      <li>价格：deepseek-flash 官方人民币价（2026-09-11），每百万 token：缓存命中 0.02、未命中 1、输出 4；高峰（北京时间工作日 9–12、14–18）翻倍。所有费用按实测 token 数折算。</li>
+      <li>写入：<code>benchmarks/egolife/results/real/elite_lines_full204</code>（2026-09-11，290 批、4,851 条消息、12,963 条记忆；每条消息 = 总量 ÷ 4,851）。</li>
+      <li>读取：<code>reader_ab_full204</code> 与 <code>reader_ab_prefix_full204</code>（2026-09-18，同一个库上换十一种记忆文字各答一遍，共 2,244 次）；缓存实测 <code>cache_probe_2026-09-18</code>。默认读法的 70.1% 来自评测台的同构造器，库方法 <code>context()</code> 本身尚未在真实 API 上整轮复跑。</li>
+      <li>代码：写入契约 <code>ingest/lines.py</code>；读取 <code>compiler/context.py</code>、<code>memory/main.py HMS.context</code>；规格 <code>docs/design/CONTRACT.md</code> §6.6 / §6.7；测试 763 通过。</li>
+      <li>没测的：后台整理、Milvus 在真实指纹下的速度、中文、缓存能保留多久。</li>
+    </ul>
+  </div>
+</div>
+
+</body></html>

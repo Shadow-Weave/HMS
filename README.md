@@ -22,6 +22,29 @@
 
 ---
 
+## News
+
+- **2026-10-28** — HMS Pro and HMS Elite now live in this repository. Select an
+  implementation with `--variant pro|elite`; each keeps its original runtime,
+  configuration, prompts, and evaluation code. The registry can accept future
+  implementations such as PMM. See [version selection](docs/variants.md).
+
+## Choose a Version
+
+HMS Pro remains in its original locations. HMS Elite is included, unchanged,
+under [`variants/elite`](variants/elite). Configure each version using its own
+environment template and installation instructions, then run:
+
+```bash
+python hmsctl.py --variant pro compose up -d --build
+python hmsctl.py --variant elite compose up -d --build
+```
+
+For an existing Python environment, use `python hmsctl.py --variant pro serve`
+or `python hmsctl.py --variant elite serve`. Pro is the default; `HMS_VARIANT`
+can also select it. These commands select a backend; each backend retains its
+native API and storage format. See [setup, evaluation, and extension instructions](docs/variants.md).
+
 ## Overview
 
 The **Holographic Memory System (HMS)** is a structured long-term memory layer

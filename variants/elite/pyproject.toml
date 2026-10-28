@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hms-elite"
+version = "0.1.0"
+description = "HMS Elite: Mem0-compatible memory API over an experience-to-state dual-plane store (State Index + Support Graph)."
+readme = "README.md"
+requires-python = ">=3.10,<4.0"
+license = {text = "Apache-2.0"}
+dependencies = ["pydantic>=2.7"]
+
+[project.optional-dependencies]
+numpy = ["numpy>=1.24"]
+openai = ["openai>=1.90"]
+anthropic = ["anthropic>=0.40"]
+ollama = []                        # ollama llm/embedder use stdlib urllib; the extra exists so the DEPS hint resolves
+ark = []                           # ark embedder uses stdlib urllib; the extra exists so the DEPS hint resolves
+fastembed = ["fastembed>=0.3"]
+milvus = ["pymilvus[milvus-lite]>=2.4"]
+spacy = ["spacy>=3.7"]
+server = ["fastapi>=0.110", "uvicorn>=0.30"]
+test = ["pytest>=8", "pytest-mock>=3", "httpx>=0.27"]   # httpx: fastapi.testclient needs an http client when the server extra is present
+dev = ["ruff==0.16.0", "isort>=5"]
+
+[project.scripts]
+hms = "hms_elite.cli:main"
+hms-server = "hms_elite.server.app:main"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["hms_elite"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+# Audit evidence scripts under docs/design/gaps/scripts are outside the shipped code (CONTRACT §0.3 scope).
+# docs/design/gaps/scripts 下的审计证据脚本不属于交付代码（CONTRACT §0.3 范围）。
+extend-exclude = ["docs/design/gaps/scripts"]
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["hms_elite"]

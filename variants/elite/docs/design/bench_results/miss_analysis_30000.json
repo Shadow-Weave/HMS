@@ -1,0 +1,262 @@
+{
+ "entity": {
+  "overlap": 0.5,
+  "missed": 10,
+  "|G|": 3000,
+  "kw_matches": 3000,
+  "ent_links": 3000,
+  "sem_rank_median": 193.5,
+  "kw_rank_median": 1897.5,
+  "rec_rank_median": 88.5,
+  "rows": [
+   {
+    "atom": "atm_8acedb4dafa9",
+    "sem_rank": 137,
+    "kw_rank": 1645,
+    "ent_rank": 41,
+    "rec_rank": 6,
+    "semantic": 0.448,
+    "keyword": 1.0,
+    "entity": 1.0,
+    "recency": 0.493,
+    "in_G": true
+   },
+   {
+    "atom": "atm_3a2b82307ee4",
+    "sem_rank": 120,
+    "kw_rank": 722,
+    "ent_rank": 105,
+    "rec_rank": 89,
+    "semantic": 0.449,
+    "keyword": 1.0,
+    "entity": 1.0,
+    "recency": 0.487,
+    "in_G": true
+   },
+   {
+    "atom": "atm_6ca181c8ca01",
+    "sem_rank": 117,
+    "kw_rank": 1281,
+    "ent_rank": 122,
+    "rec_rank": 111,
+    "semantic": 0.449,
+    "keyword": 1.0,
+    "entity": 1.0,
+    "recency": 0.487,
+    "in_G": true
+   },
+   {
+    "atom": "atm_d1e949217171",
+    "sem_rank": 165,
+    "kw_rank": 2441,
+    "ent_rank": 70,
+    "rec_rank": 18,
+    "semantic": 0.447,
+    "keyword": 1.0,
+    "entity": 1.0,
+    "recency": 0.493,
+    "in_G": true
+   },
+   {
+    "atom": "atm_bdd2ee9c838a",
+    "sem_rank": 191,
+    "kw_rank": 2228,
+    "ent_rank": 142,
+    "rec_rank": 88,
+    "semantic": 0.443,
+    "keyword": 1.0,
+    "entity": 1.0,
+    "recency": 0.487,
+    "in_G": true
+   },
+   {
+    "atom": "atm_0da1d7c835c3",
+    "sem_rank": 196,
+    "kw_rank": 181,
+    "ent_rank": 85,
+    "rec_rank": 93,
+    "semantic": 0.443,
+    "keyword": 1.0,
+    "entity": 1.0,
+    "recency": 0.487,
+    "in_G": true
+   }
+  ]
+ },
+ "identifier": {
+  "overlap": 1.0,
+  "missed": 0
+ },
+ "month": {
+  "overlap": 1.0,
+  "missed": 0
+ },
+ "preference": {
+  "overlap": 0.2,
+  "missed": 16,
+  "|G|": 29167,
+  "kw_matches": 5833,
+  "ent_links": 0,
+  "sem_rank_median": 465.5,
+  "kw_rank_median": 2929.0,
+  "rec_rank_median": 490.5,
+  "rows": [
+   {
+    "atom": "atm_b8b2806eb4f5",
+    "sem_rank": 107,
+    "kw_rank": 3387,
+    "ent_rank": null,
+    "rec_rank": 603,
+    "semantic": 0.459,
+    "keyword": 0.667,
+    "entity": 0.0,
+    "recency": 0.846,
+    "in_G": true
+   },
+   {
+    "atom": "atm_49c6947d53cb",
+    "sem_rank": 143,
+    "kw_rank": 1399,
+    "ent_rank": null,
+    "rec_rank": 828,
+    "semantic": 0.455,
+    "keyword": 0.667,
+    "entity": 0.0,
+    "recency": 0.846,
+    "in_G": true
+   },
+   {
+    "atom": "atm_879f563cea45",
+    "sem_rank": 223,
+    "kw_rank": 2478,
+    "ent_rank": null,
+    "rec_rank": 324,
+    "semantic": 0.447,
+    "keyword": 0.667,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   },
+   {
+    "atom": "atm_b88ad6deb9f0",
+    "sem_rank": 248,
+    "kw_rank": 3380,
+    "ent_rank": null,
+    "rec_rank": 224,
+    "semantic": 0.445,
+    "keyword": 0.667,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   },
+   {
+    "atom": "atm_fbfa26d037ee",
+    "sem_rank": 277,
+    "kw_rank": 4597,
+    "ent_rank": null,
+    "rec_rank": 299,
+    "semantic": 0.443,
+    "keyword": 0.667,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   },
+   {
+    "atom": "atm_e906994ec726",
+    "sem_rank": 272,
+    "kw_rank": 4257,
+    "ent_rank": null,
+    "rec_rank": 628,
+    "semantic": 0.444,
+    "keyword": 0.667,
+    "entity": 0.0,
+    "recency": 0.846,
+    "in_G": true
+   }
+  ]
+ },
+ "cjk": {
+  "overlap": 0.3,
+  "missed": 14,
+  "|G|": 29167,
+  "kw_matches": 3501,
+  "ent_links": 0,
+  "sem_rank_median": 6619.5,
+  "kw_rank_median": 883.0,
+  "rec_rank_median": 178.5,
+  "rows": [
+   {
+    "atom": "atm_6bcfd36c998a",
+    "sem_rank": 2323,
+    "kw_rank": 2160,
+    "ent_rank": null,
+    "rec_rank": 191,
+    "semantic": 0.181,
+    "keyword": 0.333,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   },
+   {
+    "atom": "atm_f552bb12653a",
+    "sem_rank": 2902,
+    "kw_rank": 3412,
+    "ent_rank": null,
+    "rec_rank": 66,
+    "semantic": 0.167,
+    "keyword": 0.333,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   },
+   {
+    "atom": "atm_c57d117a8220",
+    "sem_rank": 3852,
+    "kw_rank": 904,
+    "ent_rank": null,
+    "rec_rank": 81,
+    "semantic": 0.148,
+    "keyword": 0.333,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   },
+   {
+    "atom": "atm_4cf367d6f3c8",
+    "sem_rank": 3851,
+    "kw_rank": 355,
+    "ent_rank": null,
+    "rec_rank": 381,
+    "semantic": 0.148,
+    "keyword": 0.333,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   },
+   {
+    "atom": "atm_c8e8b99d55ca",
+    "sem_rank": 3943,
+    "kw_rank": 926,
+    "ent_rank": null,
+    "rec_rank": 156,
+    "semantic": 0.146,
+    "keyword": 0.333,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   },
+   {
+    "atom": "atm_da001ec9f21b",
+    "sem_rank": 5538,
+    "kw_rank": 1002,
+    "ent_rank": null,
+    "rec_rank": 56,
+    "semantic": 0.12,
+    "keyword": 0.333,
+    "entity": 0.0,
+    "recency": 0.856,
+    "in_G": true
+   }
+  ]
+ }
+}

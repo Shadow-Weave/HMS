@@ -1,0 +1,41 @@
+
+# local secrets / 本地密钥
+# 挡 .env / .env.local / .env.production 等全部变体；将来若加模板，用下面的 ! 放行。
+.env
+.env.*
+**/.env
+!.env.example
+
+# 本地运行数据 —— 不入库。
+#   data/local.config.json 是 0600 的本地服务配置（含密钥）
+#   data/hms.db 是本机测试库（~225 MB）+ WAL/SHM
+# 两者都是「这台机器上的状态」，不是项目内容；换台机器本来就该重新生成。
+# ⚠️ 必须锚定根目录写成 `/data/` —— 写成 `data/` 会连带匹配
+#    benchmarks/egolife/data/（5.4 MB EgoLife 基准输入），把该提交的挡在门外。
+/data/
+
+# 基准与脚本跑出来的结果目录（相对路径、落点不稳，故任意层级都挡）。
+# 注意：docs/design/artifacts/ 是**人工整理的交付物**，不在此列，要提交。
+results/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 工具缓存
+.pytest_cache/
+.ruff_cache/
+
+# 构建产物
+dist/
+build/
+
+# 日志与系统文件
+*.log
+.DS_Store
+**/.DS_Store
+
+# CI 依赖目录（verify 用 pip --target 装到这里）
+.ci-pkgs/

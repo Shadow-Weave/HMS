@@ -1,0 +1,6743 @@
+1
+00:09:47,100 --> 00:09:50,766
+杰克: 好，那我们需要一个秒表。
+Jake: Okay, then we need a stopwatch.
+
+2
+00:09:54,700 --> 00:09:55,700
+舒尔: 标记一个时间戳，对吧？
+Shure: Mark a timestamp, right?
+
+3
+00:09:56,033 --> 00:09:56,833
+杰克: 对，标记它。
+Jake: Yes, mark it.
+
+4
+00:10:00,233 --> 00:10:01,200
+杰克: 来，大家都标记一下。
+Jake: Come on, everyone mark it.
+
+5
+00:10:01,200 --> 00:10:02,200
+杰克: 每个人都标记一下。
+Jake: Each person marks it.
+
+6
+00:10:04,166 --> 00:10:05,266
+杰克: 传下去标记，嘿。
+Jake: Pass it along and mark it, hey.
+
+7
+00:10:05,266 --> 00:10:06,366
+杰克: 你能看到吧？
+Jake: You can see it, right?
+
+8
+00:10:12,333 --> 00:10:14,133
+杰克: 好了，都标记完了。
+Jake: Alright, all done marking.
+
+9
+00:10:16,366 --> 00:10:16,766
+杰克: 好的。
+Jake: Okay.
+
+10
+00:10:17,566 --> 00:10:18,933
+杰克: 打开它。
+Jake: Turn it on.
+
+11
+00:10:20,200 --> 00:10:23,400
+杰克: 所以今天我们就简单讨论一下。
+Jake: So today we're just going to discuss a bit.
+
+12
+00:10:23,400 --> 00:10:24,000
+杰克: 讨论今天早上。
+Jake: Discuss this morning.
+
+13
+00:10:24,000 --> 00:10:25,766
+杰克: 最后一天我们该做什么？
+Jake: What should we do on our last day?
+
+14
+00:10:25,766 --> 00:10:26,966
+杰克: 然后也许……
+Jake: And then maybe...
+
+15
+00:10:28,233 --> 00:10:28,766
+杰克: 嗯……
+Jake: Hmm...
+
+16
+00:10:29,933 --> 00:10:31,666
+杰克: 这里还有4个。
+Jake: There are still 4 more here.
+
+17
+00:10:31,666 --> 00:10:34,533
+杰克: 这些USB，也许这个……
+Jake: These USBs, maybe this...
+
+18
+00:10:34,566 --> 00:10:34,933
+杰克: 这个叫什么？
+Jake: What's this called?
+
+19
+00:10:34,933 --> 00:10:35,733
+杰克: 这个硬盘。
+Jake: This hard drive.
+
+20
+00:10:36,066 --> 00:10:36,900
+杰克: 嗯……
+Jake: Hmm...
+
+21
+00:10:37,566 --> 00:10:39,866
+杰克: 早上，我觉得大家主要应该讨论。
+Jake: In the morning, I think everyone should mainly discuss.
+
+22
+00:10:39,900 --> 00:10:42,700
+杰克: 讨论的时候，如果没事做……
+Jake: And while discussing, if we have nothing to do...
+
+23
+00:10:42,700 --> 00:10:44,333
+杰克: 如果大家都陷入沉思……
+Jake: If everyone gets lost in thought...
+
+24
+00:10:44,333 --> 00:10:45,133
+杰克: 或者尴尬了……
+Jake: Or it gets awkward...
+
+25
+00:10:45,133 --> 00:10:46,700
+杰克: 我们可以安装这个。
+Jake: We can install this.
+
+26
+00:10:46,933 --> 00:10:48,400
+杰克: 对，就当备份。
+Jake: Yes, just as a backup.
+
+27
+00:10:49,133 --> 00:10:49,933
+杰克: 嗯……
+Jake: Hmm...
+
+28
+00:10:50,500 --> 00:10:51,300
+杰克: 所以……
+Jake: So...
+
+29
+00:10:53,133 --> 00:10:54,700
+杰克: 现在尴尬了，是吧？
+Jake: Now it's awkward, huh?
+
+30
+00:10:55,633 --> 00:10:57,666
+舒尔: 不，不，我们先打开看看是什么。
+Shure: No, no, let's open it up and see what it is first.
+
+31
+00:10:58,200 --> 00:10:59,633
+杰克: 好，那也行。
+Jake: Alright, that works too.
+
+32
+00:11:03,533 --> 00:11:04,266
+杰克: 哇。
+Jake: Wow.
+
+33
+00:11:05,133 --> 00:11:06,366
+露西亚: 只有4个？
+Lucia: Only 4 of them?
+
+34
+00:11:06,366 --> 00:11:07,333
+杰克: 对，只有4个。
+Jake: Yes, only 4.
+
+35
+00:11:07,633 --> 00:11:08,500
+露西亚: 没关系。
+Lucia: That's okay.
+
+36
+00:11:08,500 --> 00:11:09,400
+露西亚: 我以前拆过这个。
+Lucia: I've taken this apart before.
+
+37
+00:11:09,400 --> 00:11:10,000
+杰克: 对，对。
+Jake: Yes, yes.
+
+38
+00:11:11,966 --> 00:11:13,600
+杰克: 因为你是导师。
+Jake: Because you're the mentor.
+
+39
+00:11:13,566 --> 00:11:14,333
+露西亚: 啊，对。
+Lucia: Ah, yes.
+
+40
+00:11:14,433 --> 00:11:15,000
+杰克: 导师 杰克: 导师。
+Jake: tutor
+Jake: Tutor.
+
+41
+00:11:15,000 --> 00:11:17,966
+露西亚: 哈哈，我已经装过这个东西了。
+Lucia: Haha, I've already installed this thing.
+
+42
+00:11:18,566 --> 00:11:20,333
+舒尔: 如果你需要充电宝，从这里拿一个。
+Shure: If you need a power bank, take one from here.
+
+43
+00:11:20,700 --> 00:11:21,766
+露西亚: 好的，谢谢。
+Lucia: Okay, thanks.
+
+44
+00:11:22,533 --> 00:11:24,466
+杰克: 我先把这些拿走。
+Jake: I'll take these away first.
+
+45
+00:11:26,366 --> 00:11:27,966
+卡特里娜: 哇，还有螺丝！
+Katrina: Wow, there are screws too!
+
+46
+00:12:08,900 --> 00:12:12,566
+杰克: 好，拆了这些你能做什么？
+Jake: Okay, what can you make out of these once they're dismantled?
+
+47
+00:12:13,800 --> 00:12:14,400
+杰克: 做成……
+Jake: Make it into...
+
+48
+00:12:14,400 --> 00:12:16,566
+杰克: 留着这个盒子。
+Jake: Keep this box.
+
+49
+00:12:17,766 --> 00:12:19,800
+杰克: 嗯，里面的东西可以扔掉。
+Jake: Hmm, you can throw away what's inside.
+
+50
+00:12:19,866 --> 00:12:21,166
+杰克: 把这些东西都扔掉。
+Jake: Just throw all this stuff away.
+
+51
+00:12:26,000 --> 00:12:27,133
+舒尔: 留着这个镜头布。
+Shure: Keep this lens cloth.
+
+52
+00:12:46,433 --> 00:12:47,866
+杰克: 好，暂时这样安排。
+Jake: Okay, let's arrange it like this for now.
+
+53
+00:12:49,766 --> 00:12:52,866
+杰克: 当大家陷入沉思时，我们就用这个。
+Jake: We'll use this when everyone is deep in thought.
+
+54
+00:12:52,866 --> 00:12:54,766
+杰克: 但我可以先给大家解释一下。
+Jake: But I can explain it to everyone first.
+
+55
+00:12:54,766 --> 00:12:56,066
+杰克: 这是什么东西？
+Jake: What is this thing?
+
+56
+00:12:56,066 --> 00:12:58,866
+杰克: 所以，你可以看到这个地方。
+Jake: So, you can see this place.
+
+57
+00:13:00,800 --> 00:13:03,300
+杰克: 实际上，你看不到这个地方。
+Jake: Actually, you can't see this place.
+
+58
+00:13:04,300 --> 00:13:05,166
+杰克: 或者你们可以过来。
+Jake: Or you guys can come over.
+
+59
+00:13:05,166 --> 00:13:05,966
+杰克: 走走。
+Jake: Walk around.
+
+60
+00:13:14,966 --> 00:13:17,200
+杰克: 看看我的工作站。
+Jake: Just check out my workstation.
+
+61
+00:13:18,933 --> 00:13:20,966
+舒尔: 我们是不是闯入你的私人空间了？
+Shure: Are we trespassing into your private space?
+
+62
+00:13:20,966 --> 00:13:22,366
+杰克: 不，不，请进。
+Jake: No, no, please come in.
+
+63
+00:13:22,800 --> 00:13:23,600
+杰克: 工作站。
+Jake: The workstation.
+
+64
+00:13:24,133 --> 00:13:27,566
+杰克: 这里总共有六台电脑，对吧？
+Jake: And here, there are a total of six computers, right?
+
+65
+00:13:27,666 --> 00:13:27,900
+卡特里娜: 嗯。
+Katrina: Hmm.
+
+66
+00:13:27,966 --> 00:13:29,066
+杰克: 这是第七台。
+Jake: And this is the seventh.
+
+67
+00:13:29,066 --> 00:13:30,000
+杰克: 第八台。
+Jake: Eighth.
+
+68
+00:13:30,000 --> 00:13:30,733
+杰克: 嗯。
+Jake: Hmm.
+
+69
+00:13:30,833 --> 00:13:31,600
+杰克: 第九台，第十台。
+Jake: Ninth, tenth.
+
+70
+00:13:31,600 --> 00:13:32,966
+杰克: 但主要是，这里有六台电脑。
+Jake: But mainly, six computers here.
+
+71
+00:13:32,966 --> 00:13:33,566
+杰克: 每台电脑。
+Jake: Each computer.
+
+72
+00:13:33,566 --> 00:13:36,066
+杰克: 对应你们的一副眼镜。
+Jake: Corresponds to one of your glasses.
+
+73
+00:13:36,600 --> 00:13:38,500
+杰克: 然后，每台电脑。
+Jake: Then, each computer.
+
+74
+00:13:38,500 --> 00:13:41,833
+杰克: 每次录制后。
+Jake: After each recording session.
+
+75
+00:13:41,833 --> 00:13:42,733
+杰克: 每三个小时。
+Jake: Every three hours.
+
+76
+00:13:42,766 --> 00:13:47,266
+杰克: 会把数据传输到这个硬盘。
+Jake: Will transfer the data to this hard drive.
+
+77
+00:13:47,266 --> 00:13:48,100
+杰克: 然后这个硬盘。
+Jake: Then this hard drive.
+
+78
+00:13:48,100 --> 00:13:49,533
+杰克: 就是你们之后要安装的。
+Jake: Is the one you will install later.
+
+79
+00:13:49,933 --> 00:13:53,100
+杰克: 比如这个L1，这个L1，和这个L2。
+Jake: For example, this L1, this L1, and this L2.
+
+80
+00:13:53,100 --> 00:13:54,866
+杰克: 名字都写在这里。
+Jake: The names are all written here.
+
+81
+00:13:55,533 --> 00:13:58,900
+杰克: 哈哈哈，你们所有的数据都在这里。
+Jake: Hahaha, all your data is in here.
+
+82
+00:13:58,966 --> 00:14:00,900
+舒尔: 这是我们的第二人生。
+Shure: This is our second life.
+
+83
+00:14:00,900 --> 00:14:03,900
+杰克: 对，你们的第二人生都在这里。
+Jake: Yes, your second life is all in here.
+
+84
+00:14:03,900 --> 00:14:05,366
+杰克: 比如，这是我的L1。
+Jake: For example, this is my L1.
+
+85
+00:14:05,366 --> 00:14:07,300
+杰克: 对，然后你们完成后……
+Jake: Right, then after you finish...
+
+86
+00:14:07,300 --> 00:14:10,100
+杰克: 你们会把这些眼镜插到这个上面。
+Jake: You'll plug these glasses into this thing.
+
+87
+00:14:10,100 --> 00:14:10,866
+杰克: 同时……
+Jake: And at the same time...
+
+88
+00:14:10,866 --> 00:14:13,000
+杰克: 现在总是连接到这个第一个硬盘。
+Jake: Now always connecting to this first hard drive.
+
+89
+00:14:13,566 --> 00:14:16,400
+杰克: 对，然后这个硬盘有两根线。
+Jake: Yes, then this hard drive has two cables.
+
+90
+00:14:16,400 --> 00:14:19,166
+杰克: 一根是连接电脑的。
+Jake: One is for connecting to the computer.
+
+91
+00:14:19,166 --> 00:14:20,366
+杰克: 一根是电源。
+Jake: One is for the power source.
+
+92
+00:14:20,366 --> 00:14:21,200
+杰克: 这个电源……
+Jake: And this power source...
+
+93
+00:14:21,200 --> 00:14:24,600
+杰克: 是为了让这个硬盘假装在电脑上。
+Jake: Is to make this hard drive pretend it's on a computer.
+
+94
+00:14:25,766 --> 00:14:27,333
+杰克: 所以这个盒子的目的是……
+Jake: So the purpose of this box is to...
+
+95
+00:14:27,333 --> 00:14:29,333
+杰克: 为它模拟一个电脑环境。
+Jake: Simulate a computer environment for it.
+
+96
+00:14:29,333 --> 00:14:30,600
+杰克: 然后用硬盘，对吧。
+Jake: Then use the hard drive, right.
+
+97
+00:14:30,600 --> 00:14:33,000
+杰克: 这样硬盘就知道它需要工作。
+Jake: So the hard drive knows it needs to work.
+
+98
+00:14:33,366 --> 00:14:35,766
+杰克: 对，然后这根线……
+Jake: Yeah, and then this cable...
+
+99
+00:14:35,766 --> 00:14:39,300
+杰克: 这根线，我们的线缆管理挺有趣的。
+Jake: This cable, our cable management is pretty interesting.
+
+100
+00:14:39,300 --> 00:14:40,400
+杰克: 看起来像这样。
+Jake: It looks like this.
+
+101
+00:14:40,700 --> 00:14:41,500
+杰克: 呵呵。
+Jake: Hehe.
+
+102
+00:14:41,500 --> 00:14:42,300
+舒尔: 有点悬着。
+Shure: It's kind of hanging.
+
+103
+00:14:42,366 --> 00:14:42,933
+杰克: 对。
+Jake: Right.
+
+104
+00:14:43,666 --> 00:14:45,733
+舒尔: 那如果突然停电怎么办？
+Shure: So what happens if there's a sudden power outage?
+
+105
+00:14:45,800 --> 00:14:47,733
+杰克: 那很难说。
+Jake: That's hard to say.
+
+106
+00:14:48,866 --> 00:14:50,200
+杰克: 如果电脑突然断电……
+Jake: If the computer suddenly loses power...
+
+107
+00:14:50,200 --> 00:14:51,200
+杰克: 那就尴尬了。
+Jake: It would be awkward.
+
+108
+00:14:52,500 --> 00:14:54,366
+舒尔: 那就没有……
+Shure: Then there's no...
+
+109
+00:14:54,733 --> 00:14:56,766
+舒尔: 像USB备用电源？
+Shure: Like a USB backup power supply?
+
+110
+00:14:57,266 --> 00:14:57,766
+杰克: 嗯。
+Jake: Hmm.
+
+111
+00:14:57,766 --> 00:15:00,133
+舒尔: 像那些备用电源。
+Shure: Like those backup power sources.
+
+112
+00:15:01,333 --> 00:15:02,933
+杰克: 哦，没有。
+Jake: Oh, no.
+
+113
+00:15:03,700 --> 00:15:04,900
+杰克: 我们还没那么有钱。
+Jake: We're not that rich yet.
+
+114
+00:15:05,866 --> 00:15:07,766
+杰克: 我们只能靠这个别墅。
+Jake: We can only rely on this villa.
+
+115
+00:15:08,000 --> 00:15:09,766
+杰克: 或者相信北京电力。
+Jake: Or trust Beijing Electric.
+
+116
+00:15:11,366 --> 00:15:12,166
+杰克: 对。
+Jake: Right.
+
+117
+00:15:14,133 --> 00:15:14,933
+舒尔: 谢谢。
+Shure: Thank you.
+
+118
+00:15:15,800 --> 00:15:17,333
+杰克: 好，你们开始安装吧。
+Jake: Alright, you guys start installing.
+
+119
+00:15:18,066 --> 00:15:21,100
+舒尔: 我们，我们可以……
+Shure: We, we can...
+
+120
+00:15:21,900 --> 00:15:23,033
+杰克: 你们可以边聊边安装。
+Jake: You can chat while installing.
+
+121
+00:15:23,033 --> 00:15:23,300
+舒尔: 对。
+Shure: Right.
+
+122
+00:15:23,900 --> 00:15:26,666
+杰克: 嗯，或者你们可以先带点东西。
+Jake: Hmm, or you guys can bring something first.
+
+123
+00:15:27,366 --> 00:15:28,733
+杰克: 你们会带什么？
+Jake: What will you bring?
+
+124
+00:15:28,733 --> 00:15:31,200
+杰克: 嘿，这些眼镜，你们需要戴好。
+Jake: Hey, these glasses, you need to wear them properly.
+
+125
+00:15:33,266 --> 00:15:34,200
+杰克: 这些眼镜。
+Jake: These glasses.
+
+126
+00:15:35,966 --> 00:15:37,866
+杰克: 嗯，它们不应该遮住……
+Jake: Hmm, they shouldn't cover...
+
+127
+00:15:38,100 --> 00:15:39,466
+杰克: 它们不应该遮住，对吧？
+Jake: They shouldn't cover, right?
+
+128
+00:15:40,300 --> 00:15:41,566
+杰克: 你现在没遮住什么。
+Jake: You're not covering anything now.
+
+129
+00:15:41,733 --> 00:15:43,200
+露西亚: 但这里有个洞。
+Lucia: But there's a hole here.
+
+130
+00:15:43,766 --> 00:15:45,900
+露西亚: 这部分需要放在这里。
+Lucia: And this part needs to sit here.
+
+131
+00:15:46,500 --> 00:15:48,300
+露西亚: 所以你需要这样对齐。
+Lucia: So you need to align it like this.
+
+132
+00:15:48,300 --> 00:15:49,800
+露西亚: 然后慢慢推入。
+Lucia: And then slowly push it in.
+
+133
+00:15:49,800 --> 00:15:51,200
+露西亚: 看它怎么进去。
+Lucia: See how it goes in.
+
+134
+00:15:51,533 --> 00:15:52,366
+露西亚: 似乎需要轻柔。
+Lucia: It seems like it needs to be gentle.
+
+135
+00:15:52,366 --> 00:15:54,800
+露西亚: 那天一个同学告诉我这个挺脆弱的。
+Lucia: That day a classmate told me this is quite fragile.
+
+136
+00:15:54,800 --> 00:15:55,933
+杰克: 嗯，是的。
+Jake: Hmm, yeah, it is.
+
+137
+00:15:55,933 --> 00:15:57,266
+舒尔: 别担心，明白了。
+Shure: No worries, got it.
+
+138
+00:15:57,800 --> 00:15:59,800
+露西亚: 这里有个缺口，对吧？
+Lucia: There's a notch here, right?
+
+139
+00:15:59,900 --> 00:16:01,300
+露西亚: 它和这个对齐。
+Lucia: It aligns with this.
+
+140
+00:16:01,533 --> 00:16:03,600
+露西亚: 你只需要这样对齐它们。
+Lucia: You just need to align them like this.
+
+141
+00:16:03,600 --> 00:16:04,600
+露西亚: 然后慢慢推
+
+142
+00:16:04,600 --> 00:16:06,766
+露西亚: 看这样说不定能把他推进去
+
+143
+00:16:05,566 --> 00:16:06,266
+俢硕：哎呦我天
+
+144
+00:16:08,300 --> 00:16:09,666
+露西亚: 要稍微使点力气
+
+145
+00:16:09,666 --> 00:16:10,900
+露西亚: 他这还是有一点紧的
+
+146
+00:16:10,900 --> 00:16:12,100
+露西亚: 但是别太使劲
+
+147
+00:16:11,100 --> 00:16:13,566
+舒尔:  需要拧螺丝的地方吗没有吧
+
+148
+00:16:12,100 --> 00:16:12,866
+露西亚: 别掰坏了
+
+149
+00:16:13,966 --> 00:16:17,133
+露西亚: 好像很脆弱的样子，不过我其实也不是很懂这个
+
+150
+00:16:18,900 --> 00:16:20,966
+杰克: 有有有很多螺丝
+
+151
+00:16:20,966 --> 00:16:21,666
+露西亚: 要拧螺丝
+
+152
+00:16:21,666 --> 00:16:22,066
+杰克: 对
+
+153
+00:16:22,600 --> 00:16:23,666
+舒尔: 那螺丝呢
+
+154
+00:16:23,933 --> 00:16:24,766
+露西亚: 在那里面
+
+155
+00:16:24,766 --> 00:16:26,666
+舒尔:  哦懂了
+
+156
+00:16:27,733 --> 00:16:28,533
+舒尔: 简单
+Shure:  easy
+
+157
+00:16:31,733 --> 00:16:33,066
+卡特里娜:  然后就把它装进去了
+
+158
+00:16:33,733 --> 00:16:35,866
+露西亚: 嗯对然后要装到这个盒子里
+
+159
+00:16:36,200 --> 00:16:39,300
+露西亚: 就是你最好是把这个地方取下来
+
+160
+00:16:39,466 --> 00:16:41,100
+露西亚: 然后这个片就可以不要了
+
+161
+00:16:41,500 --> 00:16:43,866
+露西亚: 因为之后我们需要用这个来拧螺栓。
+Lucia: Because we'll need to use this to screw in the bolts later.
+
+162
+00:16:46,266 --> 00:16:47,966
+爱丽丝: 我们只需要拧4个螺栓吗？
+Alice: Do we just need to screw in 4 bolts?
+
+163
+00:16:48,466 --> 00:16:50,233
+露西亚: 呃，8个。
+Lucia: Uh, 8.
+
+164
+00:16:50,233 --> 00:16:50,933
+爱丽丝: 8个？
+Alice: 8?
+
+165
+00:16:50,933 --> 00:16:51,433
+露西亚: 对。
+Lucia: Yes.
+
+166
+00:16:51,633 --> 00:16:52,066
+舒尔: 没错。
+Shure: That's right.
+
+167
+00:16:53,500 --> 00:16:56,066
+露西亚: 对，你需要拉出那条。
+Lucia: Yes, you need to pull out that strip.
+
+168
+00:16:56,166 --> 00:16:58,366
+露西亚: 对，然后，你看到那个洞了吗？
+Lucia: Yes, and then, do you see that hole?
+
+169
+00:16:58,366 --> 00:16:59,466
+露西亚: 长的那个。
+Lucia: The long one.
+
+170
+00:16:59,466 --> 00:17:00,800
+露西亚: 里面也有一个螺丝孔。
+Lucia: There's also a screw hole inside.
+
+171
+00:17:00,800 --> 00:17:02,100
+露西亚: 你也需要拧那个。
+Lucia: You need to screw that in too.
+
+172
+00:17:03,000 --> 00:17:04,866
+露西亚: 那是大螺丝的螺丝孔。
+Lucia: That's the screw hole for the big screw.
+
+173
+00:17:05,266 --> 00:17:06,166
+爱丽丝: 啊，哪一个？
+Alice: Ah, which one?
+
+174
+00:17:06,500 --> 00:17:08,533
+露西亚: 呃，这里，看。
+Lucia: Uh, here, look.
+
+175
+00:17:08,533 --> 00:17:10,533
+爱丽丝: 我已经拧了一个螺丝。
+Alice: I've already screwed in one screw.
+
+176
+00:17:11,733 --> 00:17:14,333
+露西亚: 是这个，这个东西。
+Lucia: It's this one, this thing.
+
+177
+00:17:14,333 --> 00:17:16,700
+露西亚: 嗯，我怎么指得更清楚？
+Lucia: Hmm, how can I point it out more clearly?
+
+178
+00:17:16,700 --> 00:17:18,200
+露西亚: 哦，你弄对了。
+Lucia: Oh, you've got it right.
+
+179
+00:17:17,633 --> 00:17:18,600
+爱丽丝: 嗯。
+Alice: Hmm.
+
+180
+00:17:18,266 --> 00:17:19,766
+露西亚: 对，这边每个都有一个。
+Lucia: Yes, and each one over here has one.
+
+181
+00:17:19,766 --> 00:17:22,333
+露西亚: 这个也是，所以总共有8个。
+Lucia: And this one too, so there are 8 in total.
+
+182
+00:17:20,933 --> 00:17:21,566
+爱丽丝: 明白了。
+Alice: Got it.
+
+183
+00:17:22,366 --> 00:17:23,333
+爱丽丝: 我现在看到了。
+Alice: I see it now.
+
+184
+00:17:23,333 --> 00:17:24,133
+卡特里娜: 这是大螺丝。
+Katrina: This is the big screw.
+
+185
+00:17:24,066 --> 00:17:24,966
+爱丽丝: 我之前没看到。
+Alice: I didn't see it earlier.
+
+186
+00:17:24,133 --> 00:17:25,166
+卡特里娜: 看，在这里，对吧？
+Katrina: See, it's here, right?
+
+187
+00:17:25,533 --> 00:17:25,966
+露西亚: 对，对。
+Lucia: Yes, yes.
+
+188
+00:17:26,033 --> 00:17:26,700
+卡特里娜: 小螺丝放这里。
+Katrina: The small screw goes here.
+
+189
+00:17:26,933 --> 00:17:27,100
+露西亚: 正确。
+Lucia: Correct.
+
+190
+00:17:27,000 --> 00:17:28,866
+爱丽丝: 哦，里面，直接插入，对吧？
+Alice: Oh, inside, just insert it, right?
+
+191
+00:17:29,066 --> 00:17:29,533
+爱丽丝: 就那个。
+Alice: Just that one.
+
+192
+00:17:29,800 --> 00:17:30,100
+杰克: 对。
+Jake: Yes.
+
+193
+00:17:30,366 --> 00:17:32,200
+爱丽丝: 呃，那个，对吧。
+Alice: Uh, that one, right.
+
+194
+00:17:32,533 --> 00:17:32,700
+爱丽丝: 嗯。
+Alice: Hmm.
+
+195
+00:17:33,333 --> 00:17:35,100
+露西亚: 里面，应该直接插入，就这样。
+Lucia: Inside, it should just be inserted, that's it.
+
+196
+00:17:33,533 --> 00:17:35,466
+爱丽丝: 它叫什么，集成电路之类的？
+Alice: What's it called, an integrated circuit or something?
+
+197
+00:17:41,166 --> 00:17:43,600
+杰克: 上次，我们一直抱怨磁性问题。
+Jake: Last time, we kept complaining about the magnetic issue.
+
+198
+00:17:43,600 --> 00:17:45,900
+杰克: 但今天似乎没人有问题。
+Jake: But it seems like today, no one has any problems.
+
+199
+00:17:45,933 --> 00:17:48,333
+露西亚: 对，今天大家似乎都还好。
+Lucia: Yes, today everyone seems to be okay with it.
+
+200
+00:17:49,033 --> 00:17:49,433
+杰克: 对。
+Jake: Right.
+
+201
+00:17:49,600 --> 00:17:50,366
+爱丽丝: 你们在说什么？
+Alice: What are you talking about?
+
+202
+00:17:50,000 --> 00:17:50,300
+舒尔: 他
+Shure: He
+
+203
+00:17:50,766 --> 00:17:53,333
+舒尔: 毕竟，这个赠品不能给你什么。
+Shure: After all, this freebie can't really give you anything.
+
+204
+00:17:53,333 --> 00:17:54,066
+露西亚: 没错，没错。
+Lucia: Exactly, exactly.
+
+205
+00:17:54,066 --> 00:17:55,800
+露西亚: 这个螺丝刀没有磁性。
+Lucia: This screwdriver isn't magnetic.
+
+206
+00:17:55,266 --> 00:17:56,200
+舒尔: 没有磁吸。
+Shure: No magnetic attraction.
+
+207
+00:17:56,733 --> 00:17:58,333
+露西亚: 是的，所以当
+Lucia: Yeah, so when
+
+208
+00:17:58,333 --> 00:17:59,166
+卡特里娜: 这个是给大螺丝的。
+Katrina: This one is for the bigger screws.
+
+209
+00:17:59,166 --> 00:18:00,400
+露西亚: 拧螺丝时真的很麻烦。
+Lucia: It's really troublesome when you're putting screws in.
+
+210
+00:18:00,400 --> 00:18:01,966
+露西亚: 对，这个是给大螺丝的。
+Lucia: Yeah, this one is for the bigger ones.
+
+211
+00:18:01,966 --> 00:18:03,533
+卡特里娜: 对，大的能放进去。
+Katrina: Yeah, the big one can fit in.
+
+212
+00:18:03,933 --> 00:18:05,300
+露西亚: 嗯，就像这样。
+Lucia: Um, it's just like this.
+
+213
+00:18:05,300 --> 00:18:06,966
+露西亚: 它不能穿过这个洞。
+Lucia: It can't really go through this hole.
+
+214
+00:18:06,966 --> 00:18:07,366
+露西亚: 你只需要
+Lucia: You just have to
+
+215
+00:18:07,366 --> 00:18:11,666
+杰克: 你的头发总是挡住摄像头，你能处理一下吗？
+Jake: Your hair is always blocking the camera, can you do something about it?
+
+216
+00:18:10,800 --> 00:18:11,466
+塔莎: 这个？
+Tasha: This one?
+
+217
+00:18:11,666 --> 00:18:13,466
+杰克: 对，或者塞进去。
+Jake: Yeah, or tuck it inside.
+
+218
+00:18:13,966 --> 00:18:15,266
+塔莎: 我已经塞进去了。
+Tasha: I've already tucked it in.
+
+219
+00:18:16,466 --> 00:18:16,966
+卡特里娜: 找个小夹子。
+Katrina: Find a small clip.
+
+220
+00:18:16,833 --> 00:18:19,166
+露西亚: 你只需要把它固定好。
+Lucia: You just need to fix it in place.
+
+221
+00:18:19,266 --> 00:18:20,466
+露西亚: 这样可以吗？
+Lucia: Is this okay?
+
+222
+00:18:26,066 --> 00:18:27,333
+杰克: 对，这样很好。
+Jake: Yeah, this is good.
+
+223
+00:18:32,666 --> 00:18:33,466
+舒尔: 我们
+Shure: We
+
+224
+00:18:35,266 --> 00:18:37,266
+舒尔: 我们能放点背景音乐吗？
+Shure: Can we have some background music?
+
+225
+00:18:37,633 --> 00:18:38,933
+杰克: 那你可以放一些。
+Jake: Then you can play some.
+
+226
+00:18:38,200 --> 00:18:39,533
+露西亚: 放吧。
+Lucia: Go ahead.
+
+227
+00:18:45,000 --> 00:18:47,100
+舒尔: 你们通常听什么音乐？
+Shure: What kind of music do you guys usually listen to?
+
+228
+00:18:48,166 --> 00:18:49,566
+卡特里娜: 我听陶喆。
+Katrina: I listen to David Tao.
+
+229
+00:18:50,933 --> 00:18:52,133
+杰克: 陶喆那种音乐。
+Jake: David Tao type of music.
+
+230
+00:18:52,500 --> 00:18:53,433
+卡特里娜: 对，R&B。
+Katrina: Yeah, R&B.
+
+231
+00:18:52,566 --> 00:18:53,966
+杰克:  RMB 杰克: R&B。
+Jake:  RMB
+Jake: R&B.
+
+232
+00:18:53,633 --> 00:18:54,333
+舒尔: R&B 舒尔: R&B。
+Shure: R&B
+Shure: R&B.
+
+233
+00:18:56,133 --> 00:18:57,400
+露西亚: 我喜欢西方音乐。
+Lucia: I'm into Western music.
+
+234
+00:18:57,400 --> 00:18:58,766
+露西亚: 所以我随便听。
+Lucia: So I listen to random stuff.
+
+235
+00:19:00,266 --> 00:19:01,833
+爱丽丝: 我们放点有活力的给大家。
+Alice: Let's play something energetic for everyone.
+
+236
+00:19:03,733 --> 00:19:04,166
+杰克: 好的。
+Jake: Okay.
+
+237
+00:19:04,033 --> 00:19:06,066
+卡特里娜: 来点东北的欢快音乐怎么样？
+Katrina: How about some upbeat music from Northeast China?
+
+238
+00:19:06,966 --> 00:19:10,500
+舒尔: 哈哈哈，好的。
+Shure: Hahaha, okay.
+
+239
+00:19:07,100 --> 00:19:09,133
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+240
+00:19:09,466 --> 00:19:10,266
+杰克: 好的，好的。
+Jake: Okay, okay.
+
+241
+00:19:10,266 --> 00:19:12,366
+杰克: 来自东方的一点震撼。
+Jake: A little shock from the East.
+
+242
+00:19:11,966 --> 00:19:13,900
+爱丽丝: 我笑死了，太强了。
+Alice: I'm dying of laughter, it's so powerful.
+
+243
+00:19:14,333 --> 00:19:14,800
+杰克: 对。
+Jake: Yeah.
+
+244
+00:19:15,633 --> 00:19:16,066
+舒尔: 来吧。
+Shure: Come on.
+
+245
+00:19:16,300 --> 00:19:17,366
+杰克: 那就跳吧，不然……
+Jake: Jump then, or else...
+
+246
+00:19:18,966 --> 00:19:20,466
+舒尔: 我想把它抬起来。
+Shure: I want to lift it up.
+
+247
+00:19:21,100 --> 00:19:21,766
+卡特里娜: 抬起来。
+Katrina: Lift it up.
+
+248
+00:19:26,000 --> 00:19:28,000
+舒尔: 就嵌入一半，对吧？
+Shure: Just embed this halfway, right?
+
+249
+00:19:28,000 --> 00:19:28,466
+舒尔: 像这样。
+Shure: Like this.
+
+250
+00:19:28,633 --> 00:19:30,233
+杰克: 对，固定好。
+Jake: Yeah, just fix it.
+
+251
+00:19:32,166 --> 00:19:32,733
+爱丽丝:  OK 爱丽丝: OK。
+Alice: OK
+Alice: OK.
+
+252
+00:19:32,533 --> 00:19:35,433
+舒尔: 我的家乡在东北。
+Shure: My hometown in the Great Northeast.
+
+253
+00:19:37,500 --> 00:19:38,600
+杰克: 你来自东北哪里？
+Jake: Where in the Northeast are you from?
+
+254
+00:19:39,700 --> 00:19:41,500
+舒尔: 我来自稻花香。
+Shure: I'm from Daohuaxiang.
+
+255
+00:19:42,400 --> 00:19:43,333
+杰克: 来自东北稻花？
+Jake: From Northeast Daohua?
+
+256
+00:19:43,333 --> 00:19:44,000
+舒尔: 不，不。
+Shure: No, no.
+
+257
+00:19:44,000 --> 00:19:45,166
+舒尔: 来自长春。
+Shure: From Changchun.
+
+258
+00:19:45,166 --> 00:19:45,933
+杰克: 长春。
+Jake: Changchun.
+
+259
+00:19:46,300 --> 00:19:50,966
+舒尔: 长春，吉林省，大家都知道这个城市吗？
+Shure: Changchun, Jilin Province, does everyone know this city?
+
+260
+00:19:51,533 --> 00:19:52,333
+卡特里娜: 知道。
+Katrina: Yes.
+
+261
+00:19:53,666 --> 00:19:56,333
+舒尔: 大家都知道吉林省还有一个叫吉林的城市吗？
+Shure: Does everyone know there's also a city named Jilin in Jilin Province?
+
+262
+00:19:56,533 --> 00:19:56,666
+爱丽丝: 嗯哼。
+Alice: Uh-huh.
+
+263
+00:19:56,533 --> 00:19:58,066
+杰克: 啊，对，我们也知道。
+Jake: Ah, yes, we know that too.
+
+264
+00:19:59,266 --> 00:20:00,933
+杰克: 那你在吉林市吗？
+Jake: So are you in Jilin City?
+
+265
+00:20:01,166 --> 00:20:02,366
+舒尔: 不，我在长春。
+Shure: No, I'm in Changchun.
+
+266
+00:20:02,666 --> 00:20:03,400
+杰克: 你的邻居，对吧？
+Jake: Your neighbor, right?
+
+267
+00:20:03,400 --> 00:20:04,766
+舒尔: 好像是。
+Shure: Seems like it.
+
+268
+00:20:10,100 --> 00:20:11,400
+舒尔: 大东北。
+Shure: Great Northeast.
+
+269
+00:20:28,000 --> 00:20:31,133
+舒尔: AI，为什么人类喜欢听这种音乐？
+Shure: AI, why do humans like listening to this kind of music?
+
+270
+00:20:29,000 --> 00:20:29,966
+杰克: 这个放后面。
+Jake: This goes in the back.
+
+271
+00:20:31,133 --> 00:20:32,300
+卡特里娜: 人类迷惑行为。
+Katrina: Human confusing behavior.
+
+272
+00:20:34,500 --> 00:20:36,500
+杰克: 然后这里有个螺丝。
+Jake: Then there's a screw here.
+
+273
+00:20:37,066 --> 00:20:38,100
+杰克: 看两边。
+Jake: Look at both sides.
+
+274
+00:20:40,333 --> 00:20:42,100
+露西亚: 好像我们不用把这个放回去。
+Lucia: It seems like we don't have to put this back.
+
+275
+00:20:42,100 --> 00:20:43,666
+露西亚: 我们可以就用这个条。
+Lucia: We can just use this strip.
+
+276
+00:20:43,666 --> 00:20:46,066
+露西亚: 我记得上次我们反正扔了。
+Lucia: I remember we threw it away last time anyway.
+
+277
+00:20:46,066 --> 00:20:46,733
+舒尔: 这个条正好合适。
+Shure: This strip fits perfectly.
+
+278
+00:20:46,733 --> 00:20:47,600
+露西亚: 我们可以扔掉这个条。
+Lucia: We can throw this strip away.
+
+279
+00:20:47,600 --> 00:20:48,533
+杰克: 我们可以放这里，我们可以放这里。
+Jake: We can put it here, we can put it here.
+
+280
+00:20:48,533 --> 00:20:50,266
+杰克: 我昨天成功放进去了。
+Jake: I successfully put it in yesterday.
+
+281
+00:20:50,266 --> 00:20:52,066
+露西亚: 哦，我明白了。
+Lucia: Oh, I see.
+
+282
+00:20:52,066 --> 00:20:52,533
+杰克: 对。
+Jake: Yes.
+
+283
+00:20:52,066 --> 00:20:53,766
+露西亚: 那那天呢？
+Lucia: What about that day then?
+
+284
+00:20:53,766 --> 00:20:54,700
+杰克: 没关系。
+Jake: It doesn't matter.
+
+285
+00:20:55,066 --> 00:20:56,166
+杰克: 只是为了美观。
+Jake: It's just for aesthetics.
+
+286
+00:20:56,266 --> 00:20:58,333
+杰克: 看起来没有螺丝。
+Jake: It looks like there are no screws.
+
+287
+00:20:56,466 --> 00:20:57,400
+爱丽丝: 完成了吗？
+Alice: Is it done?
+
+288
+00:20:59,700 --> 00:21:02,466
+杰克: 那你这样做。
+Jake: Then you do it like this.
+
+289
+00:21:02,466 --> 00:21:03,900
+舒尔: 准备进去。
+Shure: Ready to go in.
+
+290
+00:21:04,033 --> 00:21:05,466
+露西亚: 哦，准备进去。
+Lucia: Oh, ready to go in.
+
+291
+00:21:04,433 --> 00:21:06,966
+爱丽丝: 对，我已经进去过了。
+Alice: Yes, I’ve already been in.
+
+292
+00:21:07,900 --> 00:21:09,300
+杰克: 哦，你进去玩过了？
+Jake: Oh, you've been in and played?
+
+293
+00:21:10,533 --> 00:21:13,466
+爱丽丝: 我觉得我们大学做的布线……
+Alice: I think the wiring we did in college...
+
+294
+00:21:13,466 --> 00:21:15,800
+爱丽丝: 焊板子，和进去没什么区别。
+Alice: Soldering boards, it's no different from going in.
+
+295
+00:21:16,066 --> 00:21:16,666
+杰克: 互联网？
+Jake: Internet?
+
+296
+00:21:16,466 --> 00:21:16,666
+杰克: 还是什么？
+Jake: Or what?
+
+297
+00:21:16,666 --> 00:21:16,933
+杰克: 还是什么？
+Jake: Or what?
+
+298
+00:21:17,066 --> 00:21:18,966
+爱丽丝: 对，电工。
+Alice: Yeah, electrician.
+
+299
+00:21:17,433 --> 00:21:18,066
+卡特里娜: 电工，对。
+Katrina: Electrician, yeah.
+
+300
+00:21:18,966 --> 00:21:19,966
+卡特里娜: 焊板子。
+Katrina: Soldering boards.
+
+301
+00:21:19,100 --> 00:21:22,566
+露西亚: 哦对，电工实习会做一些神奇的事情。
+Lucia: Oh right, electrician internships do some magical things.
+
+302
+00:21:21,433 --> 00:21:22,966
+卡特里娜: 我当时不知道……
+Katrina: I didn't know back then...
+
+303
+00:21:22,133 --> 00:21:22,966
+杰克: 对，最后……
+Jake: Right, in the end...
+
+304
+00:21:22,566 --> 00:21:24,266
+露西亚: 最后，我们学校也……
+Lucia: In the end, our school also...
+
+305
+00:21:23,966 --> 00:21:30,200
+杰克: 终于，这样放，就算完成了吧？
+Jake: Finally, put it like this, then it can be called done, right?
+
+306
+00:21:25,966 --> 00:21:27,633
+卡特里娜: 开玩笑的，我们Nguyen工程师也需要培训。
+Katrina: Just kidding, our Nguyen engineer also needs training.
+
+307
+00:21:32,866 --> 00:21:33,733
+杰克: 在流水线上。
+Jake: On the assembly line.
+
+308
+00:21:34,666 --> 00:21:35,733
+杰克: 下一条流水线。
+Jake: Next assembly line.
+
+309
+00:21:36,900 --> 00:21:38,766
+露西亚: 下一条流水线连接到电脑。
+Lucia: The next assembly line connects to the computer.
+
+310
+00:21:38,600 --> 00:21:39,866
+杰克: 呵呵呵。
+Jake: Hehehe.
+
+311
+00:21:38,766 --> 00:21:39,800
+露西亚: 哈哈哈。
+Lucia: Hahaha.
+
+312
+00:21:40,733 --> 00:21:42,500
+舒尔: 下一个需要高级技师。
+Shure: The next one needs a senior technician.
+
+313
+00:21:42,566 --> 00:21:44,633
+露西亚: 哈哈哈，高级技师。
+Lucia: Hahaha, senior technician.
+
+314
+00:21:43,333 --> 00:21:45,500
+爱丽丝: 哈哈哈，暂停。
+Alice: Hahaha, pause.
+
+315
+00:21:47,366 --> 00:21:48,200
+爱丽丝: 吵死了。
+Alice: Noisy.
+
+316
+00:21:50,266 --> 00:21:52,366
+杰克: 从3000技师到5000技师。
+Jake: From a 3,000 technician to a 5,000 technician.
+
+317
+00:21:53,500 --> 00:21:55,266
+舒尔: 你管这叫技师？
+Shure: You call this a technician?
+
+318
+00:21:57,600 --> 00:21:58,700
+爱丽丝: 技师是什么？
+Alice: What's a technician?
+
+319
+00:21:59,400 --> 00:22:00,200
+爱丽丝: 鸡肉锅。
+Alice: Chicken pot.
+
+320
+00:21:59,400 --> 00:22:01,800
+露西亚: 熟练工，熟练工。
+Lucia: Skilled worker, skilled worker.
+
+321
+00:22:03,866 --> 00:22:04,766
+舒尔: 嘿，为什么是我？
+Shure: Hey, why me?
+
+322
+00:22:06,300 --> 00:22:07,600
+爱丽丝: 因为你按错了。
+Alice: Because you pressed it the wrong way.
+
+323
+00:22:06,300 --> 00:22:07,633
+杰克: 因为你按错了。
+Jake: Because you pressed it the wrong way.
+
+324
+00:22:07,633 --> 00:22:08,133
+舒尔: 哦，我明白了。
+Shure: Oh, I see.
+
+325
+00:22:08,366 --> 00:22:11,200
+杰克: 这里有两个螺丝。
+Jake: There are two screws here.
+
+326
+00:22:11,833 --> 00:22:14,233
+舒尔: 哦，哦，对，对。
+Shure: Oh, oh, right, right.
+
+327
+00:22:12,200 --> 00:22:14,466
+杰克: 看这边的侧面。
+Jake: Look at the side here.
+
+328
+00:22:15,900 --> 00:22:18,266
+杰克: 2000，对吧？是2000。
+Jake: 2,000, right? It’s 2,000.
+
+329
+00:22:17,066 --> 00:22:19,066
+舒尔: 哦不，我是最后一个，好尴尬。
+Shure: Oh no, I’m the last one, how embarrassing.
+
+330
+00:22:21,766 --> 00:22:23,366
+舒尔: 不，我得争取一下。
+Shure: No, I have to fight for it.
+
+331
+00:22:23,366 --> 00:22:24,300
+舒尔: 我不能是最后一个。
+Shure: I can't be the last one.
+
+332
+00:22:24,300 --> 00:22:25,900
+杰克: 哈哈，好的。
+Jake: Haha, okay.
+
+333
+00:22:26,200 --> 00:22:27,533
+杰克: 硬盘竞赛。
+Jake: Hard drive competition.
+
+334
+00:22:26,733 --> 00:22:29,733
+卡特里娜: 你完成了，所以不用再做别的了，对吧？
+Katrina: You’re done, so you don’t need to do anything else, right?
+
+335
+00:22:30,533 --> 00:22:31,866
+露西亚: 拧紧它，应该就行了。
+Lucia: Tighten it, and it should be fine.
+
+336
+00:22:31,866 --> 00:22:34,866
+杰克: 是的，就放那儿吧。
+Jake: Yes, just leave it there.
+
+337
+00:22:31,866 --> 00:22:35,166
+舒尔: 他随口就说拧紧了。
+Shure: He casually says he’s done tightening it.
+
+338
+00:22:35,166 --> 00:22:36,033
+舒尔: 然后呢？
+Shure: Then what?
+
+339
+00:22:37,466 --> 00:22:38,200
+舒尔: 他在挑衅我。
+Shure: He’s provoking me.
+
+340
+00:22:38,200 --> 00:22:39,300
+舒尔: 该死。
+Shure: Damn.
+
+341
+00:22:39,300 --> 00:22:40,600
+杰克: 我们还有机会吗？
+Jake: Do we still have a chance?
+
+342
+00:22:41,966 --> 00:22:42,866
+卡特里娜: 是这样吗？
+Katrina: Is it like this?
+
+343
+00:22:42,866 --> 00:22:43,866
+露西亚: 应该是吧？
+Lucia: It should be, right?
+
+344
+00:22:44,533 --> 00:22:46,533
+杰克: 对，对，放进这个盒子里。
+Jake: Yes, yes, put it in this box.
+
+345
+00:22:46,533 --> 00:22:48,266
+舒尔: 看，你没放到那个水平。
+Shure: Look, you didn’t put it in that level.
+
+346
+00:22:47,100 --> 00:22:51,733
+杰克: 这是入口，对，这是最后一步。
+Jake: This is the entrance, yes, this is the last step.
+
+347
+00:22:51,333 --> 00:22:54,333
+露西亚: 不装也行，挺麻烦的。
+Lucia: It’s fine if you don’t install it, it’s quite troublesome.
+
+348
+00:22:52,300 --> 00:22:54,900
+杰克: 我给了你机会，但你还是错过了。
+Jake: I gave you a chance, but you still missed it.
+
+349
+00:22:54,900 --> 00:22:56,100
+露西亚: 你可以把条带放进去。
+Lucia: You can put the strip inside.
+
+350
+00:22:56,100 --> 00:22:57,166
+露西亚: 如果需要安装的话。
+Lucia: If it needs to be installed.
+
+351
+00:22:57,166 --> 00:22:59,466
+露西亚: 那就试着自己安装。
+Lucia: Then try to install it yourself.
+
+352
+00:22:59,533 --> 00:23:02,666
+杰克: 不用安装，就放进去，就行了。
+Jake: No need to install, just put it inside, it’s fine.
+
+353
+00:23:05,333 --> 00:23:05,666
+舒尔: 好的 舒尔: 好的。
+Shure:  OK
+Shure: OK.
+
+354
+00:23:07,733 --> 00:23:09,400
+舒尔: 大家可以出去了。
+Shure: Everyone can go out now.
+
+355
+00:23:09,400 --> 00:23:12,700
+杰克: 退出，谢谢大家。
+Jake: Exit, thank you everyone.
+
+356
+00:23:16,700 --> 00:23:18,933
+杰克: 完成了一个奇怪的第一任务。
+Jake: Completed a strange first task.
+
+357
+00:23:19,766 --> 00:23:23,166
+杰克: 而这是EGO生活的最后一天。
+Jake: And this is the last day of EGO life.
+
+358
+00:23:23,166 --> 00:23:24,766
+杰克: 你会邀请谁？
+Jake: Who will you invite?
+
+359
+00:23:26,566 --> 00:23:26,900
+杰克: 啊。
+Jake: Ah.
+
+360
+00:23:26,700 --> 00:23:27,733
+舒尔: 最后一天
+Shure: The last day
+
+361
+00:23:27,766 --> 00:23:28,500
+杰克: 最后一天
+Jake: The last day
+
+362
+00:23:28,666 --> 00:23:29,600
+舒尔: 是星期天，对吧？
+Shure: It's Sunday, right?
+
+363
+00:23:29,600 --> 00:23:31,966
+杰克: 星期天下午，可能吧
+Jake: Sunday afternoon, maybe
+
+364
+00:23:33,600 --> 00:23:35,866
+舒尔: 我们邀请谁？
+Shure: Who are we inviting?
+
+365
+00:23:36,200 --> 00:23:36,966
+杰克: 我们邀请几个人。
+Jake: We'll invite a few people.
+
+366
+00:23:36,966 --> 00:23:37,766
+杰克: 是的
+Jake: Yeah
+
+367
+00:23:38,100 --> 00:23:40,100
+舒尔: 我们把它写在黑板上。
+Shure: Let's write it on the blackboard.
+
+368
+00:23:38,200 --> 00:23:39,500
+卡特里娜: 应该是一个，对吧？
+Katrina: Should be one, right?
+
+369
+00:23:40,133 --> 00:23:41,566
+杰克: 是的，我们可以写在黑板上。
+Jake: Yeah, we can write it on the blackboard.
+
+370
+00:23:41,733 --> 00:23:43,800
+舒尔: 让我来，我字写得很好。
+Shure: Let me do it, I have great handwriting.
+
+371
+00:23:43,800 --> 00:23:44,600
+杰克: 当然
+Jake: Sure
+
+372
+00:23:45,133 --> 00:23:46,266
+杰克: 我们还有一个架子
+Jake: We also have a shelf
+
+373
+00:23:46,266 --> 00:23:47,700
+杰克: 我们为什么不也组装它呢？
+Jake: Why don't we assemble it too?
+
+374
+00:23:49,000 --> 00:23:49,533
+舒尔: 什么架子？
+Shure: What shelf?
+
+375
+00:23:49,533 --> 00:23:50,566
+杰克: 就是，就是
+Jake: Just, just
+
+376
+00:23:50,566 --> 00:23:53,800
+杰克: 如果你觉得这样写很难
+Jake: If you find writing this way difficult
+
+377
+00:23:53,900 --> 00:23:55,133
+杰克: 其实有一个
+Jake: There's actually a
+
+378
+00:24:05,733 --> 00:24:09,800
+杰克: 这个东西，你可以把这些放下
+Jake: This thing, you can put these down
+
+379
+00:24:08,533 --> 00:24:10,600
+舒尔: 我们稍后组装，先写吧。
+Shure: Let's assemble it later, let's write first.
+
+380
+00:24:09,800 --> 00:24:11,100
+杰克: 问题不大，对吧？
+Jake: It's not a big problem, right?
+
+381
+00:24:11,100 --> 00:24:11,900
+舒尔: 问题不大，问题不大。
+Shure: Not a big problem, not a big problem.
+
+382
+00:24:11,866 --> 00:24:12,666
+杰克: 问题不大。
+Jake: Not a big problem.
+
+383
+00:24:12,666 --> 00:24:15,300
+舒尔: 不会影响我的书法。
+Shure: It won't affect my calligraphy.
+
+384
+00:24:15,800 --> 00:24:16,166
+杰克: 笔在哪里？
+Jake: Where's the pen?
+
+385
+00:24:16,666 --> 00:24:17,166
+舒尔: 笔在哪里？
+Shure: Where's the pen?
+
+386
+00:24:18,666 --> 00:24:19,433
+舒尔: 好问题。
+Shure: Good question.
+
+387
+00:24:19,466 --> 00:24:20,000
+杰克: 好问题。
+Jake: Good question.
+
+388
+00:24:22,200 --> 00:24:24,466
+舒尔: 问他，问AI，笔在哪里？
+Shure: Ask him, ask AI, where's the pen?
+
+389
+00:24:24,600 --> 00:24:25,133
+杰克: 笔在哪里，笔在哪里？
+Jake: Where's the pen, where's the pen?
+
+390
+00:24:25,966 --> 00:24:27,100
+露西亚: 找我的iPhone？
+Lucia: Looking for my iPhone?
+
+391
+00:24:27,100 --> 00:24:29,100
+露西亚: 哈哈哈
+Lucia: Hahaha
+
+392
+00:24:29,100 --> 00:24:30,000
+杰克: 是的，笔在哪里？
+Jake: Yeah, where's the pen?
+
+393
+00:24:30,000 --> 00:24:30,933
+露西亚: 找我的...
+Lucia: Looking for my...
+
+394
+00:24:31,000 --> 00:24:32,133
+露西亚: 找我的铅笔。
+Lucia: Looking for my pencil.
+
+395
+00:24:32,133 --> 00:24:33,466
+杰克: 笔应该在上面。
+Jake: The pen should be up there.
+
+396
+00:24:33,466 --> 00:24:33,966
+杰克: 等一下。
+Jake: Hold on.
+
+397
+00:24:56,466 --> 00:24:59,166
+露西亚: 嘿，那么我们的客人到底是谁？
+Lucia: Hey, so who exactly are our guests?
+
+398
+00:24:59,766 --> 00:25:00,100
+杰克: 笔
+
+399
+00:24:59,933 --> 00:25:00,300
+卡特里娜: 我
+Katrina: Me
+
+400
+00:25:01,066 --> 00:25:02,200
+舒尔: 我也是，我是...
+Shure: Me too, I'm a...
+
+401
+00:25:02,200 --> 00:25:03,600
+露西亚: 嘿，你是“I”吗？
+Lucia: Hey, are you an "I"?
+
+402
+00:25:04,566 --> 00:25:06,933
+舒尔: 不，我是“E”，不是“I”，好吗？
+Shure: No, I'm an "E", not "I", OK?
+
+403
+00:25:08,400 --> 00:25:09,966
+杰克: 有什么区别？
+Jake: What's the difference?
+
+404
+00:25:09,966 --> 00:25:10,900
+杰克: 嗯，你是“I”？
+Jake: Hmm, you're an "I"?
+
+405
+00:25:11,133 --> 00:25:14,433
+露西亚: 所以，等一下，我们是三个“E”，两个“I”。
+Lucia: So, wait a minute, we are three "E"s, two "I"s.
+
+406
+00:25:11,633 --> 00:25:13,533
+卡特里娜: 如果他是“I”，我们就完蛋了。
+Katrina: If he was an "I", we'd be doomed.
+
+407
+00:25:12,400 --> 00:25:12,900
+舒尔: 我是...
+Shure: I'm...
+
+408
+00:25:15,000 --> 00:25:16,466
+露西亚: 嘿，那么我们是...然后呢？
+Lucia: Hey, so we are... and then?
+
+409
+00:25:16,466 --> 00:25:18,733
+露西亚: 啊，好的，昨天我没有...
+Lucia: Ah, OK, yesterday I didn't...
+
+410
+00:25:18,433 --> 00:25:20,233
+舒尔: 我们辩论一下。
+Shure: Let's debate a bit.
+
+411
+00:25:18,733 --> 00:25:19,700
+露西亚: 昨天我没有猜到。
+Lucia: Yesterday I didn't guess it.
+
+412
+00:25:19,700 --> 00:25:22,066
+露西亚: 虽然我觉得他可能是个嫌疑人。
+Lucia: Although I thought he might be a suspect.
+
+413
+00:25:22,800 --> 00:25:24,466
+舒尔: EGO生活 舒尔: EGO生活。
+Shure: EGO life
+Shure: EGO life.
+
+414
+00:25:27,600 --> 00:25:27,700
+杰克: 嗯。
+Jake: Hmm.
+
+415
+00:25:28,333 --> 00:25:29,733
+舒尔: 最后一天的名单。
+Shure: The final day's list.
+
+416
+00:25:30,333 --> 00:25:30,733
+杰克: 好的。
+Jake: Okay.
+
+417
+00:25:33,666 --> 00:25:34,100
+舒尔: 你...
+Shure: You...
+
+418
+00:25:36,666 --> 00:25:37,133
+舒尔: 需要...
+Shure: Need...
+
+419
+00:25:37,466 --> 00:25:38,766
+杰克: 哈哈，当然。
+Jake: Haha, sure.
+
+420
+00:25:39,500 --> 00:25:40,400
+杰克: 这是这样写的。
+Jake: This is how it's written.
+
+421
+00:25:40,700 --> 00:25:41,200
+杰克: 笔画。
+Jake: Strokes.
+
+422
+00:25:41,333 --> 00:25:42,400
+舒尔: 是的，11是这样写的。
+Shure: Yeah, this is how 11 is written.
+
+423
+00:25:42,400 --> 00:25:43,466
+杰克: 这是这样写的。
+Jake: This is how it's written.
+
+424
+00:25:49,733 --> 00:25:51,366
+舒尔:  夹子的夹怎么写呵呵呵 舒尔: How do you write "夹"? Haha.
+
+425
+00:25:52,866 --> 00:25:55,266
+舒尔: 啊，太久没写了。
+Shure: Ah, it's been too long since I wrote it.
+
+426
+00:25:56,900 --> 00:25:57,600
+爱丽丝: 宝盖头 爱丽丝: It starts with "宝".
+
+427
+00:25:57,233 --> 00:25:59,233
+塔莎: 宝盖头宝盖 塔莎: "宝", "宝".
+
+428
+00:25:57,600 --> 00:25:59,666
+杰克: 嗯，嗯，哈哈。
+Jake: Hmm, hmm, haha.
+
+429
+00:26:01,600 --> 00:26:03,933
+舒尔: 好的，第一个。
+Shure: OK, the first one.
+
+430
+00:26:06,966 --> 00:26:08,700
+杰克: 舒尔，你邀请了多少人？
+Jake: Shure, how many people did you invite?
+
+431
+00:26:09,366 --> 00:26:12,033
+舒尔: 我先只邀请一个。
+Shure: I'll start by inviting just one.
+
+432
+00:26:12,800 --> 00:26:14,466
+杰克: 先只邀请一个？
+Jake: Just one to start?
+
+433
+00:26:13,900 --> 00:26:14,300
+舒尔: 是的。
+Shure: Yeah.
+
+434
+00:26:14,733 --> 00:26:15,533
+杰克: Luya呢？
+Jake: What about Luya?
+
+435
+00:26:16,600 --> 00:26:18,966
+露西亚: 我不确定，因为太远了。
+Lucia: I'm not sure because it's too far.
+
+436
+00:26:18,966 --> 00:26:20,800
+露西亚: 我不知道我的朋友能不能来。
+Lucia: I don't know if my friend can make it.
+
+437
+00:26:19,133 --> 00:26:20,066
+杰克: 哦。
+Jake: Oh.
+
+438
+00:26:20,800 --> 00:26:23,000
+杰克: 好的，那么你的工作室...
+Jake: Okay, then your studio...
+
+439
+00:26:25,200 --> 00:26:26,733
+塔莎: 我先只邀请一个。
+Tasha: I'll just invite one for now.
+
+440
+00:26:26,733 --> 00:26:28,266
+杰克: 好的，塔莎，邀请一个人。
+Jake: Okay, Tasha, invite someone.
+
+441
+00:26:29,433 --> 00:26:30,366
+舒尔: 他们叫什么名字？
+Shure: What's their name?
+
+442
+00:26:30,500 --> 00:26:32,600
+杰克: 不用，没必要。
+Jake: No need, there's no need.
+
+443
+00:26:33,366 --> 00:26:35,366
+杰克: 就大概画个勾。
+Jake: Just roughly draw a tick mark.
+
+444
+00:26:35,366 --> 00:26:36,933
+舒尔: 啊，一个勾，明白了。
+Shure: Ah, a tick mark, got it.
+
+445
+00:26:37,500 --> 00:26:38,566
+杰克: 或者你可以用那个小球。
+Jake: Or you can use that little ball.
+
+446
+00:26:38,566 --> 00:26:39,500
+杰克: 我觉得够了。
+Jake: I think that's enough.
+
+447
+00:26:40,566 --> 00:26:41,800
+卡特里娜: 画个小人。
+Katrina: Draw a little person.
+
+448
+00:26:41,800 --> 00:26:43,200
+卡特里娜: 男孩是这样的。
+Katrina: Boys are like this.
+
+449
+00:26:43,200 --> 00:26:44,500
+卡特里娜: 女孩在两边。
+Katrina: Girls are on both sides.
+
+450
+00:26:47,533 --> 00:26:48,300
+舒尔: 你邀请。
+Shure: You invite.
+
+451
+00:26:48,466 --> 00:26:51,166
+杰克: 呃，呵呵。
+Jake: Uh, hehe.
+
+452
+00:26:49,833 --> 00:26:51,500
+塔莎: 这是你邀请的女孩吗？
+Tasha: Is this the girl you invited?
+
+453
+00:26:51,500 --> 00:26:52,666
+舒尔: 啊，你？
+Shure: Ah, you?
+
+454
+00:26:52,700 --> 00:26:54,633
+塔莎: 那我也邀请一个女孩。
+Tasha: Then I'll invite a girl too.
+
+455
+00:27:01,066 --> 00:27:02,266
+露西亚: 这个，这个辫子。
+Lucia: This, this braid.
+
+456
+00:27:02,266 --> 00:27:05,600
+露西亚: 这个连接不在头顶上。
+Lucia: This connection isn't on top of the head.
+
+457
+00:27:03,133 --> 00:27:04,200
+爱丽丝: 抽象。
+Alice: Abstract.
+
+458
+00:27:06,766 --> 00:27:07,333
+卡特里娜: 假发。
+Katrina: Wig.
+
+459
+00:27:07,200 --> 00:27:08,366
+爱丽丝: 我的天。
+Alice: Oh my god.
+
+460
+00:27:09,933 --> 00:27:12,500
+舒尔: 哈哈，我们重做吧。
+Shure: Haha, let's redo it.
+
+461
+00:27:12,866 --> 00:27:14,633
+杰克: 嗯，奥特曼。
+Jake: Hmm, Ultraman.
+
+462
+00:27:13,900 --> 00:27:15,700
+卡特里娜: 我应该邀请一个男孩。
+Katrina: I should invite a boy.
+
+463
+00:27:15,933 --> 00:27:16,733
+舒尔: 一个男孩。
+Shure: A boy.
+
+464
+00:27:16,900 --> 00:27:17,433
+卡特里娜: 是的。
+Katrina: Yeah.
+
+465
+00:27:23,333 --> 00:27:24,133
+爱丽丝: 有爱的孩子。
+Alice: Loving children.
+
+466
+00:27:24,633 --> 00:27:25,600
+卡特里娜: 三条腿。
+Katrina: Three legs.
+
+467
+00:27:30,000 --> 00:27:31,366
+杰克: 这样行吗？
+Jake: Is this okay like this?
+
+468
+00:27:33,266 --> 00:27:35,333
+舒尔: 对不起，我不小心画了头。
+Shure: Sorry, I accidentally drew the head.
+
+469
+00:27:41,933 --> 00:27:42,433
+舒尔: 好的 舒尔: 好的。
+Shure:  OK
+Shure: OK.
+
+470
+00:27:42,900 --> 00:27:45,866
+露西亚: 我其实可以问一个女孩，但我不确定她能不能来。
+Lucia: I could actually ask a girl, but I'm not sure if she can make it.
+
+471
+00:27:45,866 --> 00:27:47,500
+露西亚: 因为她挺远的。
+Lucia: Because she's quite far.
+
+472
+00:27:50,500 --> 00:27:54,566
+露西亚: 哈哈哈，不确定，对吧？不确定。
+Lucia: Hahaha, doubtful, right? Doubtful.
+
+473
+00:27:52,900 --> 00:27:54,900
+舒尔: 好的，不确定。
+Shure: OK, doubtful.
+
+474
+00:27:57,633 --> 00:27:58,033
+舒尔: 还有别的吗？
+Shure: Anything else?
+
+475
+00:27:57,833 --> 00:27:59,100
+爱丽丝: 呃，我可以。
+Alice: Uh, I can.
+
+476
+00:27:58,433 --> 00:28:00,700
+杰克: 你可以在每个人下面写一个名字。
+Jake: You can write a name under everyone.
+
+477
+00:28:00,766 --> 00:28:02,133
+杰克: 写他们的主持人。
+Jake: Write their host.
+
+478
+00:28:02,766 --> 00:28:03,566
+舒尔: 主持人，对吧？
+Shure: Host, right?
+
+479
+00:28:03,900 --> 00:28:06,400
+杰克: 是的，比如你的代号之类的。
+Jake: Yeah, like your code name or something.
+
+480
+00:28:05,700 --> 00:28:06,533
+舒尔: 认领
+Shure: Claim it
+
+481
+00:28:06,766 --> 00:28:07,133
+杰克: 不不不
+Jake: No no no
+
+482
+00:28:07,133 --> 00:28:09,433
+杰克: 就在这个小家伙下面写一个
+Jake: Just write one under this little guy
+
+483
+00:28:09,500 --> 00:28:12,766
+杰克: 或者在脸上方或脸上写一个之类的
+Jake: Or write one above or on the face or something
+
+484
+00:28:18,700 --> 00:28:19,566
+舒尔: 这是谁的来着？
+Shure: Whose is this again?
+
+485
+00:28:20,566 --> 00:28:22,033
+爱丽丝: 呃，塔莎的
+Alice: Uh, Tasha's
+
+486
+00:28:20,866 --> 00:28:22,333
+舒尔: 哦，塔莎的
+Shure: Oh, Tasha's
+
+487
+00:28:27,500 --> 00:28:28,100
+舒尔: 然后
+Shure: And then
+
+488
+00:28:28,400 --> 00:28:29,566
+爱丽丝: 这是你喜欢的那个
+Alice: This is the one you like
+
+489
+00:28:29,933 --> 00:28:30,300
+舒尔: 嗯
+Shure: Hmm
+
+490
+00:28:30,633 --> 00:28:32,266
+卡特里娜: 那就写LYX
+Katrina: Then just write LYX
+
+491
+00:28:34,133 --> 00:28:34,900
+卡特里娜: LYX 卡特里娜: LYX
+Katrina: LYX
+Katrina: LYX
+
+492
+00:28:38,133 --> 00:28:42,466
+杰克: 啊哈哈哈
+Jake: Ah hahaha
+
+493
+00:28:42,500 --> 00:28:43,733
+舒尔: 这是谁的人？
+Shure: Whose person is this?
+
+494
+00:28:43,866 --> 00:28:47,933
+舒尔: 我记录一下或者写个L，那也行哈哈
+Shure: I record it or write an L, that's fine haha
+
+495
+00:28:48,400 --> 00:28:51,566
+舒尔: NC @
+Shure: NC @
+
+496
+00:28:52,700 --> 00:28:54,933
+舒尔: 还有，你打算邀请那个奖项吗？
+Shure: Also, are you going to invite the award?
+
+497
+00:28:54,933 --> 00:28:56,533
+爱丽丝: 是的，但可能有一个不来
+Alice: Yeah, but one might not come
+
+498
+00:28:57,866 --> 00:28:58,933
+舒尔: 性别
+Shure: Gender
+
+499
+00:28:58,933 --> 00:28:59,433
+爱丽丝: 全是女孩，嘿
+Alice: All girls, heh
+
+500
+00:29:01,133 --> 00:29:01,433
+舒尔: 嘿
+Shure: Heh
+
+501
+00:29:03,500 --> 00:29:06,200
+爱丽丝: 有一个可能来不了
+Alice: There's one who might not be able to come
+
+502
+00:29:12,500 --> 00:29:15,333
+爱丽丝: 就给我画个星星，五角星
+Alice: Just draw me a star, a five-pointed star
+
+503
+00:29:16,866 --> 00:29:17,200
+爱丽丝: 好的
+Alice: OK
+
+504
+00:29:16,866 --> 00:29:17,200
+舒尔: 好的 爱丽丝: 好的
+Shure:  OK
+Alice: OK
+
+505
+00:29:18,566 --> 00:29:22,366
+舒尔: 现在我们有一个，两个，三个，四个，五个，六个，六个客人
+Shure: Now we have one, two, three, four, five, six, six guests
+
+506
+00:29:23,066 --> 00:29:26,100
+杰克: 嗯，呃，4-6个客人
+Jake: Hmm, uh, 4-6 guests
+
+507
+00:29:26,900 --> 00:29:29,000
+舒尔: 是的，4-6个客人
+Shure: Yeah, 4-6 guests
+
+508
+00:29:29,200 --> 00:29:30,766
+杰克: 4-6个客人，好的
+Jake: 4-6 guests, OK
+
+509
+00:29:32,133 --> 00:29:32,600
+杰克: 呃
+Jake: Uh
+
+510
+00:29:33,833 --> 00:29:37,200
+杰克: 我们原本计划，如果可能的话
+Jake: We originally planned, if possible
+
+511
+00:29:37,200 --> 00:29:39,400
+杰克: 邀请这附近的人
+Jake: To invite people from around here
+
+512
+00:29:40,500 --> 00:29:41,000
+舒尔: 啊
+Shure: Ah
+
+513
+00:29:41,433 --> 00:29:41,833
+杰克: 是的
+Jake: Yeah
+
+514
+00:29:41,933 --> 00:29:44,133
+杰克: 比如来自小红书
+Jake: Like from Xiaohongshu
+
+515
+00:29:45,133 --> 00:29:45,366
+杰克: 或者
+Jake: Or
+
+516
+00:29:45,566 --> 00:29:48,333
+露西亚: 是像挨家挨户问吗？
+Lucia: Is it like going door to door asking?
+
+517
+00:29:48,633 --> 00:29:49,300
+杰克: 呃
+Jake: Uh
+
+518
+00:29:50,133 --> 00:29:51,800
+杰克: 直接在环球影城抓人
+Jake: Grabbing people directly at Universal Studios
+
+519
+00:29:50,266 --> 00:29:52,133
+塔莎: 带一篮子鸡蛋更好
+Tasha: Bringing a basket of eggs is better
+
+520
+00:29:52,500 --> 00:29:55,266
+露西亚: 提个篮子，确实，如果...
+Lucia: Carrying a basket, indeed, if...
+
+521
+00:29:55,266 --> 00:29:57,433
+露西亚: 如果他们来，我们可以给他们鸡蛋。
+Lucia: If they come, we can give them eggs.
+
+522
+00:29:59,500 --> 00:30:00,300
+杰克: 是的，是的，是的。
+Jake: Yes, yes, yes.
+
+523
+00:30:01,266 --> 00:30:02,966
+舒尔: 明天，我们会在这里被举报。
+Shure: Tomorrow, we'll get reported here.
+
+524
+00:30:03,066 --> 00:30:04,866
+杰克: 哈哈哈哈哈。
+Jake: Hahahaha.
+
+525
+00:30:04,900 --> 00:30:07,400
+杰克: 明天，我们可以和警察拍一场戏。
+Jake: Tomorrow, we can shoot a scene with the police.
+
+526
+00:30:10,566 --> 00:30:12,933
+舒尔: 第二，邀请邻居。
+Shure: Second, invite the neighbors.
+
+527
+00:30:15,866 --> 00:30:17,533
+舒尔: 哦，这个“邀请”字很难写。
+Shure: Oh, this "invite" character is hard to write.
+
+528
+00:30:18,500 --> 00:30:19,766
+杰克: 用个简单点的字怎么样？
+Jake: How about using a simpler character?
+
+529
+00:30:19,933 --> 00:30:21,300
+舒尔: 我也这么想。
+Shure: I think so too.
+
+530
+00:30:21,433 --> 00:30:22,366
+塔莎: 带上鸡蛋。
+Tasha: Bring the eggs.
+
+531
+00:30:22,400 --> 00:30:24,266
+塔莎: 如果你来，我就给你这篮子。
+Tasha: If you come, I'll give you this basket.
+
+532
+00:30:24,266 --> 00:30:25,733
+塔莎: 如果你不来，就没有鸡蛋。
+Tasha: If you don't come, no eggs for you.
+
+533
+00:30:27,133 --> 00:30:29,766
+舒尔: 邻居。
+Shure: Neighbors.
+
+534
+00:30:31,700 --> 00:30:32,700
+舒尔: 哦，这个字...
+Shure: Oh, this character...
+
+535
+00:30:33,066 --> 00:30:34,633
+舒尔: 齐白石看了都会哭。
+Shure: Even Qi Baishi would cry looking at it.
+
+536
+00:30:35,133 --> 00:30:36,566
+爱丽丝: 有复古感。
+Alice: It has a vintage feel.
+
+537
+00:30:40,133 --> 00:30:41,633
+舒尔: 这是我们的计划。
+Shure: This is our plan.
+
+538
+00:30:43,266 --> 00:30:44,133
+舒尔: 可疑的计划。
+Shure: Suspicious plan.
+
+539
+00:30:50,066 --> 00:30:50,433
+舒尔: 好的 舒尔: 好的。
+Shure:  ok
+Shure: Okay.
+
+540
+00:30:50,566 --> 00:30:51,433
+露西亚: 好多问号。
+Lucia: So many question marks.
+
+541
+00:30:51,433 --> 00:30:52,600
+露西亚: 我们看起来像谜语人。
+Lucia: We look like riddlers.
+
+542
+00:30:54,766 --> 00:30:55,400
+舒尔: 谜语 舒尔: 谜语。
+Shure:  riddle
+Shure: Riddle.
+
+543
+00:30:57,133 --> 00:30:59,133
+舒尔: 我们还有...
+Shure: And we still have...
+
+544
+00:30:59,133 --> 00:30:59,933
+舒尔: 还有什么？
+Shure: What else?
+
+545
+00:31:00,933 --> 00:31:01,766
+舒尔: 呃，这是人员。
+Shure: Uh, this is the personnel.
+
+546
+00:31:01,766 --> 00:31:02,366
+舒尔: 部分。
+Shure: Section.
+
+547
+00:31:02,766 --> 00:31:05,233
+杰克: 工作人员，我们还有5个人。
+Jake: The crew, we still have 5 people.
+
+548
+00:31:06,200 --> 00:31:08,133
+杰克: 那我们看看整体...
+Jake: Then let's see overall...
+
+549
+00:31:10,266 --> 00:31:12,100
+杰克: 最后，我们要主持多少人？
+Jake: Finally, how many people do we have to host?
+
+550
+00:31:12,066 --> 00:31:15,366
+杰克: 然后看看这个数字我们该怎么办。
+Jake: And see what we should do with this number.
+
+551
+00:31:15,400 --> 00:31:16,266
+杰克: 我们该怎么办？
+Jake: What should we do?
+
+552
+00:31:18,566 --> 00:31:19,066
+爱丽丝: 输家。
+Alice: Loser.
+
+553
+00:31:27,133 --> 00:31:28,000
+杰克: 并且为大家拍摄了。
+Jake: And filmed it for everyone.
+
+554
+00:31:31,900 --> 00:31:33,700
+露西亚: 我们不能在技术上处理这个吗？
+Lucia: Can't we handle this technically?
+
+555
+00:31:33,933 --> 00:31:36,866
+杰克: 是的，但后期制作很麻烦。
+Jake: Yes, but it's a hassle in post-production.
+
+556
+00:31:34,766 --> 00:31:35,666
+舒尔: 后期制作很麻烦。
+Shure: It's a hassle in post-production.
+
+557
+00:31:37,066 --> 00:31:38,133
+舒尔: 后期制作有多麻烦。
+Shure: How much trouble for post-production.
+
+558
+00:31:40,266 --> 00:31:44,066
+舒尔: 好的，所以总共，一，二，三，四...
+Shure: OK, so in total, one, two, three, four...
+
+559
+00:31:46,366 --> 00:31:46,933
+爱丽丝: 4到6。
+Alice: 4 to 6.
+
+560
+00:31:47,333 --> 00:31:52,200
+舒尔: 四加五，就是九。
+Shure: Four plus five, that makes nine.
+
+561
+00:31:52,266 --> 00:31:54,733
+杰克: 四加五，九。九到十一，对吧？
+Jake: Four plus five, nine. Nine to eleven, right?
+
+562
+00:31:54,766 --> 00:31:55,800
+舒尔: 九到十一个人。
+Shure: Nine to eleven people.
+
+563
+00:31:56,066 --> 00:31:58,333
+杰克: 九到十一，然后大家会...
+Jake: Nine to eleven, then everyone will...
+
+564
+00:32:01,066 --> 00:32:01,933
+舒尔: 算上我们，对吧？
+Shure: Count us in, right?
+
+565
+00:32:01,933 --> 00:32:04,833
+杰克: 是的，我们从九到十一开始。
+Jake: Yeah, let's start with nine to eleven.
+
+566
+00:32:05,333 --> 00:32:05,700
+杰克: 9-11 杰克: 九到十一。
+Jake: 9-11
+Jake: Nine to eleven.
+
+567
+00:32:06,000 --> 00:32:09,066
+舒尔:  9-11 正无穷
+
+568
+00:32:09,766 --> 00:32:11,900
+舒尔: 因为我们可以邀请邻居。
+Shure: Because we can invite the neighbors.
+
+569
+00:32:11,933 --> 00:32:12,900
+杰克: 是的，对。
+Jake: Yeah, right.
+
+570
+00:32:12,933 --> 00:32:13,933
+舒尔: 很彻底，对吧？
+Shure: Very thorough, right?
+
+571
+00:32:12,933 --> 00:32:14,866
+杰克: 我们有无限的邻居。
+Jake: We have endless neighbors.
+
+572
+00:32:15,366 --> 00:32:17,500
+杰克: 也许不是无限的，16亿。
+Jake: Maybe not endless, 1.6 billion.
+
+573
+00:32:21,766 --> 00:32:24,366
+舒尔: 我们现在有16亿人吗？
+Shure: Do we have 1.6 billion people now?
+
+574
+00:32:24,900 --> 00:32:27,266
+杰克: 十四，就说十四吧。
+Jake: Fourteen, let's say fourteen.
+
+575
+00:32:25,833 --> 00:32:26,366
+舒尔: 那就十四。
+Shure: Fourteen, then.
+
+576
+00:32:27,266 --> 00:32:30,333
+舒尔: 加上流动的五十万。
+Shure: Plus the five hundred thousand that move around.
+
+577
+00:32:29,900 --> 00:32:31,066
+杰克: 那很多。
+Jake: That's a lot.
+
+578
+00:32:36,900 --> 00:32:37,500
+杰克: 合适吗？
+Jake: Is it appropriate?
+
+579
+00:32:37,566 --> 00:32:41,766
+杰克: 哈哈哈哈哈。
+Jake: Hahahahaha.
+
+580
+00:32:41,766 --> 00:32:42,900
+杰克: 没什么大不了的，没什么大不了的。
+Jake: No big deal, no big deal.
+
+581
+00:32:45,433 --> 00:32:46,833
+舒尔: 第一点，好的。
+Shure: First point, OK.
+
+582
+00:32:47,566 --> 00:32:48,033
+杰克: 好的 杰克: 好的。
+Jake: OK
+Jake: OK.
+
+583
+00:32:49,766 --> 00:32:52,433
+舒尔: 然后，人员确认了。
+Shure: Then, the personnel is confirmed.
+
+584
+00:32:52,433 --> 00:32:52,833
+杰克: 嗯嗯。
+Jake: Mm-hmm.
+
+585
+00:32:52,433 --> 00:32:53,300
+舒尔: 是的，这是第一个。
+Shure: Yeah, that's the first.
+
+586
+00:32:53,333 --> 00:32:55,000
+舒尔: 第一个大点的第三。
+Shure: The first big point's third.
+
+587
+00:32:55,133 --> 00:32:57,133
+舒尔: 接下来，关于人员的三个子点。
+Shure: Next, three sub-points about personnel.
+
+588
+00:32:58,766 --> 00:33:00,633
+舒尔: 然后我们有第二点。
+Shure: And then we have the second point.
+
+589
+00:33:02,566 --> 00:33:03,966
+舒尔: 开始。
+Shure: To start.
+
+590
+00:33:04,000 --> 00:33:05,066
+舒尔: 活动内容部分？
+Shure: The activity content part?
+
+591
+00:33:05,066 --> 00:33:05,433
+杰克: 是的。
+Jake: Yes.
+
+592
+00:33:08,133 --> 00:33:11,233
+舒尔: 我觉得这个很难，我们要琢磨一会儿。
+Shure: I think this is a tough one, we're going to chew on this for a while.
+
+593
+00:33:11,266 --> 00:33:11,566
+杰克: 嗯嗯。
+Jake: Mm-hmm.
+
+594
+00:33:11,266 --> 00:33:14,100
+舒尔: 那我们直接从这个开始吗？
+Shure: So should we start with this directly?
+
+595
+00:33:16,700 --> 00:33:17,700
+杰克: 还有别的吗？
+Jake: Is there anything else?
+
+596
+00:33:19,766 --> 00:33:20,766
+舒尔: 活动内容。
+Shure: Activity content.
+
+597
+00:33:22,266 --> 00:33:23,066
+舒尔: 大家，想想。
+Shure: Everyone, think about it.
+
+598
+00:33:24,333 --> 00:33:27,000
+舒尔: 我记得大家都填了问卷，对吧？
+Shure: I remember everyone filled out the questionnaire, right?
+
+599
+00:33:29,133 --> 00:33:29,666
+舒尔: 对吧？
+Shure: Right?
+
+600
+00:33:29,700 --> 00:33:30,066
+杰克: 是的。
+Jake: Yes.
+
+601
+00:33:30,566 --> 00:33:32,500
+舒尔: 大家在问卷里写了什么？
+Shure: What did everyone write in the questionnaire?
+
+602
+00:33:32,500 --> 00:33:34,166
+舒尔: 不全是GPT生成的吧？
+Shure: It wasn't all generated by GPT, was it?
+
+603
+00:33:34,200 --> 00:33:36,700
+卡特里娜: 不，哈哈，我自己写的。
+Katrina: No, haha, I wrote it myself.
+
+604
+00:33:36,766 --> 00:33:38,133
+杰克: 湖南GPT生成的。
+Jake: Generated by Hunan GPT.
+
+605
+00:33:39,633 --> 00:33:42,066
+舒尔:  那既然提到湖南GPT那我们先从
+
+606
+00:33:45,766 --> 00:33:48,000
+舒尔: Lyx，哈哈。
+Shure: Lyx, haha.
+
+607
+00:33:45,766 --> 00:33:48,933
+杰克: 哦不，你有麻烦了。
+Jake: Oh no, you're in trouble.
+
+608
+00:33:48,500 --> 00:33:52,233
+卡特里娜: 我，我在想，嗯，7天。
+Katrina: I, I was thinking, um, 7 days.
+
+609
+00:33:52,266 --> 00:33:53,933
+卡特里娜: 然后我买了花。
+Katrina: And then I bought flowers.
+
+610
+00:33:53,933 --> 00:33:55,266
+卡特里娜: 每个人都得到了一个花瓶。
+Katrina: And everyone got a vase.
+
+611
+00:33:55,266 --> 00:33:58,066
+卡特里娜: 所以花会在1到2天内开花。
+Katrina: So the flowers would bloom in 1 to 2 days.
+
+612
+00:33:58,066 --> 00:33:59,566
+卡特里娜: 而且完美契合周期。
+Katrina: And it perfectly fits the cycle.
+
+613
+00:33:59,566 --> 00:34:01,633
+卡特里娜: 所以花会慢慢开放。
+Katrina: So the flowers would slowly bloom.
+
+614
+00:34:01,633 --> 00:34:03,266
+卡特里娜: 然后我会用花瓣。
+Katrina: Then I would use the petals.
+
+615
+00:34:03,266 --> 00:34:04,833
+卡特里娜: 来制作压花。
+Katrina: To make pressed flowers.
+
+616
+00:34:04,866 --> 00:34:07,600
+卡特里娜: 这更环保，还能做成明信片。
+Katrina: It's more eco-friendly and can be made into postcards.
+
+617
+00:34:07,700 --> 00:34:09,633
+卡特里娜: 我还买了一些亚克力玻璃。
+Katrina: I also bought some acrylic glass.
+
+618
+00:34:10,066 --> 00:34:11,133
+卡特里娜: 然后把它嵌进去。
+Katrina: And embedded it in.
+
+619
+00:34:11,133 --> 00:34:12,566
+卡特里娜: 这是一个不错的手工艺品。
+Katrina: It's a nice handmade craft.
+
+620
+00:34:12,566 --> 00:34:14,133
+卡特里娜: 而且和植物有关。
+Katrina: And it's related to plants.
+
+621
+00:34:14,500 --> 00:34:17,700
+卡特里娜: 原材料精心培育了7天。
+Katrina: The raw materials are carefully cultivated for 7 days.
+
+622
+00:34:18,000 --> 00:34:20,066
+卡特里娜: 这样就形成了一个完整的循环。
+Katrina: So it forms a complete cycle.
+
+623
+00:34:20,566 --> 00:34:22,266
+卡特里娜: 我做了一些周边。
+Katrina: I made some peripherals.
+
+624
+00:34:20,700 --> 00:34:25,300
+杰克: 好，展示你的才华。
+Jake: Good, show your talent.
+
+625
+00:34:22,266 --> 00:34:24,666
+卡特里娜: 那天我们可以分发给大家。
+Katrina: On that day, we can distribute them to everyone.
+
+626
+00:34:26,766 --> 00:34:27,800
+卡特里娜: 花在哪里？
+Katrina: Where are the flowers?
+
+627
+00:34:27,933 --> 00:34:28,333
+爱丽丝: 在那边。
+Alice: Over there.
+
+628
+00:34:29,400 --> 00:34:30,333
+卡特里娜: 花需要醒过来。
+Katrina: The flowers need to wake up.
+
+629
+00:34:30,333 --> 00:34:30,900
+卡特里娜: 因为我看到...
+Katrina: Because I saw...
+
+630
+00:34:30,900 --> 00:34:33,400
+卡特里娜: 我在想种点什么。
+Katrina: I was thinking of planting something.
+
+631
+00:34:33,400 --> 00:34:35,700
+卡特里娜: 这符合地球日的主题。
+Katrina: That fits the Earth Day theme.
+
+632
+00:34:35,700 --> 00:34:38,500
+卡特里娜: 但7天内不会发芽。
+Katrina: But it wouldn't sprout in 7 days.
+
+633
+00:34:38,766 --> 00:34:41,000
+卡特里娜: 所以我想到了买这些花。
+Katrina: So I thought of buying these flowers.
+
+634
+00:34:41,000 --> 00:34:41,500
+杰克: 展示你的才华。
+Jake: Show your talent.
+
+635
+00:34:41,500 --> 00:34:46,933
+卡特里娜: 由顺丰快递直接发货，来自云南的花。
+Katrina: Directly shipped by SF Express, flowers from Yunnan.
+
+636
+00:34:45,133 --> 00:34:45,866
+杰克: 是这个吗？
+Jake: Is it this one?
+
+637
+00:34:46,933 --> 00:34:48,533
+卡特里娜: 好像他有两个包裹。
+Katrina: It seems like he has two packages.
+
+638
+00:34:49,266 --> 00:34:51,500
+卡特里娜: 是的，我买了一些牡丹之类的。
+Katrina: Yeah, I bought some peonies and stuff.
+
+639
+00:34:51,000 --> 00:34:52,766
+舒尔: 天哪，我不想再给了。
+Shure: Oh my god, I don't want to give them anymore.
+
+640
+00:34:54,266 --> 00:34:55,066
+卡特里娜: 哇。
+Katrina: Wow.
+
+641
+00:34:55,133 --> 00:34:58,333
+卡特里娜: 正好，一些花蕾可以在接下来几天开放。
+Katrina: Just right, some flower buds can bloom in the next couple of days.
+
+642
+00:34:58,933 --> 00:35:01,033
+露西亚: 你需要找剪刀什么的吗？
+Lucia: Do you need to find some scissors or something?
+
+643
+00:35:01,133 --> 00:35:02,333
+爱丽丝: 剪刀。
+Alice: Scissors.
+
+644
+00:35:01,700 --> 00:35:03,933
+卡特里娜: 我们应该直接开始还是先列出所有东西？
+Katrina: Should we start directly or list everything first?
+
+645
+00:35:04,433 --> 00:35:07,566
+杰克: 呃，我们先展示一下，就展示一下。
+Jake: Uh, let's showcase a bit first, just showcase a bit.
+
+646
+00:35:06,266 --> 00:35:07,400
+舒尔: 我们先展示一下。
+Shure: Let's showcase a bit first.
+
+647
+00:35:07,566 --> 00:35:08,566
+爱丽丝: 剪刀在哪里？
+Alice: Where are the scissors?
+
+648
+00:35:08,566 --> 00:35:10,333
+卡特里娜: 我买了好几束。
+Katrina: I bought quite a few bunches.
+
+649
+00:35:10,366 --> 00:35:11,300
+舒尔: 剪刀在这里。
+Shure: The scissors are here.
+
+650
+00:35:12,266 --> 00:35:13,800
+卡特里娜: 我还买了一些康乃馨。
+Katrina: And I also bought some carnations.
+
+651
+00:35:16,133 --> 00:35:17,333
+杰克: 好眼力，年轻人。
+Jake: Good eyes, young man.
+
+652
+00:35:17,433 --> 00:35:20,633
+卡特里娜: 直接剪吧，我们这里女生多，哈哈。
+Katrina: Just cut them, we have more girls here, haha.
+
+653
+00:35:26,200 --> 00:35:27,266
+卡特里娜: 啊，确实。
+Katrina: Ah, that's true.
+
+654
+00:35:28,366 --> 00:35:29,900
+卡特里娜: 这些花瓣可以用来做压花。
+Katrina: These petals can be used for pressed flowers.
+
+655
+00:35:29,900 --> 00:35:34,366
+卡特里娜: 然后我买了一个压花器和一些干燥剂。
+Katrina: And then I bought a flower press and some desiccants.
+
+656
+00:35:40,500 --> 00:35:41,400
+卡特里娜: 这是什么？
+Katrina: What is this?
+
+657
+00:35:41,566 --> 00:35:44,133
+卡特里娜: 这些花需要准备一下。
+Katrina: These flowers need to be prepared a bit.
+
+658
+00:35:54,633 --> 00:35:55,633
+爱丽丝: 这些是牡丹吗？
+Alice: Are these peonies?
+
+659
+00:35:56,000 --> 00:35:59,766
+卡特里娜: 是的，我买多了才发现。
+Katrina: Yeah, I only found out after I bought too many.
+
+660
+00:36:00,000 --> 00:36:02,500
+卡特里娜: 他说需要一到两天才能开花。
+Katrina: He said it would take one to two days for them to bloom.
+
+661
+00:36:03,433 --> 00:36:05,133
+卡特里娜: 所以我觉得时间正好。
+Katrina: So I thought the timing would be just right.
+
+662
+00:36:05,566 --> 00:36:07,366
+卡特里娜: 压花需要两到三天。
+Katrina: Pressed flowers need two to three days.
+
+663
+00:36:07,366 --> 00:36:08,900
+卡特里娜: 而这些需要照顾两到三天。
+Katrina: And these need to be cared for two to three days.
+
+664
+00:36:19,633 --> 00:36:20,900
+卡特里娜: 这些是什么，百合？
+Katrina: What are these, lilies?
+
+665
+00:36:20,133 --> 00:36:24,333
+爱丽丝: 这些是小苍兰还是什么？铃兰，可能？
+Alice: Are these freesia or something? Lily of the valley, maybe?
+
+666
+00:36:22,266 --> 00:36:23,600
+卡特里娜: 这些是什么百合？
+Katrina: What kind of lilies are these?
+
+667
+00:36:33,266 --> 00:36:36,766
+塔莎: 营养液泡在水里加速开花。
+Tasha: Nutrients soaked in water to speed up the blooming.
+
+668
+00:36:39,500 --> 00:36:40,766
+爱丽丝: 这些是两种颜色。
+Alice: These are the two colors.
+
+669
+00:36:41,700 --> 00:36:43,500
+卡特里娜: 是的，一白一黄。
+Katrina: Yeah, one white and one yellow.
+
+670
+00:36:45,200 --> 00:36:46,133
+卡特里娜: 这是一个包裹。
+Katrina: It's one package.
+
+671
+00:36:46,133 --> 00:36:48,600
+卡特里娜: 我记得他发了两个包裹。
+Katrina: I think I remember him sending two packages.
+
+672
+00:36:53,000 --> 00:36:55,566
+杰克: 如果他去，我们也该去。
+Jake: If he goes, we should go too.
+
+673
+00:36:55,566 --> 00:36:57,766
+杰克: 各位才子，看看哪些是你们的。
+Jake: Talents, see which ones are yours.
+
+674
+00:36:58,500 --> 00:36:59,433
+塔莎: 没有我的。
+Tasha: None of mine.
+
+675
+00:36:59,500 --> 00:37:00,366
+杰克: 没有你的，是吧？
+Jake: None of yours, huh?
+
+676
+00:37:00,366 --> 00:37:01,533
+杰克: 你没买这个。
+Jake: You didn't buy this.
+
+677
+00:37:03,766 --> 00:37:08,066
+杰克: 外面唯一的包裹是Yuxuan的，对吧？
+Jake: The only package outside is Yuxuan's, right?
+
+678
+00:37:09,133 --> 00:37:10,466
+杰克: 还有其他人订了包裹吗？
+Jake: Did anyone else order a package?
+
+679
+00:37:10,500 --> 00:37:11,500
+卡特里娜: 你们买了什么吗？
+Katrina: Did you guys buy anything?
+
+680
+00:37:11,633 --> 00:37:12,033
+舒尔: 还没有。
+Shure: Not yet.
+
+681
+00:37:12,133 --> 00:37:12,533
+露西亚: 还没有。
+Lucia: Not yet.
+
+682
+00:37:13,066 --> 00:37:14,700
+杰克: 好的，没问题。
+Jake: Okay, no problem.
+
+683
+00:37:17,133 --> 00:37:18,866
+杰克: 他们三个都带了自己的东西，对吧？
+Jake: All three of them brought their own stuff, right?
+
+684
+00:37:20,333 --> 00:37:21,300
+舒尔: 他们带了资金。
+Shure: They brought funding.
+
+685
+00:37:21,266 --> 00:37:23,666
+舒尔: 你看，他们心态很好。
+Shure: You see, they've got the right mindset.
+
+686
+00:37:22,333 --> 00:37:23,000
+杰克: 确实。
+Jake: Indeed.
+
+687
+00:37:29,500 --> 00:37:30,133
+卡特里娜: 然后呢？
+Katrina: And then?
+
+688
+00:37:30,700 --> 00:37:35,166
+杰克: 然后就是比划，比划，比划。
+Jake: And then just gesture, gesture, gesture.
+
+689
+00:37:33,400 --> 00:37:34,066
+卡特里娜: 花瓶。
+Katrina: Vase.
+
+690
+00:37:33,400 --> 00:37:34,200
+爱丽丝: 先洗一下。
+Alice: Wash first.
+
+691
+00:37:35,200 --> 00:37:37,200
+杰克: 那我们看什么样的形式？
+Jake: So what kind of format are we looking at?
+
+692
+00:37:37,200 --> 00:37:40,700
+卡特里娜: 形式，嗯，我们六个人每人一个。
+Katrina: Format, well, the six of us each get one.
+
+693
+00:37:40,700 --> 00:37:42,133
+卡特里娜: 我已经买了花瓶。
+Katrina: I already bought the vases.
+
+694
+00:37:42,133 --> 00:37:45,400
+卡特里娜: 然后大家可以分发花朵并照顾它们。
+Katrina: Then everyone can distribute the flowers and take care of them.
+
+695
+00:37:42,633 --> 00:37:43,133
+杰克: 哦。
+Jake: Oh.
+
+696
+00:37:45,400 --> 00:37:47,066
+卡特里娜: 大约一到两三天后，
+Katrina: In about one to two or three days,
+
+697
+00:37:47,500 --> 00:37:49,666
+卡特里娜: 它们会慢慢开始开花。
+Katrina: They'll slowly start to bloom.
+
+698
+00:37:49,700 --> 00:37:52,133
+卡特里娜: 一旦开花，我们可以用花瓣或者
+Katrina: Once they bloom, we can use the petals or
+
+699
+00:37:49,866 --> 00:37:50,266
+杰克: 哦。
+Jake: Oh.
+
+700
+00:37:52,133 --> 00:37:52,900
+卡特里娜: 我看到有人压花。
+Katrina: I saw people pressing flowers.
+
+701
+00:37:52,933 --> 00:37:56,300
+卡特里娜: 他们只是剪下花蕾然后压。
+Katrina: They just cut off the flower buds and press them.
+
+702
+00:37:56,266 --> 00:37:57,433
+卡特里娜: 把它们压平。
+Katrina: Press them flat.
+
+703
+00:37:57,433 --> 00:37:59,833
+卡特里娜: 然后它们变成扁平、展开的花。
+Katrina: And they turn into a flat, spread-out flower.
+
+704
+00:37:59,866 --> 00:38:01,366
+卡特里娜: 然后我们可以把它们放在明信片上。
+Katrina: Then we can put them on postcards.
+
+705
+00:38:01,400 --> 00:38:03,700
+卡特里娜: 我买了那些明信片和贺卡。
+Katrina: I bought those postcards and greeting cards.
+
+706
+00:38:03,700 --> 00:38:05,200
+卡特里娜: 还有，它们叫什么，
+Katrina: And also, what are they called,
+
+707
+00:38:05,200 --> 00:38:07,566
+卡特里娜: 那些亚克力双层玻璃框。
+Katrina: Those acrylic double-layer glass frames.
+
+708
+00:38:07,566 --> 00:38:09,333
+卡特里娜: 像相框一样，我们可以作为礼物送人。
+Katrina: Like a frame, we can give them as gifts.
+
+709
+00:38:09,366 --> 00:38:11,733
+卡特里娜: 还有一些叶子之类的。
+Katrina: And some leaves and stuff.
+
+710
+00:38:11,933 --> 00:38:14,866
+卡特里娜: 然后我们可以把它们排列成一幅画。
+Katrina: Then we can arrange them into a picture.
+
+711
+00:38:14,866 --> 00:38:15,733
+卡特里娜: 我在想，
+Katrina: I was thinking,
+
+712
+00:38:15,700 --> 00:38:17,133
+卡特里娜: 你们有那个户外活动，对吧？
+Katrina: You have that outdoor activity, right?
+
+713
+00:38:17,133 --> 00:38:18,700
+卡特里娜: 我们可以收集一些叶子。
+Katrina: We can collect some leaves.
+
+714
+00:38:18,566 --> 00:38:19,500
+杰克: 嗯嗯。
+Jake: Mm-hmm.
+
+715
+00:38:18,700 --> 00:38:20,533
+卡特里娜: 然后排列成一幅画。
+Katrina: Then arrange them into a picture.
+
+716
+00:38:20,766 --> 00:38:21,433
+卡特里娜: 对。
+Katrina: Right.
+
+717
+00:38:21,433 --> 00:38:23,900
+卡特里娜: 然后还有书签，所以每个人都可以自己做着玩。
+Katrina: And then there are bookmarks, so everyone can make their own for fun.
+
+718
+00:38:23,933 --> 00:38:25,333
+卡特里娜: 然后在最后一天
+Katrina: Then on the last day
+
+719
+00:38:25,333 --> 00:38:26,766
+卡特里娜: 因为我们想要这种形式
+Katrina: Because we wanted this format
+
+720
+00:38:26,766 --> 00:38:30,333
+卡特里娜: 我们邀请了各种好朋友之类的。
+Katrina: We invited all kinds of good friends and such.
+
+721
+00:38:30,333 --> 00:38:33,066
+卡特里娜: 你可以制作和培养自己的。
+Katrina: You can make and raise your own.
+
+722
+00:38:33,066 --> 00:38:35,000
+卡特里娜: 然后分发给每个人，挺不错的。
+Katrina: And then distribute them to everyone, it’s pretty nice.
+
+723
+00:38:35,766 --> 00:38:38,666
+卡特里娜: 也很符合7天的周期。
+Katrina: It also fits well with the 7-day cycle.
+
+724
+00:38:39,000 --> 00:38:39,533
+杰克: 嗯。
+Jake: Hmm.
+
+725
+00:38:40,200 --> 00:38:41,333
+爱丽丝: 嗯，我们为什么不先叫醒他？
+Alice: Hmm, why don't we wake him up first?
+
+726
+00:38:41,366 --> 00:38:45,133
+卡特里娜: 嗯，好的。今天我一定想让他醒过来。
+Katrina: Hmm, sure. Today I definitely want him to wake up.
+
+727
+00:38:45,133 --> 00:38:48,300
+杰克: 你们先聊，我们稍后再做下一个。
+Jake: You guys chat first, we’ll do the next one later.
+
+728
+00:38:47,833 --> 00:38:48,100
+卡特里娜: 好的。
+Katrina: Okay.
+
+729
+00:38:48,500 --> 00:38:49,900
+卡特里娜: 下一个是谁？
+Katrina: Who’s next?
+
+730
+00:38:49,933 --> 00:38:50,266
+爱丽丝: 下一个。
+Alice: Next one.
+
+731
+00:38:50,933 --> 00:38:51,633
+卡特里娜: 我来处理这个。
+Katrina: I’ll handle this one.
+
+732
+00:38:56,566 --> 00:39:00,700
+卡特里娜: 啊，一堆菜叶。下一个是谁？
+Katrina: Ah, a bunch of veggie leaves. Who’s next?
+
+733
+00:39:00,700 --> 00:39:02,933
+舒尔: 下一个是露西亚。
+Shure: Next is Lucia.
+
+734
+00:39:03,500 --> 00:39:04,133
+露西亚: 好的，我来。
+Lucia: Okay, I’ll go.
+
+735
+00:39:04,500 --> 00:39:05,000
+舒尔: 露西亚。
+Shure: Lucia.
+
+736
+00:39:05,700 --> 00:39:07,333
+露西亚: 其实，我的想法
+Lucia: Actually, my idea
+
+737
+00:39:07,333 --> 00:39:09,066
+露西亚: 也和DIY有关。
+Lucia: Is also related to DIY.
+
+738
+00:39:09,066 --> 00:39:10,900
+露西亚: 起初，我在想
+Lucia: At first, I was thinking
+
+739
+00:39:10,900 --> 00:39:12,933
+露西亚: 既然这是地球日，
+Lucia: Since it’s Earth Day,
+
+740
+00:39:12,933 --> 00:39:15,400
+露西亚: 所以我想做一些环保的东西。
+Lucia: So I wanted to make something eco-friendly.
+
+741
+00:39:15,400 --> 00:39:17,766
+露西亚: 我不知道你们以前做过水母灯吗。
+Lucia: I don’t know if you guys have made jellyfish lamps before.
+
+742
+00:39:17,933 --> 00:39:20,000
+露西亚: 这几年在景点挺流行的。
+Lucia: They’ve been pretty popular in scenic spots these past couple of years.
+
+743
+00:39:20,500 --> 00:39:22,900
+露西亚: 它是一个看起来像水母的小灯。
+Lucia: It’s a little lamp that looks like a jellyfish.
+
+744
+00:39:23,200 --> 00:39:23,566
+露西亚: 是的。
+Lucia: Yeah.
+
+745
+00:39:23,566 --> 00:39:26,066
+露西亚: 而且这个东西原本有材料包。
+Lucia: And this thing originally comes with a materials kit.
+
+746
+00:39:26,066 --> 00:39:28,000
+露西亚: 你可以在网上买材料包来制作。
+Lucia: You can buy the kit online and make it.
+
+747
+00:39:28,133 --> 00:39:29,333
+露西亚: 但我在想
+Lucia: But what I was thinking
+
+748
+00:39:29,333 --> 00:39:31,200
+露西亚: 既然这是地球日，
+Lucia: Since it’s Earth Day,
+
+749
+00:39:31,200 --> 00:39:33,266
+露西亚: 我以前在网上看到一个教程。
+Lucia: I saw a tutorial online before.
+
+750
+00:39:33,266 --> 00:39:35,366
+露西亚: 你可以用奶茶杯盖
+Lucia: You can use a bubble tea cup lid
+
+751
+00:39:35,700 --> 00:39:37,100
+露西亚: 作为主要部分
+Lucia: As the main part
+
+752
+00:39:37,133 --> 00:39:38,933
+露西亚: 然后加一些丝带
+Lucia: And then add some ribbons
+
+753
+00:39:38,933 --> 00:39:40,200
+露西亚: 或者珠子之类的。
+Lucia: Or beads and such.
+
+754
+00:39:40,200 --> 00:39:42,633
+露西亚: 我不知道这里有没有热胶枪。
+Lucia: I don't know if we have a hot glue gun here.
+
+755
+00:39:42,633 --> 00:39:43,433
+露西亚: 如果没有，
+Lucia: If we don’t,
+
+756
+00:39:43,433 --> 00:39:44,933
+露西亚: 我们可以看看有没有替代品。
+Lucia: We can see if there are any alternatives.
+
+757
+00:39:44,933 --> 00:39:46,166
+露西亚: 或者我们可以直接买一个。
+Lucia: Or we could just buy one.
+
+758
+00:39:46,366 --> 00:39:47,733
+露西亚: 然后大家一起。
+Lucia: And then everyone together.
+
+759
+00:39:47,700 --> 00:39:49,900
+露西亚: 每个人做一个小灯。
+Lucia: Each person makes one of these little lights.
+
+760
+00:39:49,933 --> 00:39:51,600
+露西亚: 它们看起来挺不错的。
+Lucia: They look pretty nice.
+
+761
+00:39:51,900 --> 00:39:54,333
+露西亚: 这是一个想法。
+Lucia: And that's one of the ideas.
+
+762
+00:39:54,333 --> 00:39:55,500
+露西亚: 另一个想法也是...
+Lucia: Another idea is also...
+
+763
+00:39:55,500 --> 00:39:56,866
+露西亚: 怎么说呢...
+Lucia: How should I put it...
+
+764
+00:39:56,900 --> 00:39:58,266
+露西亚: 它是低碳可回收的。
+Lucia: It's low-carbon and recyclable.
+
+765
+00:39:58,266 --> 00:40:01,600
+露西亚: 你们以前做过纸板狗吗？
+Lucia: Have you all ever made a cardboard dog?
+
+766
+00:40:02,333 --> 00:40:04,133
+露西亚: 前阵子很流行。
+Lucia: It was really popular some time ago.
+
+767
+00:40:04,133 --> 00:40:05,466
+卡特里娜: 你可以把它...
+Katrina: You can put it...
+
+768
+00:40:05,566 --> 00:40:06,933
+露西亚: 是的，你可以把它放在门口。
+Lucia: Yes, you can put it at the door.
+
+769
+00:40:06,000 --> 00:40:06,500
+卡特里娜: 在门口。
+Katrina: At the door.
+
+770
+00:40:06,933 --> 00:40:08,933
+露西亚: 纸板狗的好处是...
+Lucia: And the good thing about the cardboard dog is...
+
+771
+00:40:08,933 --> 00:40:10,566
+露西亚: 如果你想做得简单...
+Lucia: If you want to make it simple...
+
+772
+00:40:10,566 --> 00:40:11,866
+露西亚: 就简单地剪纸板。
+Lucia: Just cut the cardboard simply.
+
+773
+00:40:11,866 --> 00:40:14,000
+露西亚: 然后画一个狗头贴上去。
+Lucia: Then draw a dog head and stick it on.
+
+774
+00:40:14,066 --> 00:40:15,333
+露西亚: 如果你想更复杂...
+Lucia: If you want it more complex...
+
+775
+00:40:15,366 --> 00:40:16,533
+露西亚: 还有一些...
+Lucia: There are also some...
+
+776
+00:40:16,500 --> 00:40:19,333
+露西亚: 对于更复杂的，你需要剪更多的部件。
+Lucia: For more complex ones, you need to cut more pieces.
+
+777
+00:40:19,366 --> 00:40:20,366
+露西亚: 然后做一个更大的。
+Lucia: And make a bigger one.
+
+778
+00:40:20,366 --> 00:40:21,933
+露西亚: 我以前看到有人做过杜宾犬。
+Lucia: I saw someone make a Doberman before.
+
+779
+00:40:22,266 --> 00:40:23,466
+露西亚: 但我自己没做过那个。
+Lucia: But I haven't made that one myself.
+
+780
+00:40:23,500 --> 00:40:24,933
+露西亚: 我只是看了教程。
+Lucia: I just watched the tutorial.
+
+781
+00:40:24,933 --> 00:40:26,000
+露西亚: 看起来挺简单的。
+Lucia: It seemed pretty easy.
+
+782
+00:40:26,000 --> 00:40:28,133
+露西亚: 就在纸板上画然后轻松剪下来。
+Lucia: Just draw on the cardboard and cut it out easily.
+
+783
+00:40:28,133 --> 00:40:29,766
+舒尔: 我们有很多纸板。
+Shure: What we have plenty of is cardboard.
+
+784
+00:40:29,766 --> 00:40:30,900
+舒尔: 所以我觉得这个...
+Shure: So I think this...
+
+785
+00:40:31,366 --> 00:40:32,533
+露西亚: 是的，我也这么想。
+Lucia: Yes, I was thinking the same.
+
+786
+00:40:31,366 --> 00:40:33,433
+杰克: 是的，这有道理。
+Jake: Yes, this makes sense.
+
+787
+00:40:32,500 --> 00:40:34,566
+露西亚: 我们这里肯定会有很多纸板。
+Lucia: We'll definitely have a lot of cardboard here.
+
+788
+00:40:34,566 --> 00:40:36,333
+露西亚: 如果我们能直接使用...
+Lucia: If we can directly use it...
+
+789
+00:40:35,000 --> 00:40:35,800
+舒尔: 非常可行。
+Shure: It's very doable.
+
+790
+00:40:36,366 --> 00:40:37,633
+露西亚: 这很环保。
+Lucia: It's quite environmentally friendly.
+
+791
+00:40:37,633 --> 00:40:39,833
+露西亚: 很符合地球日的主题。
+Lucia: It fits the Earth Day theme well.
+
+792
+00:40:39,866 --> 00:40:40,066
+杰克: 是的。
+Jake: Yeah.
+
+793
+00:40:39,866 --> 00:40:43,133
+露西亚: 然后还有一个最后的想法。
+Lucia: And then there's one last idea.
+
+794
+00:40:43,133 --> 00:40:45,100
+露西亚: 但这个更难实现。
+Lucia: But this one is harder to implement.
+
+795
+00:40:45,066 --> 00:40:46,100
+露西亚: 我在想...
+Lucia: I was thinking...
+
+796
+00:40:46,133 --> 00:40:49,100
+露西亚: 也许大家可以演一出短剧。
+Lucia: Maybe everyone could act out a short play.
+
+797
+00:40:49,066 --> 00:40:50,066
+露西亚: 或者类似的东西。
+Lucia: Or something like that.
+
+798
+00:40:50,266 --> 00:40:52,133
+露西亚: 是的，因为我之前跟我的朋友提过。
+Lucia: Yeah, because I mentioned it to my buddy before.
+
+799
+00:40:52,133 --> 00:40:54,233
+露西亚: 我们今天要拍一些短片。
+Lucia: We are shooting some short films today.
+
+800
+00:40:53,766 --> 00:40:54,133
+杰克: 买了。
+Jake: Bought it.
+
+801
+00:40:54,366 --> 00:40:56,766
+露西亚: 但如果我们想拍一个短剧，
+Lucia: But if we want to shoot a short skit,
+
+802
+00:40:56,766 --> 00:40:59,400
+露西亚: 我还没想到现成的剧本。
+Lucia: I haven't thought of a ready-made script yet.
+
+803
+00:40:59,400 --> 00:41:01,000
+露西亚: 我们目前没有准备好的剧本。
+Lucia: We don't have a script ready for now.
+
+804
+00:41:01,000 --> 00:41:02,333
+露西亚: 因为我们时间不够。
+Lucia: Because we are short on time.
+
+805
+00:41:02,766 --> 00:41:04,600
+露西亚: 如果我们现在写一个，
+Lucia: If we were to write one now,
+
+806
+00:41:04,566 --> 00:41:06,766
+露西亚: 可能来不及。
+Lucia: it might not be in time.
+
+807
+00:41:05,200 --> 00:41:05,566
+杰克: 好的。
+Jake: Okay.
+
+808
+00:41:06,900 --> 00:41:08,566
+露西亚: 所以如果有人有什么想法，
+Lucia: So if anyone has any ideas,
+
+809
+00:41:08,566 --> 00:41:10,733
+露西亚: 比如你们以前看过的短视频，
+Lucia: like short videos you've seen before,
+
+810
+00:41:10,766 --> 00:41:11,766
+露西亚: 那些也可以。
+Lucia: those could work too.
+
+811
+00:41:11,766 --> 00:41:12,866
+露西亚: 如果有现成的剧本，
+Lucia: If there's a ready-made script,
+
+812
+00:41:12,866 --> 00:41:15,433
+露西亚: 我觉得我们可以试着拍。
+Lucia: I think we can try to shoot it.
+
+813
+00:41:15,433 --> 00:41:16,933
+舒尔: 好的，听起来不错。
+Shure: OK, sounds good.
+
+814
+00:41:17,000 --> 00:41:18,900
+露西亚: 这是目前的想法。
+Lucia: This is the current idea for now.
+
+815
+00:41:19,933 --> 00:41:21,833
+舒尔: 这是露西亚。
+Shure: This is Lucia.
+
+816
+00:41:23,500 --> 00:41:24,266
+舒尔: 这是...
+Shure: This is...
+
+817
+00:41:25,700 --> 00:41:27,933
+舒尔: 露西亚，哈哈。
+Shure: Lucia, haha.
+
+818
+00:41:28,566 --> 00:41:30,933
+露西亚: 哦，我们的名字听起来相似。
+Lucia: Oh, our names sound similar.
+
+819
+00:41:30,933 --> 00:41:32,233
+爱丽丝: 你把他的名字写反了。
+Alice: You wrote his name backwards.
+
+820
+00:41:32,266 --> 00:41:32,800
+卡特里娜: 这个...
+Katrina: This...
+
+821
+00:41:32,766 --> 00:41:33,033
+舒尔: 嗯。
+Shure: Hmm.
+
+822
+00:41:34,066 --> 00:41:37,066
+卡特里娜: 刘宇轩，哈哈哈。
+Katrina: Liu Yuxuan, hahaha.
+
+823
+00:41:34,066 --> 00:41:37,066
+卡特里娜: 刘宇轩，哈哈哈。
+Katrina: Liu Yuxuan, hahaha.
+
+824
+00:41:35,900 --> 00:41:38,266
+杰克: 差不多，差不多像。
+Jake: Almost, almost looks like it.
+
+825
+00:41:37,266 --> 00:41:38,233
+爱丽丝: 再加一笔。
+Alice: Just add another stroke.
+
+826
+00:41:41,333 --> 00:41:43,300
+杰克: 哈哈哈哈。
+Jake: Hahahahaha.
+
+827
+00:41:43,133 --> 00:41:43,700
+舒尔: 需要对称。
+Shure: It needs to be symmetrical.
+
+828
+00:41:43,400 --> 00:41:45,933
+卡特里娜: 然后它就变成XY染色体，像突变。
+Katrina: Then it becomes XY chromosomes, like a mutation.
+
+829
+00:41:45,933 --> 00:41:46,633
+舒尔: 对，对。
+Shure: Right, right.
+
+830
+00:41:47,133 --> 00:41:47,533
+杰克: 突变。
+Jake: Mutation.
+
+831
+00:41:48,000 --> 00:41:49,433
+舒尔: 哇，你两个都有。
+Shure: Wow, you've got both.
+
+832
+00:41:49,433 --> 00:41:52,700
+舒尔: 真的吗？哈哈哈。
+Shure: Really? Hahaha.
+
+833
+00:41:56,200 --> 00:41:57,000
+舒尔: 塔莎。
+Shure: Tasha.
+
+834
+00:41:57,566 --> 00:42:00,333
+塔莎: 好的，我把道具拿出来。
+Tasha: OK, I'll get my props out.
+
+835
+00:41:59,566 --> 00:42:03,166
+杰克: 好的，准备好道具和背景音乐。
+Jake: Alright, get the props and BGM ready.
+
+836
+00:42:04,633 --> 00:42:09,600
+舒尔: 哒-哒-哒-哒-哒-哒-哒。
+Shure: Da-da-da-da-da-da-da.
+
+837
+00:42:13,566 --> 00:42:15,733
+舒尔: 为什么他的道具在你的行李箱里？
+Shure: Why are his props in your suitcase?
+
+838
+00:42:18,766 --> 00:42:20,100
+杰克: 呃，因为...
+Jake: Uh, because...
+
+839
+00:42:20,266 --> 00:42:20,633
+舒尔: 又是自己出资的？
+Shure: Again, funded by himself?
+
+840
+00:42:20,633 --> 00:42:21,166
+塔莎: 不就是这个吗？
+Tasha: Isn't it just this?
+
+841
+00:42:21,200 --> 00:42:23,066
+塔莎: 就这一个？
+Tasha: Just this one?
+
+842
+00:42:23,066 --> 00:42:24,066
+塔莎: 你怎么没打开？
+Tasha: Why didn't you unpack it?
+
+843
+00:42:24,066 --> 00:42:25,633
+塔莎: 我去拿现成的。
+Tasha: I'll go get the ready-made one.
+
+844
+00:42:25,633 --> 00:42:27,266
+塔莎: 你把培养皿拿出来。
+Tasha: You take out the petri dish.
+
+845
+00:42:27,366 --> 00:42:27,900
+舒尔: 培养皿。
+Shure: Petri dish.
+
+846
+00:42:29,133 --> 00:42:29,500
+杰克: 培养皿。
+Jake: Petri dish.
+
+847
+00:42:30,933 --> 00:42:32,166
+杰克: 培养皿买了。
+Jake: Petri dish was bought.
+
+848
+00:42:32,200 --> 00:42:33,066
+杰克: 但可能还没到。
+Jake: But it might not have arrived yet.
+
+849
+00:42:34,933 --> 00:42:35,666
+杰克: 可能还没到。
+Jake: Might not have arrived.
+
+850
+00:42:35,700 --> 00:42:36,633
+杰克: 我查一下。
+Jake: Let me check.
+
+851
+00:42:36,700 --> 00:42:38,133
+卡特里娜: 买了康乃馨。
+Katrina: Bought carnations.
+
+852
+00:42:38,133 --> 00:42:39,333
+卡特里娜: 这个叫，叫...
+Katrina: This is called, called...
+
+853
+00:42:39,366 --> 00:42:41,433
+卡特里娜: 牡丹康乃馨。
+Katrina: Peony carnations.
+
+854
+00:42:44,133 --> 00:42:45,300
+卡特里娜: 在直播间买的。
+Katrina: Bought it in the live stream.
+
+855
+00:42:47,433 --> 00:42:48,266
+露西亚: 看起来真好看。
+Lucia: Looks so nice.
+
+856
+00:42:48,566 --> 00:42:49,766
+卡特里娜: 在直播间买的。
+Katrina: Bought in the live stream.
+
+857
+00:42:49,766 --> 00:42:51,100
+卡特里娜: 顺丰快递即时送达。
+Katrina: Delivered by SF Express instantly.
+
+858
+00:42:54,066 --> 00:42:58,800
+卡特里娜: 嘿，花瓶昨天也到了，但他没有...
+Katrina: Hey, the vase also arrived yesterday, but he didn't...
+
+859
+00:42:58,766 --> 00:42:59,566
+杰克: 是的，到了。
+Jake: Yes, it arrived.
+
+860
+00:43:04,133 --> 00:43:05,700
+卡特里娜: 这些都是我们的包裹。
+Katrina: These are all our packages.
+
+861
+00:43:05,700 --> 00:43:06,133
+杰克: 是的。
+Jake: Yes.
+
+862
+00:43:50,066 --> 00:43:51,500
+塔莎: 好像没有其他种类了。
+Tasha: Seems like there are no other types.
+
+863
+00:43:56,933 --> 00:43:58,466
+卡特里娜: 可以放在这种里。
+Katrina: Can be put in this kind.
+
+864
+00:43:59,100 --> 00:43:59,666
+卡特里娜: 让我看看。
+Katrina: Let me check.
+
+865
+00:43:59,666 --> 00:44:00,833
+卡特里娜: 拿出来的时候特别好看。
+Katrina: Looks especially pretty when taken out.
+
+866
+00:44:12,666 --> 00:44:13,700
+舒尔: 这是香薰框吗？
+Shure: Is this a fragrance frame?
+
+867
+00:44:14,400 --> 00:44:16,000
+卡特里娜: 是的，把花放进去就行。
+Katrina: Yes, just put the flowers in it.
+
+868
+00:44:16,000 --> 00:44:18,800
+卡特里娜: 还有一些叶子什么的，可以放在家里。
+Katrina: And some leaves or whatever, can be placed at home.
+
+869
+00:44:16,100 --> 00:44:16,333
+杰克: 哦。
+Jake: Oh.
+
+870
+00:44:19,033 --> 00:44:19,300
+舒尔: 明白了。
+Shure: Got it.
+
+871
+00:44:20,666 --> 00:44:22,833
+卡特里娜: 怎么这么雾？
+Katrina: Why is it so foggy?
+
+872
+00:44:24,500 --> 00:44:26,366
+卡特里娜: 中间肯定夹了什么东西。
+Katrina: There must be something sandwiched in the middle.
+
+873
+00:44:27,566 --> 00:44:28,533
+杰克: 被拒了。
+Jake: It got rejected.
+
+874
+00:44:30,166 --> 00:44:31,333
+杰克: 我要拆开吗？
+Jake: Should I unpack it?
+
+875
+00:44:31,933 --> 00:44:32,400
+塔莎: 然后……
+Tasha: And then...
+
+876
+00:44:33,933 --> 00:44:35,033
+塔莎: 所以这是……
+Tasha: So this is...
+
+877
+00:44:36,533 --> 00:44:40,700
+塔莎: 我自己设计的一些种子纸
+Tasha: Some seed paper I designed myself
+
+878
+00:44:41,333 --> 00:44:43,933
+塔莎: 基本上就是把种子放进这张纸里
+Tasha: It's basically putting seeds in this paper
+
+879
+00:44:43,933 --> 00:44:47,500
+塔莎: 这张纸是用废弃的咖啡渣做的
+Tasha: This paper is made from discarded coffee grounds
+
+880
+00:44:47,933 --> 00:44:49,166
+塔莎: 呃，一些纸
+Tasha: Uh, some paper
+
+881
+00:44:49,366 --> 00:44:51,033
+塔莎: 然后做成纸浆
+Tasha: And then making it into pulp
+
+882
+00:44:51,166 --> 00:44:53,533
+塔莎: 纸浆里含有种子
+Tasha: And the pulp contains the seeds
+
+883
+00:44:53,533 --> 00:44:55,900
+塔莎: 种子是葵花籽
+Tasha: The seeds are sunflower seeds
+
+884
+00:44:56,100 --> 00:44:58,766
+塔莎: 葵花籽更容易发芽
+Tasha: Sunflower seeds are easier to sprout
+
+885
+00:44:58,766 --> 00:45:00,966
+塔莎: 如果你用培养皿水培
+Tasha: And if you use a petri dish for hydroponics
+
+886
+00:45:01,266 --> 00:45:03,533
+塔莎: 大约5天就能发芽
+Tasha: It can sprout in about 5 days
+
+887
+00:45:04,033 --> 00:45:07,700
+塔莎: 然后我做了几种不同的
+Tasha: Then I made some different kinds
+
+888
+00:45:08,600 --> 00:45:10,366
+塔莎: 为了地球日，对吧？
+Tasha: For Earth Day, right?
+
+889
+00:45:10,600 --> 00:45:11,833
+杰克: 完全是为了地球日
+Jake: Totally for Earth Day
+
+890
+00:45:11,366 --> 00:45:12,433
+卡特里娜: 这些都是你自己做的吗？
+Katrina: Did you make all of these yourself?
+
+891
+00:45:11,833 --> 00:45:12,766
+露西亚: 哇，太厉害了
+Lucia: Wow, that's amazing
+
+892
+00:45:13,000 --> 00:45:13,400
+塔莎: 是的
+Tasha: Yep
+
+893
+00:45:14,033 --> 00:45:15,033
+卡特里娜: 太令人印象深刻了
+Katrina: So impressive
+
+894
+00:45:16,033 --> 00:45:18,900
+塔莎: 我做了五种
+Tasha: And I made five kinds
+
+895
+00:45:20,266 --> 00:45:21,266
+塔莎: 与地球相关的
+Tasha: Earth-related ones
+
+896
+00:45:21,266 --> 00:45:24,400
+塔莎: 还有两种非常简单的
+Tasha: And two really simple ones
+
+897
+00:45:25,900 --> 00:45:27,466
+卡特里娜: 但它们是你的原创设计
+Katrina: But they're your original designs
+
+898
+00:45:29,166 --> 00:45:29,600
+杰克: 挺强的
+Jake: Pretty strong
+
+899
+00:45:30,266 --> 00:45:30,666
+卡特里娜: 是的
+Katrina: Yeah
+
+900
+00:45:31,666 --> 00:45:32,466
+杰克: 种子纸
+Jake: Seed paper
+
+901
+00:45:33,166 --> 00:45:33,566
+杰克: 种子纸，嗯
+Jake: Seed paper, hmm
+
+902
+00:45:34,166 --> 00:45:34,533
+塔莎: 是的
+Tasha: Yeah
+
+903
+00:45:34,533 --> 00:45:35,766
+舒尔: 啊，种子纸
+Shure: Ah, seed paper
+
+904
+00:45:35,766 --> 00:45:37,433
+杰克: 种子纸，嗯
+Jake: Seed paper, hmm
+
+905
+00:45:37,866 --> 00:45:40,000
+塔莎: 是的，这样更环保
+Tasha: Yeah, it's more environmentally friendly this way
+
+906
+00:45:42,800 --> 00:45:43,733
+露西亚: 真的很环保
+Lucia: It's really eco-friendly
+
+907
+00:45:44,266 --> 00:45:45,200
+卡特里娜: 真的很环保
+Katrina: It's really eco-friendly
+
+908
+00:45:46,333 --> 00:45:48,200
+卡特里娜: 而且也很美观
+Katrina: And it's also very aesthetically pleasing
+
+909
+00:45:48,166 --> 00:45:50,200
+卡特里娜: 1234，好的
+Katrina: 1234, okay then
+
+910
+00:45:50,300 --> 00:45:51,500
+杰克: 是你自己设计的吗？
+Jake: Did you design it yourself?
+
+911
+00:45:51,500 --> 00:45:52,766
+杰克: 图片是你画的吗？
+Jake: Did you draw the pictures?
+
+912
+00:45:51,600 --> 00:45:53,033
+爱丽丝: 哦，我得去拿我的东西
+Alice: Oh, I need to go get my stuff
+
+913
+00:45:53,766 --> 00:45:54,766
+塔莎: 啊，真的很简单
+Tasha: Ah, it's really simple
+
+914
+00:45:54,766 --> 00:45:55,966
+塔莎: 找一些标志就行
+Tasha: Just find some logos
+
+915
+00:45:56,033 --> 00:45:56,833
+杰克: 哦
+Jake: Oh
+
+916
+00:45:56,166 --> 00:45:57,366
+塔莎: 然后你找到这个标志
+Tasha: Then you just find this logo
+
+917
+00:45:57,400 --> 00:45:59,800
+塔莎: 写个字，框起来就行。
+Tasha: Just write a word and frame it.
+
+918
+00:45:57,466 --> 00:45:58,366
+爱丽丝: 哦不，我不给你看。
+Alice: Oh no, I'm not showing you.
+
+919
+00:45:57,766 --> 00:45:58,233
+杰克: 好的 杰克: 好的
+Jake: OK
+Jake: OK
+
+920
+00:45:59,800 --> 00:46:00,600
+杰克: 好的 杰克: 好的
+Jake: OK
+Jake: OK
+
+921
+00:46:00,966 --> 00:46:01,533
+爱丽丝: 我的天啊。
+Alice: Oh my gosh.
+
+922
+00:46:02,033 --> 00:46:02,533
+杰克: 挺好的。
+Jake: Pretty good.
+
+923
+00:46:03,300 --> 00:46:04,100
+露西亚: 太厉害了。
+Lucia: So impressive.
+
+924
+00:46:07,100 --> 00:46:08,100
+卡特里娜: 一张种子卡片。
+Katrina: A seed card.
+
+925
+00:46:08,600 --> 00:46:09,600
+卡特里娜: 然后
+Katrina: And then
+
+926
+00:46:09,933 --> 00:46:13,333
+爱丽丝: 嗯，我买了一个拼图。
+Alice: Um, I bought a puzzle.
+
+927
+00:46:17,033 --> 00:46:19,800
+爱丽丝: 是一个大的圆形底座。
+Alice: It's a big round base.
+
+928
+00:46:21,000 --> 00:46:23,166
+爱丽丝: 里面，有
+Alice: And inside it, there are
+
+929
+00:46:23,666 --> 00:46:25,433
+爱丽丝: 各种各样的动物。
+Alice: all kinds of animals.
+
+930
+00:46:25,466 --> 00:46:27,133
+爱丽丝: 哦，然后你看看能不能
+Alice: Oh, and then you see if you can
+
+931
+00:46:27,266 --> 00:46:29,466
+爱丽丝: 这是一个比较难的拼图。
+Alice: it's a relatively difficult puzzle.
+
+932
+00:46:29,466 --> 00:46:30,866
+爱丽丝: 而且有很多种动物。
+Alice: And there are many kinds of animals.
+
+933
+00:46:30,866 --> 00:46:34,700
+爱丽丝: 我觉得，嗯，你尽力把它拼起来。
+Alice: What I think is, um, you try your best to fit it together.
+
+934
+00:46:34,733 --> 00:46:37,533
+爱丽丝: 我觉得这个拼图给人一种感觉
+Alice: I think this puzzle gives a feeling that
+
+935
+00:46:38,533 --> 00:46:39,300
+爱丽丝: 我们在地球上
+Alice: we are on Earth
+
+936
+00:46:39,333 --> 00:46:41,400
+爱丽丝: 可以和谐地生活在一起。
+Alice: and can live harmoniously together.
+
+937
+00:46:41,666 --> 00:46:43,700
+爱丽丝: 而且你可能无法把它完全拼合。
+Alice: And you might not be able to fit it all.
+
+938
+00:46:43,733 --> 00:46:46,866
+爱丽丝: 因为它不是完美无缝的。
+Alice: Because it's not perfectly seamless.
+
+939
+00:46:46,866 --> 00:46:48,466
+爱丽丝: 它不是非常完美无缝的。
+Alice: It's not very perfectly seamless.
+
+940
+00:46:48,466 --> 00:46:49,933
+爱丽丝: 所以你可以拼更多块，
+Alice: So you can fit more pieces,
+
+941
+00:46:49,933 --> 00:46:51,100
+爱丽丝: 或者你可以拼少一些块。
+Alice: or you can fit fewer pieces.
+
+942
+00:46:51,300 --> 00:46:52,100
+爱丽丝: 然后我想，
+Alice: And then I thought,
+
+943
+00:46:52,600 --> 00:46:55,100
+爱丽丝: 嗯，也许这只是一个小游戏。
+Alice: um, maybe it's just a little game.
+
+944
+00:46:54,600 --> 00:46:55,533
+杰克: 你的头发
+Jake: Your hair
+
+945
+00:46:57,166 --> 00:46:59,033
+杰克: 哈哈，也许
+Jake: Haha, maybe
+
+946
+00:46:58,166 --> 00:46:58,600
+爱丽丝: 是的
+Alice: Yeah
+
+947
+00:47:01,166 --> 00:47:02,300
+杰克: 也许夹起来。
+Jake: Maybe clip it.
+
+948
+00:47:02,933 --> 00:47:03,933
+卡特里娜: 你有夹子吗？
+Katrina: Do you have a clip?
+
+949
+00:47:02,933 --> 00:47:04,000
+杰克: 挺好的。
+Jake: Pretty good.
+
+950
+00:47:04,000 --> 00:47:04,600
+杰克: 好的。
+Jake: Okay.
+
+951
+00:47:05,533 --> 00:47:06,433
+舒尔: 今天我们去买些发夹吧。
+Shure: Let's buy some hair clips today.
+
+952
+00:47:05,533 --> 00:47:07,166
+爱丽丝: 然后，
+Alice: And then,
+
+953
+00:47:07,800 --> 00:47:11,000
+爱丽丝: 我想给参与者一个小奖品。
+Alice: I want to give the participants a small prize.
+
+954
+00:47:11,000 --> 00:47:13,300
+爱丽丝: 是一个水仙球茎。
+Alice: It's a daffodil bulb.
+
+955
+00:47:13,666 --> 00:47:16,466
+爱丽丝: 因为这个水仙球茎很容易种。
+Alice: Because this daffodil bulb is easy to grow.
+
+956
+00:47:16,800 --> 00:47:18,500
+爱丽丝: 所以，嗯
+Alice: So, um
+
+957
+00:47:18,500 --> 00:47:21,900
+爱丽丝: 在我那个植物杀手朋友身上试过
+Alice: Tried it on my plant-killer friend
+
+958
+00:47:21,900 --> 00:47:22,666
+爱丽丝: 成功了
+Alice: It worked
+
+959
+00:47:22,666 --> 00:47:24,266
+爱丽丝: 如果他能把它养活
+Alice: If he can keep it alive
+
+960
+00:47:24,333 --> 00:47:26,733
+爱丽丝: 那么开出的花真的很美
+Alice: Then the flower that blooms is really beautiful
+
+961
+00:47:27,033 --> 00:47:28,766
+爱丽丝: 而且有可爱的香味
+Alice: And it has a lovely fragrance
+
+962
+00:47:28,800 --> 00:47:30,933
+爱丽丝: 另外，你可以看着它一天天长大
+Alice: Plus, you get to watch it grow day by day
+
+963
+00:47:30,933 --> 00:47:33,033
+爱丽丝: 真的让你感觉自己是自然的一部分
+Alice: It really gives you a sense of being part of nature
+
+964
+00:47:33,033 --> 00:47:35,233
+爱丽丝: 所以这就是我的想法
+Alice: So that's my idea
+
+965
+00:47:35,266 --> 00:47:37,133
+爱丽丝: 但我还没买水仙球茎
+Alice: But I haven't bought the narcissus bulbs yet
+
+966
+00:47:37,100 --> 00:47:37,500
+爱丽丝: 但我知道
+Alice: But I know
+
+967
+00:47:37,533 --> 00:47:39,866
+爱丽丝: 我知道一个地方卖质量很好的
+Alice: I know a place that sells really good quality ones
+
+968
+00:47:39,866 --> 00:47:41,533
+爱丽丝: 我种的就是从那里来的
+Alice: The ones I grew were from there
+
+969
+00:47:41,533 --> 00:47:42,966
+爱丽丝: 如果你需要，我可以直接买
+Alice: If you need, I can buy them directly
+
+970
+00:47:42,766 --> 00:47:43,533
+杰克: 好的
+Jake: Okay
+
+971
+00:47:43,000 --> 00:47:43,800
+杰克: 行
+Jake: Alright
+
+972
+00:47:44,533 --> 00:47:45,333
+杰克: 水仙球茎
+Jake: Narcissus bulbs
+
+973
+00:47:49,666 --> 00:47:51,233
+舒尔: 我们现在有4个活动
+Shure: We have 4 activities now
+
+974
+00:47:51,266 --> 00:47:51,933
+舒尔: 轮到谁了？
+Shure: Whose turn is it?
+
+975
+00:47:52,000 --> 00:47:54,500
+爱丽丝: 我来吧，不是轮到我了吗？
+Alice: I'll go, isn't it my turn?
+
+976
+00:47:54,466 --> 00:47:55,666
+舒尔: 一个野生动物拼图
+Shure: A wildlife puzzle
+
+977
+00:47:55,966 --> 00:47:58,033
+卡特里娜: 哦，我第一天还是想去海底捞
+Katrina: Oh, I still want to go to Haidilao on my first day
+
+978
+00:47:58,033 --> 00:48:00,133
+卡特里娜: 他们给了我一个草莓种植套装
+Katrina: They gave me a strawberry planting kit
+
+979
+00:48:00,533 --> 00:48:01,866
+卡特里娜: 我们也可以种
+Katrina: We can plant it too
+
+980
+00:48:01,933 --> 00:48:02,600
+杰克: 海底捞
+Jake: Haidilao
+
+981
+00:48:02,433 --> 00:48:04,800
+塔莎: 那我们也可以种豌豆苗
+Tasha: Then we can also plant pea shoots
+
+982
+00:48:04,800 --> 00:48:07,266
+卡特里娜: 海底捞最近和樱桃小丸子联名了
+Katrina: Haidilao recently partnered with Chibi Maruko-chan
+
+983
+00:48:07,266 --> 00:48:09,600
+卡特里娜: 点那个就送种植套装
+Katrina: If you order that, they give you the planting kit
+
+984
+00:48:09,600 --> 00:48:10,800
+露西亚: 哦，那不错
+Lucia: Oh, that's nice
+
+985
+00:48:10,800 --> 00:48:12,966
+舒尔: 我们宿舍有
+Shure: We have it in our dorm
+
+986
+00:48:12,966 --> 00:48:15,100
+卡特里娜: 我在想他们怎么知道我想种东西
+Katrina: I was wondering how they knew I wanted to plant something
+
+987
+00:48:15,100 --> 00:48:17,933
+卡特里娜: 哈哈哈
+Katrina: Hahaha
+
+988
+00:48:17,933 --> 00:48:19,666
+卡特里娜: 我其实正打算买一盆植物
+Katrina: I was actually planning to buy a plant
+
+989
+00:48:19,666 --> 00:48:21,933
+卡特里娜: 但植物发芽要一个月
+Katrina: But it takes a month for a plant to sprout
+
+990
+00:48:22,400 --> 00:48:24,100
+杰克: 我们去海边种树吧
+Jake: Let's go plant trees by the sea
+
+991
+00:48:25,300 --> 00:48:27,966
+舒尔: 那轮到我了
+Shure: Then it's my turn
+
+992
+00:48:27,966 --> 00:48:28,866
+杰克: 是的，轮到你了
+Jake: Yes, it's your turn
+
+993
+00:48:30,500 --> 00:48:31,500
+舒尔: 我的是一个
+Shure: Mine is a
+
+994
+00:48:33,033 --> 00:48:35,533
+舒尔: 一种二手拍卖
+Shure: A kind of second-hand auction
+
+995
+00:48:35,533 --> 00:48:38,500
+舒尔: 一个想法，想法，想法，想法，想法
+Shure: An idea, idea, idea, idea, idea
+
+996
+00:48:38,900 --> 00:48:39,600
+杰克: 好的 杰克: 好的
+Jake: OK
+Jake: OK
+
+997
+00:48:39,600 --> 00:48:44,933
+舒尔: 我不知道你们平时去不去一些地方，比如……
+Shure: I don't know if you guys usually go to some places like...
+
+998
+00:48:44,933 --> 00:48:47,700
+舒尔: 比如，小酒吧……
+Shure: For example, small bars...
+
+999
+00:48:47,666 --> 00:48:49,333
+舒尔: 或者咖啡店……
+Shure: Or coffee shops...
+
+1000
+00:48:49,366 --> 00:48:53,300
+舒尔: 你知道，那种有点舒适热闹氛围的地方。
+Shure: You know, places with a bit of a cozy and lively atmosphere.
+
+1001
+00:48:54,166 --> 00:48:55,966
+舒尔: 之前……
+Shure: And before...
+
+1002
+00:48:56,166 --> 00:48:58,733
+舒尔: 北京有一家精酿啤酒连锁……
+Shure: There was a craft beer chain in Beijing...
+
+1003
+00:48:58,766 --> 00:48:59,966
+舒尔: 叫跳海。
+Shure: Called Jumping Sea.
+
+1004
+00:48:59,966 --> 00:49:02,033
+卡特里娜: 哦，我知道，在什刹海，对吧？
+Katrina: Oh, I know, it's in Shichahai, right?
+
+1005
+00:49:02,033 --> 00:49:03,000
+舒尔: 是的，什刹海。
+Shure: Yes, Shichahai.
+
+1006
+00:49:03,033 --> 00:49:04,166
+杰克: 应该是这个吧？
+Jake: It should be this one, right?
+
+1007
+00:49:04,166 --> 00:49:05,766
+舒尔: 而且……
+Shure: And...
+
+1008
+00:49:05,366 --> 00:49:06,966
+杰克: 你说的是这个吗？
+Jake: Are you talking about this one?
+
+1009
+00:49:07,333 --> 00:49:08,533
+塔莎: 哪个？
+Tasha: Which one?
+
+1010
+00:49:07,333 --> 00:49:08,933
+舒尔: 其他城市也有。
+Shure: It's also in other cities.
+
+1011
+00:49:07,900 --> 00:49:10,900
+杰克: 你刚才是让我拿这个吗？
+Jake: Did you just ask me to get this?
+
+1012
+00:49:09,100 --> 00:49:09,933
+舒尔: 还有一些市集也有。
+Shure: And in some markets too.
+
+1013
+00:49:10,366 --> 00:49:12,900
+舒尔: 前几天，他们在大荣寺开店的时候……
+Shure: And a few days ago, when they opened at Da Rong Temple...
+
+1014
+00:49:10,366 --> 00:49:13,366
+塔莎: 我想让你帮忙把这个拿出来。
+Tasha: I wanted you to help take this out.
+
+1015
+00:49:12,733 --> 00:49:14,933
+杰克: 我最后拿太多了。
+Jake: I ended up getting too much.
+
+1016
+00:49:12,900 --> 00:49:13,933
+舒尔: 他们组织了……
+Shure: They organized...
+
+1017
+00:49:13,933 --> 00:49:16,500
+舒尔: 像拍卖……
+Shure: Like an auction...
+
+1018
+00:49:14,933 --> 00:49:17,933
+杰克: 抱歉。
+Jake: Sorry.
+
+1019
+00:49:16,500 --> 00:49:18,533
+舒尔: 一种形式。
+Shure: A kind of format.
+
+1020
+00:49:16,500 --> 00:49:19,500
+塔莎: 这是一份吗？
+Tasha: Is this just one copy?
+
+1021
+00:49:18,866 --> 00:49:20,200
+舒尔: 然后……
+Shure: And then...
+
+1022
+00:49:18,866 --> 00:49:21,866
+杰克: 啊。
+Jake: Ah.
+
+1023
+00:49:19,600 --> 00:49:21,400
+卡特里娜: 嗯。
+Katrina: Hmm.
+
+1024
+00:49:20,800 --> 00:49:21,600
+舒尔: 嗯。
+Shure: Hmm.
+
+1025
+00:49:21,866 --> 00:49:24,866
+杰克: 他们不知道。
+Jake: They don't know.
+
+1026
+00:49:21,866 --> 00:49:24,866
+塔莎: 我说明信片就一份吗
+
+1027
+00:49:22,500 --> 00:49:25,600
+舒尔: 那时候，如果你喝酒，他们会给你一个代币。
+Shure: At that time, if you drank, they would give you a token.
+
+1028
+00:49:24,866 --> 00:49:26,100
+杰克: 不知道。
+Jake: No idea.
+
+1029
+00:49:25,800 --> 00:49:27,466
+舒尔: 用那个代币……
+Shure: And with that token...
+
+1030
+00:49:27,466 --> 00:49:30,866
+舒尔: 你可以从任何人那里买任何东西。
+Shure: You could buy anything from anyone.
+
+1031
+00:49:30,933 --> 00:49:33,933
+舒尔: 可以是一本诗集……
+Shure: It could be a poetry collection...
+
+1032
+00:49:33,933 --> 00:49:35,033
+舒尔: 可以是一个故事……
+Shure: It could be a story...
+
+1033
+00:49:35,033 --> 00:49:36,500
+舒尔: 或者可以是……
+Shure: Or it could be a...
+
+1034
+00:49:36,533 --> 00:49:38,533
+舒尔: 一个真实的实物。
+Shure: A real physical item.
+
+1035
+00:49:38,866 --> 00:49:39,933
+舒尔: 然后每个人……
+Shure: And then everyone...
+
+1036
+00:49:40,366 --> 00:49:43,100
+舒尔: 所以，每件物品，我们做一个小PPT。
+Shure: So, for each item, we make a small PPT.
+
+1037
+00:49:43,400 --> 00:49:44,666
+舒尔: 然后我们展示它。
+Shure: Then we present it.
+
+1038
+00:49:45,533 --> 00:49:46,700
+塔莎: 哦不，我们得做PPT？
+Tasha: Oh no, we have to make a PPT?
+
+1039
+00:49:46,366 --> 00:49:49,666
+舒尔: 然后，然后，哈哈哈。
+Shure: And then, and then, hahaha.
+
+1040
+00:49:47,000 --> 00:49:52,166
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1041
+00:49:49,666 --> 00:49:51,166
+露西亚: 这是工作狂游戏吗？
+Lucia: Is this a workaholic game?
+
+1042
+00:49:51,166 --> 00:49:53,400
+舒尔: 呃，不，然后……
+Shure: Uh, no, and then...
+
+1043
+00:49:53,400 --> 00:49:53,800
+舒尔: 之后……
+Shure: After that...
+
+1044
+00:49:53,800 --> 00:49:54,600
+舒尔: 然后……
+Shure: And then...
+
+1045
+00:49:54,666 --> 00:49:56,300
+舒尔: 然后有一个拍卖。
+Shure: Then there's an auction.
+
+1046
+00:49:56,666 --> 00:49:57,966
+舒尔: 我们可以……
+Shure: And we can...
+
+1047
+00:49:58,000 --> 00:50:00,166
+舒尔: 来的客人……
+Shure: The guests who come...
+
+1048
+00:50:00,533 --> 00:50:03,300
+舒尔: 每个人分享一个故事。
+Shure: Each person shares a story.
+
+1049
+00:50:03,366 --> 00:50:04,966
+舒尔: 或者，嗯……
+Shure: Or, um...
+
+1050
+00:50:04,966 --> 00:50:05,766
+舒尔: 一个事件。
+Shure: An incident.
+
+1051
+00:50:05,766 --> 00:50:06,666
+舒尔: 或者一个故事。
+Shure: Or a story.
+
+1052
+00:50:06,933 --> 00:50:09,266
+舒尔: 然后我们评估它。
+Shure: Then we evaluate it.
+
+1053
+00:50:09,500 --> 00:50:11,100
+舒尔: 看看故事怎么样。
+Shure: See how the story is.
+
+1054
+00:50:11,033 --> 00:50:11,566
+杰克: 值多少硬币，对吧？
+Jake: How many coins it's worth, right?
+
+1055
+00:50:12,100 --> 00:50:13,066
+舒尔: 是的，多少硬币。
+Shure: Yes, how many coins.
+
+1056
+00:50:13,100 --> 00:50:14,033
+舒尔: 然后给他们。
+Shure: And then give it to them.
+
+1057
+00:50:14,266 --> 00:50:16,100
+舒尔: 然后那些硬币……
+Shure: And then those coins...
+
+1058
+00:50:16,100 --> 00:50:18,533
+塔莎: 一个故事换一根棍子，那种。
+Tasha: A story for a stick, that kind of thing.
+
+1059
+00:50:18,533 --> 00:50:18,833
+杰克: 嗯。
+Jake: Hmm.
+
+1060
+00:50:19,233 --> 00:50:19,500
+舒尔: 哦，对。
+Shure: Oh, right.
+
+1061
+00:50:19,500 --> 00:50:21,766
+舒尔: 然后那些硬币用于拍卖。
+Shure: Then those coins are used for the auction.
+
+1062
+00:50:21,766 --> 00:50:24,466
+舒尔: 用于客人带来的二手物品。
+Shure: For the second-hand items brought by the guests.
+
+1063
+00:50:24,466 --> 00:50:27,933
+舒尔: 也用于我们自己不用的二手物品。
+Shure: And also for our own unused second-hand items.
+
+1064
+00:50:28,166 --> 00:50:31,100
+舒尔: 然后我们做一个交换。
+Shure: And then we do an exchange.
+
+1065
+00:50:31,333 --> 00:50:32,166
+舒尔: 这是……
+Shure: It's...
+
+1066
+00:50:32,366 --> 00:50:35,533
+舒尔: 这也和环保理念密切相关。
+Shure: It's also closely related to the concept of environmental protection.
+
+1067
+00:50:35,000 --> 00:50:35,266
+杰克: 嗯。
+Jake: Hmm.
+
+1068
+00:50:36,100 --> 00:50:37,800
+舒尔: 是的，基本上就是这样。
+Shure: Yeah, that's basically it.
+
+1069
+00:50:41,033 --> 00:50:43,233
+杰克: 太棒了。
+Jake: Brilliant.
+
+1070
+00:50:42,600 --> 00:50:43,733
+卡特里娜: 所以，我们讲故事。
+Katrina: So, we tell stories.
+
+1071
+00:50:43,733 --> 00:50:46,333
+卡特里娜: 赚硬币，然后我们可以买……
+Katrina: Earn coins and then we can buy...
+
+1072
+00:50:46,600 --> 00:50:47,033
+杰克: 买东西……
+Jake: Buy something...
+
+1073
+00:50:47,166 --> 00:50:50,300
+卡特里娜: 买他们自己带来的物品，对吧？
+Katrina: Buy the items they brought themselves, right?
+
+1074
+00:50:50,533 --> 00:50:51,266
+舒尔: 每个人都拍卖……
+Shure: Everyone auctions...
+
+1075
+00:50:51,300 --> 00:50:53,466
+舒尔: 拍卖，比如，我……
+Shure: Auctions like, for example, I...
+
+1076
+00:50:53,466 --> 00:50:55,300
+舒尔: 我想卖东西。
+Shure: I want to sell something.
+
+1077
+00:50:55,300 --> 00:50:57,033
+舒尔: 然后我上来讲这个物品。
+Shure: Then I'll come up and talk about this item.
+
+1078
+00:50:57,033 --> 00:50:59,300
+舒尔: 然后我说我认为的起拍价。
+Shure: And then I'll say what I think the starting bid should be.
+
+1079
+00:50:59,866 --> 00:51:01,900
+舒尔: 然后它会被拍卖掉。
+Shure: Then it will be auctioned off.
+
+1080
+00:51:01,900 --> 00:51:03,866
+舒尔: 钱会给拍卖的人。
+Shure: The money will go to the person who auctioned it.
+
+1081
+00:51:03,866 --> 00:51:05,900
+舒尔: 货币会流通。
+Shure: And the currency will circulate.
+
+1082
+00:51:06,000 --> 00:51:07,100
+舒尔: 然后我会得到一些这种货币。
+Shure: Then I'll have some of this currency.
+
+1083
+00:51:07,100 --> 00:51:08,500
+舒尔: 我可以去另一个拍卖。
+Shure: I can go to another auction.
+
+1084
+00:51:08,800 --> 00:51:09,666
+舒尔: 买其他东西。
+Shure: And buy other things.
+
+1085
+00:51:09,666 --> 00:51:11,300
+舒尔: 对于剩下的物品。
+Shure: For the remaining items.
+
+1086
+00:51:12,100 --> 00:51:15,666
+爱丽丝: 所以，基本上只是另一种形式的货币交换。
+Alice: So, it's basically just a different form of currency exchange.
+
+1087
+00:51:15,666 --> 00:51:16,133
+爱丽丝: 哈哈哈。
+Alice: Hahaha.
+
+1088
+00:51:16,100 --> 00:51:18,933
+卡特里娜: 它也建立了我们整个经济体系。
+Katrina: It also builds our entire economic system.
+
+1089
+00:51:18,666 --> 00:51:20,700
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1090
+00:51:20,366 --> 00:51:21,033
+卡特里娜: 货币的起源。
+Katrina: The origin of the currency.
+
+1091
+00:51:21,833 --> 00:51:24,833
+卡特里娜: 我们都是这个市场的一部分。
+Katrina: We are all part of this market.
+
+1092
+00:51:22,900 --> 00:51:25,900
+杰克: 呵呵呵。
+Jake: Hehehe.
+
+1093
+00:51:25,900 --> 00:51:26,600
+舒尔: 是的，你也可以加这些。
+Shure: Yes, you can add these too.
+
+1094
+00:51:26,600 --> 00:51:28,000
+舒尔: 这些也可以包括。
+Shure: These can also be included.
+
+1095
+00:51:27,733 --> 00:51:30,733
+杰克: 是的，它们都是商品。
+Jake: Yes, they are all commodities.
+
+1096
+00:51:28,500 --> 00:51:30,166
+卡特里娜: 我们都在做货币生意。
+Katrina: We are all in the currency business.
+
+1097
+00:51:29,433 --> 00:51:31,100
+爱丽丝: 货币生意。哈哈哈。
+Alice: In the currency business. Hahaha.
+
+1098
+00:51:30,366 --> 00:51:32,933
+露西亚: 他是做货币流通生意的。
+Lucia: He is in the currency circulation business.
+
+1099
+00:51:32,533 --> 00:51:34,233
+杰克: 嗯。
+Jake: Hmm.
+
+1100
+00:51:33,533 --> 00:51:35,133
+露西亚: 你可以做一些手工艺品。
+Lucia: You can make some handicrafts.
+
+1101
+00:51:34,833 --> 00:51:36,800
+杰克: 给平台方。
+Jake: For the platform side.
+
+1102
+00:51:35,166 --> 00:51:36,333
+露西亚: 去拍卖。
+Lucia: To auction off.
+
+1103
+00:51:36,400 --> 00:51:37,100
+露西亚: 是的，可以。
+Lucia: Yes, it can work.
+
+1104
+00:51:36,966 --> 00:51:39,133
+杰克: 平台方和小店。
+Jake: The platform side and small shops.
+
+1105
+00:51:37,100 --> 00:51:38,133
+卡特里娜: 就我们平台方做这个。
+Katrina: Just our platform side does this.
+
+1106
+00:51:38,166 --> 00:51:40,333
+杰克: 平台方和小店可以做。
+Jake: The platform side and small shops can do it.
+
+1107
+00:51:39,300 --> 00:51:40,400
+杰克: 小店，对吧。
+Jake: Small shops, right.
+
+1108
+00:51:40,366 --> 00:51:41,466
+杰克: 小店，对吧。
+Jake: Small shops, right.
+
+1109
+00:51:41,300 --> 00:51:44,300
+杰克: 平台方像京东。
+Jake: Platform side like JD.
+
+1110
+00:51:42,666 --> 00:51:44,200
+舒尔: 基本上就是这样。
+Shure: That's basically how it works.
+
+1111
+00:51:49,266 --> 00:51:50,266
+塔莎: 这是我的物品。
+Tasha: This is my item.
+
+1112
+00:51:50,266 --> 00:51:51,266
+塔莎: 我拍卖它。
+Tasha: I'm auctioning it off.
+
+1113
+00:51:51,266 --> 00:51:52,900
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+1114
+00:51:53,733 --> 00:51:54,533
+舒尔: 还有其他想法吗？
+Shure: Any other thoughts?
+
+1115
+00:51:54,533 --> 00:51:55,233
+舒尔: 大家。
+Shure: Everyone.
+
+1116
+00:51:55,233 --> 00:51:58,533
+卡特里娜: 让我看看，那天邀请他。
+Katrina: Let me see, invite him on that day.
+
+1117
+00:51:58,533 --> 00:52:02,833
+卡特里娜: 他们可以过来，这些是我们准备的一些东西。
+Katrina: They can come over, these are some things we prepared.
+
+1118
+00:52:02,866 --> 00:52:05,900
+卡特里娜: 我们怎么招待他们？要做些特别的事吗？
+Katrina: How should we entertain them? Should we do something special?
+
+1119
+00:52:06,166 --> 00:52:08,166
+卡特里娜: 比如，我经常在我们学校的草坪上办活动。
+Katrina: Like, I often hold events on our school's lawn.
+
+1120
+00:52:08,166 --> 00:52:09,600
+卡特里娜: 他们可以自己调鸡尾酒。
+Katrina: They can make their own cocktails.
+
+1121
+00:52:11,533 --> 00:52:12,300
+卡特里娜: 就他们自己。
+Katrina: Just by themselves.
+
+1122
+00:52:12,300 --> 00:52:15,366
+卡特里娜: 人多了，感觉像个小派对。
+Katrina: When there are a lot of people, it feels like a small party.
+
+1123
+00:52:15,366 --> 00:52:16,333
+卡特里娜: 啊。
+Katrina: Ah.
+
+1124
+00:52:16,333 --> 00:52:22,733
+舒尔: 我可以在外面给大家做咖啡，我有一套手冲工具，哈哈。
+Shure: I can make coffee for everyone outside, I have a set of pour-over tools, haha.
+
+1125
+00:52:22,733 --> 00:52:25,666
+卡特里娜: 是的，我们可以给大家提供饮料。
+Katrina: Yes, we can serve drinks to everyone.
+
+1126
+00:52:25,533 --> 00:52:26,966
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1127
+00:52:25,666 --> 00:52:26,800
+舒尔: 笑得这么开心。
+Shure: Laughing so happily.
+
+1128
+00:52:27,400 --> 00:52:28,666
+杰克: 突然觉得开心。
+Jake: Suddenly feeling happy.
+
+1129
+00:52:29,500 --> 00:52:35,166
+舒尔: 支持，好的，我们呈现C加A，咖啡和酒精。
+Shure: Supporting OK, let's present C plus A, coffee and alcohol.
+
+1130
+00:52:35,500 --> 00:52:37,100
+舒尔: 嗯，听起来不错。
+Shure: Hmm, sounds good.
+
+1131
+00:52:38,166 --> 00:52:39,866
+卡特里娜: 是的，所以整个活动，
+Katrina: Yes, so the whole event,
+
+1132
+00:52:39,866 --> 00:52:42,166
+卡特里娜: 那天会持续多久？
+Katrina: How long will it last on that day?
+
+1133
+00:52:42,500 --> 00:52:43,333
+杰克: 一个下午吧。
+Jake: An afternoon, I guess.
+
+1134
+00:52:43,333 --> 00:52:44,700
+杰克: 嗯。
+Jake: Hmm.
+
+1135
+00:52:43,400 --> 00:52:44,366
+卡特里娜: 一个下午。
+Katrina: An afternoon.
+
+1136
+00:52:44,466 --> 00:52:48,766
+卡特里娜: 嗯，所以只提供一些饮料应该就够了，对吧？
+Katrina: Hmm, so just providing them with some drinks should be enough, right?
+
+1137
+00:52:48,800 --> 00:52:51,800
+舒尔: 是的。
+Shure: Yes.
+
+1138
+00:52:48,800 --> 00:52:52,300
+卡特里娜: 先饮料，然后我们可以有类似，
+Katrina: First drinks, then we can have something like,
+
+1139
+00:52:52,333 --> 00:52:54,100
+卡特里娜: 这算是一个城市级的部分，
+Katrina: This counts as a city-level part,
+
+1140
+00:52:54,100 --> 00:52:55,533
+卡特里娜: 然后我们有饮料部分，
+Katrina: And then we have the drinks part,
+
+1141
+00:52:55,533 --> 00:52:57,566
+卡特里娜: 我们需要什么节目吗？你之前提到过。
+Katrina: Do we need any programs? You mentioned before.
+
+1142
+00:52:57,600 --> 00:52:58,866
+杰克: 嗯，是的，我们可以。
+Jake: Hmm, yes, we can.
+
+1143
+00:52:59,966 --> 00:53:05,266
+杰克: 嗯，或者最后一天，应该从中午开始。
+Jake: Hmm, or on the last day, it should start from noon.
+
+1144
+00:53:05,266 --> 00:53:06,533
+杰克: 我们提供午餐吗？
+Jake: Do we provide lunch?
+
+1145
+00:53:06,533 --> 00:53:07,366
+杰克: 那是另一回事。
+Jake: That's another matter.
+
+1146
+00:53:07,366 --> 00:53:10,533
+杰克: 我们可以提供也可以不提供，取决于人数。
+Jake: We can or cannot provide it, depending on the number of people.
+
+1147
+00:53:11,766 --> 00:53:12,000
+卡特里娜: 看起来，
+Katrina: Seems like,
+
+1148
+00:53:12,000 --> 00:53:14,766
+卡特里娜: 我们不需要提供午餐，但可以提供一些甜点。
+Katrina: We don't need to provide lunch, but we can offer some sweets.
+
+1149
+00:53:14,766 --> 00:53:16,033
+杰克: 对，对，下午茶。
+Jake: Yes, yes, afternoon tea.
+
+1150
+00:53:16,100 --> 00:53:19,366
+杰克: 对，没错，所以不需要提供午餐。
+Jake: Yes, right, so no need to provide lunch.
+
+1151
+00:53:19,500 --> 00:53:20,966
+杰克: 大家可以在午餐后过来。
+Jake: Everyone can come over after lunch.
+
+1152
+00:53:21,166 --> 00:53:23,433
+杰克: 那我们可以调整时间线。
+Jake: Then we can adjust the timeline.
+
+1153
+00:53:23,666 --> 00:53:28,000
+杰克: 如果从下午开始，比如下午2点或3点，
+Jake: If it starts in the afternoon, say 2 PM or 3 PM,
+
+1154
+00:53:28,800 --> 00:53:30,966
+杰克: 一直持续到晚上左右。
+Jake: And goes on until the evening or so.
+
+1155
+00:53:32,266 --> 00:53:35,100
+卡特里娜: 我们可以持续到晚上，但天气怎么样？
+Katrina: We can go on until the evening, but how's the weather?
+
+1156
+00:53:35,366 --> 00:53:36,833
+杰克: 我不确定。
+Jake: I'm not sure about that.
+
+1157
+00:53:36,833 --> 00:53:39,200
+卡特里娜: 我看看会不会下雨。如果像今天这样...
+Katrina: I'll see if it rains. If it's like today...
+
+1158
+00:53:39,166 --> 00:53:41,333
+卡特里娜: 晚上还是会挺不错的。
+Katrina: It'll still be pretty nice in the evening.
+
+1159
+00:53:42,733 --> 00:53:43,933
+杰克: 是的，今天下午...
+Jake: Yeah, this afternoon...
+
+1160
+00:53:43,933 --> 00:53:47,466
+杰克: 这个小院子应该挺舒服的。
+Jake: This little yard should be quite comfortable.
+
+1161
+00:53:48,100 --> 00:53:49,600
+杰克: 你甚至可以烧烤。
+Jake: You can even have a barbecue.
+
+1162
+00:53:49,933 --> 00:53:51,166
+舒尔: 是的，没错。
+Shure: Yeah, that's right.
+
+1163
+00:53:52,000 --> 00:53:52,966
+杰克: 你买签子了吗？
+Jake: Did you buy the skewers?
+
+1164
+00:53:53,366 --> 00:53:54,333
+杰克: 好的。
+Jake: Okay.
+
+1165
+00:53:53,366 --> 00:53:57,433
+舒尔: 还没，我今天去买。
+Shure: Not yet, I'll get them today.
+
+1166
+00:53:57,433 --> 00:54:01,400
+杰克: 好的，我们还需要买木炭，对吧？
+Jake: Alright, and we need to buy charcoal too, right?
+
+1167
+00:54:01,400 --> 00:54:05,866
+舒尔: 签子、木炭、肉，这些都可以当天送到。
+Shure: Skewers, charcoal, meat, all these can be delivered on the same day.
+
+1168
+00:54:04,366 --> 00:54:06,833
+杰克: 是的，好的，听起来不错。
+Jake: Yeah, okay, sounds good.
+
+1169
+00:54:09,166 --> 00:54:10,300
+卡特里娜: 21号。
+Katrina: The 21st.
+
+1170
+00:54:11,533 --> 00:54:13,866
+舒尔: 大家的厨艺怎么样？
+Shure: How's everyone's cooking skills?
+
+1171
+00:54:14,166 --> 00:54:16,266
+舒尔: 你们会用刀吗？
+Shure: Can you handle a knife?
+
+1172
+00:54:16,733 --> 00:54:19,166
+杰克: 哈哈哈，你说的会用是什么意思？
+Jake: Hahaha, what do you mean by handle?
+
+1173
+00:54:18,333 --> 00:54:21,333
+卡特里娜: 我还行。
+Katrina: I'm alright.
+
+1174
+00:54:19,666 --> 00:54:21,333
+舒尔: 你们会切肉吗？
+Shure: Can you cut meat?
+
+1175
+00:54:21,333 --> 00:54:23,333
+杰克: 我们都会切肉，对吧？
+Jake: We can all cut meat, right?
+
+1176
+00:54:23,766 --> 00:54:26,000
+杰克: 大家都能切，没问题。
+Jake: Everyone can cut it, no problem.
+
+1177
+00:54:26,000 --> 00:54:27,900
+舒尔: 好的，听你这么说我就放心了。
+Shure: Okay, hearing that puts my mind at ease.
+
+1178
+00:54:27,933 --> 00:54:28,866
+杰克: 因为不用你切。
+Jake: Because you won't be cutting.
+
+1179
+00:54:28,866 --> 00:54:29,733
+露西亚: 稍微冰一下。
+Lucia: Slightly chill it.
+
+1180
+00:54:29,733 --> 00:54:31,966
+露西亚: 然后放一会儿再切，这样更容易。
+Lucia: Then let it sit a bit before cutting, it's easier that way.
+
+1181
+00:54:32,300 --> 00:54:35,166
+露西亚: 如果肉是软的，我不太会切。
+Lucia: If the meat is soft, I'm not good at cutting it.
+
+1182
+00:54:35,166 --> 00:54:37,466
+露西亚: 当它已经解冻了。
+Lucia: When it's already thawed.
+
+1183
+00:54:37,466 --> 00:54:40,466
+舒尔: 明白了，好的。
+Shure: Got it, alright.
+
+1184
+00:54:40,666 --> 00:54:42,166
+杰克: 好的，我们可以烤，对吧？
+Jake: Okay, we can grill it, right?
+
+1185
+00:54:42,166 --> 00:54:42,833
+舒尔: 我们可以烤。
+Shure: We can grill it.
+
+1186
+00:54:42,833 --> 00:54:43,933
+杰克: 长春签子。
+Jake: Changchun skewers.
+
+1187
+00:54:44,100 --> 00:54:45,766
+舒尔: 哈哈哈。
+Shure: Hahaha.
+
+1188
+00:54:46,033 --> 00:54:49,866
+卡特里娜: 其实，鸡尾酒的话，只需要买些啤酒。
+Katrina: Actually, for cocktails, you just need to buy some beer.
+
+1189
+00:54:49,933 --> 00:54:51,766
+卡特里娜: 是的，再买些冰。
+Katrina: Yeah, and get some ice.
+
+1190
+00:54:51,766 --> 00:54:52,533
+舒尔: 对。
+Shure: Right.
+
+1191
+00:54:53,166 --> 00:54:54,000
+舒尔: 关于冰...
+Shure: About the ice...
+
+1192
+00:54:54,166 --> 00:54:56,000
+卡特里娜: 嘿，前面几步有一家咖啡馆。
+Katrina: Hey, there's a café a few steps ahead.
+
+1193
+00:54:56,000 --> 00:54:56,766
+卡特里娜: 我们向他们要些冰怎么样？
+Katrina: Should we ask them for some ice?
+
+1194
+00:54:56,766 --> 00:54:58,300
+卡特里娜: 这样我们就不用买制冰机了。
+Katrina: So we don't have to buy an ice machine.
+
+1195
+00:54:58,300 --> 00:55:00,166
+卡特里娜: 省得麻烦。
+Katrina: It saves us the trouble.
+
+1196
+00:55:00,400 --> 00:55:02,033
+卡特里娜: 我们能请他们买些冰吗？
+Katrina: Can we ask them to buy some ice?
+
+1197
+00:55:02,033 --> 00:55:03,100
+卡特里娜: 那边有咖啡馆吗？
+Katrina: Is there a café over there?
+
+1198
+00:55:03,333 --> 00:55:04,866
+卡特里娜: 是的，我们昨天停车的地方。
+Katrina: Yeah, the spot where we parked yesterday.
+
+1199
+00:55:05,866 --> 00:55:07,766
+露西亚: 如果我们的要求不太高，
+Lucia: If our requirements aren't too high,
+
+1200
+00:55:07,766 --> 00:55:10,100
+露西亚: 我们可以买个冰模自己冻。
+Lucia: we can just buy an ice mold and freeze it ourselves.
+
+1201
+00:55:10,100 --> 00:55:10,966
+露西亚: 那也行。
+Lucia: That works too.
+
+1202
+00:55:10,966 --> 00:55:12,366
+露西亚: 只是冰可能不会像
+Lucia: It's just that the ice might not be as
+
+1203
+00:55:12,366 --> 00:55:13,366
+露西亚: 咖啡馆的那么清澈。
+Lucia: clear as the café's.
+
+1204
+00:55:13,366 --> 00:55:14,533
+卡特里娜: 我们有冰箱。
+Katrina: We have a fridge.
+
+1205
+00:55:14,533 --> 00:55:16,000
+卡特里娜: 买个模具，倒点水进去。
+Katrina: Just buy the mold and pour some water in.
+
+1206
+00:55:16,000 --> 00:55:16,966
+卡特里娜: 冻一晚上。
+Katrina: Freeze it overnight.
+
+1207
+00:55:16,966 --> 00:55:18,200
+爱丽丝: 就用蒸馏水。
+Alice: Just use distilled water.
+
+1208
+00:55:18,166 --> 00:55:20,133
+爱丽丝: 开水也行。
+Alice: Boiled water works too.
+
+1209
+00:55:20,366 --> 00:55:23,366
+杰克: 嗯，蒸馏水。
+Jake: Hmm, distilled water.
+
+1210
+00:55:22,333 --> 00:55:24,533
+舒尔: 不错，哈哈。
+Shure: Not bad, haha.
+
+1211
+00:55:25,266 --> 00:55:26,866
+舒尔: 我们到底在做什么？
+Shure: What are we even doing?
+
+1212
+00:55:27,100 --> 00:55:28,166
+舒尔: 我们是在做实验还是什么？
+Shure: Are we doing an experiment or what?
+
+1213
+00:55:27,266 --> 00:55:28,900
+杰克: 哈哈。
+Jake: Haha.
+
+1214
+00:55:33,466 --> 00:55:36,166
+卡特里娜: 那整体日程是什么？
+Katrina: So what's the overall schedule then?
+
+1215
+00:55:37,533 --> 00:55:40,333
+杰克: 比如，我们下午3点开始，对吧？
+Jake: For example, we start at 3 PM, right?
+
+1216
+00:55:40,333 --> 00:55:41,766
+卡特里娜: 我们从几点到几点做什么？
+Katrina: What do we do from what time to what time?
+
+1217
+00:55:41,766 --> 00:55:43,100
+卡特里娜: 从几点到几点？
+Katrina: From what time to what time?
+
+1218
+00:55:43,166 --> 00:55:45,866
+卡特里娜: 因为我们只有五个人。
+Katrina: Because there are only five of us.
+
+1219
+00:55:43,300 --> 00:55:43,766
+杰克: 对。
+Jake: Right.
+
+1220
+00:55:45,900 --> 00:55:47,400
+卡特里娜: 这感觉像是个市集。
+Katrina: This feels like a market.
+
+1221
+00:55:47,400 --> 00:55:48,800
+卡特里娜: 但那些市集通常更大。
+Katrina: But those markets are usually bigger.
+
+1222
+00:55:48,800 --> 00:55:49,666
+卡特里娜: 人们只是四处闲逛。
+Katrina: People just wander around.
+
+1223
+00:55:49,666 --> 00:55:51,300
+卡特里娜: 但我们的地方更小。
+Katrina: But our place is smaller.
+
+1224
+00:55:51,333 --> 00:55:53,266
+卡特里娜: 所以我们需要为活动设定具体时间。
+Katrina: So we need to set specific times for activities.
+
+1225
+00:55:53,266 --> 00:55:54,033
+卡特里娜: 活动的具体时间。
+Katrina: Specific times for activities.
+
+1226
+00:55:54,033 --> 00:55:56,366
+卡特里娜: 否则，他们很快就会把所有事情都做完。
+Katrina: Otherwise, they'll finish everything too quickly.
+
+1227
+00:55:56,400 --> 00:55:58,400
+杰克: 你的拍卖可以占用一些时间。
+Jake: Your auction can take up some time.
+
+1228
+00:55:58,400 --> 00:55:59,600
+杰克: 看看需要多久。
+Jake: See how long it takes.
+
+1229
+00:55:59,800 --> 00:56:00,600
+杰克: 然后...
+Jake: Then...
+
+1230
+00:56:01,266 --> 00:56:01,966
+杰克: 唉。
+Jake: Sigh.
+
+1231
+00:56:01,966 --> 00:56:05,000
+杰克: 所有这些准备工作就是我们过去几天一直在做的，对吧？
+Jake: All these preparations are what we've been working on these past few days, right?
+
+1232
+00:56:05,000 --> 00:56:06,900
+杰克: 然后其他耗时的短活动...
+Jake: Then other time-consuming short activities...
+
+1233
+00:56:08,166 --> 00:56:09,100
+杰克: 跳舞？哈哈。
+Jake: Dancing? Haha.
+
+1234
+00:56:09,100 --> 00:56:13,066
+露西亚: 哈哈，我一个人跳吗？
+Lucia: Haha, am I dancing alone?
+
+1235
+00:56:14,166 --> 00:56:16,466
+杰克: 我们以前做过，可以再做。
+Jake: We used to do it before, we can do it again.
+
+1236
+00:56:17,666 --> 00:56:19,666
+卡特里娜: 我们能拍点更简单的吗？
+Katrina: Can we shoot something a bit simpler?
+
+1237
+00:56:18,666 --> 00:56:19,700
+杰克: 乔伊斯特 也会跳舞。
+Jake: Choiszt can dance too.
+
+1238
+00:56:21,433 --> 00:56:21,733
+杰克: 对吧？
+Jake: Right?
+
+1239
+00:56:21,733 --> 00:56:22,966
+卡特里娜: 你也会跳舞吗？
+Katrina: Can you dance too?
+
+1240
+00:56:21,733 --> 00:56:23,700
+露西亚: 如果我们有短片的剧本...
+Lucia: If we have a script for a short film...
+
+1241
+00:56:23,666 --> 00:56:26,733
+露西亚: 我们可以拍一个，哈哈。
+Lucia: We can shoot one, haha.
+
+1242
+00:56:31,366 --> 00:56:33,900
+舒尔: 演戏其实有点尴尬。
+Shure: Acting is actually a bit awkward.
+
+1243
+00:56:34,000 --> 00:56:36,366
+卡特里娜: 嗯，跳舞更好。
+Katrina: Hmm, dancing is better.
+
+1244
+00:56:36,666 --> 00:56:38,366
+卡特里娜: 因为音乐一响...
+Katrina: Because once the music starts...
+
+1245
+00:56:36,800 --> 00:56:37,800
+杰克: 那我们跳舞吧。
+Jake: Let's dance instead.
+
+1246
+00:56:38,366 --> 00:56:39,033
+露西亚: 那我们跳舞吧。
+Lucia: Let's dance instead.
+
+1247
+00:56:39,033 --> 00:56:40,433
+爱丽丝: 跳舞比约会好。
+Alice: Dancing is better than dating.
+
+1248
+00:56:41,000 --> 00:56:42,333
+舒尔: 那我们跳舞吧。
+Shure: Let's dance instead.
+
+1249
+00:56:45,100 --> 00:56:46,500
+舒尔: 我们来过一遍时间线。
+Shure: Let's go over the timeline.
+
+1250
+00:56:47,033 --> 00:56:49,833
+露西亚: 但如果我们跳舞，我的眼镜可能会掉。
+Lucia: But if we dance, my glasses might fall off.
+
+1251
+00:56:50,600 --> 00:56:51,400
+露西亚: 哈哈哈。
+Lucia: Hahaha.
+
+1252
+00:56:51,400 --> 00:56:52,933
+舒尔: 那时候戴眼镜？
+Shure: Wearing glasses at that time?
+
+1253
+00:56:53,733 --> 00:56:55,533
+舒尔: 我们可以选更简单的。
+Shure: We can choose something simpler.
+
+1254
+00:56:55,966 --> 00:56:57,333
+舒尔: 蘑菇，蘑菇，嘿！
+Shure: Mushrooms, mushrooms, hey!
+
+1255
+00:56:57,366 --> 00:56:59,100
+露西亚: 我们可以跟着 TikTok 上的舞跳。
+Lucia: We can dance to something from TikTok.
+
+1256
+00:56:57,366 --> 00:56:59,266
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1257
+00:56:59,100 --> 00:57:02,000
+舒尔: 哈哈哈。
+Shure: Hahaha.
+
+1258
+00:57:02,900 --> 00:57:03,900
+舒尔: 听我说。
+Shure: Listen to me.
+
+1259
+00:57:03,900 --> 00:57:04,900
+舒尔: 谢谢，是的，是的。
+Shure: Thank you, yes, yes.
+
+1260
+00:57:04,900 --> 00:57:06,766
+露西亚: 是的，在 TikTok 上大家都能参与。
+Lucia: Yes, on TikTok everyone can join in.
+
+1261
+00:57:07,033 --> 00:57:09,533
+露西亚: 规划起来也花更少时间，对吧？
+Lucia: It also takes less time to plan, right?
+
+1262
+00:57:10,266 --> 00:57:11,866
+露西亚: 而且没有大动作。
+Lucia: And there aren't any big moves.
+
+1263
+00:57:10,600 --> 00:57:11,033
+杰克: 对。
+Jake: Right.
+
+1264
+00:57:11,866 --> 00:57:13,100
+露西亚: 眼镜不会碍事。
+Lucia: Glasses won't get in the way.
+
+1265
+00:57:15,100 --> 00:57:15,900
+舒尔: 嘿。
+Shure: Hey.
+
+1266
+00:57:18,400 --> 00:57:19,266
+舒尔: 我们来过一遍时间线。
+Shure: Let's go over the timeline.
+
+1267
+00:57:19,266 --> 00:57:20,533
+塔莎: 我们可以拍100个硬币。
+Tasha: We can shoot 100 coins.
+
+1268
+00:57:20,533 --> 00:57:21,733
+塔莎: 哈哈哈。
+Tasha: Hahaha.
+
+1269
+00:57:21,333 --> 00:57:23,266
+杰克: 啊，买它们。
+Jake: Ah, buy them.
+
+1270
+00:57:21,733 --> 00:57:22,733
+塔莎: 啊，没关系。
+Tasha: Ah, it's okay.
+
+1271
+00:57:22,733 --> 00:57:25,533
+塔莎: 我只是觉得我们应该买真硬币。
+Tasha: I just think we should buy real coins.
+
+1272
+00:57:24,666 --> 00:57:27,666
+杰克: 哦，我们可以买，采购。
+Jake: Oh, we can buy them, procurement.
+
+1273
+00:57:25,533 --> 00:57:26,533
+卡特里娜: 哦，不，等等。
+Katrina: Oh, no, wait.
+
+1274
+00:57:26,766 --> 00:57:29,000
+卡特里娜: 在拍卖之前，他们需要讲个故事。
+Katrina: Before the auction, they need to tell a story.
+
+1275
+00:57:29,000 --> 00:57:30,533
+卡特里娜: 只有这样他们才能得到硬币。
+Katrina: Only then can they get the coins.
+
+1276
+00:57:31,233 --> 00:57:32,766
+杰克: 是的，是的，是的，就是这个时间。
+Jake: Yes, yes, yes, it's this time.
+
+1277
+00:57:32,766 --> 00:57:34,966
+杰克: 可能需要大约一个半小时。
+Jake: It might take about an hour and a half.
+
+1278
+00:57:36,233 --> 00:57:38,666
+杰克: 就像你昨天的活动一样。
+Jake: Just like your event yesterday.
+
+1279
+00:57:38,800 --> 00:57:40,766
+杰克: 也是两个小时。
+Jake: It was also two hours.
+
+1280
+00:57:39,466 --> 00:57:40,966
+舒尔: 不需要那么长。
+Shure: No need to make it that long.
+
+1281
+00:57:40,966 --> 00:57:42,166
+舒尔: 就讲个短故事。
+Shure: Just tell a short story.
+
+1282
+00:57:42,166 --> 00:57:44,133
+舒尔: 比如，每个人5分钟左右。
+Shure: Like, each person gets 5 minutes or so.
+
+1283
+00:57:45,300 --> 00:57:47,533
+杰克: 哦，那可以。
+Jake: Oh, that works.
+
+1284
+00:57:47,900 --> 00:57:50,033
+舒尔: 或者如果我们不能很好地控制时间成本...
+Shure: Or if we can't control the time cost well...
+
+1285
+00:57:50,033 --> 00:57:51,833
+舒尔: 我们可以通过其他方式获得硬币。
+Shure: We can gain the coins in other ways.
+
+1286
+00:57:51,866 --> 00:57:55,500
+舒尔: 但这个活动的核心是拍卖过程。
+Shure: But the core of this event is the auction process.
+
+1287
+00:57:55,500 --> 00:57:57,000
+舒尔: 至于如何赚取硬币...
+Shure: As for how to earn the coins...
+
+1288
+00:57:57,000 --> 00:57:58,666
+舒尔: 我们可以进一步细化。
+Shure: We can refine that further.
+
+1289
+00:58:00,033 --> 00:58:00,700
+杰克: 嗯嗯。
+Jake: Mm-hmm.
+
+1290
+00:58:00,500 --> 00:58:02,866
+舒尔: 是的，我们需要保留拍卖过程。
+Shure: Yes, we need to keep the auction process.
+
+1291
+00:58:02,866 --> 00:58:05,866
+舒尔: 大约9个人，每人5分钟。
+Shure: For about 9 people, each person gets 5 minutes.
+
+1292
+00:58:05,866 --> 00:58:07,500
+舒尔: 5945，那就是一个小时。
+Shure: 5945, that's an hour.
+
+1293
+00:58:07,500 --> 00:58:08,933
+舒尔: 我们就当它是一个小时。
+Shure: We can just consider it as an hour.
+
+1294
+00:58:13,366 --> 00:58:14,600
+露西亚: 路上发一些硬币。
+Lucia: Hand out some coins on the way.
+
+1295
+00:58:14,600 --> 00:58:17,666
+露西亚: 让大家通过掷骰子来玩。
+Lucia: And let everyone play by rolling dice.
+
+1296
+00:58:18,300 --> 00:58:19,866
+卡特里娜: 啊，我们可以设置一些游戏。
+Katrina: Ah, we can set up some games.
+
+1297
+00:58:18,300 --> 00:58:20,933
+杰克: 嗯，是的，是的。
+Jake: Mm, yeah, yeah.
+
+1298
+00:58:21,966 --> 00:58:24,366
+杰克: 哈哈哈，一些游戏可以。
+Jake: Hahaha, some games would be fine.
+
+1299
+00:58:24,366 --> 00:58:26,333
+舒尔: 我们在入口处放一个。
+Shure: Let's have one at the entrance.
+
+1300
+00:58:27,533 --> 00:58:28,866
+露西亚: 哈哈哈，不，开玩笑的。
+Lucia: Hahaha, no, just kidding.
+
+1301
+00:58:27,833 --> 00:58:34,266
+杰克: 哈哈哈。
+Jake: Hahaha.
+
+1302
+00:58:28,900 --> 00:58:29,400
+露西亚: 好的，好的，好的。
+Lucia: Okay, okay, okay.
+
+1303
+00:58:29,400 --> 00:58:31,100
+露西亚: 说真的。
+Lucia: Seriously.
+
+1304
+00:58:31,100 --> 00:58:32,300
+露西亚: 这听起来有点...
+Lucia: This sounds a bit...
+
+1305
+00:58:33,533 --> 00:58:37,466
+露西亚: 哈哈哈，发鸡蛋和掷骰子。
+Lucia: Hahaha, handing out eggs and rolling dice.
+
+1306
+00:58:35,666 --> 00:58:36,100
+杰克: 然后...
+Jake: Then...
+
+1307
+00:58:37,466 --> 00:58:40,200
+杰克: 哈哈哈，就像个据点。
+Jake: Hahaha, it's like a stronghold.
+
+1308
+00:58:39,500 --> 00:58:40,866
+杰克: 哈哈哈，就像个据点。
+Jake: Hahaha, it's like a stronghold.
+
+1309
+00:58:40,866 --> 00:58:44,266
+舒尔: 小心，我们可能会被抓住。
+Shure: Be careful, we might get busted.
+
+1310
+00:58:44,266 --> 00:58:47,000
+塔莎: 进来玩玩嘛进来就可以获得10个币
+
+1311
+00:58:51,666 --> 00:58:52,666
+舒尔: 哈哈。
+Shure: Haha.
+
+1312
+00:58:53,333 --> 00:58:55,033
+卡特里娜: 但一旦他们进来...
+Katrina: But once they come in...
+
+1313
+00:58:55,100 --> 00:58:57,533
+卡特里娜: 一开始，他们肯定需要赚取一些货币。
+Katrina: At first, they definitely need to earn some currency.
+
+1314
+00:58:57,533 --> 00:58:58,566
+卡特里娜: 但要赚取货币...
+Katrina: But to earn currency...
+
+1315
+00:58:58,600 --> 00:59:00,533
+卡特里娜: 他们需要通过讲故事来做到。
+Katrina: They need to do it by telling stories.
+
+1316
+00:59:00,766 --> 00:59:02,866
+卡特里娜: 但他们刚进来时，可能没那么熟悉。
+Katrina: But when they first come in, they might not be that familiar.
+
+1317
+00:59:02,866 --> 00:59:05,133
+卡特里娜: 我们指望他们在大家面前讲故事？
+Katrina: And we expect them to tell stories in front of everyone?
+
+1318
+00:59:05,100 --> 00:59:05,966
+卡特里娜: 自我介绍怎么样？
+Katrina: How about self-introductions?
+
+1319
+00:59:06,000 --> 00:59:07,666
+塔莎: 可能会尴尬，但他们可以赚一个硬币！
+Tasha: It might be awkward, but they can earn a coin!
+
+1320
+00:59:06,833 --> 00:59:08,100
+杰克: 嗯。
+Jake: Hmm.
+
+1321
+00:59:07,666 --> 00:59:08,933
+露西亚: 自我介绍可以赚...
+Lucia: Self-introductions can earn...
+
+1322
+00:59:08,933 --> 00:59:11,533
+卡特里娜: 是的，自我介绍可以赚...
+Katrina: Yeah, self-introductions can earn...
+
+1323
+00:59:10,600 --> 00:59:12,266
+杰克: 通过自我介绍赚或者...
+Jake: Earn through self-introductions or...
+
+1324
+00:59:11,533 --> 00:59:12,800
+爱丽丝: 第一个得五个。
+Alice: The first one gets five.
+
+1325
+00:59:12,800 --> 00:59:13,666
+爱丽丝: 第二个得三个。
+Alice: The second one gets three.
+
+1326
+00:59:15,900 --> 00:59:17,166
+卡特里娜: 奖惩制度。
+Katrina: Reward and punishment system.
+
+1327
+00:59:17,300 --> 00:59:19,333
+杰克: 或者我们可以在房间里藏东西。
+Jake: Or we could actually hide things in this room.
+
+1328
+00:59:19,333 --> 00:59:20,600
+杰克: 然后，嗯...
+Jake: And then, um...
+
+1329
+00:59:20,666 --> 00:59:21,466
+杰克: 比如...
+Jake: Like...
+
+1330
+00:59:21,500 --> 00:59:24,166
+露西亚: 像寻彩蛋那种游戏？
+Lucia: Like an Easter egg hunt kind of game?
+
+1331
+00:59:22,766 --> 00:59:24,500
+杰克: 是的，是的，没错。
+Jake: Yeah, yeah, exactly.
+
+1332
+00:59:26,100 --> 00:59:26,900
+杰克: 藏一些硬币。
+Jake: Hide some coins.
+
+1333
+00:59:27,666 --> 00:59:29,300
+舒尔: 藏硬币也行。
+Shure: Hiding coins works too.
+
+1334
+00:59:31,166 --> 00:59:33,166
+卡特里娜: 所以，一开始，通过自我介绍赚硬币。
+Katrina: So, at first, earn coins through self-introductions.
+
+1335
+00:59:33,166 --> 00:59:36,066
+卡特里娜: 然后玩一些小游戏赢更多硬币。
+Katrina: Then play some mini-games to win more coins.
+
+1336
+00:59:36,100 --> 00:59:38,100
+舒尔: 是的，比如一些问答之类的。
+Shure: Yeah, like some quiz or something.
+
+1337
+00:59:38,100 --> 00:59:39,700
+舒尔: 像野生动物拼图那个。
+Shure: Like the wildlife puzzle one.
+
+1338
+00:59:39,733 --> 00:59:41,933
+露西亚: 是的，反正也是地球日。
+Lucia: Yeah, since it's Earth Day anyway.
+
+1339
+00:59:41,933 --> 00:59:42,300
+露西亚: 是的，那很好。
+Lucia: Yeah, that's good.
+
+1340
+00:59:42,300 --> 00:59:44,033
+露西亚: 知识问答，知识问答。
+Lucia: Knowledge quizzes, knowledge quizzes.
+
+1341
+00:59:44,033 --> 00:59:45,633
+舒尔: 通过知识问答赚硬币。
+Shure: Earn coins through knowledge quizzes.
+
+1342
+00:59:46,000 --> 00:59:46,900
+舒尔: 是的，没错，太好了。
+Shure: Yeah, exactly, great.
+
+1343
+00:59:47,033 --> 00:59:48,100
+舒尔: 我想起来了。
+Shure: I remember now.
+
+1344
+00:59:47,033 --> 00:59:48,500
+塔莎: 好的，地球日是什么时候？
+Tasha: Alright, when is Earth Day?
+
+1345
+00:59:48,533 --> 00:59:49,433
+卡特里娜: 首先，我们需要...
+Katrina: First, we need to...
+
+1346
+00:59:49,600 --> 00:59:50,633
+露西亚: 是在二十几号。
+Lucia: It's on the twenty-something.
+
+1347
+00:59:51,033 --> 00:59:54,000
+卡特里娜: 首先，我们需要让他们赚到那笔钱。
+Katrina: First, we need to let them earn that money.
+
+1348
+00:59:51,800 --> 00:59:54,900
+杰克: 22号。我选21号。
+Jake: Twenty-second. I'll go with the twenty-first.
+
+1349
+00:59:54,500 --> 00:59:55,733
+卡特里娜: 然后我们开始推广...
+Katrina: Then we start promoting...
+
+1350
+00:59:55,600 --> 00:59:56,800
+杰克: 因为是星期天。
+Jake: Because it's a Sunday.
+
+1351
+00:59:56,500 --> 00:59:58,333
+卡特里娜: 推广我们的产品。
+Katrina: Promoting our products.

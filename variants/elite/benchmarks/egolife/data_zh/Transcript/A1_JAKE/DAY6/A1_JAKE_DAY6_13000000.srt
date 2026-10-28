@@ -1,0 +1,1065 @@
+1
+00:00:05,533 --> 00:00:06,333
+塔莎: 要喝点吗？
+Tasha: Want a drink?
+
+2
+00:00:06,900 --> 00:00:08,100
+杰克: 喝，嘿嘿。
+Jake: Drink, hehe.
+
+3
+00:00:09,966 --> 00:00:11,066
+塔莎: 要加冰吗？
+Tasha: Want ice?
+
+4
+00:00:12,033 --> 00:00:14,266
+塔莎: 要的话，也帮我拿点。
+Tasha: If you do, help me get some too.
+
+5
+00:00:13,133 --> 00:00:15,400
+杰克: 好东西在哪儿，Zilang？
+Jake: Where's the good stuff, Zilang?
+
+6
+00:00:15,400 --> 00:00:16,200
+杰克: 喝吧。
+Jake: Drink up.
+
+7
+00:00:17,033 --> 00:00:17,833
+杰克: 喝。
+Jake: Drink.
+
+8
+00:00:18,233 --> 00:00:19,033
+杰克: 我不知道。
+Jake: I don't know.
+
+9
+00:00:24,733 --> 00:00:25,833
+塔莎: 要加冰吗？
+Tasha: Want ice?
+
+10
+00:00:30,766 --> 00:00:32,866
+塔莎: 我怎么记得之前开过？
+Tasha: How do I remember opening it before?
+
+11
+00:00:33,366 --> 00:00:34,866
+杰克: 我得把它压碎。
+Jake: I need to crush it.
+
+12
+00:00:34,933 --> 00:00:35,933
+杰克: 太大了。
+Jake: It's too big.
+
+13
+00:00:37,000 --> 00:00:37,833
+杰克: 这么大。
+Jake: This big.
+
+14
+00:00:38,933 --> 00:00:39,733
+杰克: 加点水。
+Jake: Add water.
+
+15
+00:00:44,300 --> 00:00:45,333
+塔莎: 你倒的话，你不喝？
+Tasha: If you pour it, you won't drink?
+
+16
+00:00:46,866 --> 00:00:47,933
+塔莎: 那可是重罪。
+Tasha: That's a serious crime.
+
+17
+00:00:47,133 --> 00:00:48,933
+杰克: 哈哈哈，不，不，我不喝。
+Jake: Hahaha, no, no, I won't drink.
+
+18
+00:00:48,933 --> 00:00:50,400
+杰克: 不，你们先挑。
+Jake: No, you guys pick first.
+
+19
+00:00:59,266 --> 00:01:00,233
+Others: 你们在楼下吃吗？
+Others: Are you eating downstairs?
+
+20
+00:01:00,233 --> 00:01:01,033
+杰克: 在楼下吃。
+Jake: Eating downstairs.
+
+21
+00:01:04,000 --> 00:01:05,066
+杰克: 在楼下吃还是楼上吃？
+Jake: Eating downstairs or upstairs?
+
+22
+00:01:05,066 --> 00:01:06,066
+杰克: 我们可以在楼上吃。
+Jake: We can eat upstairs.
+
+23
+00:01:06,066 --> 00:01:07,000
+杰克: 像便当一样。
+Jake: Like a lunchbox.
+
+24
+00:01:07,133 --> 00:01:09,166
+杰克: 我觉得我们应该在外面吃。
+Jake: I think we should eat outside.
+
+25
+00:01:10,800 --> 00:01:11,966
+杰克: 哦，确实。
+Jake: Oh, indeed.
+
+26
+00:01:12,566 --> 00:01:13,900
+塔莎: 楼上还是楼下？
+Tasha: Upstairs or downstairs?
+
+27
+00:01:13,900 --> 00:01:15,066
+塔莎: 两边都能用空调。
+Tasha: Both can use the air conditioner.
+
+28
+00:01:17,733 --> 00:01:18,233
+杰克: 在楼上吃。
+Jake: Eat upstairs.
+
+29
+00:01:18,233 --> 00:01:19,133
+杰克: 在楼下吃。
+Jake: Eat downstairs.
+
+30
+00:01:19,766 --> 00:01:20,966
+杰克: 你，你在吃。
+Jake: You, you are eating.
+
+31
+00:01:21,333 --> 00:01:22,533
+Others: 楼上不是更干净吗？
+Others: Isn't upstairs cleaner?
+
+32
+00:01:22,933 --> 00:01:23,733
+杰克: 好吧。
+Jake: Alright.
+
+33
+00:01:34,033 --> 00:01:34,966
+塔莎: 你要去看看吗？
+Tasha: Are you going to check it out?
+
+34
+00:01:35,700 --> 00:01:36,933
+塔莎: 哈哈哈
+Tasha: Hahaha
+
+35
+00:01:37,866 --> 00:01:38,633
+杰克: 真厉害。
+Jake: Really impressive.
+
+36
+00:01:38,633 --> 00:01:39,666
+杰克: 这花了半小时。
+Jake: This took half an hour.
+
+37
+00:01:39,666 --> 00:01:41,466
+杰克: 花了整整一小时才完成。
+Jake: Took a full hour to finish.
+
+38
+00:04:08,500 --> 00:04:09,366
+杰克: 哇。
+Jake: Whoa.
+
+39
+00:05:36,833 --> 00:05:38,733
+杰克: 处理数据。
+Jake: Processing data.
+
+40
+00:05:39,033 --> 00:05:40,766
+Others: 哦，真的吗？
+Others: Oh, really?
+
+41
+00:05:41,133 --> 00:05:42,800
+杰克: 还没完全决定。
+Jake: Not fully decided yet.
+
+42
+00:05:42,800 --> 00:05:46,200
+杰克: 现在先不谈这个。
+Jake: Let's not talk about it now.
+
+43
+00:05:46,533 --> 00:05:48,433
+Others: 如果他愿意报销，
+Others: If he's willing to reimburse me,
+
+44
+00:05:48,433 --> 00:05:50,033
+Others: 我会毫不犹豫。
+Others: I would have no hesitation.
+
+45
+00:05:50,366 --> 00:05:51,366
+Others: 勇往直前。
+Others: Move forward bravely.
+
+46
+00:05:52,933 --> 00:05:56,066
+塔莎: 你们呢，清华有很多职位吗？
+Tasha: How about you guys, do you have many positions at Tsinghua?
+
+47
+00:05:56,333 --> 00:05:57,200
+Others: 在清华，
+Others: At Tsinghua,
+
+48
+00:05:57,433 --> 00:05:58,966
+Others: 嗯，还行。
+Others: Yeah, it's okay.
+
+49
+00:05:58,533 --> 00:06:01,433
+塔莎: 我想做个数据调查。
+Tasha: I want to do a data survey.
+
+50
+00:06:02,400 --> 00:06:03,066
+Others: 没问题。
+Others: It's okay.
+
+51
+00:06:03,066 --> 00:06:07,333
+Others: 因为他们的西点不是主要教学区。
+Others: Because their west point is not the main educational area.
+
+52
+00:06:07,333 --> 00:06:08,566
+Others: 更多是人流。
+Others: It's more about the flow of people.
+
+53
+00:06:09,166 --> 00:06:11,500
+塔莎: 现在进去需要预约吗？
+Tasha: Do you need an appointment to get in now?
+
+54
+00:06:13,666 --> 00:06:15,600
+其他人：就是你必须在他的公众号预约
+
+55
+00:06:16,933 --> 00:06:18,000
+Others: 好像每天有限额。
+Others: Seems like there is a daily limit.
+
+56
+00:06:20,533 --> 00:06:22,066
+Others: 可以提前7天预订。
+Others: You can book 7 days in advance.
+
+57
+00:06:22,566 --> 00:06:23,500
+塔莎: 这么严格。
+Tasha: So strict.
+
+58
+00:06:23,266 --> 00:06:25,033
+Other: 但其实，周中通常不满。
+Other: But actually, midweek is usually not full.
+
+59
+00:06:27,400 --> 00:06:28,733
+其他人：但是五一肯定要满
+
+60
+00:06:29,833 --> 00:06:31,100
+塔莎: 谁五一去，我。
+Tasha: Who's going on May Day, me.
+
+61
+00:06:33,966 --> 00:06:34,866
+塔莎: 嗯哼。
+Tasha: Uh-huh.
+
+62
+00:06:35,833 --> 00:06:37,033
+塔莎: 我肯定不会。
+Tasha: I definitely won't.
+
+63
+00:06:38,466 --> 00:06:39,866
+Other: 你领先太多了。
+Other: You're way ahead.
+
+64
+00:06:53,866 --> 00:06:55,833
+Other: 西边以前是个圆形花园。
+Other: The west side used to be a round garden.
+
+65
+00:06:56,666 --> 00:06:57,466
+Other: 一个小花园。
+Other: A small garden.
+
+66
+00:07:01,866 --> 00:07:02,866
+塔莎: 写一篇短论文。
+Tasha: Write a short paper.
+
+67
+00:07:02,866 --> 00:07:04,866
+塔莎: 然后再搞个毕设毕业
+
+68
+00:07:05,800 --> 00:07:07,433
+Other: 好，毕业设计。
+Other: Good, graduation project.
+
+69
+00:07:09,233 --> 00:07:10,666
+Other: 靠，这是我的项目。
+Other: Damn, this is my project.
+
+70
+00:07:10,666 --> 00:07:11,533
+Other: 还没在平板上写。
+Other: Haven't written on the tablet yet.
+
+71
+00:07:13,133 --> 00:07:14,966
+Other: 哇，该死的MD翻译。
+Other: Wow, damn MD translation.
+
+72
+00:07:15,933 --> 00:07:23,966
+杰克:请把这段翻译成中文 杰克: 请把这段翻译成中文。
+Jake:please translate this paragraph into Chinese
+Jake: Please translate this paragraph into Chinese.
+
+73
+00:07:28,666 --> 00:07:29,933
+Other: 你觉得微信能写歌吗？
+Other: Do you think WeChat can write songs?
+
+74
+00:07:30,166 --> 00:07:31,633
+塔莎: 不知道，杰克。
+Tasha: No idea, Jake.
+
+75
+00:07:33,266 --> 00:07:34,266
+塔莎: 哦，舒尔。
+Tasha: Oh, Shure.
+
+76
+00:07:37,700 --> 00:07:38,500
+塔莎: 怎么了？
+Tasha: What's up?
+
+77
+00:07:41,200 --> 00:07:42,933
+杰克: 是的。
+Jake: Yes.
+
+78
+00:07:41,266 --> 00:07:42,333
+塔莎: 真的吗，杰克？
+Tasha: Really, Jake?
+
+79
+00:07:47,266 --> 00:07:47,933
+塔莎: 杰克，你为什么不
+Tasha: Jake, why don't
+
+80
+00:07:47,933 --> 00:07:48,766
+塔莎: 出来换一下？
+Tasha: you come out to change?
+
+81
+00:07:50,266 --> 00:07:51,133
+杰克: 呃。
+Jake: Uh.
+
+82
+00:07:52,166 --> 00:07:54,433
+杰克: 这里更快。
+Jake: It's faster here.
+
+83
+00:16:09,433 --> 00:16:10,566
+Other: 现在到哪部分了？
+Other: What part is it now?
+
+84
+00:16:10,566 --> 00:16:11,566
+Other: 我要吃饭了。
+Other: I'm about to eat.
+
+85
+00:16:11,566 --> 00:16:12,666
+Other: 我饿死了。
+Other: I'm starving.
+
+86
+00:16:15,166 --> 00:16:16,066
+杰克: 吃饭。
+Jake: Eating.
+
+87
+00:16:18,033 --> 00:16:19,233
+杰克: 是啊，不知道哪部分。
+Jake: Yeah, no idea what part.
+
+88
+00:16:19,233 --> 00:16:20,233
+杰克: 应该在收杯子。
+Jake: Should be collecting glasses.
+
+89
+00:16:21,566 --> 00:16:21,933
+杰克: 那家伙
+Jake: That guy
+
+90
+00:16:21,933 --> 00:16:22,633
+杰克: 他们在哪儿？
+Jake: where are they?
+
+91
+00:16:22,633 --> 00:16:23,433
+杰克: 他们在干什么？
+Jake: What are they doing?
+
+92
+00:16:23,366 --> 00:16:24,533
+爱丽丝: 他们在楼上吗？
+Alice: Are they upstairs?
+
+93
+00:16:24,533 --> 00:16:25,766
+爱丽丝: 先拿出来。
+Alice: Take it out first.
+
+94
+00:16:25,866 --> 00:16:28,266
+Other: 散开了。
+Other: Spread out.
+
+95
+00:16:28,266 --> 00:16:30,533
+Other: 每个人都在做自己的事。
+Other: Everyone's doing their own thing.
+
+96
+00:16:30,766 --> 00:16:31,933
+杰克: 他们在干什么？
+Jake: What are they doing?
+
+97
+00:16:32,966 --> 00:16:34,400
+杰克: 那些工作人员呢？
+Jake: And those crews?
+
+98
+00:16:34,966 --> 00:16:36,733
+Others: 大家都在上面
+Others: Everyone's up there
+
+99
+00:16:36,733 --> 00:16:38,033
+Others: 不知道Jack在干什么
+Others: No idea what Jack is doing
+
+100
+00:16:38,366 --> 00:16:42,000
+杰克: 嘿，让舒尔和乔伊斯特下来
+Jake: Hey, have Shure and Choiszt come down
+
+101
+00:16:42,000 --> 00:16:43,433
+Others: 他们在玩乐器
+Others: They're playing instruments
+
+102
+00:16:43,433 --> 00:16:44,733
+杰克: 不，叫他们下来
+Jake: No, get them down here
+
+103
+00:18:08,900 --> 00:18:10,233
+杰克: 啊
+Jake: Ah
+
+104
+00:18:12,033 --> 00:18:13,400
+舒尔: 对吃饭不热情
+Shure: Not enthusiastic about eating
+
+105
+00:18:13,400 --> 00:18:14,766
+舒尔: 你心态有问题
+Shure: Got a problem with your mindset
+
+106
+00:18:15,766 --> 00:18:17,033
+杰克: 舒尔和乔伊斯特在哪儿？
+Jake: Where are Shure and Choiszt?
+
+107
+00:18:28,033 --> 00:18:28,833
+杰克: 拿你们的杯子
+Jake: Get your glasses
+
+108
+00:18:28,833 --> 00:18:30,800
+杰克: 拿杯子，别瞎闹了
+Jake: Get your glasses and stop messing around
+
+109
+00:18:42,833 --> 00:18:44,000
+Others: 嘿，那些家伙来了
+Others: Hey, those guys are here
+
+110
+00:18:58,533 --> 00:19:01,000
+杰克: 不，不，不，他们跟我们一起
+Jake: No, no, no, they're coming with us
+
+111
+00:19:06,000 --> 00:19:06,800
+杰克: 靠
+Jake: Damn
+
+112
+00:19:07,800 --> 00:19:08,433
+杰克: 这要花我们钱了
+Jake: This is gonna cost us money
+
+113
+00:19:08,400 --> 00:19:09,433
+Others: 插上
+Others: Plug it in
+
+114
+00:19:08,433 --> 00:19:09,466
+杰克: 这个
+Jake: This one
+
+115
+00:19:11,433 --> 00:19:12,233
+杰克: 啊
+Jake: Ah
+
+116
+00:19:12,633 --> 00:19:13,266
+杰克: 插上，插上
+Jake: Plug it in, plug it in
+
+117
+00:19:13,266 --> 00:19:14,366
+杰克: 好了，好了
+Jake: All set, all set
+
+118
+00:19:14,933 --> 00:19:17,666
+Others: 如果这台电脑有特定端口，随便插哪儿都行
+Others: If this computer has specific ports, just plug it in anywhere
+
+119
+00:19:19,000 --> 00:19:20,933
+杰克: 对，对，对，你插低处，对吧？
+Jake: Yeah, yeah, yeah, you plug it in low, right?
+
+120
+00:19:22,433 --> 00:19:23,266
+杰克: 第一次插
+Jake: First time plugging in
+
+121
+00:19:25,766 --> 00:19:27,566
+杰克: 看，每个端口
+Jake: See, each port
+
+122
+00:19:28,800 --> 00:19:30,766
+杰克: 你，你，你没有那个
+Jake: You, you, you don't have that
+
+123
+00:19:30,766 --> 00:19:32,766
+杰克: 那吃饭时录，行吗？
+Jake: Then record while eating, okay?
+
+124
+00:19:33,466 --> 00:19:35,266
+卡特里娜: 对，我们早上录了很多
+Katrina: Yeah, we recorded a lot in the morning
+
+125
+00:19:35,533 --> 00:19:40,066
+杰克: 好，行，行，只要有空间
+Jake: OK, fine, fine, as long as you have space
+
+126
+00:19:40,066 --> 00:19:42,266
+杰克: 如果有空间，我们可以多拍，对吧
+Jake: If there's space, we can shoot more, right
+
+127
+00:19:53,933 --> 00:19:56,900
+舒尔: 太好了，我就喜欢这样的人
+Shure: Great, I just love people like this
+
+128
+00:20:05,733 --> 00:20:06,800
+Others: 这个插哪儿？
+Others: Where does this plug in?
+
+129
+00:20:07,866 --> 00:20:08,666
+Others: 插这里
+Others: Plug it here
+
+130
+00:20:09,733 --> 00:20:12,200
+杰克: 就看小条
+Jake: Just look at the small strip
+
+131
+00:20:12,200 --> 00:20:13,433
+杰克: 这个没有小条
+Jake: This one doesn't have a small strip
+
+132
+00:20:13,433 --> 00:20:15,200
+杰克: 这个没有，所以随便插
+Jake: This one doesn't, so just plug it anywhere
+
+133
+00:20:16,233 --> 00:20:17,833
+Others: 就插那个端口，对
+Others: Just plug it into that port, yeah
+
+134
+00:20:18,600 --> 00:20:19,800
+杰克: 不，就是那个
+Jake: No, it's just that
+
+135
+00:20:19,800 --> 00:20:20,633
+杰克: 你有小条
+Jake: You have a small strip
+
+136
+00:20:20,633 --> 00:20:22,033
+杰克: 你得抓住小条
+Jake: You gotta catch the small strip
+
+137
+00:20:22,033 --> 00:20:24,966
+杰克: 对，如果在中间，没关系
+Jake: Yeah, and if it's in the middle, it doesn't matter
+
+138
+00:20:23,633 --> 00:20:24,900
+Other: 没关系
+Other: Doesn't matter
+
+139
+00:20:27,600 --> 00:20:29,033
+杰克: 其实，如果是L，真的有关系
+Jake: Actually, it really does matter if it's L
+
+140
+00:20:29,033 --> 00:20:30,333
+杰克: 但你不必担心
+Jake: But you don't have to worry about it
+
+141
+00:20:32,233 --> 00:20:33,000
+杰克: 对
+Jake: Yeah
+
+142
+00:20:33,833 --> 00:20:36,833
+杰克: 不能再定义了
+Jake: It can't be defined anymore
+
+143
+00:20:37,700 --> 00:20:38,966
+Other: 那么，我们怎么导出这个？
+Other: So, how do we export this?
+
+144
+00:20:39,200 --> 00:20:42,033
+杰克: 所以出来时，会有两个
+Jake: So when it comes out, there will be two of them
+
+145
+00:20:45,333 --> 00:20:46,433
+杰克: 对，就这些东西
+Jake: Yes, just these things
+
+146
+00:20:46,433 --> 00:20:47,200
+Other: 就这六个
+Other: Just these six
+
+147
+00:20:47,200 --> 00:20:48,800
+杰克: 这些，对，这些
+Jake: These, yes, these
+
+148
+00:20:48,800 --> 00:20:49,166
+杰克: 然后
+Jake: And then
+
+149
+00:20:49,166 --> 00:20:52,933
+杰克: 你找一个，需要新建一个
+Jake: You find one, you need to create a new one
+
+150
+00:20:52,933 --> 00:20:53,733
+杰克:421 杰克: 421
+Jake:421
+Jake: 421
+
+151
+00:20:55,366 --> 00:20:57,433
+杰克: 里面很多东西不能复制
+Jake: You can't copy a lot of things inside
+
+152
+00:21:03,600 --> 00:21:05,733
+Other: 然后把它们都
+Other: And then put them all
+
+153
+00:21:05,566 --> 00:21:06,433
+杰克: 对，对
+Jake: Yes, yes
+
+154
+00:21:06,433 --> 00:21:07,333
+杰克: 复制过来
+Jake: Copy them over
+
+155
+00:21:08,033 --> 00:21:11,800
+Other: 是VRS和这个XS，对吧？
+Other: It's VRS and this XS, right?
+
+156
+00:21:11,366 --> 00:21:12,133
+杰克: 对
+Jake: Yes
+
+157
+00:21:13,533 --> 00:21:15,000
+杰克: 不要建任何文件夹
+Jake: And don't make any folders
+
+158
+00:21:15,033 --> 00:21:15,766
+杰克: 不要文件夹
+Jake: No folders
+
+159
+00:21:15,766 --> 00:21:16,833
+杰克: 谢斌竹在干什么？
+Jake: What is Xie Binzhu doing?
+
+160
+00:21:17,666 --> 00:21:18,466
+其他人：不知道，他在坐着
+
+161
+00:21:18,966 --> 00:21:19,766
+杰克: 坐着
+Jake: Sitting down
+
+162
+00:21:22,200 --> 00:21:23,333
+杰克: 坐着干什么？
+Jake: What is sitting down?
+
+163
+00:21:22,800 --> 00:21:23,600
+其他人：打电话呢
+
+164
+00:21:24,033 --> 00:21:24,833
+杰克: 天啊
+Jake: Oh my
+
+165
+00:21:30,700 --> 00:21:33,100
+其他人：这个格式都不一样啊
+
+166
+00:21:34,833 --> 00:21:37,400
+Other: 看这个，这里写VRS文件
+Other: Look at this, it writes the VRS file here
+
+167
+00:21:37,400 --> 00:21:38,933
+Other: 这里指向js
+Other: And here it points to js
+
+168
+00:21:38,933 --> 00:21:41,033
+Other: 这里这是VR
+Other: And here this is VR
+
+169
+00:21:41,733 --> 00:21:42,533
+Other: 这是VRS
+Other: This is VRS
+
+170
+00:21:42,533 --> 00:21:44,200
+Other: 这里指向VRS作为JS
+Other: And this points to VRS as JS
+
+171
+00:21:45,466 --> 00:21:47,000
+杰克: 嗯，没事，没事
+Jake: Hmm, it's fine, it's fine
+
+172
+00:21:47,000 --> 00:21:49,066
+杰克: 因为这个VRS指向结构
+Jake: Because this VRS points to the structure
+
+173
+00:21:49,066 --> 00:21:49,866
+杰克: 就像这样
+Jake: It's like this
+
+174
+00:21:52,166 --> 00:21:53,633
+杰克: 现在明白了吗？
+Jake: Do you understand now?
+
+175
+00:21:53,733 --> 00:21:56,200
+杰克: 嗯，所以V指向VRS
+Jake: Hmm, so the V points to VRS
+
+176
+00:21:56,200 --> 00:21:57,133
+杰克: 是VS格式
+Jake: It's the VS format
+
+177
+00:21:57,133 --> 00:21:59,133
+杰克: VRS指向JS是JS格式
+Jake: VRS pointing to JS is the JS format
+
+178
+00:21:59,133 --> 00:22:00,933
+杰克: 它的文件名是VRS
+Jake: And its file name is VRS
+
+179
+00:22:41,966 --> 00:22:43,700
+Other: 找眼镜
+Other: Look for the glasses
+
+180
+00:22:50,233 --> 00:22:51,966
+杰克: 确保所有充电宝都充好电
+Jake: And make sure all the power banks are charged
+
+181
+00:22:52,166 --> 00:22:53,433
+杰克: 谢斌竹
+Jake: Xie Binzhu
+
+182
+00:22:52,900 --> 00:22:53,466
+Others: 嘿
+Others: Hey
+
+183
+00:22:53,466 --> 00:22:54,633
+杰克: 把所有充电宝都充上电
+Jake: Charge all the power banks
+
+184
+00:22:54,633 --> 00:22:58,133
+杰克: 除了GoPro的那些
+Jake: Except for the GoPro ones
+
+185
+00:22:59,200 --> 00:23:01,533
+杰克: 检查并给所有其他充电宝充电
+Jake: Check and charge all other power banks
+
+186
+00:23:09,533 --> 00:23:11,733
+杰克: 除了GoPro的，其他都充上电
+Jake: Charge everything except the GoPro ones
+
+187
+00:23:12,166 --> 00:23:13,266
+杰克: 给所有充电宝充电
+Jake: Charge all the power banks
+
+188
+00:23:14,833 --> 00:23:17,600
+Others: 这个L4是什么？
+Others: What's this L4?
+
+189
+00:23:18,166 --> 00:23:20,333
+Others: 在这个文件夹里，这个L4是什么？
+Others: In this folder, what's this L4?
+
+190
+00:23:20,333 --> 00:23:21,133
+杰克: 忽略那个
+Jake: Ignore that
+
+191
+00:23:21,333 --> 00:23:23,866
+杰克: 是个老问题，别管它
+Jake: It's an old issue, don't worry about it
+
+192
+00:23:30,533 --> 00:23:31,866
+其他人：2024
+Others: 2024
+
+193
+00:23:34,133 --> 00:23:36,033
+Others: 这里有可用的充电端口吗？
+Others: Are there any available charging ports here?
+
+194
+00:23:36,033 --> 00:23:36,833
+杰克: 有
+Jake: Yes
+
+195
+00:23:37,166 --> 00:23:37,966
+杰克: 找找
+Jake: Look for them
+
+196
+00:23:47,466 --> 00:23:48,166
+Others: 这是什么？
+Others: What's this?
+
+197
+00:23:48,166 --> 00:23:49,066
+Others: 怎么回事？
+Others: What's going on?
+
+198
+00:23:50,666 --> 00:23:51,466
+杰克: 什么情况？
+Jake: What situation?
+
+199
+00:23:53,133 --> 00:23:54,866
+Others: 我一个个解释
+Others: I'll explain each one
+
+200
+00:23:54,866 --> 00:23:57,333
+Others: 如果出错，我就拔了重插
+Others: If there's an error, I'll unplug and replug it
+
+201
+00:23:57,333 --> 00:23:59,000
+杰克: 我不太擅长
+Jake: I'm not very good at it
+
+202
+00:24:00,066 --> 00:24:02,766
+杰克: 你还有眼镜吗？
+Jake: Do you still have your glasses?
+
+203
+00:24:03,366 --> 00:24:05,000
+Others: 有，我还有三副
+Others: Yeah, I still have three pairs
+
+204
+00:24:06,433 --> 00:24:07,533
+杰克: 还有三个端口
+Jake: There are still three ports
+
+205
+00:24:08,866 --> 00:24:10,433
+Others: S1在录
+Others: S1 is recording
+
+206
+00:24:11,800 --> 00:24:12,800
+Others: 刘宇轩在录
+Others: Liu Yuxuan is recording
+
+207
+00:24:12,800 --> 00:24:16,733
+Others: 还有蒋如雅的眼镜
+Others: And Jiang Ruya's glasses
+
+208
+00:24:16,733 --> 00:24:17,533
+Others: 这是谁的？
+Others: Whose is this?
+
+209
+00:24:18,433 --> 00:24:19,133
+露西亚: 这是我的
+Lucia: This is mine
+
+210
+00:24:19,133 --> 00:24:21,933
+露西亚: 那个是，哈哈
+Lucia: That one is, haha
+
+211
+00:24:23,666 --> 00:24:24,666
+其他人：L3
+Others: L3
+
+212
+00:24:46,633 --> 00:24:47,733
+Others: 直接放下
+Others: Just drop it directly
+
+213
+00:25:07,933 --> 00:25:09,200
+Others: 这很刺激
+Others: This is exciting
+
+214
+00:25:20,900 --> 00:25:25,300
+Others: 看这个L3，电池故障
+Others: Look at this L3, battery malfunction

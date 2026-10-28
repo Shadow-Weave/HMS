@@ -1,0 +1,63 @@
+{
+  "pro": {
+    "name": "HMS Pro",
+    "root": ".",
+    "python_paths": [
+      "core/dataplane"
+    ],
+    "commands": {
+      "serve": [
+        "{python}",
+        "-c",
+        "from hms_api.main import main; raise SystemExit(main())"
+      ],
+      "compose": [
+        "docker",
+        "compose"
+      ],
+      "benchmark": [
+        "bash",
+        ".aaaSCRIPT/run_benchmark.sh"
+      ],
+      "test": [
+        "{python}",
+        "-m",
+        "pytest",
+        "core/dataplane/tests"
+      ],
+      "run": [
+        "{python}"
+      ]
+    }
+  },
+  "elite": {
+    "name": "HMS Elite",
+    "root": "variants/elite",
+    "python_paths": [
+      "."
+    ],
+    "commands": {
+      "serve": [
+        "{python}",
+        "-c",
+        "from hms_elite.server.app import main; raise SystemExit(main())"
+      ],
+      "compose": [
+        "docker",
+        "compose"
+      ],
+      "benchmark": [
+        "{python}",
+        "benchmarks/egolife/run_egolife.py"
+      ],
+      "test": [
+        "{python}",
+        "-m",
+        "pytest"
+      ],
+      "run": [
+        "{python}"
+      ]
+    }
+  }
+}

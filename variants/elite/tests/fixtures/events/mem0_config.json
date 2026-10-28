@@ -1,0 +1,1 @@
+{"llm": {"provider": "openai", "config": {"model": "gpt-4.1-mini", "temperature": 0.1, "top_p": 0.1, "top_k": 1}}, "embedder": {"provider": "openai", "config": {"model": "text-embedding-3-small"}}, "vector_store": {"provider": "qdrant", "config": {"host": "localhost"}}, "history_db_path": "/tmp/x/history.db", "version": "v1.1", "custom_instructions": null}

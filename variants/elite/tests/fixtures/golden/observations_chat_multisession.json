@@ -1,0 +1,83 @@
+[
+  [
+    {
+      "attributed_to": "user",
+      "confidence": 0.75,
+      "date_observed": "2026-03-01",
+      "entity_mentions": [
+        "Sarah"
+      ],
+      "event_idx": 0,
+      "id": "0",
+      "objects": [],
+      "predicate": "did",
+      "relation": "single_fact",
+      "sentiment": "neutral",
+      "speaker": null,
+      "subject": "Sarah",
+      "supersedes_hint_ids": [],
+      "text": "Sarah joined the billing team in March.",
+      "topic_tags": [
+        "work",
+        "billing"
+      ],
+      "type": "temporal_fact",
+      "valid_from": null,
+      "valid_to": null
+    }
+  ],
+  [
+    {
+      "attributed_to": "user",
+      "confidence": 0.75,
+      "date_observed": "2026-05-06",
+      "entity_mentions": [
+        "Sarah"
+      ],
+      "event_idx": 0,
+      "id": "0",
+      "objects": [],
+      "predicate": "did",
+      "relation": "single_fact",
+      "sentiment": "neutral",
+      "speaker": null,
+      "subject": "Sarah",
+      "supersedes_hint_ids": [],
+      "text": "Sarah shipped the webhook retry design on May 6.",
+      "topic_tags": [
+        "work",
+        "engineering"
+      ],
+      "type": "temporal_fact",
+      "valid_from": null,
+      "valid_to": null
+    }
+  ],
+  [
+    {
+      "attributed_to": "user",
+      "confidence": 0.6,
+      "date_observed": "2026-06-11",
+      "entity_mentions": [
+        "Sarah"
+      ],
+      "event_idx": 0,
+      "id": "0",
+      "objects": [],
+      "predicate": "is",
+      "relation": "single_fact",
+      "sentiment": "neutral",
+      "speaker": null,
+      "subject": "Sarah",
+      "supersedes_hint_ids": [],
+      "text": "Sarah is reviewing the checkout refactor this week.",
+      "topic_tags": [
+        "engineering",
+        "billing"
+      ],
+      "type": "fact",
+      "valid_from": null,
+      "valid_to": null
+    }
+  ]
+]
